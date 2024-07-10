@@ -328,11 +328,13 @@ beta_model_results %>%
   print_html()
 ```
 
-### $\mu$ component
+### Model parameters
+
+#### $\mu$ component
 
 Looking at the model output in Table 4, there are two components we need to interpret when using beta regression. The first set of coefficients under fixed effects represents how factors influence the $\mu$ parameter, which is the mean of the beta distribution. These coefficients are interpreted on the scale of the logit link function, meaning they represent changes in the log-odds of the mean proportion. The intercept term represents the log odds of the mean on accuracy for the fluent instructor condition which we coded as the reference. Here being in the fluent condition translates to a log odds of `r round(beta_model_results$Coefficient[1], 3)`. The fluency coefficient represents the difference between the fluency and disfluency conditions. That is, watching a fluent instructor leads to higher recall than watching a disfluent instructor, b = `r round(beta_model_results$Coefficient[2], 3)` , SE = `r round(beta_model_results$SE[2], 3)` , 95% CIs = `r round(beta_model_results$CI_low[2], 3)`,`r round(beta_model_results$CI_high[2], 3)`\], p = `r round(beta_model_results$p[2], 3)`.
 
-#### Predicted probabilities
+##### Predicted probabilities
 
 While it is quite common to report the logits from a non-linear model, they are not very useful or intuitive. Instead we should discuss the effects of the predictor on the actual outcome of interest (in this case the 0-1 scale). The logit link allows us to transform back and forth between log-odds and probabilities. By using the inverse of the logit, we can easily transform coefficients to obtain proportions or percentages. In a simple case, we can do this manually, but when we have many moving pieces it can get quite complicated. Thankfully, there is a package called **`marginaleffects`** [@marginaleffects] that can help us extract the probabilities quite easily.[^2] To get the percentages for each of our categorical predictors we can use the function from the package called `avg_predictions`.
 
@@ -356,7 +358,7 @@ avg_predictions(beta_model, variables="Fluency_dummy") %>%
 
 Looking at table X, we see that both estimates are negative, which indicates that probability is below 50%. Looking at the predicted probablities confirms this. For the Fluency factor, we can interpret the estimate column in terms of proportions or percentages. That is, participants who watched the fluency video scored on average 36% on the final exam compared to 29% who watched the disfluency video.
 
-#### Marginal effects
+##### Marginal effects
 
 We can also examine changes in predicted probabilities for variations or small changes in an independent variable. This is called a marginal effect. There are different types of marginal effects, and various packages calculate them differently. Since we will be using the `marginaleffects` package for this tutorial, we will focus on the average marginal effect (AME), which is used by default in the `marginaleffects` package. The AME is the predicted change in the outcome for a very small change in the independent variable. In the `marginaleffects` package this invovle generating predictions for each row of the original data then averaging these predictions. One effect size measure we can calculate with categorical variables is the risk difference, which is the discrete difference between the average marginal effect of one condition or group and that of another condition or group. In the `marginaleffects` package, we can use the function `avg_comparisons` to obtain this metric. This function can also be used to get other popular effect size metrics, such as odds ratios and risk ratios.
 
@@ -400,7 +402,7 @@ plot_predictions(beta_model, condition="Fluency_dummy")
 
 ```
 
-### Precision ($\phi$) component
+#### Precision ($\phi$) component
 
 The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `phi` in Table 4. The $\phi$ parameter tells us how precise our estimate is. Specifically, $\phi$ in beta regression tells us about the variability of the response variable around its mean. Specifically, a higher dispersion parameter indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability.
 
@@ -986,9 +988,9 @@ plots$continuous
 
 It is clear from the posterior distribution plot that the ordered beta model fits the data well.
 
-## Conclusion
+# Discussion and Conclusion
 
-The use of beta regression in psychology is rare. Beta regression models are an attractive alternative to models subsumed under the GLM, which imposes the unrealistic assumptions of normality, homoscadacidty, unbounded. In addition, there is actually a diverse array of different models that can be used depending on your outcome of interest. Throughout this tutorial our main aim was to help guide researchers in running a beta regression with real data by providing R codeand its alappropriate beta regression model beta, zero-inflated, zero-one-inflated, ordered beta). The empirical example in this study, accuracy on the final test, is ideally suited for a beta model. There are a whole host of outcomes used in psychology that would be ideal for beta regression and its alternatives. Researchers now have some tools to analyze their data properly.
+The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial we hope to change this. Beta regression models are an attractive alternative to models subsumed under the GLM, which imposes the unrealistic assumptions of normality, homoscadacidty, requires the data to be unbounded. There is actually a diverse array of different models that can be used depending on your outcome of interest. Throughout this tutorial our main aim was to help guide researchers in running a beta regression with real data by providing R code and providng an in-depth walk through on how to interepret model parameters for each model, as well as how to extract predicted probablities and marginal effects from each model, and finally visualize the results from each model. The empirical example in this study, accuracy on the final test, is ideally suited for a beta model. There are a whole host of outcomes used in psychology that would be ideal for beta regression and its alternatives. Researchers now have some tools to analyze their data properly.
 
 # References
 
