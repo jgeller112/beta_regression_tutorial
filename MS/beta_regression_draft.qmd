@@ -32,10 +32,14 @@ abstract: "Rates, percentages, and proportional data are widespread in psycholog
 keywords: [Beta regression, tutorial, cognitive psychology, learning and memory]
 bibliography: bibliography.bib
 format:
+  apaquarto-docx: default
   apaquarto-html: default
+execute: 
+  warning: false
+  message: false
 ---
 
-In psychological research it is quite common to use response outcomes that are rates, percentages, or proportional in nature. For example, it is quite common in educational and cognitive research to measure learning by looking at accuracy on a final test. To make this more concreate, let’s say you run a memory experiment wherein participants read a short passage pertaining to some topic or subject. After a short distractor task, participants completed a final memory test consisting of 10 short-answer questions, each worth a different number of points (e.g., question 1 may be worth 4 points while question 2 may be worth 1 point). Your estimand of interest is the total number of correct answers out of the total possible points for each question. With this as your main outcome, the resulting metric would be proportional in nature. How do you analyze this type of data?
+In psychological research it is quite common to use response outcomes that are rates, percentages, or proportional in nature. For example, it is quite common in educational and cognitive research to measure learning by looking at accuracy on a final test. To make this more concrete, let’s say you run a memory experiment wherein participants read a short passage pertaining to some topic or subject. After a short distractor task, participants completed a final memory test consisting of 10 short-answer questions, each worth a different number of points (e.g., question 1 may be worth 4 points while question 2 may be worth 1 point). Your estimand of interest is the total number of correct answers out of the total possible points for each question. With this as your main outcome, the resulting metric would be proportional in nature. How do you analyze this type of data?
 
 Statistical analysis of proportions can present numerous difficulties. By definition, proportions are limited to numerical values between, and including, 0 and 1, and the variability in the observed proportions usually varies systematically with the mean of the response. It is quite common to analyze proportional outcomes using methods falling under the general linear model (GLM). There are several issues with this approach, however. First, the GLM assumes the residuals in the model are normal distributed. Second, it assumes an unbounded distribution that can extend from -$\infty$ to $\infty$. Lastly, the GLM assumes constant residuals across varying levels of variables in the model. These assumptions are often violated when dealing with proportional data, which are typically bounded between 0 and 1 and may not follow a normal distribution [@ferrari2004; @paolino2001]. Adopting a model that does not capture your data accurately can have deleterious consequences, such as missing a true effect when it exists (Type 2 error), or mistaking an effect as real when it is not (Type 1 error). A goal for any researcher trying to draw inferences from their data is to fit a model that accurately captures the important features of the data and has predictive utility [@yarkoni2017].
 
@@ -354,7 +358,7 @@ Looking at table X, we see that both estimates are negative, which indicates tha
 
 #### Marginal effects
 
-We can also examine changes in predicted probabilities for variations in an independent variable. This is called a marginal effect and can be used as a measure of effect size. There are different types of marginal effects, and various packages calculate them differently. Since we will be using the `marginaleffects` package for this tutorial, we will focus on the average marginal effect (AME), which is used by default in the `marginaleffects` package. The AME is the predicted change in the outcome for a very small change in the independent variable. In the `marginaleffects` package this invovles generating predictions for each row of the original data then averaging these predictions. One effect size measure we can calculate with categorical variables is the risk difference, which is the discrete difference between the average marginal effect of one condition or group and that of another condition or group. In the `marginaleffects` package, we can use the function `avg_comparisons` to obtain this metric. This function can also be used to get other popular effect size metrics, such as odds ratios and risk ratios.
+We can also examine changes in predicted probabilities for variations or small changes in an independent variable. This is called a marginal effect. There are different types of marginal effects, and various packages calculate them differently. Since we will be using the `marginaleffects` package for this tutorial, we will focus on the average marginal effect (AME), which is used by default in the `marginaleffects` package. The AME is the predicted change in the outcome for a very small change in the independent variable. In the `marginaleffects` package this invovle generating predictions for each row of the original data then averaging these predictions. One effect size measure we can calculate with categorical variables is the risk difference, which is the discrete difference between the average marginal effect of one condition or group and that of another condition or group. In the `marginaleffects` package, we can use the function `avg_comparisons` to obtain this metric. This function can also be used to get other popular effect size metrics, such as odds ratios and risk ratios.
 
 ```{r}
 #| echo: true
@@ -451,7 +455,7 @@ beta_model_dis %>%
   print_html()
 ```
 
-The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `Fluency` represents the change in that precision for the Fluent instructors vs. Disfluent instructors. Here it is statistically significant, b = `r round(beta_model_dis_results$Coefficient[2], 3)` , SE = `r round(beta_model_dis_results$SE[2], 3)` , 95% CIs = `r round(beta_model_dis_results$CI_low[2], 3)`,`r round(beta_model_dis_results$CI_high[2], 3`\], p = `r round(beta_model_dis_results$p[2], 3)`.
+The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `Fluency` represents the change in that precision for the Fluent instructors vs. Disfluent instructors. Here it is statistically significant, b = `r round(beta_model_dis_results$Coefficient[2], 3)` , SE = `r round(beta_model_dis_results$SE[2], 3)` , 95% CIs = `r round(beta_model_dis_results$CI_low[2], 3)`,`r round(beta_model_dis_results$CI_high[2], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)`.
 
 We have all the parameters to draw two different distributions of our outcome, split by fluency of the instructor. Let’s plot these two predicted distributions on top of the true underlying data and see how well they fit. In Figure 6, we can see how the distribution changes when we include a dispersion parameter for Fluency.
 
@@ -709,13 +713,14 @@ data_beta_0 <- fluency_data %>%
 
 ```{r}
 #| label: glmmTMB zib
-#| 
+#| echo: true
 beta_model_0<-glmmTMB(Accuracy~Fluency_dummy, disp=~Fluency_dummy,  ziformula = ~ Fluency_dummy, data=data_beta_0, family=beta_family(link="logit"))
 ```
 
 ### Model parameters
 
 ```{r}
+#| echo: true
 
 model_zi <- model_parameters(beta_model_0) 
 
@@ -725,11 +730,13 @@ model_zi %>%
 
 As before, the 𝜇 parameter coefficients under the Fixed Effects header (i.e., `Intercept`, `Fluency_dummy)` are on the logit scale; while 𝜙 parameter coefficients under the Dispersion header are on the log scale. In addition, the paramters under the zero-inflated header are on the logit scale. Looking at the output, the $\mu$ part of the model, there are no significant effects. However, for the zero-inflated part of the model, the`Fluency` predictor is significant.
 
-### Predicted probablities and marginal effects
+### Predicted probabilities and marginal effects
 
 Because is on the logit scale we can back-transform it to the probability scale. To do this easily, we can use the `avg_predictions` function from `marginaleffects` package. Because we are interested in the zero-inflated part of the model we set the `type` argument to `zprob`.
 
 ```{r}
+#| echo: true
+#| 
 beta_model_0 %>%
   marginaleffects::avg_predictions(by = "Fluency_dummy", type="zprob") %>%
   tt()
@@ -741,6 +748,8 @@ The estimates provided in Table X are percentages of zeros in the model. There a
 We can also get the average marginal effect of Fluency like we did before:
 
 ```{r}
+#| echo: true
+#| 
  beta_model_0 %>%
   marginaleffects::avg_comparisons(variables = "Fluency_dummy", type="zprob", comparison = "difference")
 
@@ -756,6 +765,8 @@ Luckily, we can fit a zero-inflated model using brms and use the `marginaleffect
 
 ```{r}
 #| label: zib brms model
+#| echo: true
+#| 
 
 zib_model <-   bf(
     Accuracy ~ Fluency_dummy,  # The mean of the 0-1 values, or mu
@@ -771,7 +782,7 @@ We pass `zib_model` to the `brm` function.
 ```{r}
 #| label: fit zib model
 #| results: hide
-#| 
+#| echo: true
 fit_zi <- brm(
   formula = zib_model,
   data = data_beta_0, 
@@ -786,7 +797,9 @@ fit_zi <- brm(
 ```
 
 ```{r}
-
+#| tbl-cap-location: "top"
+#| tbl-cap: Paramter estimates for zero-inflated beta model
+#| 
 model_parameters(fit_zi, "mean")%>%
   tt()
 ```
@@ -798,9 +811,12 @@ We can easily plot the zero-inflated part of the model using the `plot_predictio
 ```{r}
 #| label: plot brms zi model
 #| fig-cap: "Predicted zero-inflated probablities of fluency on final test accuracy"
+#| warning: false
+#| message: false
+#
 
-plot_predictions(fit_zi, by = c("Fluency_dummy"), dpar="zi") %>%
-  theme_lucid(base_size=14)
+zi_plot <- plot_predictions(fit_zi, by = c("Fluency_dummy"), dpar="zi")
+
 
 ```
 
@@ -810,16 +826,7 @@ Sometimes it is theoretically useful to model zeros and ones in our data, For ex
 
 The ZIB model works well if you have 0s in your data, but not 1s. In our data, we have exactly one value equal to 1. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one inflated beta (ZOIB) model. Unfortunately, there is no frequentist implemnetation of the ZOIB model. Luckily, we can fit a Bayesian implementation of the ZOIB model in `brms`. In this model, we fit four parameters or sub-models. We fit seperate models for the mean (\$\\mu\$) and the precision (\$\\phi\$) of the beta distribution; a zero-one inflation parameter (i.e. the probability that an observation is either 0 or 1; $\alpha$ ); and a ‘conditional one inflation’ parameter (i.e. the probability that, given an observation is 0 or 1, the observation is 1; $\gamma$). This specification captures the entire range of possible values while still being constrained between zero and one.
 
-```{r}
-#| label: "Number of ones in data"
-#| 
-fluency_data %>% 
-  count(Accuracy == 1) %>% 
-  mutate(proportion_1s = n / sum(n)) %>%
-  tt()
-```
-
-We use the `bf` function to fit our four parameters. We use the native zero_one_inflated_beta family to fit our model.
+We use the `bf` function again to fit models for our four parameters. We use the native zero_one_inflated_beta family to fit our model.
 
 ```{r}
 
@@ -839,7 +846,9 @@ We then pass the `zoib_model` to our `brm` function.
 ```{r}
 #| label: fit zoib model
 #| results: hide
+#| message: false
 #| 
+
 fit <- brm(
   formula = zoib_model,
   data = fluency_data, 
@@ -921,20 +930,26 @@ library(ordbetareg)
 ```
 
 ```{r}
-
 #| label: brms ordered beta model
+#| results: hide
+#| echo: true
 
-ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy + (1|Participant),
+
+# use ordbetareg to fit model
+ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy,
                       data=fluency_data,
-                      chains=1,
-                      iter=1000,
-                      backend="cmdstanr")
+                      chains=4,
+                      iter=2000,
+                      backend="cmdstanr", 
+                      file = "model_beta_ordbeta")
 
 
 ```
 
 ```{r}
-
+#| tbl-cap: Model parameters for ordered beta model
+#| tbl-cap-location: "top"
+#| 
 ord_fit_brms %>%
   model_parameters() %>%
   tt()
@@ -947,6 +962,7 @@ The best way to visualize model fit is to plot the full predictive distribution 
 
 ```{r}
 #| label: Model fits
+#| echo: true
 
 plots <- pp_check_ordbeta(ord_fit_brms,
                           ndraws=100,
