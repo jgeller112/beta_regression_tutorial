@@ -1502,7 +1502,7 @@ table.hline(y: 0, start: 0, end: 9, stroke: 0.1em + black),
 ], caption: figure.caption(
 position: top, 
 [
-Beta model output of the $phi.alt$ parameter
+Beta model summary output of the $phi.alt$ parameter
 ]), 
 kind: "quarto-float-tbl", 
 supplement: "Table", 
@@ -1597,7 +1597,7 @@ table.hline(y: 0, start: 0, end: 9, stroke: 0.1em + black),
 ], caption: figure.caption(
 position: top, 
 [
-Beta regression model summary for fluency factor $phi.alt$ parameter
+Beta regression model summary for fluency factor with $phi.alt$ parameter unexponentiated
 ]), 
 kind: "quarto-float-tbl", 
 supplement: "Table", 
