@@ -491,7 +491,7 @@ beta_model<-betareg(Accuracy~Fluency_dummy, data=data_beta)
 ```{r}
 #| label: tbl-phi
 #| echo: true
-#| tbl-cap: Beta model output of the $\phi$ parameter
+#| tbl-cap: Beta model summary output of the $\phi$ parameter
  
 # get the precision paramter 
 beta_model %>%
@@ -514,7 +514,7 @@ beta_model_dis<-betareg(Accuracy~Fluency_dummy | Fluency_dummy, data=data_beta)
 ```{r}
 #| label: tbl-phi-beta
 #| echo: true
-#| tbl-cap: Beta regression  model summary for fluency factor $\phi$ parameter 
+#| tbl-cap: Beta regression model summary for fluency factor with $\phi$ parameter unexponentiated
 
 beta_model_dis  %>%
   model_parameters(component = "precision")%>%
