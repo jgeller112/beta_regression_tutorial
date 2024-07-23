@@ -681,11 +681,11 @@ We can also fit beta regression models within a Bayesian framework. Adopting a B
 
 For the following analyses we will be using default priors provided by `brms`. This will get us something tantamount to a frequentist analysis most of the readers are used to seeing.
 
-To fit our Bayesian models, we will be using a Bayesian package called `brms` [@brms] . b`rms` is a powerful and flexible Bayesian regression modeling package that offers built in support for the beta distribution and some of the alternatives we discuss in this tutorial.
+To fit our Bayesian models, we will be using a Bayesian package called `brms` [@brms] . `brms` is a powerful and flexible Bayesian regression modeling package that offers built in support for the beta distribution and some of the alternatives we discuss in this tutorial.
 
 We can recreate the beta model from `betareg` in `brms`. Instead of using the `|` operator to specify different parameters like we did in `betareg`, we model each parameter independently. Recall we are fitting two parameters— $\mu$ and $\phi$. We can easily do this by using the `bf` function from `brms`. `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in `model_beta_bayes`. Here we allow precision to vary as a function of Fluency (this model fit the data better than a model with an intercept-only dispersion parameter).
 
-We first start by loading in the `brms` [@brms] and `cmdstanr` [@cmdstanr]packages.
+We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages.
 
 ```{r}
 #| echo: true
@@ -708,7 +708,11 @@ model_beta_bayes <- bf(Accuracy  ~ Fluency_dummy, # fit mu model
      phi ~ Fluency_dummy) # fit phi model
 ```
 
-Using the `bf` function, we specify two models—one for $\mu$ and one for $\phi$. We then pass `model_beta_bayes` to the `brm` function and set the model family to the beta distribution, which is native to our model using the `brm` function. We also set a bunch of arguments to speed up the fitting of the models, which we will not explain herein.
+Using the `bf` function, we specify two models—one for $\mu$ and one for $\phi$. We then pass `model_beta_bayes` to the `brm` function and set the model family to the beta distribution, which is native to our model using the `brm` function. Each model was run with four chains of 2000 Markov chain Monte Carlo iterations. For each chain, there was a
+2000-iteration warmup. The output of these models provides estimates of each effect (the
+coefficient b, which is the median of the posterior distribution), its estimation error (the standard
+deviation of the posterior distribution), and its 95% credible interval (Crl). We inferred that
+there was evidence of an effect when its 95% Crl did not include zero. We also set a bunch of arguments to speed up the fitting of the models (`cores` = 4 and `backend` = `cmdstanr` ) which we will not explain herein.
 
 ```{r}
 #| label: brms beta model
