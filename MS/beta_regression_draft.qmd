@@ -791,8 +791,6 @@ beta_brms  %>%
 
 In @tbl-brms-marg, the risk difference in predicted outcomes is 0.05, which is roughly what we found before with our frequentist model. The 95% credible interval includes zero so we can state the fluency effect is not statistically significant.
 
-### Plotting
-
 Similar to our frequentist model, we can use `plot_predictions` to plot our model on the original scale (see @fig-plot-brms)
 
 ```{r}
@@ -849,7 +847,7 @@ model_zi %>%
 
 ```
 
-@tbl-beta-model-zero provides a summary of the output for our zib model. As before, the 𝜇 parameter estimates, which have the conditional tag in the Component column are on the logit scale; while 𝜙 parameter coefficients (tagged as dispersion in the Component colum) are on the log scale. In addition, the zero-inflated parameter estimates (tagged as zero-inflated in the Component column) are on the logit scale.
+@tbl-beta-model-zero provides a summary of the output for our zib model. As before, the 𝜇 parameter estimates, which have the conditional tag in the Component column are on the logit scale; while 𝜙 parameter coefficients (tagged as dispersion in the Component column) are on the log scale. In addition, the zero-inflated parameter estimates (tagged as zero-inflated in the Component column) are on the logit scale.
 
 Looking at the $\mu$ part of the model, there is no significant effect for `Fluency_dummy1`, b = `r round(model_zi$Coefficient[2], 3)` , SE = `r round(beta_model_dis_results$SE[2], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[2], 3)`,`r round(beta_model_dis_results$CI_high[2], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)` . However, for the zero-inflated part of the model, the `Fluency_dummy1` predictor is significant, b = `r round(model_zi$Coefficient[2], 3)` , SE = `r round(beta_model_dis_results$SE[2], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[2], 3)`,`r round(beta_model_dis_results$CI_high[2], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)`. Lastly the dispersion estimate for `Fluency_dummy1` is significant, b = `r round(model_zi$Coefficient[3], 3)` , SE = `r round(beta_model_dis_results$SE[3], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[3], 3)`,`r round(beta_model_dis_results$CI_high[3], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)`.
 
@@ -869,7 +867,7 @@ beta_model_0 %>%
 
 ```
 
-The estimates provided in @tbl-predict-zero are percentages of zeros in the model. We can see there are fewer 0s in the fluent condition (2%) compared to the disfluent condition (15%).
+The estimates provided in @tbl-predict-zero are percentages of zeros in the model. There are fewer 0s in the fluent condition (2%) compared to the disfluent condition (15%).
 
 We can also get the average marginal effect of Fluency like we did before:
 
@@ -885,7 +883,7 @@ We can also get the average marginal effect of Fluency like we did before:
 
 ```
 
-Interpreting the estimate in @tbl-marg-zib, seeing lecture videos with a fluent instructor reduces the proportion of zeros by about 13%. Here we have evidence that participants were more likely to do more poorly after watching a disflueny lecture than a fluent lecture.
+Interpreting the estimates in @tbl-marg-zib, seeing lecture videos with a fluent instructor reduces the proportion of zeros by about 13%. Here we have evidence that participants were more likely to do more poorly after watching a disflueny lecture than a fluent lecture.
 
 As a word of caution, the `marginaleffects` package has some issues with fitting models from `glmmTMB` and it has been recommended not to use it. Thus, we will not highlight it here. Please see this issue for more information: <https://github.com/vincentarelbundock/marginaleffects/issues/1064>
 
