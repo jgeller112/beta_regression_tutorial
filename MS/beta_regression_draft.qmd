@@ -1111,21 +1111,20 @@ tt(digits = 2) %>%
 
 ## Bayesian implementation
 
-To fit an ordered beta regression in a Bayesian context you can use `ordbetareg` [@ordbetareg] package.
+To fit an ordered beta regression in a Bayesian context we use the `ordbetareg` [@ordbetareg] package.
 
-We first load in the `ordbetareg` package.
+We first load the `ordbetareg` package. You can download it from CRAN or from here: <https://github.com/saudiwin/ordbetareg_pack>.
 
 ```{r}
 #| echo: true
 #| label: load ordbetareg
-
 
 # load ordbetareg package
 library(ordbetareg)
 
 ```
 
-The `ordbetareg` package uses `brms` on the front-end and is straightforward to run. Instead of the `brm` function we use `ordbetareg`. It has similar arguments.
+The `ordbetareg` package uses `brms` on the front-end so all the arguments we used previously apply here. Instead of the `brm()` function we use `ordbetareg()`.
 
 ```{r}
 #| label: brms ordered beta model
@@ -1188,7 +1187,7 @@ For the continuous plot shown as a density plot with one line per posterior draw
 
 Overall, it is clear from the posterior distribution plot that the ordered beta model fits the data well.
 
-# Discussion and Conclusion
+# Conclusion
 
 The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to change this. Beta regression models are an attractive alternative to models subsumed under the GLM, which imposes the unrealistic assumptions of normality, linearity, homoscedasticity, and requires the data to be unbounded. Beyond the GLM, there is a diverse array of different models that can be used depending on your outcome of interest.
 
