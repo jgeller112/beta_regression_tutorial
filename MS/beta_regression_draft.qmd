@@ -148,7 +148,7 @@ We can use regression to model the $\mu$ (mean) and $\phi$ (dispersion) paramete
 
 ## Data and Methods
 
-Now that we have built up an intuition about the beta distribution we can start to analyze some data. The principles of beta regression are best understood in the context of a real data set. The example we are gonna use comes from the learning and memory literature. A whole host of literature has shown extrinsic cues like fluency (i.e., how easy something is to process) can influence metamemory (i.e., how well we think we will remember something). As an interesting example, a line of research has focused on instructor fluency and how that influences both metamemory and actual learning. When an instructor uses lots of non-verbal gestures, has variable voice dynamics/intonation, is mobile about the space, and includes appropriate pauses when delivering content, participants perceive them as more fluent, but it does not influence actual memory performance, or what we learn from them \[\@carpenter2013; \@toftness2017; \@witherby2022\]. While fluency of instructor has not been found to impact actual memory across several studies, \@wilford2020 found that it can. In several experiments, \@wilford2020 showed that when participants watched multiple videos of a fluent vs. a disfluent instructor (here two videos as opposed to one), they remembered more information on a final test. Given the interesting, and contradictory results, we chose this paper to highlight. In the current tutorial we are going to re-analyze the final recall data from Wilford et al. (2021; Experiment 1a). All their data is open and available here:<https://osf.io/6tyn4/>.
+Now that we have built up an intuition about the beta distribution we can start to analyze some data. The principles of beta regression are best understood in the context of a real data set. The example we are gonna use comes from the learning and memory literature. A whole host of literature has shown extrinsic cues like fluency (i.e., how easy something is to process) can influence metamemory (i.e., how well we think we will remember something). As an interesting example, a line of research has focused on instructor fluency and how that influences both metamemory and actual learning. When an instructor uses lots of non-verbal gestures, has variable voice dynamics/intonation, is mobile about the space, and includes appropriate pauses when delivering content, participants perceive them as more fluent, but it does not influence actual memory performance, or what we learn from them [@carpenter2013; @toftness2017; @witherby2022]. While fluency of instructor has not been found to impact actual memory across several studies, \@wilford2020 found that it can. In several experiments, \@wilford2020 showed that when participants watched multiple videos of a fluent vs. a disfluent instructor (here two videos as opposed to one), they remembered more information on a final test. Given the interesting, and contradictory results, we chose this paper to highlight. In the current tutorial we are going to re-analyze the final recall data from Wilford et al. (2021; Experiment 1a). All their data is open and available here:<https://osf.io/6tyn4/>.
 
 Accuracy data is widely used in psychology and is well suited for beta regression. Despite this, it is common to treat accuracy data as continuous and unbounded, and analyze the resulting proportions using methods that fall under the general linear model. Below we will reproduce the analysis conducted by @wilford2020 (Experiment 1a) and then re-analyze it using beta regression. We hope to show how beta regression and its extensions can be a more powerful tool in making inferences about your data.
 
@@ -174,11 +174,11 @@ As a first step, we will load the necessary packages along with the data we will
 
 # packages needed
 library(tidyverse) # tidy functions/data wrangling/viz
-library(betareg) # run beta regression 
+library(gamlss) # run beta regression 
 library(glmmTMB) # zero inflated beta
 library(easystats)
 library(gghalves)
-library(ggbeeswarm)       # Special distribution-shaped point jittering
+library(ggbeeswarm) # Special distribution-shaped point jittering
 library(scales) # percentage
 library(tinytable) # tables
 library(marginaleffects) # marginal effects
@@ -308,28 +308,32 @@ Using a traditional approach, we observed instructor fluency impacts actual lear
 
 ```{r}
 #| label: fig-ols-assump
+#| fig-width: 8
+#| fig-height: 12
 #| fig-cap: "Assumption checks for OLS model"
 
 check_model(ols_model, check=c("homogeneity", "normality"))
 ```
 
-One solution is to run a beta regression model. Below we fit a beta regression using the `betareg` package [@betareg]. This a popular package for running frequentist beta regressions.
+One solution is to run a beta regression model. Below we fit a beta regression using the `gamlss` package [@gamlss]. This a popular package for running frequentist beta regressions. Another popular package that we will not talk about here is `betareg` [@betareg-2]. In `gamlss` we fit a beta regression by using a formula simialr to the lm we fit above. However, we must specify the family argument as `BE` to fit a beta regression.
 
 ```{r}
 #| echo: true
-# load betareg package
-library(betareg)
+# load gamlss package
+library(gamlss)
 ```
 
 ```{r}
 #| echo: true
 #| error: true
 
-# running beta model error
-beta_model<-betareg(Accuracy~Fluency_dummy, data=fluency_data)
+# running beta model error)
+
+beta_model <-gamlss(Accuracy~Fluency_dummy, data=fluency_data,family=BE) # fits a constant for mu and sigma 
+
 ```
 
-When you run the above model, an error will appear: `Error in betareg(Accuracy ~ Fluency_dummy, data = fluency_data) : invalid dependent variable, all observations must be in (0, 1)`. If your remember, the beta distribution can only model responses in the interval \[0-1\], but not responses that are exactly 0 or 1. We need make sure there are no zeros and ones in our dataset.
+When you run the above model, an error will appear: `Error in gamlss(Accuracy ~ Fluency_dummy, data = fluency_data, family = BE) : response variable out of range.` If your remember, the beta distribution can only model responses in the interval \[0-1\], but not responses that are exactly 0 or 1. We need make sure there are no zeros and ones in our dataset.
 
 ```{r}
 #| label: tbl-01s
@@ -341,7 +345,7 @@ fluency_data %>%
   tt()
 ```
 
-@tbl-01s shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a beta regression, we can employ a little hack. We can nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\].[^3]
+@tbl-01s shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\].[^3]
 
 [^3]: In the newest version of betareg you can model data inclusive 0-1 by including a xdist argumement.
 
@@ -354,13 +358,43 @@ data_beta <- fluency_data %>%
 
 ```
 
-Let's fit the model again.
+A more formal way is to nudge these values is apply this formula proposed by @smithson2006:
+
+$$
+(y_i * (n - 1) + 0.5) / n
+$$
+
+This involves adjusting the values of each value y and weighting it based on the total number of observations (N) and adding a small constant (0.5) to reduce bias or refine the estimate. While recent papers have used this approach \[@alves2024betaregressionmixedmodel\], it is not advised \[blog post?\]
+
+```{r}
+# code to use formula by smithson to nudge values
+# taken from blog
+
+# Define the transformation function for a dataframe
+apply_transformation_to_df <- function(df, column_name) {
+  n <- nrow(df)  # Total number of rows (observations)
+  
+  df <- df %>%
+    mutate(!!sym(column_name) := (!!sym(column_name) * (n - 1) + 0.5) / n)
+  
+  return(df)
+}
+
+```
+
+```{r}
+
+transformed_df <- apply_transformation_to_df(fluency_data, "Accuracy")
+
+```
+
+Let's fit the model again with our little .01 and .99 hack.
 
 ```{r}
 #| echo: true
 
 # fit beta model without 0s and 1s in our dataset 
-beta_model<-betareg(Accuracy~Fluency_dummy, data=data_beta)
+beta_model<-gamlss(Accuracy~Fluency_dummy, data=data_beta, family=BE)
 
 ```
 
@@ -375,13 +409,11 @@ No errors this time! Now, let’s interpret the results of our beta regression
 #| tbl-cap: Model summary for the mu parameter in  beta regression model
 #| tbl-cap-location: "top"
 
-beta_model_results <- model_parameters(beta_model, component="all")
+beta_model_results <- model_parameters(beta_model)
 
-  model_parameters(beta_model) %>% 
+  beta_model_results %>% 
     as.data.frame()%>% 
-     tt(digits = 2) %>%
-    format_tt(j= "p", fn = scales::label_pvalue()) %>%
-  format_tt(escape = TRUE)
+     tt(digits = 2)
 ```
 
 @tbl-beta-cond displays the summary of the beta regression model. The first set of coefficients represents how factors influence the $\mu$ parameter, which is the mean of the beta distribution. These coefficients are interpreted on the scale of the logit link function, meaning they represent changes in the log-odds of the mean proportion. The intercept term `(Intercept)` represents the log odds of the mean on accuracy for the fluent instructor condition. Here being in the fluent condition translates to a log odds of `r round(beta_model_results$Coefficient[1], 3)`. The fluency coefficient `Fluency_dummy` represents the difference between the fluency and disfluency conditions. That is, watching a fluent instructor leads to higher recall than watching a disfluent instructor, b = `r round(beta_model_results$Coefficient[2], 3)` , SE = `r round(beta_model_results$SE[2], 3)` , 95% CIs = \[`r round(beta_model_results$CI_low[2], 3)`,`r round(beta_model_results$CI_high[2], 3)`\], p = `r round(beta_model_results$p[2], 3)`.
@@ -415,7 +447,7 @@ avg_predictions(beta_model, variables="Fluency_dummy") %>%
   format_tt(escape = TRUE)
 ```
 
-@tbl-beta-cond displays the predicted probablities for each condition. Both values in the estimate column are negative, which indicates that probability is below 50%. Looking at the predicted probabilities confirms this. For the `Fluency` factor, we can interpret the estimate column in terms of proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 29% for those who watched the disfluent instructor.
+@tbl-beta-cond displays the predicted probabilities for each condition. Both values in the estimate column are negative, which indicates that probability is below 50%. Looking at the predicted probabilities confirms this. For the `Fluency` factor, we can interpret the estimate column in terms of proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 29% for those who watched the disfluent instructor.
 
 We can also easily visualize these from `marginaleffects` using the `plot_predictions` function.
 
@@ -744,8 +776,7 @@ model_parameters(beta_brms, "mean")%>%
 
 ### Model parameters
 
-@tbl-beta-brms displays the summary from our Bayesian implementation. [^5] To make the output more readable, each model parameter is labeled with a prefix before the variable name, except for the $\mu$ parameter, which takes the same name as the variables in your model. Comparing results with \``` betareg` ``in `model_beta`, our results are very similar. Additionally, the parameters can be interpreted in a similar manner and we can use `marginaleffects` to extract marginal effects and risk difference. [^6] There are some notable differences, such as the
-absence of t- and p-values. There is a metric in the table that is included with models fit when using `easystats` and `bayestestr` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values [see @makowski2019; @makowski2019a]. A *pd* of **95%**, **97.5%**, **99.5%** and **99.95%** correspond approximately to two-sided *p*-value of respectively **.1**, **.05**, **.01** and **.001**. Instead of p-values one can look at the 95% credible interval to see if it includes 0--if it does not then the effect can be said to be significant. In the table below the 95% credible intervals are located in the CI_low and CI_high columns. The results are similar to what we found with \``` betareg` ``in `model_beta`.
+@tbl-beta-brms displays the summary from our Bayesian implementation. [^5] To make the output more readable, each model parameter is labeled with a prefix before the variable name, except for the $\mu$ parameter, which takes the same name as the variables in your model. Comparing results with \``` betareg` ``in `model_beta`, our results are very similar. Additionally, the parameters can be interpreted in a similar manner and we can use `marginaleffects` to extract marginal effects and risk difference. [^6] There are some notable differences, such as the absence of t- and p-values. There is a metric in the table that is included with models fit when using `easystats` and `bayestestr` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values [see @makowski2019; @makowski2019a]. A *pd* of **95%**, **97.5%**, **99.5%** and **99.95%** correspond approximately to two-sided *p*-value of respectively **.1**, **.05**, **.01** and **.001**. Instead of p-values one can look at the 95% credible interval to see if it includes 0--if it does not then the effect can be said to be significant. In the table below the 95% credible intervals are located in the CI_low and CI_high columns. The results are similar to what we found with \``` betareg` ``in `model_beta`.
 
 [^5]: We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)
 
