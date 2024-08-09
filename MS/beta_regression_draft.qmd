@@ -439,9 +439,11 @@ library(marginaleffects)
 #| tbl-cap-location: top
 
 # get the predicted probablities for each level of fluency 
-avg_predictions(beta_model, variables="Fluency_dummy") %>% 
-  select(-s.value) %>%
-  mutate(Fluency_dummy=ifelse(Fluency_dummy==0, "Fluent", "Disfluent")) %>% 
+predictions(beta_model,
+             newdata = datagrid(Fluency_dummy = c("0", "1")),             what = "mu") %>% 
+  select(-s.value, -rowid, -Accuracy) %>%
+  mutate(Fluency_dummy=ifelse(Fluency_dummy==0, "Fluent", "Disfluent")) %>%   
+  relocate(Fluency_dummy) %>% 
   tt(digits = 2) %>%
     format_tt(j = "p", fn = scales::label_pvalue()) %>%
   format_tt(escape = TRUE)
@@ -449,7 +451,7 @@ avg_predictions(beta_model, variables="Fluency_dummy") %>%
 
 @tbl-beta-cond displays the predicted probabilities for each condition. Both values in the estimate column are negative, which indicates that probability is below 50%. Looking at the predicted probabilities confirms this. For the `Fluency` factor, we can interpret the estimate column in terms of proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 29% for those who watched the disfluent instructor.
 
-We can also easily visualize these from `marginaleffects` using the `plot_predictions` function.
+We can also easily visualize these from `marginaleffects` using the `plot_predictions` function. To visualize the mu parameter set the `what` argument as `mu`.
 
 ```{r}
 
@@ -457,7 +459,7 @@ We can also easily visualize these from `marginaleffects` using the `plot_predic
 #| echo: true
 #| fig-cap: Predicted probablities for fluency factor
 
-plot_predictions(beta_model, condition="Fluency_dummy") +
+plot_predictions(beta_model, condition="Fluency_dummy", what="mu") +
   theme_lucid(base_size=14) + 
   scale_x_discrete(breaks=c("0","1"),
         labels=c("Fluent", "Disfluent")) + 
@@ -480,7 +482,7 @@ Should we discuss counterfactuals?
 #| tbl-cap-location: top
 
 # get risk difference 
-beta_avg_comp<- avg_comparisons(beta_model, comparison= "difference") 
+beta_avg_comp<- avg_comparisons(beta_model, what = "mu", newdata=fluency_data) 
 
 beta_avg_comp %>%
   select(-predicted_lo,-predicted_hi,-s.value, -predicted)%>% # remove unwanted variables
@@ -499,7 +501,7 @@ We can also get the odds ratio with `avg_comparisons` (see @tbl-or).
 #| tbl-cap: Odds ratio for fluency factor
 
 # get odds ratios as an example
-avg_comparisons(beta_model, comparison = "lnoravg",
+avg_comparisons(beta_model, what = "mu", newdata=fluency_data,  comparison = "lnoravg",
     transform = "exp") %>%
   select(-predicted_lo,-predicted_hi,-s.value, -predicted) %>% 
   tt() %>%
@@ -518,7 +520,7 @@ Understanding the dispersion parameter helps us gauge the precision of our predi
 
 # fit beta regression model using betareg 
 
-beta_model<-betareg(Accuracy~Fluency_dummy, data=data_beta)
+beta_model<-gamlss(Accuracy~Fluency_dummy, sigma.formula = ~1,  data=data_beta, family=BE)
 
 ```
 
@@ -529,10 +531,10 @@ beta_model<-betareg(Accuracy~Fluency_dummy, data=data_beta)
  
 # get the precision paramter 
 beta_model %>%
-  model_parameters(component = "precision") %>%
-   tt(digits = 2) %>%
-    format_tt(j = "p", fn = scales::label_pvalue()) %>%
-  format_tt(escape = TRUE)
+  model_parameters() %>%
+  as.data.frame() %>% 
+  filter(Component=="sigma") %>%
+   tt(digits = 3)
 
 ```
 
@@ -542,7 +544,7 @@ The intercept under the precision heading is not that interesting. It represents
 #| echo: true
 
 # add disp/percison for fluency by including |
-beta_model_dis<-betareg(Accuracy~Fluency_dummy | Fluency_dummy, data=data_beta)
+beta_model_dis<-gamlss(Accuracy~Fluency_dummy, sigma.formula = ~Fluency_dummy,  data=data_beta, family=BE)
 ```
 
 ```{r}
@@ -551,9 +553,11 @@ beta_model_dis<-betareg(Accuracy~Fluency_dummy | Fluency_dummy, data=data_beta)
 #| tbl-cap: Beta regression model summary for fluency factor with $\phi$ parameter unexponentiated
 
 beta_model_dis  %>%
-  model_parameters(component = "precision")%>%
-  tt(digits = 2) %>%
-    format_tt(j = "p", fn = scales::label_pvalue()) %>%
+  model_parameters()%>%
+as.data.frame() %>%
+  filter(Component=="sigma") %>% 
+  tt(digits = 3) %>% 
+   format_tt(j = "p", fn = scales::label_pvalue()) %>%
   format_tt(escape = TRUE)
 ```
 
@@ -565,13 +569,13 @@ beta_model_dis  %>%
 # get dis only from model
 # exp to get original metric
 beta_model_dis_results <- beta_model_dis %>%
-  model_parameters(component = "all")
+  model_parameters()
 
 beta_model_dis %>%
-  model_parameters(component = "precision", exponentiate = TRUE) %>%
-  tt(digits = 2) %>%
-    format_tt(j = "p", fn = scales::label_pvalue()) %>%
-  format_tt(escape = TRUE)
+  model_parameters(exponentiate = TRUE) %>%
+  as.data.frame()%>%
+  filter(Component=="sigma") %>% 
+  tt(digits = 2)
 ```
 
 The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `Fluency_dummy1` represents the change in that precision for the fluent instructors vs. disfluent instructors. The effect is reliable, b = `r round(beta_model_dis_results$Coefficient[2], 3)` , SE = `r round(beta_model_dis_results$SE[2], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[2], 3)`,`r round(beta_model_dis_results$CI_high[2], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)`.
@@ -601,13 +605,13 @@ beta_mu_fluency <- beta_model_dis_output  %>%
 
 beta_phi_intercept <- beta_model_dis_output  %>% 
   as.data.frame() %>%
-   filter(Component == "precision", Parameter == "(Intercept)") %>% 
+   filter(Component == "sigma", Parameter == "(Intercept)") %>% 
   pull(Coefficient)
 
 # get phi for fluency
 beta_phi_fluency <- beta_model_dis_output %>% 
   as.data.frame() %>%
-   filter(Component == "precision", Parameter == "Fluency_dummy1") %>% 
+   filter(Component == "sigma", Parameter == "Fluency_dummy1") %>% 
   pull(Coefficient)
 
 
@@ -651,7 +655,7 @@ ggplot(data = tibble(x = 0:1), aes(x = x)) +
 # get phi for fluency
 beta_phi <- beta_model_results %>% 
   as.data.frame() %>%
-   filter(Component == "precision", Parameter == "(phi)") %>% 
+   filter(Component == "sigma", Parameter == "(Intercept)") %>% 
   pull(Coefficient)
 
 
