@@ -822,6 +822,10 @@ model_beta_bayes <- bf(Accuracy  ~ Fluency_dummy, # fit mu model
 
 Using the `bf` function, we specify two models—one for $\mu$ and one for $\phi$. We then pass `model_beta_bayes` to the `brm` function and set the model family to the beta distribution, which is native to our model using the `brm` function. Each model was run with four chains of 2000 Markov chain Monte Carlo iterations. For each chain, there was a 2000-iteration warmup. The output of these models provides estimates of each effect (the coefficient b, which is the median of the posterior distribution), its estimation error (the standard deviation of the posterior distribution), and its 95% credible interval (Crl). We inferred that there was evidence of an effect when its 95% Crl did not include zero. We also set a bunch of arguments to speed up the fitting of the models (`cores` = 4 and `backend` = `cmdstanr` ) which we will not explain herein.
 
+::: callout-note
+report mean or median?
+:::
+
 ```{r}
 #| label: brms beta model
 #| #| echo: true
