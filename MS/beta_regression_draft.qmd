@@ -430,7 +430,7 @@ data_beta <- fluency_data %>%
 
 #### Squeezing lemons
 
-A more formal way is to nudge these values is apply this formula proposed by @smithson2006:
+A more formal way to nudge these values is apply this formula proposed by @smithson2006:
 
 $$
 (y_i * (n - 1) + 0.5) / n
