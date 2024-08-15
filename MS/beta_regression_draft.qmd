@@ -436,7 +436,7 @@ $$
 (y_i * (n - 1) + 0.5) / n
 $$
 
-This involves adjusting the values of each value y and weighting it based on the total number of observations (N) and adding a small constant (0.5) to reduce bias or refine the estimate. While recent papers have used this approach \[@alves2024betaregressionmixedmodel\], it is not advised \[blog post?\]
+This involves adjusting the values of each value y and weighting it based on the total number of observations (N) and adding a small constant (0.5) to reduce bias or refine the estimate. While recent papers have used this approach [@alves2024betaregressionmixedmodel], it is not advised \[blog post?\]
 
 ```{r}
 # code to use formula by smithson to nudge values
