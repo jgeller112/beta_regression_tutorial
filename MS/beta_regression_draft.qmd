@@ -16,7 +16,7 @@ author:
         postal-code: 02467
   - name: Robert Kubinec
     affiliations:
-      - name: NYU Abu Dhabi
+      - name: University of South Carolina
   - name: Matti Vuorre
     affiliations:
       - name: Tilburg University
@@ -56,8 +56,8 @@ language:
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
 format:
-  apaquarto-typst: 
-    keep-typ: true
+  # apaquarto-typst:
+  #   keep-typ: true
   apaquarto-pdf:
     # Can be jou (journal), man (manuscript), stu (student), or doc (document)
     documentmode: man
@@ -99,6 +99,8 @@ library(tidyverse)
 library(easystats)
 library(patchwork)
 library(cowplot)
+
+theme_set(theme_classic(base_size = 6))
 
 p1 <- ggplot() +
   geom_function(fun = dbeta, args = list(shape1 = 4 , shape2 = 2),
@@ -190,8 +192,9 @@ What we can see in @fig-trump0 is a unique feature of the Beta distribution: it 
 
 However, the canonical parametrization of $\alpha$ and $\beta$ does not lend itself to the regression framework. Thus, it is quite common to talk about $\mu$ and $\phi$ instead, where $\mu$ represents the mean or average, and $\phi$ represents the precision. We can reparameterize $\alpha$ and $\beta$ into $\mu$ and $\phi$:
 
+<!-- Note: the \begin{equation} doesn't need to used if you also have \begin{aligned} -->
+
 $$
-\begin{equation}
 \begin{aligned}[t]
 \text{Shape 1:} && a &= \mu \phi \\
 \text{Shape 2:} && b &= (1 - \mu) \phi
@@ -201,8 +204,7 @@ $$
 \text{Mean:} && \mu &= \frac{a}{a + b} \\
 \text{Precision:} && \phi &= a + b
 \end{aligned}
-\end{equation}
-$$\
+$$
 
 The variance is a function of $\mu$ and $\phi$:
 
@@ -237,9 +239,15 @@ In Experiment 1a, @wilford2020 only used the first time point (one video) and co
 As a first step, we will load the necessary packages along with the data we will be using. While we load all the necessary packages here, we also highlight when packages are needed as code chunks are run.
 
 ```{r}
+#| label: setup
 #| echo: true
 #| message: false
 #| warning: false
+
+# requirements:
+# patchwork v1.2.0 or higher
+# marginaleffects 0.21.0 or higher
+# I also had to do tlmg_install fontaxes
 
 
 # packages needed
@@ -297,7 +305,10 @@ fluency_data <- fluency_data <- read.csv(here::here("MS/data/miko_data.csv")) %>
   
 
 # Display the first few rows of the modified dataframe
+# underscore won't display in Latex
 head(fluency_data) %>%
+  mutate(Participant=str_remove(Participant, "_")) %>% 
+  rename(FluencyDummy="Fluency_dummy") %>% 
   tt()
 ```
 
@@ -307,7 +318,7 @@ head(fluency_data) %>%
 
 data.frame(
   stringsAsFactors = FALSE,
-            Column = c("Participant", "Fluency", "Fluency_dummy", "Accuracy"),
+            Column = c("Participant", "Fluency", "FluencyDummy", "Accuracy"),
                Key = c("Participant ID number",
                        "Fluent vs. Disfluent","Fluent: 0; Disfluent: 1",
                        "Proportion recalled (idea units)")
@@ -382,7 +393,11 @@ Using a traditional approach, we observed instructor fluency impacts actual lear
 #| fig-height: 12
 #| fig-cap: "Assumption checks for OLS model"
 
+theme_set(theme_classic(base_size = 6))
+
 check_model(ols_model, check=c("homogeneity", "normality"))
+
+
 ```
 
 One solution is to run a beta regression model. Below we fit a beta regression using the `glmmTMB`package [@glmmTMB]. This a popular package for running frequentist beta regressions. Other packages that can be used to run beta regression include `betareg` [@betareg] and also `gamlss` [@gamlss]. In `glmmTMB` we fit a beta regression by using a formula simialr to the lm we fit above. However, we must specify the family argument as `beta_family` to fit a beta regression.
@@ -481,10 +496,14 @@ No errors this time! Now, let’s interpret the results of our beta regression u
 #| tbl-cap: Model summary for the mu parameter in  beta regression model
 #| tbl-cap-location: "top"
 
+# same latex issue with the underscores
+
 beta_model_results <- model_parameters(beta_model)
 
   beta_model_results %>% 
     as.data.frame()%>% 
+    mutate(Parameter=str_remove(Parameter, "_")) %>% 
+    rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
      tt(digits = 2)
 ```
 
@@ -576,6 +595,7 @@ We can also get the odds ratio with `avg_comparisons` (see @tbl-or).
 avg_comparisons(beta_model,  comparison = "lnoravg",
     transform = "exp") %>%
   select(-predicted_lo,-predicted_hi,-s.value, -predicted) %>% 
+  mutate(term=str_remove(term, "_")) %>% 
   tt() %>%
   format_tt(digits=3)
 
@@ -605,6 +625,7 @@ beta_model<-glmmTMB(Accuracy~Fluency_dummy, disp=~1, data=data_beta, family=beta
 beta_model %>%
   model_parameters() %>%
   as.data.frame() %>% 
+      rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
   filter(Component=="dispersion") %>%
    tt(digits = 3)
 
@@ -627,6 +648,8 @@ beta_model_dis<-glmmTMB(Accuracy~Fluency_dummy, disp=~Fluency_dummy, data=data_b
 beta_model_dis  %>%
   model_parameters()%>%
 as.data.frame() %>%
+      rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
+  mutate(Parameter=str_remove(Parameter, "_")) %>% 
   filter(Component=="dispersion") %>% 
   tt(digits = 3)
 ```
@@ -644,6 +667,8 @@ beta_model_dis_results <- beta_model_dis %>%
 beta_model_dis %>%
   model_parameters(exponentiate = TRUE) %>%
   as.data.frame()%>%
+      rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
+    mutate(Parameter=str_remove(Parameter, "_")) %>% 
   filter(Component=="dispersion") %>% 
   tt(digits = 2)
 ```
@@ -776,6 +801,8 @@ beta_model_dis<-glmmTMB(Accuracy~Fluency_dummy, disp=~Fluency_dummy, data=data_b
 LRT<-test_likelihoodratio(beta_model, beta_model_dis)
 
 LRT %>%
+  mutate(Name=str_remove_all(Name, "_")) %>% 
+  rename(dfDiff="df_diff") %>% 
   tt() %>%
   format_tt(digits=3)
 
@@ -851,6 +878,7 @@ beta_brms <- brm(model_beta_bayes,
 #| tbl-cap: Posterior summary  for beta regression using `brms`
 
 model_parameters(beta_brms, "mean")%>%
+    mutate(Parameter=str_remove_all(Parameter, "_")) %>%   rename(CIlow="CI_low",CIhigh="CI_high") %>% 
   tt() %>%
   format_tt(digits=3)
 
@@ -887,6 +915,7 @@ Predicted probabilities (@tbl-brms-pred-prob) and marginal effects (@tbl-brms-ma
 
 # get predicted 
 avg_predictions(beta_brms, variables = "Fluency_dummy") %>%
+  rename(FluencyDummy="Fluency_dummy") %>% 
   tt(digits=3)
 ```
 
@@ -898,6 +927,7 @@ avg_predictions(beta_brms, variables = "Fluency_dummy") %>%
 # risk difference
 beta_brms  %>% 
   avg_comparisons(variables = "Fluency_dummy", comparison = "difference") %>%
+  mutate(term=str_remove(term, "_")) %>% 
    select(-predicted_lo,-predicted_hi, -predicted, -tmp_idx) %>%
   tt(digits=3)
 ```
@@ -955,6 +985,10 @@ model_zi <- model_parameters(beta_model_0)
 
 model_zi %>% 
   mutate(p = round(p, 3), p = ifelse(p == 0, "p < .001", p)) %>% 
+    rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
+  mutate(Parameter=str_remove(Parameter, "_"),
+         Component=str_remove(Component, "_")) %>% 
+  
   select(-Effects) %>% 
    tt(digits = 2)
 
@@ -975,7 +1009,8 @@ Similar to above, we can back-transform our estimates to get probabilities. Focu
 #| 
 beta_model_0 %>%
   marginaleffects::avg_predictions(by = "Fluency_dummy", type="zprob") %>%
-   select(Fluency_dummy, estimate) %>%
+  rename(FluencyDummy="Fluency_dummy") %>% 
+   select(FluencyDummy, estimate) %>%
    tt(digits = 2)
 
 ```
@@ -991,6 +1026,9 @@ We can also get the average marginal effect of `Fluency` like we did before:
 #| 
  beta_model_0 %>%
   marginaleffects::avg_comparisons(variables = "Fluency_dummy", type="zprob", comparison = "difference") %>% 
+  mutate(term=str_remove(term, "_")) %>% 
+  rename(PredictedHigh="predicted_hi",
+         PredictedLow="predicted_lo") %>% 
   tt()
 
 ```
@@ -1044,6 +1082,9 @@ fit_zi <- brm(
 #| tbl-cap: Model summary (posterior distribution) for zero-inflated beta model
 #| 
 model_parameters(fit_zi, "mean")%>%
+      rename(CIlow="CI_low",CIhigh="CI_high") %>% 
+  mutate(Parameter=str_remove_all(Parameter, "_"),
+         Component=str_remove_all(Component, "_")) %>% 
   tt() %>%
   format_tt(digits=3)
 ```
@@ -1059,6 +1100,7 @@ We can use `marginaleffects` to get get the predicted probability from our model
 
 fit_zi %>% 
  avg_predictions(variables = "Fluency_dummy", dpar="zi") %>%
+  rename(FluencyDummy="Fluency_dummy") %>% 
   tt(digits=3)
 
 ```
@@ -1090,6 +1132,10 @@ zi_plot
 
 fit_zi %>% 
   avg_comparisons(variables = "Fluency_dummy", dpar="zi", comparison = "difference") %>%
+  mutate(term=str_remove(term, "_")) %>% 
+  rename(PredictedLow="predicted_lo",
+         PredictedHigh="predicted_hi",
+         tmpIDX="tmp_idx") %>% 
   tt(digits=3) 
 
 ```
@@ -1145,7 +1191,9 @@ fit_zoib <- brm(
 #| tbl-cap-location: "top"
 
 
-zoib_model <- parameters::model_parameters(fit_zoib, "mean")
+zoib_model <- parameters::model_parameters(fit_zoib, "mean") %>% 
+    rename(CIlow="CI_low",CIhigh="CI_high") %>% 
+  mutate(Parameter=str_remove_all(Parameter, "_"))
 
 zoib_model %>%
  tt(digits=3)
@@ -1187,6 +1235,8 @@ ord_fit <- glmmTMB(formula=Accuracy ~ Fluency_dummy,
 ord_fit %>%
   model_parameters() %>%
   mutate(p = round(p, 2)) %>% 
+    rename(CIlow="CI_low",CIhigh="CI_high") %>% 
+  mutate(Parameter=str_remove(Parameter, "_")) %>% 
    tt(digits = 2) %>%
   format_tt(escape = TRUE)
 
@@ -1205,6 +1255,7 @@ Remember these values are on the logit scale so we can take the inverse and get 
 
 # get the predicted probablities for each level of fluency 
 avg_predictions(ord_fit, variables="Fluency_dummy") %>%
+  rename(FluencyDummy="Fluency_dummy") %>% 
   select(-s.value)%>% 
   tt(digits = 2) %>%
     format_tt(j = "p", fn = scales::label_pvalue()) %>%
@@ -1220,6 +1271,7 @@ We can get the risk difference as well. These values are in @tbl-ordbeta-risk.
 # get risk difference 
 avg_comparisons(ord_fit,variables="Fluency_dummy",  comparison= "difference") %>%
       select(-predicted_lo,-predicted_hi,-s.value, -predicted) %>% 
+  mutate(term=str_remove(term, "_")) %>% 
 tt(digits = 2) %>%
     format_tt(j = "p", fn = scales::label_pvalue()) %>%
   format_tt(escape = TRUE)
@@ -1270,6 +1322,8 @@ ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy,
 
 ord_fit_brms %>%
   model_parameters() %>%
+      rename(CIlow="CI_low",CIhigh="CI_high") %>% 
+  mutate(Parameter=str_remove_all(Parameter, "_")) %>% 
   tt() %>%
   format_tt(digits=3)
 
