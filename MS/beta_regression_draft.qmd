@@ -125,8 +125,8 @@ plot_grid(p1, p2, labels = c('A', 'B'))
 To make abundantly clear what the beta distribution is let's look at another example. \[Bob: your example from blog obvs feel free to get rid of this or change this\]. For example, suppose we want to come up with our best guess of how Donald Trump might do in the 2024 presidential election given his performance in the 2020 election in terms of the number of electoral college votes he received (which are roughly proportional to the popular vote for president in the United States). In that case, we could use the Beta distribution to get a sense of our uncertainty in that statement by plugging in 232 for the number of electors Trump won in 2020 for α and 306 for the number of electors that Trump didn’t win for β–i.e., all the electors Joe Biden won in 2020:
 
 ```{r}
-
 #| label: fig-trump
+#| fig-cap: Density Plot of Electors
 # Load the necessary library
 library(ggplot2)
 
@@ -139,7 +139,7 @@ electors_df <- data.frame(electors)
 # Create a density plot using ggplot2
 ggplot(electors_df, aes(x = electors)) +
   geom_density(fill = "blue", alpha = 0.5) +
-  labs(title = "Density Plot of Electors", x = "Electors", y = "Density") +
+  labs(x = "Electors", y = "Density") +
   theme_minimal()
 
 
@@ -151,6 +151,8 @@ What @fig-trump above shows is the range of uncertainty around the proportion of
 
 ```{r}
 #| label: fig-trump2
+#| fig-cap: Density Plot of Electors
+
 # Generate the electors data
 electors <- rbeta(1000, 304 + 232, 227 + 306)
 # Create a data frame from the electors data
@@ -159,7 +161,7 @@ electors_df <- data.frame(electors)
 # Create a density plot using ggplot2
 ggplot(electors_df, aes(x = electors)) +
   geom_density(fill = "blue", alpha = 0.5) +
-  labs(title = "Density Plot of Electors", x = "Electors", y = "Density") +
+  labs( x = "Electors", y = "Density") +
   theme_minimal()
 
 
@@ -170,8 +172,8 @@ The plausible range of percentages/probabilities of @fig-trump1 is now within 48
 Suppose, for example, that we only expect Trump to win 1 out of 538 electors. That would concentrate a substantial amount of plausible values at the lower end of the range of the variable:
 
 ```{r}
-
 #| label: fig-trump0
+#| fig-cap: "Density Plot of Electors"
 
 electors <- rbeta(1000, 1, 537)
 
@@ -181,7 +183,7 @@ electors_df <- data.frame(electors)
 # Create a density plot using ggplot2
 ggplot(electors_df, aes(x = electors)) +
   geom_density(fill = "blue", alpha = 0.5) +
-  labs(title = "Density Plot of Electors", x = "Electors", y = "Density") +
+  labs(x = "Electors", y = "Density") +
   theme_minimal()
 
 ```
