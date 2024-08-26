@@ -1,6 +1,6 @@
 # beta_regression_tutorial
 
-RStudio: [![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/gh/jgeller112/beta_regression_tutorial?urlpath=rstudio)
+RStudio: [![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/gh/jgeller112/beta_regression_tutorial/master?urlpath=rstudio)
 
 Repository for beta regression tutorial highlighting how to run a beta regression and some of its alternatives.
 
