@@ -1,4 +1,4 @@
-# beta_regression_tutorial
+# Beta_Regression_Tutorial
 
 RStudio: [![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/gh/jgeller112/beta_regression_tutorial/HEAD?urlpath=rstudio)
 
