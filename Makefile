@@ -24,7 +24,7 @@ docx: $(SOURCE)
 	--output manuscript-$@.docx
 
 typst: $(SOURCE)
-	quarto render $< --to apaquarto-typst \
+	quarto render $< --to typst \
 	--output manuscript-$@.pdf
 
 clean:
