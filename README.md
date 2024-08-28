@@ -2,6 +2,26 @@
 
 RStudio: [![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/gh/jgeller112/beta_regression_tutorial/HEAD?urlpath=rstudio)
 
-Repository for beta regression tutorial highlighting how to run a beta regression and some of its alternatives.
+A tutorial paper on beta regression highlighting how to run a beta regression and some of its alternatives with a real-world dataset. 
 
-Working draft of the paper can be found by navigating MS > beta_regression_draft.qmd. 
+# Repository Overview
+
+beta_regression_tutorial/
+|-- README.md (project directory information)
+|-- data
+|   |-- miko_data.csv(data file for example in paper)
+|-- renv
+|   |-- .gitignore
+|   |-- activate.R (R packages and versions)
+|   |-- settings.json
+|-- .Rprofile (activate renv on startup)
+|-- .lintr
+|-- Beta_Regression-Tutrial.Rproj (project file)
+|-- LICENSE
+|-- Makefile 
+|-- beta_regression_draft.qmd (quarto working draft of paper)
+|-- bibliography.bib (references for paper)
+|-- renv.lock (R package versions for project)
+|-- runtime.txt (R version for binder)
+
+
