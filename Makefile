@@ -24,17 +24,9 @@ docx: $(SOURCE)
 	quarto render $< --to apaquarto-docx \
 	--output manuscript-$@.docx
 
-typst-man: $(SOURCE)
-	quarto render $< --to apaquarto-typst \
-	--output manuscript-$@.pdf
-	
-typst-doc: $(SOURCE)
+typst: $(SOURCE)
 	quarto render $< --to apaquarto-typst \
 	--output manuscript-$@.pdf
 
-typst-jou: $(SOURCE)
-	quarto render $< --to apaquarto-typst \
-	--output manuscript-$@.pdf
-	
 clean:
 	rm -fr *_files/ *.aux *.log *.out *.tex *.pdf
