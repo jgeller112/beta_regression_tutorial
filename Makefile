@@ -35,3 +35,6 @@ typst-doc: $(SOURCE)
 typst-jou: $(SOURCE)
 	quarto render $< --to apaquarto-typst \
 	--output example-$@.pdf
+	
+clean:
+	rm -fr *_files/ *.aux *.log *.out *.tex *.pdf
