@@ -6,8 +6,14 @@
 # Temporary files
 **/.DS_Store
 **/*_cache/
-*.typ
 **/*_files/
+*.typ
+*.aux
+*.log
+*.out
+*.tex
+*.pdf
+*.html
 
 # Model files
 **/*.rds
