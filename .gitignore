@@ -2,3 +2,18 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Temporary files
+**/.DS_Store
+**/*_cache/
+**/*_files/
+*.typ
+*.aux
+*.log
+*.out
+*.tex
+*.pdf
+*.html
+
+# Model files
+**/*.rds
