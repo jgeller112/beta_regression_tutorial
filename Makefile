@@ -3,7 +3,6 @@ SOURCE = beta_regression_draft.qmd
 all: pdf typst docx
 
 pdf: pdf-man pdf-doc pdf-jou
-typst: typst-man typst-doc typst-jou
 
 pdf-man: $(SOURCE)
 	quarto render $< --to apaquarto-pdf \
