@@ -7,34 +7,34 @@ typst: typst-man typst-doc typst-jou
 
 pdf-man: $(SOURCE)
 	quarto render $< --to apaquarto-pdf \
-	--output example-$@.pdf \
+	--output manuscript-$@.pdf \
 	-M documentmode:man
 
 pdf-doc: $(SOURCE)
 	quarto render $< --to apaquarto-pdf \
-	--output example-$@.pdf \
+	--output manuscript-$@.pdf \
 	-M documentmode:doc
 
 pdf-jou: $(SOURCE)
 	quarto render $< --to apaquarto-pdf \
-	--output example-$@.pdf \
+	--output manuscript-$@.pdf \
 	-M documentmode:jou
 
 docx: $(SOURCE)
 	quarto render $< --to apaquarto-docx \
-	--output example-$@.docx
+	--output manuscript-$@.docx
 
 typst-man: $(SOURCE)
 	quarto render $< --to apaquarto-typst \
-	--output example-$@.pdf
+	--output manuscript-$@.pdf
 	
 typst-doc: $(SOURCE)
 	quarto render $< --to apaquarto-typst \
-	--output example-$@.pdf
+	--output manuscript-$@.pdf
 
 typst-jou: $(SOURCE)
 	quarto render $< --to apaquarto-typst \
-	--output example-$@.pdf
+	--output manuscript-$@.pdf
 	
 clean:
 	rm -fr *_files/ *.aux *.log *.out *.tex *.pdf
