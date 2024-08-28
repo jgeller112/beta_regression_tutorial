@@ -1,6 +1,9 @@
 SOURCE = beta_regression_draft.qmd
 
-all: pdf typst docx
+all: renv pdf typst docx
+
+renv: renv.lock
+	Rscript -e "renv::restore()"
 
 pdf: pdf-man pdf-doc pdf-jou
 
