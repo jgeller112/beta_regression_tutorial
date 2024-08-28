@@ -262,6 +262,7 @@ library(ggbeeswarm) # Special distribution-shaped point jittering
 library(scales) # percentage
 library(tinytable) # tables
 library(marginaleffects) # marginal effects
+library(collapse) # marginaleffects hidden requirement
 library(extraDistr)       # Use extra distributions like dprop()
 library(brms) # bayesian models
 

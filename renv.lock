@@ -589,6 +589,17 @@
       ],
       "Hash": "61e097f35917d342622f21cdc79c256e"
     },
+    "collapse": {
+      "Package": "collapse",
+      "Version": "2.0.16",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp"
+      ],
+      "Hash": "6c44b359839bd71fc5cc7818e1c4a5bb"
+    },
     "colorspace": {
       "Package": "colorspace",
       "Version": "2.1-0",
