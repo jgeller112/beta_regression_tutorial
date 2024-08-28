@@ -7,3 +7,4 @@
 MS/*.rds # Model files
 **/*_cache/
 **/*.typ
+**/*_files/
