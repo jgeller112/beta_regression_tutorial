@@ -4,3 +4,6 @@
 .Ruserdata
 
 **/.DS_Store
+MS/*.rds # Model files
+**/*_cache/
+**/*.typ
