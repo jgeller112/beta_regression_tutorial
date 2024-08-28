@@ -1,4 +1,4 @@
-SOURCE = MS/beta_regression_draft.qmd
+SOURCE = beta_regression_draft.qmd
 
 all: pdf typst docx
 
