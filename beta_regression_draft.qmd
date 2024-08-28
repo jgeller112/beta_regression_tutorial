@@ -65,7 +65,6 @@ format:
 execute: 
   warning: false
   message: false
-execute-dir: project
 ---
 
 In psychological research, it is common to use response outcomes that are percentages or proportions. For instance, in educational and cognitive research, one popular way to assess learning is by looking at the proportion correct on some test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they take a final memory test with 10 short-answer questions, each worth a different number of points (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). Your primary interest is in the total number of correct answers out of the total possible points for each question. An important question is how do we analyze this type of data?
