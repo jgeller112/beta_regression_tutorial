@@ -6,7 +6,7 @@
 # Temporary files
 **/.DS_Store
 **/*_cache/
-**/*.typ
+*.typ
 **/*_files/
 
 # Model files

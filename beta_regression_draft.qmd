@@ -65,6 +65,7 @@ format:
 execute: 
   warning: false
   message: false
+execute-dir: project
 ---
 
 In psychological research, it is common to use response outcomes that are percentages or proportions. For instance, in educational and cognitive research, one popular way to assess learning is by looking at the proportion correct on some test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they take a final memory test with 10 short-answer questions, each worth a different number of points (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). Your primary interest is in the total number of correct answers out of the total possible points for each question. An important question is how do we analyze this type of data?
@@ -103,23 +104,26 @@ library(cowplot)
 theme_set(theme_classic(base_size = 6))
 
 p1 <- ggplot() +
-  geom_function(fun = dbeta, args = list(shape1 = 4 , shape2 = 2),
-                aes(color = "Beta(shape1 = 4, shape2 = 2)")) +
+  geom_function(
+    fun = dbeta, args = list(shape1 = 4, shape2 = 2),
+    aes(color = "Beta(shape1 = 4, shape2 = 2)")
+  ) +
   scale_color_viridis_d(option = "plasma", name = "") +
-  theme_lucid(base_size=18) +
-  theme(legend.position = "bottom") + 
-  labs(x="Percentage")
+  theme_lucid(base_size = 18) +
+  theme(legend.position = "bottom") +
+  labs(x = "Percentage")
 
 p2 <- ggplot() +
-  geom_function(fun = dbeta, args = list(shape1 = 2 , shape2 = 4),
-                aes(color = "Beta(shape1 = 4, shape2 = 2)")) +
+  geom_function(
+    fun = dbeta, args = list(shape1 = 2, shape2 = 4),
+    aes(color = "Beta(shape1 = 4, shape2 = 2)")
+  ) +
   scale_color_viridis_d(option = "plasma", name = "") +
-  theme_lucid(base_size=18) +
-  theme(legend.position = "bottom") + 
-  labs(x="Percentage")
+  theme_lucid(base_size = 18) +
+  theme(legend.position = "bottom") +
+  labs(x = "Percentage")
 
-plot_grid(p1, p2, labels = c('A', 'B'))
-
+plot_grid(p1, p2, labels = c("A", "B"))
 ```
 
 To make abundantly clear what the beta distribution is let's look at another example. \[Bob: your example from blog obvs feel free to get rid of this or change this\]. For example, suppose we want to come up with our best guess of how Donald Trump might do in the 2024 presidential election given his performance in the 2020 election in terms of the number of electoral college votes he received (which are roughly proportional to the popular vote for president in the United States). In that case, we could use the Beta distribution to get a sense of our uncertainty in that statement by plugging in 232 for the number of electors Trump won in 2020 for α and 306 for the number of electors that Trump didn’t win for β–i.e., all the electors Joe Biden won in 2020:
@@ -141,10 +145,6 @@ ggplot(electors_df, aes(x = electors)) +
   geom_density(fill = "blue", alpha = 0.5) +
   labs(x = "Electors", y = "Density") +
   theme_minimal()
-
-
-
-
 ```
 
 What @fig-trump above shows is the range of uncertainty around the proportion of electors that Trump could win in 2024 if we use his 2020 performance as our prior knowledge. We would expect, based on chance alone, for his 2024 total to vary between 40% of electors to 48% of electors. In other words, he would be likely to still lose, but he could get a lot closer to a majority of electoral college votes. If we increase the sample size, say by including how many electoral votes Trump won in 2016 (304 out of 531), our uncertainty would decrease:
@@ -161,10 +161,8 @@ electors_df <- data.frame(electors)
 # Create a density plot using ggplot2
 ggplot(electors_df, aes(x = electors)) +
   geom_density(fill = "blue", alpha = 0.5) +
-  labs( x = "Electors", y = "Density") +
+  labs(x = "Electors", y = "Density") +
   theme_minimal()
-
-
 ```
 
 The plausible range of percentages/probabilities of @fig-trump1 is now within 48% to 52% as taking into account Trump’s 2016 results increases our sample size while also increasing our most likely estimate of his 2024 performance. Importantly, the Beta distribution respects bounds.
@@ -185,7 +183,6 @@ ggplot(electors_df, aes(x = electors)) +
   geom_density(fill = "blue", alpha = 0.5) +
   labs(x = "Electors", y = "Density") +
   theme_minimal()
-
 ```
 
 What we can see in @fig-trump0 is a unique feature of the Beta distribution: it respects upper and lower bounds. Here the Beta distribution says it is most likely Trump wins a very small number of electors – below 1% of them – but it is plausible that he still wins more than 1%. It is impossible, as it should be, for Trump to win less than 0% of electors.
@@ -254,7 +251,7 @@ As a first step, we will load the necessary packages along with the data we will
 
 # packages needed
 library(tidyverse) # tidy functions/data wrangling/viz
-library(gamlss) # run beta regression 
+library(gamlss) # run beta regression
 library(glmmTMB) # zero inflated beta
 library(easystats)
 library(gghalves)
@@ -263,11 +260,10 @@ library(scales) # percentage
 library(tinytable) # tables
 library(marginaleffects) # marginal effects
 library(collapse) # marginaleffects hidden requirement
-library(extraDistr)       # Use extra distributions like dprop()
+library(extraDistr) # Use extra distributions like dprop()
 library(brms) # bayesian models
 
 options(scipen = 999) # get rid of scienitifc notation
-
 ```
 
 Next, we read in the data from OSF. We make some modifications to the original dataset. Namely, we rename the columns to make them more informative, and transform the data. Here we transform accuracy so it is a proportion by multiplying each score by 10 and dividing by 100. Finally, we dummy code the `Fluency` variable (`Flunency_dummy`) setting the fluent condition to 0 and the disfluent condition to 1. The first few rows of the data are displayed in @tbl-dataset along with the data dictionary in @tbl-columnkey.
@@ -277,41 +273,36 @@ Next, we read in the data from OSF. We make some modifications to the original d
 #| echo: true
 #| tbl-cap: Dataset example (taken from Wilford et al. 2021)
 # Read the CSV file located in the "MS/data" directory and store it in a dataframe
-fluency_data <- fluency_data <- read.csv(here::here("MS/data/miko_data.csv")) %>%
-  
+fluency_data <- fluency_data <- read.csv("data/miko_data.csv") %>%
   # Rename the columns for better readability
   rename(
     "Participant" = "ResponseID", # Rename "ResponseID" to "Participant"
-    "Fluency" = "Condition",      # Rename "Condition" to "Fluency"
-    "Time" = "name",              # Rename "name" to "Time"
-    "Accuracy" = "value"          # Rename "value" to "Accuracy"
+    "Fluency" = "Condition", # Rename "Condition" to "Fluency"
+    "Time" = "name", # Rename "name" to "Time"
+    "Accuracy" = "value" # Rename "value" to "Accuracy"
   ) %>%
-  
   # Transform the data
   mutate(
-    Accuracy = Accuracy *10 / 100, # Convert Accuracy values to proportions
-    Fluency = ifelse(Fluency == 1, "Fluent", "Disflueny"), # rename levels 
-    Fluency_dummy = ifelse(Fluency == "Fluent", 0, 1),  # Recode
-    #Fluency: 1 becomes 0, others become 1 
+    Accuracy = Accuracy * 10 / 100, # Convert Accuracy values to proportions
+    Fluency = ifelse(Fluency == 1, "Fluent", "Disflueny"), # rename levels
+    Fluency_dummy = ifelse(Fluency == "Fluent", 0, 1), # Recode
+    # Fluency: 1 becomes 0, others become 1
     Fluency_dummy = as.factor(Fluency_dummy) # turn fluency cond to dummy code
-
   ) %>%
-  
-  filter(Time=="FreeCt1AVG") %>% # only choose first time point
-  
+  filter(Time == "FreeCt1AVG") %>% # only choose first time point
+
   # Drop the column "X" and "time" from the dataframe
-  select(-X, -Time)  %>%
-  
+  select(-X, -Time) %>%
   # move columns around
-  
+
   relocate(Accuracy, .after = last_col())
-  
+
 
 # Display the first few rows of the modified dataframe
 # underscore won't display in Latex
 head(fluency_data) %>%
-  mutate(Participant=str_remove(Participant, "_")) %>% 
-  rename(FluencyDummy="Fluency_dummy") %>% 
+  mutate(Participant = str_remove(Participant, "_")) %>%
+  rename(FluencyDummy = "Fluency_dummy") %>%
   tt()
 ```
 
@@ -321,14 +312,14 @@ head(fluency_data) %>%
 
 data.frame(
   stringsAsFactors = FALSE,
-            Column = c("Participant", "Fluency", "FluencyDummy", "Accuracy"),
-               Key = c("Participant ID number",
-                       "Fluent vs. Disfluent","Fluent: 0; Disfluent: 1",
-                       "Proportion recalled (idea units)")
+  Column = c("Participant", "Fluency", "FluencyDummy", "Accuracy"),
+  Key = c(
+    "Participant ID number",
+    "Fluent vs. Disfluent", "Fluent: 0; Disfluent: 1",
+    "Proportion recalled (idea units)"
+  )
 ) %>%
   tt()
-
-
 ```
 
 #### OLS regression
@@ -343,12 +334,12 @@ We first start by fitting a frequentist regression model using the `lm` function
 library(ggrain)
 
 
-ggplot(fluency_data,  aes(x = Fluency, y =, Accuracy, fill = Fluency)) +
-	geom_rain(rain.side = 'l') +
-  geom_jitter(width=.05)+ 
+ggplot(fluency_data, aes(x = Fluency, y = , Accuracy, fill = Fluency)) +
+  geom_rain(rain.side = "l") +
+  geom_jitter(width = .05) +
   labs(x = "Fluency", y = "Pecentage Idea Units Recalled on Final Test") +
-  theme_lucid(base_size=14) +
-  scale_y_continuous(labels = label_percent()) + 
+  theme_lucid(base_size = 14) +
+  scale_y_continuous(labels = label_percent()) +
   theme(legend.position = "none")
 ```
 
@@ -361,8 +352,7 @@ Below is the code needed to fit the regression model in R.
 #| message: false
 
 # fit ols reg
-ols_model <- lm(Accuracy~Fluency_dummy, data=fluency_data)
-
+ols_model <- lm(Accuracy ~ Fluency_dummy, data = fluency_data)
 ```
 
 ```{r}
@@ -371,17 +361,14 @@ ols_model <- lm(Accuracy~Fluency_dummy, data=fluency_data)
 #| tbl-cap-location: top
 #| echo: true
 
-# for regression model 
+# for regression model
 ols_model_new <- model_parameters(ols_model)
 
 
 ols_model_new %>%
- tt(digits = 2) %>%
-    format_tt(j = "p", fn = scales::label_pvalue()) %>%
+  tt(digits = 2) %>%
+  format_tt(j = "p", fn = scales::label_pvalue()) %>%
   format_tt(escape = TRUE)
-
-
-
 ```
 
 @tbl-ols displays the summary of the ols model. It shows two coefficients. The `Intercept` value refers to the accuracy in the fluent condition. The Fluency coefficient (`Fluency_dummy1`) highlights the difference between the fluent and disfluent condition, which is significant, b = `r round(ols_model_new$Coefficient[2], 3)` , SE = `r round(ols_model_new$SE[2], 3)` , 95% CIs = \[`r round(ols_model_new$CI_low[2], 3)`,`r round(ols_model_new$CI_high[2], 3)`\], p = `r round(ols_model_new$p[2], 3)`. This analysis reproduces what @wilford2020 found—better memory for fluent instructor videos.
@@ -398,9 +385,7 @@ Using a traditional approach, we observed instructor fluency impacts actual lear
 
 theme_set(theme_classic(base_size = 6))
 
-check_model(ols_model, check=c("homogeneity", "normality"))
-
-
+check_model(ols_model, check = c("homogeneity", "normality"))
 ```
 
 One solution is to run a beta regression model. Below we fit a beta regression using the `glmmTMB`package [@glmmTMB]. This a popular package for running frequentist beta regressions. Other packages that can be used to run beta regression include `betareg` [@betareg] and also `gamlss` [@gamlss]. In `glmmTMB` we fit a beta regression by using a formula simialr to the lm we fit above. However, we must specify the family argument as `beta_family` to fit a beta regression.
@@ -417,8 +402,7 @@ library(glmmTMB)
 
 # running beta model error)
 
-beta_model <- glmmTMB(Accuracy~Fluency_dummy, disp=~1, data=fluency_data, family=beta_family(link="logit"))# fits a constant for mu and dispersion
-
+beta_model <- glmmTMB(Accuracy ~ Fluency_dummy, disp = ~1, data = fluency_data, family = beta_family(link = "logit")) # fits a constant for mu and dispersion
 ```
 
 When you run the above model, an error will appear: `Error in eval(family$initialize) : y values must be 0 < y < 1`. If your remember, the beta distribution can only model responses in the interval \[0-1\], but not responses that are exactly 0 or 1. We need make sure there are no zeros and ones in our dataset.
@@ -428,7 +412,7 @@ When you run the above model, an error will appear: `Error in eval(family$initia
 #| tbl-cap: Number of zeros and ones in our dataset
 
 fluency_data %>%
-  filter(Accuracy==0 |Accuracy==1) %>% # get onlys 0s and 1s
+  filter(Accuracy == 0 | Accuracy == 1) %>% # get onlys 0s and 1s
   count(Accuracy) %>% # count them
   tt()
 ```
@@ -439,11 +423,10 @@ fluency_data %>%
 
 ```{r}
 #| echo: true
-#| 
+#|
 # transform 0 to 0.1 and 1 to .99
-data_beta <- fluency_data %>% 
-    mutate(Accuracy = ifelse(Accuracy == 0, .01, ifelse(Accuracy == 1, .99, Accuracy)))
-
+data_beta <- fluency_data %>%
+  mutate(Accuracy = ifelse(Accuracy == 0, .01, ifelse(Accuracy == 1, .99, Accuracy)))
 ```
 
 #### Squeezing lemons
@@ -462,20 +445,17 @@ This involves adjusting the values of each value y and weighting it based on the
 
 # Define the transformation function for a dataframe
 apply_transformation_to_df <- function(df, column_name) {
-  n <- nrow(df)  # Total number of rows (observations)
-  
+  n <- nrow(df) # Total number of rows (observations)
+
   df <- df %>%
     mutate(!!sym(column_name) := (!!sym(column_name) * (n - 1) + 0.5) / n)
-  
+
   return(df)
 }
-
 ```
 
 ```{r}
-
 transformed_df <- apply_transformation_to_df(fluency_data, "Accuracy")
-
 ```
 
 Let's fit the model again with our little .01 and .99 hack.
@@ -483,9 +463,8 @@ Let's fit the model again with our little .01 and .99 hack.
 ```{r}
 #| echo: true
 
-# fit beta model without 0s and 1s in our dataset 
-beta_model<- glmmTMB(Accuracy~Fluency_dummy, disp=~1, data=data_beta, family=beta_family(link="logit"))# fits a constant for mu and dispersion
-
+# fit beta model without 0s and 1s in our dataset
+beta_model <- glmmTMB(Accuracy ~ Fluency_dummy, disp = ~1, data = data_beta, family = beta_family(link = "logit")) # fits a constant for mu and dispersion
 ```
 
 No errors this time! Now, let’s interpret the results of our beta regression using the .01 and .99 values.
@@ -503,11 +482,11 @@ No errors this time! Now, let’s interpret the results of our beta regression u
 
 beta_model_results <- model_parameters(beta_model)
 
-  beta_model_results %>% 
-    as.data.frame()%>% 
-    mutate(Parameter=str_remove(Parameter, "_")) %>% 
-    rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
-     tt(digits = 2)
+beta_model_results %>%
+  as.data.frame() %>%
+  mutate(Parameter = str_remove(Parameter, "_")) %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high", dfError = "df_error") %>%
+  tt(digits = 2)
 ```
 
 @tbl-beta-cond displays the summary of the beta regression model. The first set of coefficients represents how factors influence the $\mu$ parameter, which is the mean of the beta distribution. These coefficients are interpreted on the scale of the logit link function, meaning they represent changes in the log-odds of the mean proportion. The intercept term `(Intercept)` represents the log odds of the mean on accuracy for the fluent instructor condition. Here being in the fluent condition translates to a log odds of `r round(beta_model_results$Coefficient[1], 3)`. The fluency coefficient `Fluency_dummy` represents the difference between the fluency and disfluency conditions. That is, watching a fluent instructor leads to higher recall than watching a disfluent instructor, b = `r round(beta_model_results$Coefficient[2], 3)` , SE = `r round(beta_model_results$SE[2], 3)` , 95% CIs = \[`r round(beta_model_results$CI_low[2], 3)`,`r round(beta_model_results$CI_high[2], 3)`\], p = `r round(beta_model_results$p[2], 3)`.
@@ -522,7 +501,7 @@ Thankfully, there is a package called **`marginaleffects`** [@marginaleffects] t
 
 ```{r}
 #| echo: true
-#load marginaleffects package
+# load marginaleffects package
 library(marginaleffects)
 ```
 
@@ -532,14 +511,15 @@ library(marginaleffects)
 #| tbl-cap: Predicted probablities for fluency factor
 #| tbl-cap-location: top
 
-# get the predicted probablities for each level of fluency 
+# get the predicted probablities for each level of fluency
 predictions(beta_model,
-             newdata = datagrid(Fluency_dummy = c("0", "1")),             what = "mu") %>% 
+  newdata = datagrid(Fluency_dummy = c("0", "1")), what = "mu"
+) %>%
   select(-s.value, -rowid, -Accuracy) %>%
-  mutate(Fluency_dummy=ifelse(Fluency_dummy==0, "Fluent", "Disfluent")) %>%   
-  relocate(Fluency_dummy) %>% 
+  mutate(Fluency_dummy = ifelse(Fluency_dummy == 0, "Fluent", "Disfluent")) %>%
+  relocate(Fluency_dummy) %>%
   tt(digits = 2) %>%
-    format_tt(j = "p", fn = scales::label_pvalue()) %>%
+  format_tt(j = "p", fn = scales::label_pvalue()) %>%
   format_tt(escape = TRUE)
 ```
 
@@ -548,17 +528,17 @@ predictions(beta_model,
 We can also easily visualize these from `marginaleffects` using the `plot_predictions` function. To visualize the mu parameter set the `what` argument as `mu`.
 
 ```{r}
-
 #| label: fig-plot-pre
 #| echo: true
 #| fig-cap: Predicted probablities for fluency factor
 
-plot_predictions(beta_model, condition="Fluency_dummy", vcov=TRUE) +
-  theme_lucid(base_size=14) + 
-  scale_x_discrete(breaks=c("0","1"),
-        labels=c("Fluent", "Disfluent")) + 
+plot_predictions(beta_model, condition = "Fluency_dummy", vcov = TRUE) +
+  theme_lucid(base_size = 14) +
+  scale_x_discrete(
+    breaks = c("0", "1"),
+    labels = c("Fluent", "Disfluent")
+  ) +
   scale_y_continuous(labels = label_percent())
-  
 ```
 
 ##### Marginal effects
@@ -575,13 +555,13 @@ Should we discuss counterfactuals?
 #| tbl-cap: Risk difference for fluency factor
 #| tbl-cap-location: top
 
-# get risk difference 
-beta_avg_comp<- avg_comparisons(beta_model)
+# get risk difference
+beta_avg_comp <- avg_comparisons(beta_model)
 
 beta_avg_comp %>%
-  select(-predicted_lo,-predicted_hi,-s.value, -predicted)%>% # remove unwanted variables
-   tt(digits = 2) %>%
-    format_tt(j = "p", fn = scales::label_pvalue()) %>%
+  select(-predicted_lo, -predicted_hi, -s.value, -predicted) %>% # remove unwanted variables
+  tt(digits = 2) %>%
+  format_tt(j = "p", fn = scales::label_pvalue()) %>%
   format_tt(escape = TRUE)
 ```
 
@@ -595,13 +575,14 @@ We can also get the odds ratio with `avg_comparisons` (see @tbl-or).
 #| tbl-cap: Odds ratio for fluency factor
 
 # get odds ratios as an example
-avg_comparisons(beta_model,  comparison = "lnoravg",
-    transform = "exp") %>%
-  select(-predicted_lo,-predicted_hi,-s.value, -predicted) %>% 
-  mutate(term=str_remove(term, "_")) %>% 
+avg_comparisons(beta_model,
+  comparison = "lnoravg",
+  transform = "exp"
+) %>%
+  select(-predicted_lo, -predicted_hi, -s.value, -predicted) %>%
+  mutate(term = str_remove(term, "_")) %>%
   tt() %>%
-  format_tt(digits=3)
-
+  format_tt(digits = 3)
 ```
 
 #### Precision ($\phi$) component
@@ -613,25 +594,23 @@ Understanding the dispersion parameter helps us gauge the precision of our predi
 ```{r}
 #| echo: true
 
-# fit beta regression model using betareg 
+# fit beta regression model using betareg
 
-beta_model<-glmmTMB(Accuracy~Fluency_dummy, disp=~1, data=data_beta, family=beta_family(link="logit"))
-
+beta_model <- glmmTMB(Accuracy ~ Fluency_dummy, disp = ~1, data = data_beta, family = beta_family(link = "logit"))
 ```
 
 ```{r}
 #| label: tbl-phi
 #| echo: true
 #| tbl-cap: Beta model summary output of the $\phi$ parameter
- 
-# get the precision paramter 
+
+# get the precision paramter
 beta_model %>%
   model_parameters() %>%
-  as.data.frame() %>% 
-      rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
-  filter(Component=="dispersion") %>%
-   tt(digits = 3)
-
+  as.data.frame() %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high", dfError = "df_error") %>%
+  filter(Component == "dispersion") %>%
+  tt(digits = 3)
 ```
 
 The intercept under the precision heading is not that interesting. It represents the overall dispersion in the model. We can model the dispersion of the `Fluency` factor—this allows dispersion to differ between the fluent and disfluent conditions. To do this we add a vertical bar to our `betareg` function which allows us to model the dispersion of any factor to the right of it. In the below model, `beta_model_dis`, we model the precision of the `Fluency` factor.
@@ -640,7 +619,7 @@ The intercept under the precision heading is not that interesting. It represents
 #| echo: true
 
 # add disp/percison for fluency by including |
-beta_model_dis<-glmmTMB(Accuracy~Fluency_dummy, disp=~Fluency_dummy, data=data_beta, family=beta_family(link="logit"))
+beta_model_dis <- glmmTMB(Accuracy ~ Fluency_dummy, disp = ~Fluency_dummy, data = data_beta, family = beta_family(link = "logit"))
 ```
 
 ```{r}
@@ -648,12 +627,12 @@ beta_model_dis<-glmmTMB(Accuracy~Fluency_dummy, disp=~Fluency_dummy, data=data_b
 #| echo: true
 #| tbl-cap: Beta regression model summary for fluency factor with $\phi$ parameter unexponentiated
 
-beta_model_dis  %>%
-  model_parameters()%>%
-as.data.frame() %>%
-      rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
-  mutate(Parameter=str_remove(Parameter, "_")) %>% 
-  filter(Component=="dispersion") %>% 
+beta_model_dis %>%
+  model_parameters() %>%
+  as.data.frame() %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high", dfError = "df_error") %>%
+  mutate(Parameter = str_remove(Parameter, "_")) %>%
+  filter(Component == "dispersion") %>%
   tt(digits = 3)
 ```
 
@@ -669,10 +648,10 @@ beta_model_dis_results <- beta_model_dis %>%
 
 beta_model_dis %>%
   model_parameters(exponentiate = TRUE) %>%
-  as.data.frame()%>%
-      rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
-    mutate(Parameter=str_remove(Parameter, "_")) %>% 
-  filter(Component=="dispersion") %>% 
+  as.data.frame() %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high", dfError = "df_error") %>%
+  mutate(Parameter = str_remove(Parameter, "_")) %>%
+  filter(Component == "dispersion") %>%
   tt(digits = 2)
 ```
 
@@ -690,59 +669,75 @@ Horrible fit. Why?
 #| fig-cap: Distributional outcomes of Fluency with disperison parameter included
 
 
-beta_model_dis_output  <- beta_model_dis %>% model_parameters(component = "all")
+beta_model_dis_output <- beta_model_dis %>% model_parameters(component = "all")
 
-beta_mu_intercept <- beta_model_dis_output %>% as.data.frame() %>%
-  filter(Component == "conditional", Parameter == "(Intercept)") %>% 
-  pull(Coefficient)
-
-beta_mu_fluency <- beta_model_dis_output  %>% 
-   as.data.frame() %>%
-   filter(Component == "conditional", Parameter == "Fluency_dummy1") %>% 
-  pull(Coefficient)
-
-beta_phi_intercept <- beta_model_dis_output  %>% 
+beta_mu_intercept <- beta_model_dis_output %>%
   as.data.frame() %>%
-   filter(Component == "dispersion", Parameter == "(Intercept)") %>% 
+  filter(Component == "conditional", Parameter == "(Intercept)") %>%
+  pull(Coefficient)
+
+beta_mu_fluency <- beta_model_dis_output %>%
+  as.data.frame() %>%
+  filter(Component == "conditional", Parameter == "Fluency_dummy1") %>%
+  pull(Coefficient)
+
+beta_phi_intercept <- beta_model_dis_output %>%
+  as.data.frame() %>%
+  filter(Component == "dispersion", Parameter == "(Intercept)") %>%
   pull(Coefficient)
 
 # get phi for fluency
-beta_phi_fluency <- beta_model_dis_output %>% 
+beta_phi_fluency <- beta_model_dis_output %>%
   as.data.frame() %>%
-   filter(Component == "dispersion", Parameter == "Fluency_dummy1") %>% 
+  filter(Component == "dispersion", Parameter == "Fluency_dummy1") %>%
   pull(Coefficient)
 
 
-Fluency_same_prescion <- paste0("dprop(mean = plogis(", round(beta_mu_intercept, 2),
-                         "), size = exp(", round(beta_phi_intercept, 2), "))")
+Fluency_same_prescion <- paste0(
+  "dprop(mean = plogis(", round(beta_mu_intercept, 2),
+  "), size = exp(", round(beta_phi_intercept, 2), "))"
+)
 
 
-Fluency_different_precison <- paste0("dprop(mean = plogis(", round(beta_mu_intercept, 2),
-                      " + ", round(beta_mu_fluency, 2), 
-                      "), size = exp(", round(beta_phi_intercept, 2),
-                      " + ", round(beta_phi_fluency, 2), "))")
+Fluency_different_precison <- paste0(
+  "dprop(mean = plogis(", round(beta_mu_intercept, 2),
+  " + ", round(beta_mu_fluency, 2),
+  "), size = exp(", round(beta_phi_intercept, 2),
+  " + ", round(beta_phi_fluency, 2), "))"
+)
 
 ggplot(data = tibble(x = 0:1), aes(x = x)) +
-  geom_density(data = data_beta, 
-               aes(x = Accuracy, fill = Fluency_dummy), alpha = 0.5, color = NA) +
-  stat_function(fun = dprop, size = 1,
-                args = list(size = exp(beta_phi_intercept), 
-                            mean = plogis(beta_mu_intercept)),
-                aes(color = Fluency_same_prescion)) +
-  stat_function(fun = dprop, size = 1,
-                args = list(size = exp(beta_phi_intercept + beta_phi_fluency), 
-                            mean = plogis(beta_mu_intercept + beta_mu_fluency)),
-                aes(color =Fluency_different_precison )) + 
- scale_fill_viridis_d(option = "mako", end = 0.8, name = "Fluency",
-                       guide = guide_legend(ncol = 1, order = 1)) +
-  scale_color_viridis_d(option = "mako", end = 0.8, direction = -1, name = "",
-                        guide = guide_legend(reverse = TRUE, ncol = 1, order = 2)) + 
-    scale_x_continuous(labels = label_percent()) +
-
+  geom_density(
+    data = data_beta,
+    aes(x = Accuracy, fill = Fluency_dummy), alpha = 0.5, color = NA
+  ) +
+  stat_function(
+    fun = dprop, size = 1,
+    args = list(
+      size = exp(beta_phi_intercept),
+      mean = plogis(beta_mu_intercept)
+    ),
+    aes(color = Fluency_same_prescion)
+  ) +
+  stat_function(
+    fun = dprop, size = 1,
+    args = list(
+      size = exp(beta_phi_intercept + beta_phi_fluency),
+      mean = plogis(beta_mu_intercept + beta_mu_fluency)
+    ),
+    aes(color = Fluency_different_precison)
+  ) +
+  scale_fill_viridis_d(
+    option = "mako", end = 0.8, name = "Fluency",
+    guide = guide_legend(ncol = 1, order = 1)
+  ) +
+  scale_color_viridis_d(
+    option = "mako", end = 0.8, direction = -1, name = "",
+    guide = guide_legend(reverse = TRUE, ncol = 1, order = 2)
+  ) +
+  scale_x_continuous(labels = label_percent()) +
   labs(x = "Accuracy Final Recall") +
   theme(legend.position = "bottom")
-
-
 ```
 
 ```{r}
@@ -751,40 +746,56 @@ ggplot(data = tibble(x = 0:1), aes(x = x)) +
 #| fig-cap: Distributional outcomes of Fluency with no disperison parameter modeled
 
 # get phi for fluency
-beta_phi <- beta_model_results %>% 
+beta_phi <- beta_model_results %>%
   as.data.frame() %>%
-   filter(Component == "dispersion", Parameter == "(Intercept)") %>% 
+  filter(Component == "dispersion", Parameter == "(Intercept)") %>%
   pull(Coefficient)
 
 
-Fluency_same_prescion <- paste0("dprop(mean = plogis(", round(beta_mu_intercept, 2),
-                         "), size = ", round(beta_phi, 2), "))")
+Fluency_same_prescion <- paste0(
+  "dprop(mean = plogis(", round(beta_mu_intercept, 2),
+  "), size = ", round(beta_phi, 2), "))"
+)
 
 
-Fluency_different_precison <- paste0("dprop(mean = plogis(", round(beta_mu_intercept, 2),
-                      " + ", round(beta_mu_fluency, 2), 
-                      "), size = ", round(beta_phi, 2), ")")
+Fluency_different_precison <- paste0(
+  "dprop(mean = plogis(", round(beta_mu_intercept, 2),
+  " + ", round(beta_mu_fluency, 2),
+  "), size = ", round(beta_phi, 2), ")"
+)
 
 ggplot(data = tibble(x = 0:1), aes(x = x)) +
-  geom_density(data = data_beta, 
-               aes(x = Accuracy, fill = Fluency_dummy), alpha = 0.5, color = NA) +
-  stat_function(fun = dprop, size = 1,
-                args = list(size = beta_phi, 
-                            mean = plogis(beta_mu_intercept)),
-                aes(color = Fluency_same_prescion)) +
-  stat_function(fun = dprop, size = 1,
-                args = list(size = beta_phi, 
-                            mean = plogis(beta_mu_intercept + beta_mu_fluency)),
-                aes(color =Fluency_different_precison )) + 
- scale_fill_viridis_d(option = "mako", end = 0.8, name = "Fluency",
-                       guide = guide_legend(ncol = 1, order = 1)) +
-  scale_color_viridis_d(option = "mako", end = 0.8, direction = -1, name = "",
-                        guide = guide_legend(reverse = TRUE, ncol = 1, order = 2)) + 
-    scale_x_continuous(labels = label_percent()) +
-
+  geom_density(
+    data = data_beta,
+    aes(x = Accuracy, fill = Fluency_dummy), alpha = 0.5, color = NA
+  ) +
+  stat_function(
+    fun = dprop, size = 1,
+    args = list(
+      size = beta_phi,
+      mean = plogis(beta_mu_intercept)
+    ),
+    aes(color = Fluency_same_prescion)
+  ) +
+  stat_function(
+    fun = dprop, size = 1,
+    args = list(
+      size = beta_phi,
+      mean = plogis(beta_mu_intercept + beta_mu_fluency)
+    ),
+    aes(color = Fluency_different_precison)
+  ) +
+  scale_fill_viridis_d(
+    option = "mako", end = 0.8, name = "Fluency",
+    guide = guide_legend(ncol = 1, order = 1)
+  ) +
+  scale_color_viridis_d(
+    option = "mako", end = 0.8, direction = -1, name = "",
+    guide = guide_legend(reverse = TRUE, ncol = 1, order = 2)
+  ) +
+  scale_x_continuous(labels = label_percent()) +
   labs(x = "Accuracy Final Recall") +
   theme(legend.position = "bottom")
-
 ```
 
 Note how the whole distribution changes when allow precision to differ across levels of `Fluency`. The data doesn't fit the underlying distribution very well. Despite this, this makes clear the importance of including a precision parameter. A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model. We can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model changed the statistical significance of the $\mu$ coefficient. This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like beta regression over a traditional GLM (regression or ANOVA approach), as beta regression can explicitly model dispersion and address issues of heteroscedasticity.
@@ -796,19 +807,18 @@ We wont always need to include dispersion parameters for each of our variables. 
 #| tbl-cap: LRT comparing models with and without a dispersion paramter for fluency
 #| echo: true
 
-beta_model<-glmmTMB(Accuracy~Fluency_dummy, disp=~1, data=data_beta, family=beta_family(link="logit"))
+beta_model <- glmmTMB(Accuracy ~ Fluency_dummy, disp = ~1, data = data_beta, family = beta_family(link = "logit"))
 
-beta_model_dis<-glmmTMB(Accuracy~Fluency_dummy, disp=~Fluency_dummy, data=data_beta, family=beta_family(link="logit"))
+beta_model_dis <- glmmTMB(Accuracy ~ Fluency_dummy, disp = ~Fluency_dummy, data = data_beta, family = beta_family(link = "logit"))
 
 
-LRT<-test_likelihoodratio(beta_model, beta_model_dis)
+LRT <- test_likelihoodratio(beta_model, beta_model_dis)
 
 LRT %>%
-  mutate(Name=str_remove_all(Name, "_")) %>% 
-  rename(dfDiff="df_diff") %>% 
+  mutate(Name = str_remove_all(Name, "_")) %>%
+  rename(dfDiff = "df_diff") %>%
   tt() %>%
-  format_tt(digits=3)
-
+  format_tt(digits = 3)
 ```
 
 According to the results of our LRT in @tbl-LRT , we would want to model the precision for fluency as the test is significant, $\Delta$$\chi^2$ = `r LRT$Chi2[2]` , *p* \< .001.
@@ -831,23 +841,25 @@ We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages
 
 ```{r}
 #| echo: true
-#| 
-#load brms and cmdstanr
+#|
+# load brms and cmdstanr
 library(brms)
 library(cmdstanr) # Use the cmdstanr backend for Stan because it's faster and more modern than
-  # the default rstan You need to install the cmdstanr package first
-  # (https://mc-stan.org/cmdstanr/) and then run cmdstanr::install_cmdstan() to
-  # install cmdstan on your computer.
+# the default rstan You need to install the cmdstanr package first
+# (https://mc-stan.org/cmdstanr/) and then run cmdstanr::install_cmdstan() to
+# install cmdstan on your computer.
 options(marginaleffects_posterior_center = mean)
 # get mean instead of median in marginaleffects
 ```
 
 ```{r}
-#| label: brms model beta 
+#| label: brms model beta
 #| echo: true
 # fit model with mu and phi
-model_beta_bayes <- bf(Accuracy  ~ Fluency_dummy, # fit mu model
-     phi ~ Fluency_dummy) # fit phi model
+model_beta_bayes <- bf(
+  Accuracy ~ Fluency_dummy, # fit mu model
+  phi ~ Fluency_dummy
+) # fit phi model
 ```
 
 Using the `bf` function, we specify two models—one for $\mu$ and one for $\phi$. We then pass `model_beta_bayes` to the `brm` function and set the model family to the beta distribution, which is native to our model using the `brm` function. Each model was run with four chains of 2000 Markov chain Monte Carlo iterations. For each chain, there was a 2000-iteration warmup. The output of these models provides estimates of each effect (the coefficient b, which is the median of the posterior distribution), its estimation error (the standard deviation of the posterior distribution), and its 95% credible interval (Crl). We inferred that there was evidence of an effect when its 95% Crl did not include zero. We also set a bunch of arguments to speed up the fitting of the models (`cores` = 4 and `backend` = `cmdstanr` ) which we will not explain herein.
@@ -861,18 +873,18 @@ report mean or median?
 #| #| echo: true
 #| results: hide
 
-# run model 
+# run model
 
-beta_brms <- brm(model_beta_bayes, 
-    data = data_beta,
+beta_brms <- brm(model_beta_bayes,
+  data = data_beta,
   family = Beta(),
-  chains = 4, 
-  iter = 2000, 
+  chains = 4,
+  iter = 2000,
   warmup = 1000,
-  cores = 4, 
-  seed = 1234, 
+  cores = 4,
+  seed = 1234,
   backend = "cmdstanr",
-  file = "model_beta_bayes_1"  # Save this so it doesn't have to always rerun
+  file = "model_beta_bayes_1" # Save this so it doesn't have to always rerun
 )
 ```
 
@@ -880,11 +892,11 @@ beta_brms <- brm(model_beta_bayes,
 #| label: tbl-beta-brms
 #| tbl-cap: Posterior summary  for beta regression using `brms`
 
-model_parameters(beta_brms, "mean")%>%
-    mutate(Parameter=str_remove_all(Parameter, "_")) %>%   rename(CIlow="CI_low",CIhigh="CI_high") %>% 
+model_parameters(beta_brms, "mean") %>%
+  mutate(Parameter = str_remove_all(Parameter, "_")) %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high") %>%
   tt() %>%
-  format_tt(digits=3)
-
+  format_tt(digits = 3)
 ```
 
 ### Model parameters
@@ -904,7 +916,7 @@ The `pp_check` function allows us to examine the fit between our data and the mo
 #| label: fig-post-pred
 #| fig-cap: Posterior predictive check for our  beta model with 100 draws
 
-pp_check(beta_brms,ndraws = 100) # ndraws is nu
+pp_check(beta_brms, ndraws = 100) # ndraws is nu
 ```
 
 ### Predicted probabilities and marginal effects
@@ -916,10 +928,10 @@ Predicted probabilities (@tbl-brms-pred-prob) and marginal effects (@tbl-brms-ma
 #| tbl-cap: Predicted probablities for fluency factor fit with `brms`
 #| echo: true
 
-# get predicted 
+# get predicted
 avg_predictions(beta_brms, variables = "Fluency_dummy") %>%
-  rename(FluencyDummy="Fluency_dummy") %>% 
-  tt(digits=3)
+  rename(FluencyDummy = "Fluency_dummy") %>%
+  tt(digits = 3)
 ```
 
 ```{r}
@@ -928,11 +940,11 @@ avg_predictions(beta_brms, variables = "Fluency_dummy") %>%
 #| echo: true
 
 # risk difference
-beta_brms  %>% 
+beta_brms %>%
   avg_comparisons(variables = "Fluency_dummy", comparison = "difference") %>%
-  mutate(term=str_remove(term, "_")) %>% 
-   select(-predicted_lo,-predicted_hi, -predicted, -tmp_idx) %>%
-  tt(digits=3)
+  mutate(term = str_remove(term, "_")) %>%
+  select(-predicted_lo, -predicted_hi, -predicted, -tmp_idx) %>%
+  tt(digits = 3)
 ```
 
 In @tbl-brms-marg, the risk difference in predicted outcomes is 0.05, which is roughly what we found before with our frequentist model. The 95% credible interval includes zero so we can state the fluency effect is not statistically significant.
@@ -942,15 +954,15 @@ Similar to our frequentist model, we can use `plot_predictions` to plot our mode
 ```{r}
 #| label: fig-plot-brms
 #| echo: true
-#| fig-cap: Predicted probablities for fluency with 95% credible intervals 
+#| fig-cap: Predicted probablities for fluency with 95% credible intervals
 
-plot_predictions(beta_brms, condition="Fluency_dummy") + theme_lucid(base_size = 14) +
-  scale_x_discrete(breaks=c("0","1"),
-        labels=c("Fluent", "Disfluent")) + 
-scale_y_continuous(labels = label_percent()) + 
-    labs(x="Fluency")
-
-
+plot_predictions(beta_brms, condition = "Fluency_dummy") + theme_lucid(base_size = 14) +
+  scale_x_discrete(
+    breaks = c("0", "1"),
+    labels = c("Fluent", "Disfluent")
+  ) +
+  scale_y_continuous(labels = label_percent()) +
+  labs(x = "Fluency")
 ```
 
 # Zero-inflated beta (ZIB) regression
@@ -962,18 +974,17 @@ To use the beta distribution we nudged our zeros to 0.01--which is never a good 
 ```{r}
 #| label: change 1s
 # keep 0 but transform 1 to .99
-data_beta_0 <- fluency_data %>% 
-    mutate(Accuracy = ifelse(Accuracy == 1, .99, Accuracy))
-
+data_beta_0 <- fluency_data %>%
+  mutate(Accuracy = ifelse(Accuracy == 1, .99, Accuracy))
 ```
 
 ```{r}
 #| label: glmmTMB zib
 #| echo: true
 
-# fit zib modelwith glmmTMB 
+# fit zib modelwith glmmTMB
 
-beta_model_0<-glmmTMB(Accuracy~Fluency_dummy, disp=~Fluency_dummy,  ziformula = ~ Fluency_dummy, data=data_beta_0, family=beta_family(link="logit"))
+beta_model_0 <- glmmTMB(Accuracy ~ Fluency_dummy, disp = ~Fluency_dummy, ziformula = ~Fluency_dummy, data = data_beta_0, family = beta_family(link = "logit"))
 ```
 
 ### Model parameters
@@ -984,17 +995,17 @@ beta_model_0<-glmmTMB(Accuracy~Fluency_dummy, disp=~Fluency_dummy,  ziformula = 
 #| echo: true
 
 # use model_parameters to get the summary coefs
-model_zi <- model_parameters(beta_model_0) 
+model_zi <- model_parameters(beta_model_0)
 
-model_zi %>% 
-  mutate(p = round(p, 3), p = ifelse(p == 0, "p < .001", p)) %>% 
-    rename(CIlow="CI_low",CIhigh="CI_high",dfError="df_error") %>% 
-  mutate(Parameter=str_remove(Parameter, "_"),
-         Component=str_remove(Component, "_")) %>% 
-  
-  select(-Effects) %>% 
-   tt(digits = 2)
-
+model_zi %>%
+  mutate(p = round(p, 3), p = ifelse(p == 0, "p < .001", p)) %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high", dfError = "df_error") %>%
+  mutate(
+    Parameter = str_remove(Parameter, "_"),
+    Component = str_remove(Component, "_")
+  ) %>%
+  select(-Effects) %>%
+  tt(digits = 2)
 ```
 
 @tbl-beta-model-zero provides a summary of the output for our zib model. As before, the 𝜇 parameter estimates, which have the conditional tag in the Component column are on the logit scale; while 𝜙 parameter coefficients (tagged as dispersion in the Component column) are on the log scale. In addition, the zero-inflated parameter estimates (tagged as zero-inflated in the Component column) are on the logit scale.
@@ -1009,13 +1020,12 @@ Similar to above, we can back-transform our estimates to get probabilities. Focu
 #| label: tbl-predict-zero
 #| tbl-cap: Predicted probablites (zero-inflated) for flueny factor
 #| echo: true
-#| 
+#|
 beta_model_0 %>%
-  marginaleffects::avg_predictions(by = "Fluency_dummy", type="zprob") %>%
-  rename(FluencyDummy="Fluency_dummy") %>% 
-   select(FluencyDummy, estimate) %>%
-   tt(digits = 2)
-
+  marginaleffects::avg_predictions(by = "Fluency_dummy", type = "zprob") %>%
+  rename(FluencyDummy = "Fluency_dummy") %>%
+  select(FluencyDummy, estimate) %>%
+  tt(digits = 2)
 ```
 
 The estimates provided in @tbl-predict-zero are percentages of zeros in the model. There are fewer 0s in the fluent condition (2%) compared to the disfluent condition (15%).
@@ -1025,15 +1035,16 @@ We can also get the average marginal effect of `Fluency` like we did before:
 ```{r}
 #| echo: true
 #| label: tbl-marg-zib
-#| tbl-cap: Risk difference (zero-inflated) for fluency factor 
-#| 
- beta_model_0 %>%
-  marginaleffects::avg_comparisons(variables = "Fluency_dummy", type="zprob", comparison = "difference") %>% 
-  mutate(term=str_remove(term, "_")) %>% 
-  rename(PredictedHigh="predicted_hi",
-         PredictedLow="predicted_lo") %>% 
+#| tbl-cap: Risk difference (zero-inflated) for fluency factor
+#|
+beta_model_0 %>%
+  marginaleffects::avg_comparisons(variables = "Fluency_dummy", type = "zprob", comparison = "difference") %>%
+  mutate(term = str_remove(term, "_")) %>%
+  rename(
+    PredictedHigh = "predicted_hi",
+    PredictedLow = "predicted_lo"
+  ) %>%
   tt()
-
 ```
 
 Interpreting the estimates in @tbl-marg-zib, seeing lecture videos with a fluent instructor reduces the proportion of zeros by about 13%. Here we have evidence that participants were more likely to do more poorly after watching a disflueny lecture than a fluent lecture.
@@ -1049,17 +1060,16 @@ Luckily, we can fit a ZIB model using `brms` and use the `marginaleffects` packa
 ```{r}
 #| label: zib brms model
 #| echo: true
-#| 
+#|
 
 # fit zero-inflated beta in brms
 
-zib_model <-   bf(
-    Accuracy ~ Fluency_dummy,  # The mean of the 0-1 values, or mu
-    phi ~ Fluency_dummy,  # The precision of the 0-1 values, or phi
-    zi ~ Fluency_dummy,  # The zero-or-one-inflated part, or alpha
+zib_model <- bf(
+  Accuracy ~ Fluency_dummy, # The mean of the 0-1 values, or mu
+  phi ~ Fluency_dummy, # The precision of the 0-1 values, or phi
+  zi ~ Fluency_dummy, # The zero-or-one-inflated part, or alpha
   family = zero_inflated_beta()
 )
-
 ```
 
 Below we pass `zib_model` to the `brm` function.
@@ -1070,11 +1080,11 @@ Below we pass `zib_model` to the `brm` function.
 #| echo: true
 fit_zi <- brm(
   formula = zib_model,
-  data = data_beta_0, 
+  data = data_beta_0,
   cores = 4,
-  iter = 2000, 
-  warmup = 1000, 
-  seed = 1234, 
+  iter = 2000,
+  warmup = 1000,
+  seed = 1234,
   backend = "cmdstanr",
   file = "model_beta_bayes_zib"
 )
@@ -1083,13 +1093,15 @@ fit_zi <- brm(
 ```{r}
 #| label: tbl-brms-zib
 #| tbl-cap: Model summary (posterior distribution) for zero-inflated beta model
-#| 
-model_parameters(fit_zi, "mean")%>%
-      rename(CIlow="CI_low",CIhigh="CI_high") %>% 
-  mutate(Parameter=str_remove_all(Parameter, "_"),
-         Component=str_remove_all(Component, "_")) %>% 
+#|
+model_parameters(fit_zi, "mean") %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high") %>%
+  mutate(
+    Parameter = str_remove_all(Parameter, "_"),
+    Component = str_remove_all(Component, "_")
+  ) %>%
   tt() %>%
-  format_tt(digits=3)
+  format_tt(digits = 3)
 ```
 
 #### Predicted probabilities and marginal effects
@@ -1101,11 +1113,10 @@ We can use `marginaleffects` to get get the predicted probability from our model
 #| tbl-cap: Predicted probablities (zero-inflated) for fluency factor
 #| echo: true
 
-fit_zi %>% 
- avg_predictions(variables = "Fluency_dummy", dpar="zi") %>%
-  rename(FluencyDummy="Fluency_dummy") %>% 
-  tt(digits=3)
-
+fit_zi %>%
+  avg_predictions(variables = "Fluency_dummy", dpar = "zi") %>%
+  rename(FluencyDummy = "Fluency_dummy") %>%
+  tt(digits = 3)
 ```
 
 ```{r}
@@ -1115,12 +1126,14 @@ fit_zi %>%
 #| message: false
 #
 
-zi_plot <- plot_predictions(fit_zi, by = c("Fluency_dummy"), dpar="zi") + 
-  theme_lucid(base_size=14)+
-    scale_x_discrete(breaks=c("0","1"),
-        labels=c("Fluent", "Disfluent")) + 
-scale_y_continuous(labels = label_percent()) +
-  labs(x="Fluency", y="Probablity of 0")
+zi_plot <- plot_predictions(fit_zi, by = c("Fluency_dummy"), dpar = "zi") +
+  theme_lucid(base_size = 14) +
+  scale_x_discrete(
+    breaks = c("0", "1"),
+    labels = c("Fluent", "Disfluent")
+  ) +
+  scale_y_continuous(labels = label_percent()) +
+  labs(x = "Fluency", y = "Probablity of 0")
 
 zi_plot
 ```
@@ -1128,19 +1141,20 @@ zi_plot
 @tbl-marg-zib-brms displays the risk difference between each level of fluency. With a Bayesian implementation we get 95% credible intervals and we see the difference is significant.
 
 ```{r}
-#| echo: true 
+#| echo: true
 #| tbl-cap: Risk difference (zero-inflated) for fluency factor
-#| label: tbl-marg-zib-brms 
-#| 
+#| label: tbl-marg-zib-brms
+#|
 
-fit_zi %>% 
-  avg_comparisons(variables = "Fluency_dummy", dpar="zi", comparison = "difference") %>%
-  mutate(term=str_remove(term, "_")) %>% 
-  rename(PredictedLow="predicted_lo",
-         PredictedHigh="predicted_hi",
-         tmpIDX="tmp_idx") %>% 
-  tt(digits=3) 
-
+fit_zi %>%
+  avg_comparisons(variables = "Fluency_dummy", dpar = "zi", comparison = "difference") %>%
+  mutate(term = str_remove(term, "_")) %>%
+  rename(
+    PredictedLow = "predicted_lo",
+    PredictedHigh = "predicted_hi",
+    tmpIDX = "tmp_idx"
+  ) %>%
+  tt(digits = 3)
 ```
 
 ## Zero-one inflated beta (ZOIB)
@@ -1158,11 +1172,11 @@ We use the `bf` function again to fit models for our four parameters. We use the
 
 # fit the zoib model
 
-zoib_model <-   bf(
-    Accuracy ~ Fluency_dummy,  # The mean of the 0-1 values, or mu
-    phi ~ Fluency_dummy,  # The precision of the 0-1 values, or phi
-    zoi ~ Fluency_dummy,  # The zero-or-one-inflated part, or alpha
-    coi ~ Fluency_dummy,   # The one-inflated part, conditional on the 0s, or gamma
+zoib_model <- bf(
+  Accuracy ~ Fluency_dummy, # The mean of the 0-1 values, or mu
+  phi ~ Fluency_dummy, # The precision of the 0-1 values, or phi
+  zoi ~ Fluency_dummy, # The zero-or-one-inflated part, or alpha
+  coi ~ Fluency_dummy, # The one-inflated part, conditional on the 0s, or gamma
   family = zero_one_inflated_beta()
 )
 ```
@@ -1175,15 +1189,15 @@ We then pass the `zoib_model` to our `brm` function. The summary of the output i
 #| results: hide
 #| message: false
 
-# run the zoib mode using brm 
+# run the zoib mode using brm
 
 fit_zoib <- brm(
   formula = zoib_model,
-  data = fluency_data, 
+  data = fluency_data,
   chains = 4, iter = 2000, warmup = 1000,
-  cores = 4, seed = 1234, 
+  cores = 4, seed = 1234,
   backend = "cmdstanr",
-  file = "model_beta_zoib_1" 
+  file = "model_beta_zoib_1"
 )
 ```
 
@@ -1194,12 +1208,12 @@ fit_zoib <- brm(
 #| tbl-cap-location: "top"
 
 
-zoib_model <- parameters::model_parameters(fit_zoib, "mean") %>% 
-    rename(CIlow="CI_low",CIhigh="CI_high") %>% 
-  mutate(Parameter=str_remove_all(Parameter, "_"))
+zoib_model <- parameters::model_parameters(fit_zoib, "mean") %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high") %>%
+  mutate(Parameter = str_remove_all(Parameter, "_"))
 
 zoib_model %>%
- tt(digits=3)
+  tt(digits = 3)
 ```
 
 ### Model parameters
@@ -1213,7 +1227,6 @@ Should we show how to combine all the submodels and plot the overall effect here
 ### Plotting ZOIB
 
 ```{r}
-
 ```
 
 ## Ordered beta regression
@@ -1226,10 +1239,12 @@ We can run an ordered beta regression using the `glmmTMB` function and changing 
 
 ```{r}
 #| label: run ordered beta regression
-#| 
-ord_fit <- glmmTMB(formula=Accuracy ~ Fluency_dummy,
-         data=fluency_data,
-         family = ordbeta)
+#|
+ord_fit <- glmmTMB(
+  formula = Accuracy ~ Fluency_dummy,
+  data = fluency_data,
+  family = ordbeta
+)
 ```
 
 ```{r}
@@ -1237,12 +1252,11 @@ ord_fit <- glmmTMB(formula=Accuracy ~ Fluency_dummy,
 
 ord_fit %>%
   model_parameters() %>%
-  mutate(p = round(p, 2)) %>% 
-    rename(CIlow="CI_low",CIhigh="CI_high") %>% 
-  mutate(Parameter=str_remove(Parameter, "_")) %>% 
-   tt(digits = 2) %>%
+  mutate(p = round(p, 2)) %>%
+  rename(CIlow = "CI_low", CIhigh = "CI_high") %>%
+  mutate(Parameter = str_remove(Parameter, "_")) %>%
+  tt(digits = 2) %>%
   format_tt(escape = TRUE)
-
 ```
 
 If we take a look at the summary output in @tbl-ordbeta-glmm, we can interpret the values similar to a beta regression, where the conditional effects are on the log odds scale. Here the `Fluency_dummy1` parameter is not statistically significant, *p* = .05.
@@ -1253,16 +1267,16 @@ Remember these values are on the logit scale so we can take the inverse and get 
 
 ```{r}
 #| label: tbl-ordbeta-pred
-#| tbl-cap: Predicted probablites for flueny factor in  ordered beta regression model 
+#| tbl-cap: Predicted probablites for flueny factor in  ordered beta regression model
 #| echo: true
 
-# get the predicted probablities for each level of fluency 
-avg_predictions(ord_fit, variables="Fluency_dummy") %>%
-  rename(FluencyDummy="Fluency_dummy") %>% 
-  select(-s.value)%>% 
+# get the predicted probablities for each level of fluency
+avg_predictions(ord_fit, variables = "Fluency_dummy") %>%
+  rename(FluencyDummy = "Fluency_dummy") %>%
+  select(-s.value) %>%
   tt(digits = 2) %>%
-    format_tt(j = "p", fn = scales::label_pvalue()) %>%
-  format_tt(escape = TRUE) 
+  format_tt(j = "p", fn = scales::label_pvalue()) %>%
+  format_tt(escape = TRUE)
 ```
 
 We can get the risk difference as well. These values are in @tbl-ordbeta-risk.
@@ -1271,12 +1285,12 @@ We can get the risk difference as well. These values are in @tbl-ordbeta-risk.
 #| label: tbl-ordbeta-risk
 #| tbl-cap: Risk difference for fluency factor in ordered beta model
 #| echo: true
-# get risk difference 
-avg_comparisons(ord_fit,variables="Fluency_dummy",  comparison= "difference") %>%
-      select(-predicted_lo,-predicted_hi,-s.value, -predicted) %>% 
-  mutate(term=str_remove(term, "_")) %>% 
-tt(digits = 2) %>%
-    format_tt(j = "p", fn = scales::label_pvalue()) %>%
+# get risk difference
+avg_comparisons(ord_fit, variables = "Fluency_dummy", comparison = "difference") %>%
+  select(-predicted_lo, -predicted_hi, -s.value, -predicted) %>%
+  mutate(term = str_remove(term, "_")) %>%
+  tt(digits = 2) %>%
+  format_tt(j = "p", fn = scales::label_pvalue()) %>%
   format_tt(escape = TRUE)
 ```
 
@@ -1292,7 +1306,6 @@ We first load the `ordbetareg` package. You can download it from CRAN or from he
 
 # load ordbetareg package
 library(ordbetareg)
-
 ```
 
 The `ordbetareg` package uses `brms` on the front-end so all the arguments we used previously apply here. Instead of the `brm()` function we use `ordbetareg()`.
@@ -1305,12 +1318,12 @@ The `ordbetareg` package uses `brms` on the front-end so all the arguments we us
 
 # use ordbetareg to fit model
 ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy,
-                      data=fluency_data,
-                      chains=4,
-                      iter=2000,
-                      backend="cmdstanr", 
-                      file = "model_beta_ordbeta")
-
+  data = fluency_data,
+  chains = 4,
+  iter = 2000,
+  backend = "cmdstanr",
+  file = "model_beta_ordbeta"
+)
 ```
 
 ## Model parameters
@@ -1325,11 +1338,10 @@ ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy,
 
 ord_fit_brms %>%
   model_parameters() %>%
-      rename(CIlow="CI_low",CIhigh="CI_high") %>% 
-  mutate(Parameter=str_remove_all(Parameter, "_")) %>% 
+  rename(CIlow = "CI_low", CIhigh = "CI_high") %>%
+  mutate(Parameter = str_remove_all(Parameter, "_")) %>%
   tt() %>%
-  format_tt(digits=3)
-
+  format_tt(digits = 3)
 ```
 
 ### Ordered beta model fit
@@ -1343,15 +1355,15 @@ Some reason cant get pdf to render if this figure is labeled
 ```{r}
 #| label: ppcheck
 #| tbl-cap: posterior predictive checks ordered beta regression model
-#| 
+#|
 #| echo: true
 
 plots <- pp_check_ordbeta(ord_fit_brms,
-                          ndraws=100,
-                          outcome_label="Final Test Accuracy")
+  ndraws = 100,
+  outcome_label = "Final Test Accuracy"
+)
 
 plots
-
 ```
 
 The discrete plot which is a bar graph, shows that the posterior distribution accurately captures the number of different types of responses (discrete or continuous) in the data.
@@ -1384,7 +1396,6 @@ Overall, this tutorial serves to highlight the importance of modeling the data y
 # Appendix
 
 ```{r}
-
 ```
 
 # Title for Appendix
