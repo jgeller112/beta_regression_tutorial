@@ -1442,22 +1442,6 @@ ord_fit_brms %>%
   format_tt(digits = 3)
 ```
 
-**\[BOB COMMENT: the one issue here is that the `model_parameters` function is not returning the cutpoints. Not sure why as it is returning phi. We can access those with the default `summary` function or another function from `posterior` like `summarize_draws`\]:**
-
-The model cutpoints are not reported by default, but we can access them with the R package `posterior`:
-
-```{r}
-#| label: tbl-cutpoints
-
-library(posterior)
-
-as_draws(ord_fit_brms, c("cutzero","cutone")) %>% 
-  summarize_draws %>%
-  tt()
-
-```
-
-In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and continuous values) and `cutone` is the second cutpoint (the difference between the continuous values and 1). These cutpoints are on the logit scale and as such the numbers do not have a simple substantive meaning. In general, as the cutpoints increase in absolute value (away from zero), then the discrete/boundary observations are more distinct from the continuous values. This will happen if there is a clear gap or bunching in the outcome around the bounds. This type of empirical feature of the distribution may be useful to scholars if they want to study differences in how people perceive the ends of the scale versus the middle, though the package at present does not permit the direct parameterization of the cutpoints.
 
 
 ## Model parameters
@@ -1467,11 +1451,10 @@ In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and
 @tbl-ordbeta-summ presents the model summary for our model. This summary looks just like the summary for our previous model, with `b_` representing the intercept and fluency contrast of $\mu$. Similar to our above analyses, the CIs include zero and we can say there is no effect fluency. 
 
 ```{r}
-#| label: tbl-ordbeta-summ
+#| label: tbl-ordbeta-summ-brms
 #| tbl-cap: Model summary for ordered beta model
 #| echo: true
 #| eval: false
-
 
 ord_fit_brms %>%
   model_parameters() %>%
@@ -1512,14 +1495,26 @@ m.phi %>%
 
 `b_phi_Fluency_dummy1` is close enough to 0 relative to its uncertainty, we can say that in this case there likely aren’t major differences in variance between the fluent disfluent conditions
 
+The model cutpoints are not reported by default, but we can access them with the R package `posterior`:
+
+```{r}
+#| label: tbl-cutpoints
+
+library(posterior)
+
+as_draws(ord_fit_brms, c("cutzero","cutone")) %>% 
+  summarize_draws %>%
+  tt()
+
+```
+
+
+In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and continuous values) and `cutone` is the second cutpoint (the difference between the continuous values and 1). These cutpoints are on the logit scale and as such the numbers do not have a simple substantive meaning. In general, as the cutpoints increase in absolute value (away from zero), then the discrete/boundary observations are more distinct from the continuous values. This will happen if there is a clear gap or bunching in the outcome around the bounds. This type of empirical feature of the distribution may be useful to scholars if they want to study differences in how people perceive the ends of the scale versus the middle, though the package at present does not permit the direct parameterization of the cutpoints.
 
 ### Ordered beta model fit
 
 The best way to visualize model fit is to plot the full predictive distribution relative to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, a separate plotting function, `pp_check_ordbetareg`, is included in the `ordbetareg` package that accurately handles the unique features of this distribution. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is. The `ordbetareg` function returns a list with two plots, `discrete` and `continuous`, which can either be printed and plotted or further modified as `ggplot2` objects. This can be observed in fig x
 
-::: callout-note
-Some reason cant get pdf to render if this figure is labeled
-:::
 
 ```{r}
 #| label: ppcheck
