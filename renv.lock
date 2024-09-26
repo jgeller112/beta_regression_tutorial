@@ -1450,7 +1450,7 @@
     },
     "insight": {
       "Package": "insight",
-      "Version": "0.20.3",
+      "Version": "0.20.4",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1459,7 +1459,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "19a5e2db13306af8a80d4e605d3cb06e"
+      "Hash": "8457d6e682a49f2c87b698a830527b09"
     },
     "isoband": {
       "Package": "isoband",
@@ -1643,9 +1643,14 @@
     },
     "marginaleffects": {
       "Package": "marginaleffects",
-      "Version": "0.21.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
+      "Version": "0.22.0.3",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "marginaleffects",
+      "RemoteUsername": "vincentarelbundock",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "cf428324d1f6799b659fbf725b7372d0a15afa42",
       "Requirements": [
         "R",
         "Rcpp",
@@ -1655,10 +1660,9 @@
         "generics",
         "insight",
         "methods",
-        "rlang",
-        "utils"
+        "rlang"
       ],
-      "Hash": "ff81d0015a8b37d206b7fbaf8c888578"
+      "Hash": "f554253768e1a937072a5d27f731bb5d"
     },
     "matrixStats": {
       "Package": "matrixStats",
@@ -2687,14 +2691,14 @@
     },
     "tinytable": {
       "Package": "tinytable",
-      "Version": "0.4.0",
+      "Version": "0.4.0.9",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R",
         "methods"
       ],
-      "Hash": "fb44b5c5e35e171b0129b22e7cb35949"
+      "Hash": "9972f1518f61ac0dac463ec841f33e00"
     },
     "tinytex": {
       "Package": "tinytex",
