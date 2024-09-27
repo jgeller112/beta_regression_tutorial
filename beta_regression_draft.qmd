@@ -56,8 +56,8 @@ language:
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
 format:
-    apaquarto-typst:
-     keep-typ: true
+    apaquarto-typst: default
+      # Can be jou (journal), man (manuscript), stu (student), or doc (document)
 execute: 
   warning: false
   message: false
@@ -1043,7 +1043,7 @@ beta_model_0 <- glmmTMB(
 ```{r}
 #| label: beta-model-zero
 #| tbl-cap: Model summary for ZIB model
-#| echo: true
+#| echo: false
 
 # use model_parameters to get the summary coefs
 model_zi <- model_parameters(beta_model_0)
@@ -1064,7 +1064,7 @@ model_zi %>%
 
 @tbl-beta-model-zero provides a summary of the output for our zib model. As before, the 𝜇 parameter estimates, which have the conditional tag in the `Component` column are on the logit scale; while 𝜙 parameter coefficients (tagged as dispersion in the `Component` column) are on the log scale. In addition, the zero-inflated parameter estimates (tagged as zero-inflated in the `Component` column) are on the logit scale.
 
-Looking at the $\mu$ part of the model, there is no significant effect for `Fluency_dummy1`, b = `r round(model_zi$Coefficient[2], 3)` , SE = `r round(beta_model_dis_results$SE[2], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[2], 3)`,`r round(beta_model_dis_results$CI_high[2], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)` . However, for the zero-inflated part of the model, the `Fluency_dummy1` predictor is significant, b = `r round(model_zi$Coefficient[2], 3)` , SE = `r round(beta_model_dis_results$SE[2], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[2], 3)`,`r round(beta_model_dis_results$CI_high[2], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)`. Lastly the dispersion estimate for `Fluency_dummy1` is significant, b = `r round(model_zi$Coefficient[3], 3)` , SE = `r round(beta_model_dis_results$SE[3], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[3], 3)`,`r round(beta_model_dis_results$CI_high[3], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)`.
+Looking at the $\mu$ part of the model, there is no significant effect for `Fluency_dummy1`, b = `r round(model_zi$Coefficient[2], 3)` , SE = `r round(beta_model_dis_results$SE[2], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[2], 3)`,`r round(beta_model_dis_results$CI_high[2], 3)`\], p = `r round(beta_model_dis_results$p[2], 3)` . However, for the zero-inflated part of the model, the `Fluency_dummy1` predictor is significant, b = `r round(model_zi$Coefficient[4], 3)` , SE = `r round(beta_model_dis_results$SE[4], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[4], 3)`,`r round(beta_model_dis_results$CI_high[4], 3)`\], p = `r round(beta_model_dis_results$p[4], 3)`. Lastly the dispersion estimate for `Fluency_dummy1` is significant, b = `r round(model_zi$Coefficient[6], 3)` , SE = `r round(beta_model_dis_results$SE[6], 3)` , 95% CIs = \[`r round(beta_model_dis_results$CI_low[6], 3)`,`r round(beta_model_dis_results$CI_high[6], 3)`\], p = `r round(beta_model_dis_results$p[6], 3)`.
 
 ### Predicted probabilities and marginal effects
 
@@ -1095,7 +1095,7 @@ beta_model_table %>%
 
 ```{r}
 #| echo: true
-#| label: tbl-marg-zib
+#| label: marg-zib
 #| tbl-cap: Risk difference (zero-inflated) for fluency factor
 
 
@@ -1106,6 +1106,18 @@ zob_marg <- beta_model_0 %>%
     comparison = "difference"
   )
 ```
+
+
+```{r}
+#| echo: false
+#| label: tbl-marg-zib
+# get table for 
+zob_marg %>% 
+  as.data.frame()%>%
+  tt(digits = 3)
+
+```
+
 Interpreting the estimates in @tbl-marg-zib, seeing lecture videos with a fluent instructor reduces the proportion of zeros by about 13%, which is statistically significant, b = `r round(zob_marg$estimate, 3)` , SE = `r round(zob_marg$std.error, 3)` , 95% CIs = \[`r round(zob_marg$conf.low, 3)`,`r round(zob_marg$conf.high, 3)`\], p = `r round(zob_marg$p.value, 3)`. Here we have evidence that participants were more likely to do more poorly (have more zeros) after watching a disflueny lecture than a fluent lecture.
 
 ## Bayesian implementation of ZIB
@@ -1148,7 +1160,8 @@ fit_zi <- brm(
 ```{r}
 #| label: tbl-brms-zib
 #| tbl-cap: Model summary (posterior distribution) for zero-inflated beta model
-#|
+#| echo: false
+
 model_parameters(fit_zi, "mean")  %>%
   tt() %>%
   format_tt(digits = 3)
@@ -1159,15 +1172,22 @@ model_parameters(fit_zi, "mean")  %>%
 We can use `marginaleffects` to get get the predicted probability from our model. To get the zero-inflated part the model, we can set `dpar` argument to `zi` in `avg_predictions`. @tbl-brms-zib-predict shows predicted probabilities of zero for each level of fluency. We can easily plot the zero-inflated part of the model using the `plot_predictions` function (see @fig-brms-zib)
 
 ```{r}
-#| label: tbl-brms-zib-predict
-#| tbl-cap: Predicted probablities (zero-inflated) for fluency factor
+#| label: brms-zib-predict
 #| echo: true
 
 fit_zi %>%
-  avg_predictions(variables = "Fluency_dummy", dpar = "zi") %>%
-  rename(FluencyDummy = "Fluency_dummy") %>%
-  tt(digits = 3)
+  avg_predictions(variables = "Fluency_dummy", dpar = "zi")
 
+```
+
+```{r}
+#| label: tbl-brms-zib-predict
+#| tbl-cap: Predicted probablities (zero-inflated) for fluency factor
+#| echo: false
+
+fit_zi %>%
+  avg_predictions(variables = "Fluency_dummy", dpar = "zi") %>%
+  tt()
 ```
 
 ```{r}
@@ -1331,6 +1351,7 @@ If we take a look at the summary output in @tbl-ordbeta-glmm, we can interpret t
 
 @tbl-ordbeta-glmm also includes an overall $\phi$ component. Similar to our other models we can model the variability as a function of fluency. 
 ```{r}
+#| label: glmmtmb ordbeta
 
 ord_fit_dis <- glmmTMB(
   formula = Accuracy ~ Fluency_dummy,
@@ -1354,7 +1375,6 @@ ord_fit_dis %>%
 
 Similar to before, including the dispersion parameter introduces more uncertainty into the $\mu$ estimate. 
 
-
 #### Predicted probabilities and marginal effects
 
 Remember these values are on the logit scale so we can take the inverse and get predicted probabilities like we have done before. These values are shown in @tbl-ordbeta-pred.
@@ -1362,8 +1382,7 @@ Remember these values are on the logit scale so we can take the inverse and get 
 ```{r}
 #| label: tbl-ordbeta-pred
 #| tbl-cap: Predicted probablites for flueny factor in  ordered beta regression model
-#| echo: true
-#| eval: false
+#| echo: false
 
 # get the predicted probablities for each level of fluency
 avg_predictions(ord_fit, variables = "Fluency_dummy") %>%
@@ -1378,8 +1397,7 @@ We can get the risk difference as well. These values are in @tbl-ordbeta-risk.
 ```{r}
 #| label: tbl-ordbeta-risk
 #| tbl-cap: Risk difference for fluency factor in ordered beta model
-#| echo: true
-#| eval: false
+#| echo: false
 # get risk difference
 avg_comparisons(
   ord_fit,
@@ -1435,7 +1453,6 @@ ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy,
 #| tbl-cap: Model summary for ordered beta model
 #| echo: true
 
-
 ord_fit_brms %>%
   model_parameters() %>%
   tt() %>%
@@ -1453,8 +1470,7 @@ ord_fit_brms %>%
 ```{r}
 #| label: tbl-ordbeta-summ-brms
 #| tbl-cap: Model summary for ordered beta model
-#| echo: true
-#| eval: false
+#| echo: false
 
 ord_fit_brms %>%
   model_parameters() %>%
