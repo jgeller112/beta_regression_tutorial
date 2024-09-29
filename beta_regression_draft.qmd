@@ -252,7 +252,6 @@ As a first step, we will load the necessary packages along with the data we will
 
 # packages needed
 library(tidyverse) # tidy functions/data wrangling/viz
-library(gamlss) # run beta regression
 library(glmmTMB) # zero inflated beta
 library(easystats)
 library(gghalves)
@@ -377,7 +376,7 @@ ols_model_new %>%
 
 ## Beta regression approach
 
-Using a traditional approach, we observed instructor fluency impacts actual learning. Keep in mind the traditional approach assumes normality of residuals and homoscadacity. These assumptions are tricky to maintain when the continuous response approaches either the upper or lower boundary of the scale. Does the model meet those assumptions? Using `easystats` [@easystats] and the `check_model` function, we can easily assess this. In @fig-ols-assump , we see there are some issues with our model. Specifically, there appears to be violations of normality and constant variance. 
+Using a traditional approach, we observed instructor fluency impacts actual learning. Keep in mind the traditional approach assumes normality of residuals and homoscadacity. These assumptions are tricky to maintain when the continuous response approaches either the upper or lower boundary of the scale. Does the model meet those assumptions? Using `easystats` [@easystats] and the `check_model` function, we can easily assess this. In @fig-ols-assump , we see there are some issues with our model. Specifically, there appears to be violations of normality and constant variance.
 
 ```{r}
 #| label: fig-ols-assump
@@ -824,7 +823,6 @@ ggplot(data = tibble(x = 0:1), aes(x = x)) +
   theme(legend.position = "bottom")
 ```
 
-
 ```{r}
 #| label: fig-disp-model
 #| fig-cap: Conditional ($\mu$) paramter for beta model with (beta_model_dis) and without (beta_model) disperion parameter by fluency
@@ -835,7 +833,6 @@ plot(compare_parameters(beta_model, beta_model_dis))
 
 
 ```
-
 
 Note how the whole distribution changes when allow precision to differ across levels of `Fluency`. The data doesn't fit the underlying distribution very well. Despite this, this makes clear the importance of including a precision parameter. A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model changed the statistical significance of the $\mu$ coefficient. This suggests that failing to account for the dispersion of the variables might lead to biased estimates (see @fig-disp-model). This highlights the potential utility of an approach like beta regression over a traditional GLM (regression or ANOVA approach), as beta regression can explicitly model dispersion and address issues of heteroscedasticity.
 
@@ -889,6 +886,7 @@ We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages
 #| echo: true
 #|
 # load brms and cmdstanr
+library(rstan)
 library(brms)
 library(cmdstanr) # Use the cmdstanr backend for Stan because it's faster and more modern than
 # the default rstan You need to install the cmdstanr package first
@@ -918,7 +916,7 @@ Using the `bf` function, we specify two models—one for $\mu$ and one for $\phi
 
 beta_brms <- brm(model_beta_bayes,
   data = data_beta,
-  family = beta(),
+  family = Beta(),
   chains = 4,
   iter = 2000,
   warmup = 1000,
@@ -1070,7 +1068,6 @@ Looking at the $\mu$ part of the model, there is no significant effect for `Flue
 
 Similar to above, we can back-transform our estimates to get probabilities. Focusing on the zero-inflated part, we can use the `avg_predictions` function from `marginaleffects` package. Because we are interested in the zero-inflated part of the model we set the `type` argument to `zprob`.
 
-
 ```{r}
 #| label: zero-margeffects
 #| tbl-cap: Predicted probablites (zero-inflated) for flueny factor
@@ -1106,7 +1103,6 @@ zob_marg <- beta_model_0 %>%
     comparison = "difference"
   )
 ```
-
 
 ```{r}
 #| echo: false
@@ -1349,7 +1345,8 @@ If we take a look at the summary output in @tbl-ordbeta-glmm, we can interpret t
 
 ###### $\phi$
 
-@tbl-ordbeta-glmm also includes an overall $\phi$ component. Similar to our other models we can model the variability as a function of fluency. 
+@tbl-ordbeta-glmm also includes an overall $\phi$ component. Similar to our other models we can model the variability as a function of fluency.
+
 ```{r}
 #| label: glmmtmb ordbeta
 
@@ -1373,7 +1370,7 @@ ord_fit_dis %>%
   format_tt(escape = TRUE)
 ```
 
-Similar to before, including the dispersion parameter introduces more uncertainty into the $\mu$ estimate. 
+Similar to before, including the dispersion parameter introduces more uncertainty into the $\mu$ estimate.
 
 #### Predicted probabilities and marginal effects
 
@@ -1443,7 +1440,6 @@ ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy,
 )
 ```
 
-
 ## Model parameters
 
 @tbl-ordbeta-summ presents the model summary for our model.
@@ -1459,13 +1455,11 @@ ord_fit_brms %>%
   format_tt(digits = 3)
 ```
 
-
-
 ## Model parameters
 
 ### $\mu$
 
-@tbl-ordbeta-summ presents the model summary for our model. This summary looks just like the summary for our previous model, with `b_` representing the intercept and fluency contrast of $\mu$. Similar to our above analyses, the CIs include zero and we can say there is no effect fluency. 
+@tbl-ordbeta-summ presents the model summary for our model. This summary looks just like the summary for our previous model, with `b_` representing the intercept and fluency contrast of $\mu$. Similar to our above analyses, the CIs include zero and we can say there is no effect fluency.
 
 ```{r}
 #| label: tbl-ordbeta-summ-brms
@@ -1480,7 +1474,7 @@ ord_fit_brms %>%
 
 ### $\phi$
 
-@tbl-ordbeta-summ also includes an overall phi component. Similar to our other models we can model the variability as a function of fluency. Let’s try this in our model: 
+@tbl-ordbeta-summ also includes an overall phi component. Similar to our other models we can model the variability as a function of fluency. Let’s try this in our model:
 
 ```{r}
 #| label: brms ordered beta model phi
@@ -1524,13 +1518,11 @@ as_draws(ord_fit_brms, c("cutzero","cutone")) %>%
 
 ```
 
-
 In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and continuous values) and `cutone` is the second cutpoint (the difference between the continuous values and 1). These cutpoints are on the logit scale and as such the numbers do not have a simple substantive meaning. In general, as the cutpoints increase in absolute value (away from zero), then the discrete/boundary observations are more distinct from the continuous values. This will happen if there is a clear gap or bunching in the outcome around the bounds. This type of empirical feature of the distribution may be useful to scholars if they want to study differences in how people perceive the ends of the scale versus the middle, though the package at present does not permit the direct parameterization of the cutpoints.
 
 ### Ordered beta model fit
 
 The best way to visualize model fit is to plot the full predictive distribution relative to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, a separate plotting function, `pp_check_ordbetareg`, is included in the `ordbetareg` package that accurately handles the unique features of this distribution. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is. The `ordbetareg` function returns a list with two plots, `discrete` and `continuous`, which can either be printed and plotted or further modified as `ggplot2` objects. This can be observed in fig x
-
 
 ```{r}
 #| label: ppcheck
@@ -1552,19 +1544,25 @@ For the continuous plot shown as a density plot with one line per posterior draw
 
 Overall, it is clear from the posterior distribution plot that the ordered beta model fits the data well. To fully understand model fit, both of these plots need to be inspected as they are conceptually distinct.
 
-# Conclusion
+# Dicussion
 
 The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to change this. beta regression models are an attractive alternative to models subsumed under the GLM, which imposes the unrealistic assumptions of normality, linearity, homoscedasticity, and requires the data to be unbounded. Beyond the GLM, there is a diverse array of different models that can be used depending on your outcome of interest.
 
 Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of it's alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results.
 
-Comparing our analysis with that conducted by @wilford2020 we demonstrated that using the traditional approach (i.e., *t*-test) to analyze accuracy data can lead to inaccurate inferences. While we did reproduce the results from @wilford2020, our use of a beta regression model, which accounts for both the mean and precision/dispersion, revealed no significant effect of fluency. By fitting a zero-inflated beta model, which models the structural 0s in the data, we did find an effect of fluency, but not on the mean component. We found an effect of fluency on the zero-inflated component. Specifically, those in the disfluent condition were more likely to perform more poorly (with a higher probability of 0s). Here, we see fluency does not affect mean accuracy, but instead influences the structural zero part of the model. Fluency might influence specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This finding has important theoretical implications and should be included in discussions of fluency effects. Additionally, we demonstrated how to fit data with zeros and ones using the ZOIB and ordered beta models. These analyses Again these analyses highlighted the importance of fitting a model to the data you have.
+Comparing our analysis with that conducted by @wilford2020 we demonstrated that using the traditional approach (i.e., *t*-test) to analyze accuracy data can lead to inaccurate inferences. While we did reproduce the results from @wilford2020, our use of a beta regression model, which accounts for both the mean and precision/dispersion, revealed no significant effect of fluency. By fitting a zero-inflated beta model, which models the structural 0s in the data, we did find an effect of fluency, but not on the mean component. We found an effect of fluency on the zero-inflated component. Specifically, those in the disfluent condition were more likely to perform more poorly (with a higher probability of 0s). Here, we see fluency does not affect mean accuracy, but instead influences the structural zero part of the model. Fluency might influence specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. If replicable, this finding has potentially important theoretical implications and should be included in discussions of fluency effects. [^9]Additionally, we demonstrated how to fit data with zeros and ones using the ZOIB and ordered beta models. These analyses Again these analyses highlighted the importance of fitting a model to the data you have.
+
+[^9]: It seems that previous studies of instructor fluency have less 0s in their data. This particular finding might not be replicable and further research is needed.
 
 Overall, this tutorial serves to highlight the importance of modeling the data you have. Modeling your data appropriately can provide deeper and richer insights than those obtained through traditional measures. With this tutorial, researchers now have some tools to analyze their data properly, allowing them to uncover patterns, make accurate predictions, and support their findings with robust statistical evidence. By leveraging these modeling techniques, researchers can enhance the validity and reliability of their studies, leading to more informed decisions and advancements in their respective fields.
 
-## Hierarchical of sins
+Not everyone will be eager to implement the techniques discussed herein, and there are several reasons for that. One reason is a lack of familiarity with these methods. Another reason is tradition and not wanting to make the change. In such cases, the question becomes: what is the least problematic approach to handling proportional data?
 
-"I don't want to change, what is the least bad option here?"
+One option is to fit multiple models tailored to your specific use case. For example, if your data contains zeros, you could fit two models: a traditional OLS analysis without the zeros, and a logistic model to account for the zero/non-zero distinction. If your data contains both ones and zeros, you could fit separate models for the zeros and ones in addition to the OLS model. We do not recommend transforming the values of your data.
+
+## Conclusion
+
+This tutorial has emphasized the importance of carefully selecting appropriate models for proportional or percentage outcomes, with a focus on beta regression and its alternatives. Ultimately, this tutorial equips researchers with tools to properly analyze their data, leading to more valid, reliable, and insightful conclusions. By embracing these techniques, researchers can enhance the quality of their findings and push their respective fields forward with robust, data-driven evidence.
 
 # References
 
