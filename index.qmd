@@ -55,9 +55,6 @@ language:
   title-block-correspondence-note: "Correspondence concerning this article should be addressed to"
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
-format:
-    apaquarto-typst: default
-      # Can be jou (journal), man (manuscript), stu (student), or doc (document)
 execute: 
   warning: false
   message: false
