@@ -17,3 +17,6 @@
 
 # Model files
 **/*.rds
+
+/.quarto/
+_freeze/
