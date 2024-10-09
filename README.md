@@ -4,6 +4,10 @@ RStudio: [![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/
 
 A tutorial paper on beta regression highlighting how to run a beta regression and some of its alternatives with a real-world dataset.
 
+## Reproduce
+
+The tutorial is written as a [Quarto](https://quarto.org/) document. Steps to reproduce our computations and create the output documents are in `Makefile`, to run those simply run `make` in your terminal. To develop and preview documents locally, run `quarto preview`. 
+
 # Renv
 
 This repository has `renv` included in order to allow you to load the same packages that were used to compile the Quarto notebook. To do so, first run this command to check which packages on your machine have different versions:
