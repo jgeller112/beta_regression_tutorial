@@ -55,6 +55,7 @@ language:
   title-block-correspondence-note: "Correspondence concerning this article should be addressed to"
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
+csl: apa.csl
 execute: 
   warning: false
   message: false
@@ -70,7 +71,7 @@ The issues related to analyzing proportional data are not new (see [@bartlett193
 
 In this tutorial, we plan to (a) give a brief, non-technical overview of the principles underlying beta regression, (b) walk-through an empirical example of applying beta regression using popular frequentist and Bayesian packages in the popular R programming language and (c) highlight the the extensions which are most relevant to researchers in psychology (e.g., zero-inflated, zero-one-inflated, and ordered beta regressions).
 
-To follow this tutorial it is recommended that readers be familiar with the popular open source programming language R [@R][^1] and have a basic understanding of regression and generalized linear models. To increase computationally reproducibility, we integrate key code chunks into the main text throughout so the reader can follow along. [^2]In addition, this manuscript was written in Quarto. All the code and data is publicly available at this location: \[link forthcoming\].
+To follow this tutorial it is recommended that readers be familiar with the popular open source programming language R [@R] and have a basic understanding of regression and generalized linear models. To increase computationally reproducibility, we integrate key code chunks into the main text throughout so the reader can follow along. [^2]In addition, this manuscript was written in Quarto. All the code and data is publicly available at this location: \[link forthcoming\].
 
 [^1]: We also highlight how to preform these models using Python
 
