@@ -23,6 +23,7 @@ format:
       - text: GitHub Repository
         href: https://github.com/jgeller112/beta_regression_tutorial
         icon: github
+    code-links: binder
 
 execute:
   freeze: auto
