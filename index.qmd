@@ -1601,7 +1601,7 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 
 In the `ordbetareg` function there is a `true_bound` argument. In the case where you data in not bounded between 0-1, you can use the argument to specify the bounds of the argument to fit the ordered beta regression. 
 
-# Dicussion
+# Discussion
 
 The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to change this. beta regression models are an attractive alternative to models subsumed under the GLM, which imposes the unrealistic assumptions of normality, linearity, homoscedasticity, and requires the data to be unbounded. Beyond the GLM, there is a diverse array of different models that can be used depending on your outcome of interest.
 
