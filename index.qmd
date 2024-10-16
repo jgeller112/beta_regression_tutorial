@@ -32,28 +32,9 @@ author-note:
     financial-support: ~
     gratitude: ~
     authorship-agreements: ~
-abstract: "Rates, percentages, and proportional data are widespread in psychology and social sciences. These data are usually analyzed with methods falling under the general linear model, which are not ideal for this type of data. A better alternative is the beta regession model which is based on the beta distribution. A beta regression can be used to model continuous outcomes that are non-normal,non-linear, heteroscedastic, and bounded between an upper and lower interval, such as proportions and percentiles. Thus, the beta regression model is well-suited to examine outcomes in psycholgical research expressed as proportions, percentages, or ratios. The overall purpose of this tutorial is to give researchers a hands-on demonstration of how to use beta regression using a real example from the psychological literature. First, we introduce the beta distribution and the beta regression model highlighting crucial components and assumptions. Second, we highlight how to conduct a beta regression in R  using an example dataset from the learning and memory literature. Some extensions of the beta model are then discussed (e.g., zero-inflated, zero- one-inflated, and ordered beta). We present accompanying R code throughout. All code to reproduce this paper can be found on Github: link forthcoming "
+abstract: "Rates, percentages, and proportions are common in psychology and the social sciences, and usually treated as normally distributed. This practice, however, ignores salient features in the data, such as its natural limits at 0 and 1, and can thus lead to distorted estimates. Treating such outcomes as beta-distributed, instead, acknowledges these salient features and therefore leads to more accurate estimates. The adoption of such models remains limited, however. Our purpose is to guide researchers in using the beta distribution through illustrative analyses of a real example from the psychological literature. First, we introduce the beta distribution and the beta regression model highlighting crucial components and assumptions. Second, we show how to conduct a beta regression in R using an example dataset from the learning and memory literature. We then discuss extensions of the beta model, such as zero-inflated, zero- and one-inflated, and ordered beta models. To facilitate these analyses' more widespread adoption, we present a detailed code supplement at [todo]."
 keywords: [beta regression, tutorial, psychology, learning and memory]
-floatsintext: true
-# Numbered lines (.pdf and .docx only)
-numbered-lines: false
-# File with references
-suppress-title-page: false
-# Link citations to references
 link-citations: true
-# Masks references that appear in the masked-citations list
-mask: false
-# Language options. See https://quarto.org/docs/authoring/language.html
-lang: en
-language:
-  citation-last-author-separator: "and"
-  citation-masked-author: "Masked Citation"
-  citation-masked-date: "n.d."
-  citation-masked-title: "Masked Title"
-  email: "Email"
-  title-block-author-note: "Author Note"
-  title-block-correspondence-note: "Correspondence concerning this article should be addressed to"
-  title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
 execute: 
   warning: false
