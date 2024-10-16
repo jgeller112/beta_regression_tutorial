@@ -33,7 +33,7 @@ author-note:
     gratitude: ~
     authorship-agreements: ~
 abstract: "Rates, percentages, and proportions are common in psychology and the social sciences, and usually treated as normally distributed. This practice, however, ignores salient features in the data, such as its natural limits at 0 and 1, and can thus lead to distorted estimates. Treating such outcomes as beta-distributed, instead, acknowledges these salient features and therefore leads to more accurate estimates. The adoption of such models remains limited, however. Our purpose is to guide researchers in using the beta distribution through illustrative analyses of a real example from the psychological literature. First, we introduce the beta distribution and the beta regression model highlighting crucial components and assumptions. Second, we show how to conduct a beta regression in R using an example dataset from the learning and memory literature. We then discuss extensions of the beta model, such as zero-inflated, zero- and one-inflated, and ordered beta models. To facilitate these analyses' more widespread adoption, we present a detailed code supplement at [todo]."
-keywords: [beta regression, tutorial, psychology, learning and memory]
+keywords: [statistics, beta models, tutorial, psychology, learning and memory]
 link-citations: true
 bibliography: bibliography.bib
 execute: 
