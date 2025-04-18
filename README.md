@@ -1,6 +1,6 @@
 This repository contains  materials and code for our manuscript "A Beta model" 
 
-
+```
 beta_regression_tutorial/
 |-- README.md (project directory information)
 |-- data
@@ -12,7 +12,7 @@ beta_regression_tutorial/
 |-- bibliography.bib (references for paper)
 |-- default.nix 
 |-- create_env_dev.R
-
+```
 
 ## Overview
 
