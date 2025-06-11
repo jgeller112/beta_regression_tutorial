@@ -78,7 +78,7 @@ To reproduce the manuscript, you will need the following if not using rix/nix:
 Clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/jgeller112/nix_beta_regression_ms.git
+git clone https://github.com/jgeller112/beta_regression_tutorial.git
 cd nix_beta_regression_ms
 ```
 - You can also clone the repository from Github using the SSH and opeining a project in RStudio/Positron. 
@@ -102,7 +102,7 @@ Once in the shell, You can:
 1. Reproduce the manuscript
 
 ```
-quarto render "~/_manuscript/ms.qmd"
+quarto render "~/manuscript/ms.qmd"
 ```
 
 
@@ -188,9 +188,9 @@ cmdstanr::install_cmdstan()
 <img width="2083" alt="Screenshot 2025-03-18 at 1 57 14 PM" src="https://github.com/user-attachments/assets/003c7cfa-393b-408d-8aa6-99bb25f0adfe" />
 
 
-2.  Open `nix-beta_reg_ms.Rproj` to open a new RStudio project.
+2.  Open `beta_regression_tutorial.Rproj` to open a new RStudio project.
 
-3.  Open `/_manuscript/ms.qmd`
+3.  Open `/manuscript/ms.qmd`
 
 4.  Run each chunk in the manuscript
 
