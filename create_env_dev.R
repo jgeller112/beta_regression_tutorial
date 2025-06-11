@@ -5,6 +5,8 @@
 required_packages  = c("tidyverse", "brms", "quarto", "tinytable", "marginaleffects", "extraDistr","easystats",
                        "scales", "tidybayes","ggrain", "posterior", "ggokabeito", "patchwork", "cowplot", "viridis", "collapse", "transformr")
 
+library(rix)
+
 rix(date = "2025-04-07",
     r_pkgs = required_packages, 
     system_pkgs = c("quarto", "git", "pandoc", "typst", "stanc", "tbb"),
