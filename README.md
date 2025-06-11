@@ -23,6 +23,7 @@ beta_regression_tutorial/
 
 ## Overview
 
+- **`.github`**: contains render_paper.yml that builds the manuscript using nix anew every time it detects a new change
 - **`.Rprofile`**: Configuration file for R sessions.
 - **`.gitignore`**: Specifies files and directories for Git to ignore.
 - **`Rproj`**: RStudio project file.
