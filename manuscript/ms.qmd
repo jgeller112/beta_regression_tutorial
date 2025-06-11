@@ -1,5 +1,5 @@
 ---
-title: "A Beta Way: A Tutorial For Using Beta Regression in Pychological Research to Analyze Proportional and Percentage Data"
+title: "A Beta Way: A Tutorial For Using Beta Regression in Pychological Research"
 shorttitle: "Beta Regression Tutorial"
 author:
   - name: Jason Geller
