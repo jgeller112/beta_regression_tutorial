@@ -113,7 +113,7 @@ or
 
 - Positron
   - To use Positron from the shell you will need to make sure the correct path is set (see https://github.com/posit-dev/positron/discussions/4485#discussioncomment-10456159). Once this is done you can open Positron from the shell
-
+  - If you are using Positron within WSL/Windows you need to download WSL for positron and direnv in Positron.
 ```bash
 positron
 ```
