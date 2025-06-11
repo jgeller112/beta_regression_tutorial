@@ -5,7 +5,7 @@ author:
   - name: Jason Geller
     corresponding: true
     orcid: 0000-0002-7459-4505
-    email: drjasongeller@gmail.com
+    email: gellerja@bc.edu
     affiliations:
       - name: Boston College
         department: Department of Psychology and Neuroscience
