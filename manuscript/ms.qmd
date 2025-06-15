@@ -540,7 +540,7 @@ brms_model_new %>%
 
 ```
 
-@tbl-brms-ols displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. Comparing results with the OLS model we ran above our results are very similar. Additionally, the parameters can be interpreted in a similar manner. There are some notable differences, such as the absence of *t*- and *p*-values. There is a metric in the table that is included with models fit when using the `bayestestr` function from `easystats` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values (see [@makowski2019; @makowski2019a]). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending omn the package being used) to see if it includes 0--if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the `CI_low` and `CI_high` columns.
+@tbl-brms-ols displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. Comparing results with the OLS model we ran above our results are very similar. Additionally, the parameters can be interpreted in a similar manner. There are some notable differences, such as the absence of *t*- and *p*-values. There is a metric in the table that is included with models fit when using the `bayestestr` function from `easystats` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values (see [@makowski2019; @makowski2019a]). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending on the package being used) to see if it includes 0--if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the 95% CrIs column.
 
 The `b_Intercept` value refers to the accuracy in the fluent condition (because we dummy coded our variable). The Fluency coefficient (`b_Fluency_dummy1`) highlights the difference between the fluent and disfluent conditions, b = `r round(brms_model_new$Mean[2], 3)`, 95% CrIs = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. These results map onto the results from the regression analysis above.
 
@@ -649,7 +649,7 @@ No errors this time! We will perform the Beta regression using the nudged values
 
 ```{r}
 #| label: tbl-beta-brms
-#| tbl-cap: Posterior summary  for beta regression using `brms`
+#| tbl-cap: Regression coefficients of a beta regression `(beta_brms` model).
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -667,7 +667,8 @@ model_parameters(beta_brms, "mean") %>%
 
 ```{r}
 #| label: tbl-beta-mu
-#| tbl-cap: $\mu$ parameter posterior summary 
+#| tbl-cap: Regression coefficients for $\mu$ parameter (`beta_brms` model)
+#| 
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -900,7 +901,7 @@ beta_brms_dis <- brm(model_beta_bayes_disp,
 
 ```{r}
 #| label: tbl-beta-mu-dis
-#| tbl-cap: $\mu$ and $\phi$ posterior summary 
+#| tbl-cap: Regression coefficients for $\mu$ and $\phi$  parameters (`beta_brms_dis` model)
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -999,15 +1000,15 @@ pp_check(beta_brms_dis, ndraws = 100)  + # ndraws is nu
 
 A limitation of the beta regression model is it can can only model values between 0 and 1, but not exactly 0 or 1. In our dataset we have 9 rows with `Accuracy` equal to zero.
 
-To use the Beta distribution we nudged our zeros to 0.01--which is never a good idea in practice. In our case it might be important to model the structural zeros in our data, as fluency of instructor might be an important factor in predicting the zeros in our model. There is a model called the zero-inflated beta (ZIB) model that takes into account the structural 0s in our data. We’ll still model the $\mu$ and $\phi$ (or mean and precision) of the beta distribution, but now we’ll also add one new special parameter: $\alpha$.
+To use the Beta distribution we nudged our zeros to 0.01--which is never a good idea in practice. In our case it might be important to model the structural zeros in our data, as fluency of instructor might be an important factor in predicting the zeros in our model. There is a model called the zero-inflated beta (ZIB) model that takes into account the structural 0s in our data. We’ll still model the $\mu$ and $\phi$ (or mean and precision) of the Beta distribution, but now we’ll also add one new special parameter: $\alpha$.
 
 With zero-inflated regression, we’re actually modelling a mixture of the data-generating process. The $\alpha$ parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset of with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.
 
-We can fit a ZIB model using `brms` and use the `marginaleffects` package to make inferences about our parameters of interest. Similar to our Beta regression model we fit in `brms`, we will use the `bf()` function to fit several models. We fit our $\mu$ and $\phi$ parameters as well as our zero-inflated parameter ($\alpha$; here labeled as `zi`). In `brms` we can use the zero_inflated_beta family.
+We can fit a ZIB model using `brms` and use the `marginaleffects` package to make inferences about our parameters of interest. Before we run a zero-inflated beta model, we will need to transform `fluency_data` again and nudge our 1s to .99--we can keep our zeros. Similar to our Beta regression model we fit in `brms`, we will use the `bf()` function to fit several models. We fit our $\mu$ and $\phi$ parameters as well as our zero-inflated parameter ($\alpha$; here labeled as `zi`). In `brms` we can use the zero_inflated_beta family.
 
 ```{r}
 #| label: change 1s
-#| echo: true
+#| echo: false 
 # keep 0 but transform 1 to .99
 data_beta_0 <- fluency_data %>%
   mutate(Accuracy = ifelse(Accuracy == 1, .99, Accuracy))
@@ -1063,7 +1064,7 @@ model_parameters(fit_zi, "mean")  %>%
 
 ### Predicted Probabilities and Marginal Effects
 
-@tbl-brms-zib provides a summary of the posterior distribution for each parameter. As stated before, it is preferable to back-transform our estimates to get probabilities. We can model the parameters separately using the `dpar` argument setting to: $\mu$, $\phi$, $\alpha$. To get the predicted probabilities we can use the `avg_predictions()` function and to get risk difference between the levels of each factor we can use the `avg_comparisons()` function from `marginaleffects` package. Here we look at the risk difference for Fluency under each parameter.
+@tbl-brms-zib provides a summary of the posterior distribution for each parameter. As stated before, it is preferable to back-transform our estimates to get probabilities. We can model the parameters separately using the `dpar` argument setting to: $\mu$, $\phi$, $\alpha$. To get the predicted probabilities we can use the `avg_predictions()` function and to get risk difference between the levels of each factor we can use the `avg_comparisons()` function from `marginaleffects` package [@marginaleffects]. Here we look at the risk difference for Fluency under each parameter.
 
 #### Mean ($\mu$)
 
@@ -1081,7 +1082,7 @@ marg_zi_brms <- fit_zi %>%
 
 ```{r}
 #| label: tbl-marg-mu-brms
-#| tbl-cap:  Risk difference (mu) for fluency factor
+#| tbl-cap:  Risk difference ($\mu$) for fluency factor
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -1115,7 +1116,7 @@ marg_phi_brms <- fit_zi %>%
 
 ```{r}
 #| label: tbl-marg-phi-brms
-#| tbl-cap:  Risk difference (Phi) for fluency factor
+#| tbl-cap:  Risk difference ($\phi$) for fluency factor
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -1150,7 +1151,7 @@ marg_zi_brms <- fit_zi %>%
 
 ```{r}
 #| label: tbl-marg-zib-brms
-#| tbl-cap: Posterior summary of the risk difference (zero-inflated) for fluency factor
+#| tbl-cap: Regression coefficients for ZIB model (`marg_zi_brms`)
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -1303,7 +1304,7 @@ ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy,
 
 ```{r}
 #| label: tbl-ordbeta-summ
-#| tbl-cap: Model summary for ordered beta model
+#| tbl-cap: Regression coefficients for ordered beta regression  (`ord_fit_brms` model)
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -1347,7 +1348,7 @@ Note the addition of the `phi_reg` argument. This argument allows us to include 
 
 ```{r}
 #| label: tbl-phi-ordbeta
-#| tbl-cap: Model summary ordered beta regression with dispersion
+#| tbl-cap: Regression coefficients for ordered beta regression with disperison for fluency (`m_phi` model)
 #| echo: false
 #| after-caption-space: 0pt
 
