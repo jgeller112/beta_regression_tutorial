@@ -608,15 +608,15 @@ fluency_data %>%
    format_tt(escape = TRUE)
 ```
 
-Looking at our dataset (\@tbl-01s) shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\]. In the below code we use the `ifelse()` function from `tidyverse` package [@wickham2017] to change our zeros to .01 and ones to .99.
+Looking at our dataset (\@tbl-01s) shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\]. In the below code, the object `data_beta` has the transformed accuracy values that we will use to re-run our Beta regression.
 
 ```{r}
-#| echo: true
 
 # transform 0 to 0.1 and 1 to .99
 data_beta <- fluency_data %>%
   mutate(
-    Accuracy = ifelse(Accuracy == 0, .01, ifelse(Accuracy == 1, .99, Accuracy))
+    Accuracy = ifelse(Accuracy == 0, .01, 
+                      ifelse(Accuracy == 1, .99, Accuracy))
   )
 ```
 
@@ -704,6 +704,8 @@ library(marginaleffects)
 #| eval: false
 #| echo: true
 
+# use predictions to get predicted probs for each condition
+
 predictions(beta_brms,
   newdata = datagrid(Fluency_dummy = c("0", "1"))
 )
@@ -715,7 +717,6 @@ predictions(beta_brms,
 #| tbl-cap-location: top
 #| echo: false
 #| after-caption-space: 0pt
-
 
 # get the predicted probablities for each level of fluency
 predictions(beta_brms,
@@ -732,7 +733,7 @@ predictions(beta_brms,
   format_tt(escape=TRUE)
 ```
 
-For the `Fluency` factor, we can interpret the estimate column in terms of proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 26% for those who watched the disfluent instructor.
+For the `Fluency` factor, we can interpret the `Mean` column in terms of proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 26% for those who watched the disfluent instructor.
 
 We can also easily visualize these from `marginaleffects` using the `plot_predictions` function. After using this function, the proportions are visualized in @fig-plot-pre.
 
