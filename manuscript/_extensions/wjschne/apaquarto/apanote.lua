@@ -14,12 +14,14 @@ local function getnote(m)
     end
 end
 
+local utilsapa = require("utilsapa")
+
 local function apanote(elem)
   if elem.attributes["apa-note"] then
       hasnote = true
       -- If div contains another div with apa-note, do nothing
       elem.content:walk {
-        Div = function(div) 
+        Div = function(div)
           if div.attributes["apa-note"] then
             hasnote = false
           end
@@ -27,13 +29,11 @@ local function apanote(elem)
       }
       if hasnote then
         -- Make note
-        local apanotepara = pandoc.Para({pandoc.Emph(pandoc.Str(beginapanote)), pandoc.Str("."),pandoc.Space()})
-        apanotepara.content:extend(quarto.utils.string_to_inlines(elem.attributes["apa-note"]))
-        local apanote = pandoc.Div(apanotepara)
-        
-        apanote.attributes['custom-style'] = 'FigureNote'
-        apanote.classes:extend({"FigureNote"})
-        return {elem, apanote}
+        prefix = pandoc.Para({pandoc.Emph(pandoc.Str(beginapanote)), pandoc.Str("."),pandoc.Space()})
+        apanotedivs = utilsapa.make_note(elem.attributes["apa-note"], prefix)
+
+
+        return {elem, apanotedivs}
       end
     end
 end

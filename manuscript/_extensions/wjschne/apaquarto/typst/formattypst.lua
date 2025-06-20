@@ -37,14 +37,14 @@ return {
   } ,
   {
     Pandoc = function (doc)
-      -- typst aggressively wants to make first paragraphs after something not intented. 
+      -- typst aggressively wants to make first paragraphs after something not indented. 
       -- APA style wants almost all paragraphs to be indented.
       -- This function inserts a blank  paragraph and then negative vertical space
       -- before any first paragraph. Hoping that typst will fix this and that this function
       -- becomes unnecessary.
       local appendixword = "Appendix"
-      if doc.meta.language and doc.meta.language["section-title-appendix"] then
-        appendixword = pandoc.utils.stringify(doc.meta.language["section-title-appendix"])
+      if doc.meta.language and doc.meta.language["crossref-apx-prefix"] then
+        appendixword = pandoc.utils.stringify(doc.meta.language["crossref-apx-prefix"])
       end
       
       for i = #doc.blocks, 1, -1 do
