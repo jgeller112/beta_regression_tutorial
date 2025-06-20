@@ -2,6 +2,31 @@ if FORMAT ~= "latex" then
   return 
 end
 
+local utilsapa = require("utilsapa")
+
+local noteword = "Note"
+
+-- from quarto-cli/src/resources/pandoc/datadir/init.lua
+-- global quarto params
+local paramsJson = quarto.base64.decode(os.getenv("QUARTO_FILTER_PARAMS"))
+local quartoParams = quarto.json.decode(paramsJson)
+local function param(name, default)
+  -- get name from quartoParams, if possible
+  local value = quartoParams[name]
+  if value == nil then
+    -- get name from quartoParams.language, if possible
+    if quartoParams.language then
+      value = quartoParams.language[name]
+    end
+    -- If still nil, then assign default
+    if value == nil then
+      value = default
+    end
+  end
+  return value
+end
+
+
 -- Is the .pdf in journal mode?
 local journalmode = false
 local manuscriptmode = true
@@ -11,7 +36,17 @@ local getmode = function(meta)
   local documentmode = pandoc.utils.stringify(meta["documentmode"])
   journalmode = documentmode == "jou"
   manuscriptmode = documentmode == "man"
+    -- Find word for "note"
+  if not meta.language["figure-table-note"] then
+    if param("callout-note-title") then
+      meta.language["figure-table-note"] = param("callout-note-title")
+    end
+  end
+  noteprefix = "\\noindent \\emph{" .. meta.language["figure-table-note"] .. ".} "
+  
 end
+
+
 
 -- Split string function
 function string:split(delimiter)
@@ -37,9 +72,10 @@ local processfloat = function(float)
   -- default float position
   local floatposition = "[!htbp]"
   local p = {}
+  local apanotedivs = pandoc.Div(pandoc.Blocks{})
   if float.attributes["fig-pos"] then
     if pandoc.utils.stringify(float.attributes["fig-pos"]) == "false" then
-      floatposition = ""
+      floatposition = "[!htbp]"
     else
       floatposition = "[" .. float.attributes["fig-pos"] .. "]"
     end
@@ -82,10 +118,8 @@ local processfloat = function(float)
     
     -- Add note
     if float.attributes["apa-note"] then
-      p = pandoc.Span({
-        pandoc.RawInline("latex", beforenote .. "\\noindent \\emph{Note.} "),
-        float.attributes["apa-note"]
-      })
+        note_prefix = pandoc.Span(pandoc.RawInline("latex", beforenote .. noteprefix))
+        apanotedivs =  utilsapa.make_note(float.attributes["apa-note"], note_prefix)
     end
       
       local captionsubspan = pandoc.Span({
@@ -120,18 +154,21 @@ local processfloat = function(float)
       local returnblock = pandoc.Div({
         pandoc.RawBlock("latex", "\\begin{" .. latextableenv .. "}"),
         captionspan,
-        float.content,
-        p,
-        pandoc.RawBlock("latex", "\\end{" .. latextableenv .. "}")
+        float.content
+        
       }
       )
+      returnblock.content:extend({apanotedivs})
+
+      
+      returnblock.content:extend({pandoc.RawBlock("latex", "\\end{" .. latextableenv .. "}")})
       
       if journalmode then
         
         returnblock = pandoc.Div({
           pandoc.RawBlock("latex", "\\begin{" .. latextableenv .. "}"),
           float.__quarto_custom_node,
-          p,
+          apanotedivs,
           pandoc.RawBlock("latex", "\\end{" .. latextableenv .. "}")
         })
     
@@ -171,11 +208,10 @@ local processfloat = function(float)
     -- Make note
     if hasnote or twocolumn then
       if hasnote then
-        
-        p = pandoc.Span(pandoc.RawInline("latex", beforenote .. noteprefix))
-        local apanotestr = quarto.utils.string_to_inlines(apanote)
-        for i, v in ipairs(apanotestr) do
-          p.content:insert(v)
+        -- Add note
+        if float.attributes["apa-note"] then
+            note_prefix = pandoc.Span(pandoc.RawInline("latex", beforenote .. noteprefix))
+           apanotedivs =  utilsapa.make_note(float.attributes["apa-note"], note_prefix)
         end
       end
     
@@ -202,7 +238,7 @@ local processfloat = function(float)
         pandoc.RawBlock("latex", "\\begin{" .. latexenv .. "}" .. floatposition),
         captionspan,
         float.content,
-        p,
+        apanotedivs,
         pandoc.RawBlock("latex", "\\end{" .. latexenv .. "}")
       })
   
@@ -211,6 +247,7 @@ local processfloat = function(float)
     
   end
 end
+
 
 return {
 { Meta = getmode },
