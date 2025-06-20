@@ -5,7 +5,7 @@
 -- global quarto params
 local paramsJson = quarto.base64.decode(os.getenv("QUARTO_FILTER_PARAMS"))
 local quartoParams = quarto.json.decode(paramsJson)
-quarto.log.output(quartoParams)
+
 local function param(name, default)
   -- get name from quartoParams, if possible
   local value = quartoParams[name]
@@ -26,6 +26,7 @@ end
 local fields = {
   {field = "crossref-fig-title", default = "Figure"},
   {field = "crossref-tbl-title", default = "Table"},
+  {field = "crossref-apx-title", default = "Appendix"},
   {field = "citation-last-author-separator", default = "and"},
   {field = "citation-masked-author", default = "Masked Citation"},
   {field = "citation-masked-title", default = "Masked Title"},
@@ -33,12 +34,14 @@ local fields = {
   {field = "email", default = "Email"},
   {field = "figure-table-note", default = "Note"},  
   {field = "section-title-abstract", default = "Abstract"},
-  {field = "section-title-appendix", default = "Appendix"},
+  {field = "section-title-appendixes", default = "Appendices"},
   {field = "section-title-references", default = "References"},
   {field = "title-block-author-note", default = "Author Note"},
   {field = "title-block-correspondence-note", default = "Correspondence concerning this article should be addressed to"},
   {field = "title-block-keywords", default = "Keywords"},
   {field = "title-block-role-introduction", default = "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"},
+  {field = "title-impact-statement", "Impact Statement"},
+  {field = "title-word-count", default = "Word Count"},
   {field = "references-meta-analysis", default = "References marked with an asterisk indicate studies included in the meta-analysis."},
 }
 

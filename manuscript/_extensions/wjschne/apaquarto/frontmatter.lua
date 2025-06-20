@@ -9,7 +9,8 @@ local andreplacement = "and"
 
 
 local List = require 'pandoc.List'
-local stringify = pandoc.utils.stringify
+local utilsapa = require("utilsapa")
+local stringify = utilsapa.stringify
 
 local function get_and(m)
   if m.language and m.language["citation-last-author-separator"] then
@@ -629,14 +630,31 @@ return {
         
         body:extend({keywords_paragraph})
       end
+      
+      if meta["word-count"] then
+        local word_count_word = "Word Count"
+        if meta.language and meta.language["title-block-word-count"] then
+          word_count_word = stringify(meta.language["title-block-word-count"])
+        end
+        
+
+        local word_count_paragraph = pandoc.Para({pandoc.Emph(word_count_word), pandoc.Str(": " .. meta.wordn)})
+        body:extend({word_count_paragraph})
+      end
 
         if FORMAT:match 'docx' then
           body:extend({pandoc.RawBlock('openxml', '<w:p><w:r><w:br w:type="page"/></w:r></w:p>')})
         end
         
         if FORMAT:match 'typst' then
-          body:extend({pandoc.RawBlock('typst', '#pagebreak()\n\n')})
+          local pg = '#pagebreak()\n\n' 
+          if meta['first-page'] then
+            pg = '#counter(page).update(' .. stringify(meta['first-page']) .. ' - 1)\n #pagebreak()\n\n'
+          end
+          body:extend({pandoc.RawBlock('typst', pg)})
         end
+        
+
         
         if FORMAT:match 'html' then
           body:extend({pandoc.RawBlock('html', '<br>')})
@@ -694,6 +712,7 @@ return {
         firstpageheader.classes = {"title", "unnumbered", "unlisted"}
         body:extend({firstpageheader})
       end
+      
 
       
 
