@@ -8,12 +8,12 @@
 
 <meta name="author" content="Jason Geller">
 <meta name="author" content="Robert Kubinec">
-<meta name="author" content="Matti Vuorre">
 <meta name="author" content="Chelsea M. Parlett Pelleriti">
-<meta name="keywords" content="beta regression, R, tutorial, psychology, learning and memory">
+<meta name="author" content="Matti Vuorre">
+<meta name="keywords" content="beta regression, beta distribution, R, tutorial, psychology, learning and memory">
 <meta name="description" content="BETA REGRESSION TUTORIAL">
 
-<title>A Beta Way: A Tutorial For Using Beta Regression in Pychological Research</title>
+<title>A Beta Way: A Tutorial For Using Beta Regression in Psychological Research</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -204,15 +204,15 @@ window.Quarto = {
 <br>
 
 <section id="title" class="level1 title unnumbered unlisted">
-<h1 class="title unnumbered unlisted">A Beta Way: A Tutorial For Using Beta Regression in Pychological Research</h1>
+<h1 class="title unnumbered unlisted">A Beta Way: A Tutorial For Using Beta Regression in Psychological Research</h1>
 <div class="Author">
 <br>
 
-<p>Jason Geller<sup>1</sup>, Robert Kubinec<sup>2</sup>, Matti Vuorre<sup>3</sup>, and Chelsea M. Parlett Pelleriti<sup>4</sup></p>
+<p>Jason Geller<sup>1</sup>, Robert Kubinec<sup>2</sup>, Chelsea M. Parlett Pelleriti<sup>3</sup>, and Matti Vuorre<sup>4</sup></p>
 <p><sup>1</sup>Department of Psychology and Neuroscience, Boston College</p>
 <p><sup>2</sup>University of South Carolina</p>
-<p><sup>3</sup>Tilburg University</p>
-<p><sup>4</sup>School</p>
+<p><sup>3</sup>School</p>
+<p><sup>4</sup>Tilburg University</p>
 </div>
 <br>
 
@@ -222,48 +222,66 @@ window.Quarto = {
 <section id="author-note" class="level1 unnumbered unlisted AuthorNote">
 <h1 class="unnumbered unlisted AuthorNote">Author Note</h1>
 <p>Jason Geller <img src="_extensions/wjschne/apaquarto/ORCID-iD_icon-vector.svg" id="orchid" class="img-fluid" style="width:4.23mm" alt="Orcid ID Logo: A green circle with white letters ID"> <a href="https://orcid.org/0000-0002-7459-4505">https://orcid.org/0000-0002-7459-4505</a></p>
-<p>Robert Kubinec <img src="_extensions/wjschne/apaquarto/ORCID-iD_icon-vector.svg" id="orchid" class="img-fluid" style="width:4.23mm" alt="Orcid ID Logo: A green circle with white letters ID"> <a href="https://orcid.org/0000-0002-7459-4505">https://orcid.org/0000-0002-7459-4505</a></p>
-<p>Matti Vuorre <img src="_extensions/wjschne/apaquarto/ORCID-iD_icon-vector.svg" id="orchid" class="img-fluid" style="width:4.23mm" alt="Orcid ID Logo: A green circle with white letters ID"> <a href="https://orcid.org/0000-0002-7459-4505">https://orcid.org/0000-0002-7459-4505</a></p>
+<p>Robert Kubinec <img src="_extensions/wjschne/apaquarto/ORCID-iD_icon-vector.svg" id="orchid" class="img-fluid" style="width:4.23mm" alt="Orcid ID Logo: A green circle with white letters ID"> <a href="https://orcid.org/0000-0001-6655-4119">https://orcid.org/0000-0001-6655-4119</a></p>
 <p>Chelsea M. Parlett Pelleriti <img src="_extensions/wjschne/apaquarto/ORCID-iD_icon-vector.svg" id="orchid" class="img-fluid" style="width:4.23mm" alt="Orcid ID Logo: A green circle with white letters ID"> <a href="https://orcid.org/0000-0001-9301-1398">https://orcid.org/0000-0001-9301-1398</a></p>
+<p>Matti Vuorre <img src="_extensions/wjschne/apaquarto/ORCID-iD_icon-vector.svg" id="orchid" class="img-fluid" style="width:4.23mm" alt="Orcid ID Logo: A green circle with white letters ID"> <a href="https://orcid.org/0000-0001-5052-066X">https://orcid.org/0000-0001-5052-066X</a></p>
+<p>No preregistration Data, code, and materials for this manuscript can be found at. The authors have no conflicts of interest to disclose.</p>
+<p>Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows: <em>Jason Geller</em><strong>: </strong>conceptualization, writing – original draft, data curation, writing – review &amp; editing, and formal analysis. <em>Robert Kubinec</em><strong>: </strong>writing – original draft, writing – review &amp; editing, and formal analysis. <em>Chelsea M. Parlett Pelleriti</em><strong>: </strong>writing – original draft, writing – review &amp; editing, and formal analysis. <em>Matti Vuorre</em><strong>: </strong>writing – original draft, writing – review &amp; editing, and formal analysis</p>
 <p>Correspondence concerning this article should be addressed to Jason Geller, Department of Psychology and Neuroscience, Boston College, McGuinn 300, Chestnut Hill, MA 2467, USA, Email: <a href="mailto:drjasongeller@gmail.com">drjasongeller@gmail.com</a></p>
 <br>
 </section>
 <section id="abstract" class="level1 unnumbered unlisted AuthorNote">
 <h1 class="unnumbered unlisted AuthorNote">Abstract</h1>
 <div class="AbstractFirstParagraph">
-<p>Rates, percentages, and proportions are common in psychology and the social sciences, and usually treated as normally distributed. This practice, however, ignores salient features in the data, such as its natural limits at 0 and 1, and can thus lead to distorted estimates. Treating such outcomes as beta-distributed, instead, acknowledges these salient features and therefore leads to more accurate estimates. The adoption of such models remains limited, however. Our purpose is to guide researchers in using the beta distribution through illustrative analyses of a real example from the psychological literature. First, we introduce the beta distribution and the beta regression model highlighting crucial components and assumptions. Second, we show how to conduct a beta regression in R using an example dataset from the learning and memory literature. We then discuss extensions of the beta model, such as zero-inflated, zero- and one-inflated, and ordered beta models. To facilitate these analyses’ more widespread adoption, we present a detailed code supplement at https://github.com/jgeller112/beta_regression_tutorial.</p>
+<p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a Beta regression model in R with the Bayesian package <code>brms</code> and how to interpret results using the <code>marginaleffects</code> package. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. To promote wider adoption of these methods, we provide detailed code and materials at https://github.com/jgeller112/beta_regression_tutorial.</p>
 </div>
-<p><em>Keywords</em>: beta regression, R, tutorial, psychology, learning and memory</p>
+<p><em>Keywords</em>: beta regression, beta distribution, R, tutorial, psychology, learning and memory</p>
+<p><em>Word Count</em>: 8813</p>
 <br>
 </section>
 <section id="firstheader" class="level1 title unnumbered unlisted">
-<h1 class="title unnumbered unlisted">A Beta Way: A Tutorial For Using Beta Regression in Pychological Research</h1>
-<p>In psychological research, it is common to measure performance (on a test or task), attitudes, and choices using outcomes expressed as proportions or percentages. To illustrate this in a practical context, consider a memory experiment in which participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). In this scenario, the primary focus is on the total number of points earned relative to the total possible points across all questions.</p>
-<p>An important question arises: how do we analyze this type of data? In psychological research, proportional outcomes are frequently analyzed with methods that fall under the general or generalized linear (G/GLM) frameworks. General linear models assume normal distributions, such as t-tests and ANOVAs while generalized models assume non-normal distributions, with logistic regression being a common example.</p>
-<p>One popular tool for estimation and hypothesis testing that most readers will be familiar with is ordinary least squares (OLS) regression. OLS regression assumes our response outcome is normal in nature. With our example above, we could calculate the proportion or percentage correct for each question (or overall performance) and submit it to a regression analysis. While this is a very popular approach in psychology and is used quite frequently <span class="citation" data-cites="sladekova2024unicorns">(<a href="#ref-sladekova2024unicorns" role="doc-biblioref">Sladekova &amp; Field, 2024</a>)</span>, OLS regression makes several key assumptions that make it not ideal for the data we have. These assumptions include (1) a linear and additive relationship between predictors and outcomes, (2) normally distributed errors with a mean of zero and constant variance, and (3) homoscedasticity. When these assumptions are met, OLS regression provides unbiased and reliable estimates. However, when dealing with proportional data, several of these assumptions are often violated due to their bounded nature (0 to 1) and tendency to exhibit non-constant variance <span class="citation" data-cites="ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>)</span>. This makes OLS regression an unsuitable choice for such data.</p>
-<p>Another popular tool for estimation and hypothesis testing with proportional data is logistic regression. In our example, we could model accuracy as the ratio of successes to failures—specifically, the number of correct responses relative to the total for each question. While this approach might seem appropriate, it presents several challenges when dealing with data near the boundaries of 0 and 1, which is a common characteristic of proportional or percentage outcomes in psychological research.</p>
-<p>One major issue with this approach is boundary inflation, which refers to the inflated estimates that occur when data clusters too closely at the extremes of 0 or 1. Binomial models assume probabilities strictly between 0 and 1, and this assumption can lead to biased estimates, especially when a substantial proportion of responses cluster near the boundaries. Additionally, as proportions approach these extremes, variance decreases, resulting in overly narrow confidence intervals and an underestimation of variability. Real-world data often exhibit greater variability than what the binomial model can accommodate, leading to overdispersion that can distort statistical inferences. Moreover, the bounded nature of proportions complicates their interpretation within a binomial framework.</p>
-<p>This discussion highlights the importance of selecting statistical models that accurately reflect the characteristics of your data. Choosing an inappropriate model can lead to misleading conclusions—for instance, failing to detect genuine effects (Type II errors) or falsely identifying effects that do not exist (Type I errors). To ensure valid and reliable inferences, researchers must carefully consider the structure of their data and the assumptions underlying their chosen models.</p>
+<h1 class="title unnumbered unlisted">A Beta Way: A Tutorial For Using Beta Regression in Psychological Research</h1>
+<p>In psychological research, it is common to measure performance, attitudes, or choices using outcomes expressed as proportions or percentages. As a running example, memory researchers might have participants read a short passage and complete a final memory test with 10 short-answer questions, each assigned a different point value. The primary outcome could be the proportion of total points earned relative to the total possible points across all questions.</p>
+<p>A key question arises: how should proportional data like this be analyzed? In psychology, such outcomes are often analyzed using models from the general linear model (GLM) or generalized linear model (GLiM) frameworks. General linear models — including t-tests, ANOVAs, and linear regression — assume the outcome is normally distributed, unbounded, and exhibits constant variance. However, these assumptions are frequently violated when working with proportional data, which are bounded between 0 and 1 and tend to show non-constant variance, especially near the boundaries <span class="citation" data-cites="ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>)</span>. This can lead to biased estimates and invalid inferences, making general linear models an unsuitable choice for analyzing proportions.</p>
+<p>Generalized linear models extend the linear model framework to accommodate non-normal outcome distributions and different link functions. For example, binomial or Bernoulli models with a logit link (commonly referred to as logistic regression) are well-suited for binary outcomes or counts of successes out of a fixed number of trials. However, these models may still fall short when proportions are treated as continuous outcomes or when data exhibit overdispersion or cluster near 0 or 1.</p>
 <p>The challenges of analyzing proportional data are not new <span class="citation" data-cites="bartlett1936">(see <a href="#ref-bartlett1936" role="doc-biblioref">Bartlett, 1936</a>)</span>. Fortunately, several alternative approaches address the limitations of commonly used models. One such approach is Beta regression, an extension of the generalized linear model that employs the Beta distribution (described in-depth below) <span class="citation" data-cites="ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>)</span>. Beta regression offers a flexible and robust solution for modeling proportional data by accounting for boundary effects and overdispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets.</p>
 <section id="a-beginners-guide-to-beta-regression" class="level2">
 <h2 data-anchor-id="a-beginners-guide-to-beta-regression">A Beginners Guide to Beta Regression</h2>
-<p>With the combination of open-source programming languages like R <span class="citation" data-cites="R">(<a href="#ref-R" role="doc-biblioref">R Core Team, 2024</a>)</span> and the great community of package developers, it is becoming trivial to run analyses like Beta regression. However, adoption of these methods, especially in psychology, is sparse. One reason for the lack of adaptation could be the lack of resources available to wider community. However, this is slowly changing with a great blog posts by <span class="citation" data-cites="heiss2021">Heiss (<a href="#ref-heiss2021" role="doc-biblioref">2021</a>)</span>, <span class="citation" data-cites="vuorre2019">Vuorre (<a href="#ref-vuorre2019" role="doc-biblioref">2019</a>)</span>, and <span class="citation" data-cites="bendixen2023">Bendixen and Purzycki (<a href="#ref-bendixen2023" role="doc-biblioref">2023</a>)</span>, and some excellent tutorial papers <span class="citation" data-cites="coretta2025bayesian">(see <a href="#ref-coretta2025bayesian" role="doc-biblioref">Coretta &amp; Bürkner, 2025</a>)</span>. This tutorial hopes to expand upon these resources and provide psychologists with the tools and code needed to explore other statistical options in their research.</p>
-<p>In this tutorial, we plan to (a) give a brief, non-technical overview of the principles underlying beta regression (keeping mathematics notation to a minimum), (b) walk-through an empirical example of applying beta regression in the popular R programming language and (c) highlight the the extensions which are most relevant to researchers in psychology (e.g., zero-inflated, zero-one-inflated, and ordered beta regressions).</p>
-<p>In this article, we try to limit code where possible; however, the online version has all the code needed to reproduce all analyses herein. Furthermore, to promote transparency and reproduciblity, the tutorial was written in R version 4.4.3 (<span class="citation" data-cites="R">R Core Team (<a href="#ref-R" role="doc-biblioref">2024</a>)</span>) using Quarto (v.1.5.54), an open-source publishing system that allows for dynamic and static documents. This allows figures, tables, and text to be programmatically included directly in the manuscript, ensuring that all results are seamlessly integrated into the document. In addition, we use the <code>rix</code> <span class="citation" data-cites="rix">(<a href="#ref-rix" role="doc-biblioref">Rodrigues &amp; Baumann, 2025</a>)</span> R package which harnesses the power of the <code>nix</code> <span class="citation" data-cites="nix">(<a href="#ref-nix" role="doc-biblioref">Dolstra &amp; contributors, 2006</a>)</span> ecosystem to to help with computational reproducibility. Not only does this give us a snapshot of the packages used to create the current manuscript, but it also takes a snapshot of system dependencies used at run-time. This way reproducers can easily re-use the exact same environment by installing the <code>nix</code> package manager and using the included default.nix file to set up the right environment. The README file in the GitHub repository contains detailed information on how to set this up to reproduce the contents of the current manuscript, including a video.</p>
-<p>Beta regression can be estimated using various tools and approached from either a frequentist or Bayesian perspective. We adopt a Bayesian framework primarily due to its practicality and the availability of advanced computational techniques ([<span class="citation" data-cites="gelman2013bayesian">Gelman et al. (<a href="#ref-gelman2013bayesian" role="doc-biblioref">2013</a>)</span>; <span class="citation" data-cites="mcelreath2020statistical">McElreath (<a href="#ref-mcelreath2020statistical" role="doc-biblioref">2020</a>)</span>; <span class="citation" data-cites="bayes_rules">Johnson et al. (<a href="#ref-bayes_rules" role="doc-biblioref">n.d.</a>)</span>). However, similar implementations are available within the frequentist framework (see supplemental materials).</p>
+<p>With the combination of open-source programming languages like R [@R] and the vibrant community of package developers, running analyses such as Beta regression has become increasingly accessible. Yet, adoption of these methods—especially in psychology—remains limited. One reason may be the lack of resources tailored to the needs of psychologists conducting applied research. Although recent years have seen a surge of interest in Beta regression <span class="citation" data-cites="heiss2021 vuorre2019 bendixen2023 coretta2025bayesian">(<a href="#ref-bendixen2023" role="doc-biblioref">Bendixen &amp; Purzycki, 2023</a>; <a href="#ref-coretta2025bayesian" role="doc-biblioref">Coretta &amp; Bürkner, 2025</a>; see <a href="#ref-heiss2021" role="doc-biblioref">Heiss, 2021</a>; <a href="#ref-vuorre2019" role="doc-biblioref">Vuorre, 2019</a>)</span>, these introductions often do not provide comprehensive, psychology-relevant examples or guidance on interpreting results for common research questions. This tutorial seeks to expand on existing resources by offering a more thorough application of Beta regression within psychologically meaningful contexts, illustrating how to draw inferences, and equipping psychologists with the tools and code needed to explore these statistical methods in their own work.</p>
+<p>In this tutorial, we provide (a) give a brief, non-technical overview of the principles underlying beta regression, (b) walk-through an empirical example of applying beta regression in the popular R programming language and (c) highlight the the extensions which are most relevant to researchers in psychology (e.g., zero-inflated, zero-one-inflated, and ordered beta regressions). Moreover, we provide a fully reproducible code supplement at X (link to multiformat rendered document and its Zenodo archive) that provides more detailed code examples.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Beta regression can be estimated using various tools and approached from either a frequentist or Bayesian perspective. We adopt a Bayesian framework primarily due to its practicality and the availability of advanced computational techniques <span class="citation" data-cites="gelman2013bayesian mcelreath2020statistical bayes_rules">(<a href="#ref-gelman2013bayesian" role="doc-biblioref">Gelman et al., 2013</a>; <a href="#ref-bayes_rules" role="doc-biblioref">Johnson et al., n.d.</a>; <a href="#ref-mcelreath2020statistical" role="doc-biblioref">McElreath, 2020</a>)</span>. However, similar implementations are available within the frequentist framework.</p>
 <p>In this paper, we demonstrate how to implement Beta regression models and their extensions using the brms <span class="citation" data-cites="brms">(<a href="#ref-brms" role="doc-biblioref">Bürkner, 2017</a>)</span> package. Additionally, we leverage the powerful <code>marginaleffects</code> <span class="citation" data-cites="margeffects2024">(<a href="#ref-margeffects2024" role="doc-biblioref">Arel-Bundock et al., 2024</a>)</span> package to extract meaningful estimates. We believe this combination provides an effective and efficient approach to performing beta regression, ensuring robust and interpretable results.</p>
 </section>
 <section id="beta-distribution" class="level2">
 <h2 data-anchor-id="beta-distribution">Beta Distribution</h2>
 <p>Proportional data are bounded between 0 and 1 and often display heteroscedasticity. Common distributions that fall under the G/GLM often do a poor job of capturing this, necessitating the need to fit a different model to the data. For any statistical model, there are two main components: a random component that specifies the distribution of the response variable around its expected value (such as a Poisson or binomial, which are part of the exponential family), a linear predictor that combines explanatory variables in a linear form, and a link function that connects the mean of the response variable to the linear predictor (also referred to as the expected value) <span class="citation" data-cites="nelder1972">(<a href="#ref-nelder1972" role="doc-biblioref">Nelder &amp; Wedderburn, 1972</a>)</span>.</p>
-<p>To deal with proportional data, we can fit a model with a Beta distribution <span class="citation" data-cites="ferrari2004">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>)</span>. The Beta distribution has some desirable characteristics that make it ideal for analyzing proportions: It is continuous, it is limited to numbers that fall between 0 and 1, and it highly flexible—it can take on a number of different distribution shapes. The shape which comprises the location, skew, and spread of the distribution are controlled by two parameters: <em>shape1</em> and <em>shape2</em>. <code>Shape 1</code> is sometimes called <span class="math inline">\alpha</span> and <code>shape 2</code> is sometimes called <span class="math inline">\beta</span>. Together these two parameters shape the density curve of the distribution. To highlight this, let’s suppose a participant got 4 out of 6 on a short answer question on a test. We can take the number of correct on that particular test item (4) and divide that by the number of correct (4) + number of incorrect (2) and plot the resulting density curve. Shape1 in this example would be 4 (number of points received or successes). <code>Shape2</code> would be 2–the number of points not received (number of failures). Looking at <a href="#fig-beta-dist" class="quarto-xref" aria-expanded="false">Figure&nbsp;1</a> (A) we see the distribution for one of our questions is shifted towards one indicating higher accuracy on the exam. If we reversed the values of the two parameters <a href="#fig-beta-dist" class="quarto-xref" aria-expanded="false">Figure&nbsp;1</a> (B), we would get a distribution shifted towards 0, indicating a lower accuracy. By adjusting the values of two parameters, we can get a wide range of distributions (e.g., u-shaped, inverted u-shaped , normal, or uniform). In mathematical statistics, the beta distribution is known as the distribution for probabilities because probabilities are bounded but can never equal 0 or 1.</p>
+<p>To deal with proportional data, we can fit a model with a Beta distribution <span class="citation" data-cites="ferrari2004">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>)</span>. The Beta distribution has some desirable characteristics that make it ideal for analyzing proportions: It is continuous, it is limited to numbers that fall between 0 and 1, and it highly flexible—it can take on a number of different distribution shapes. The shape which comprises the location, skew, and spread of the distribution are controlled by two parameters: <em>shape1</em> and <em>shape2</em>. <code>Shape 1</code> is sometimes called <span class="math inline">\alpha</span> and <code>shape 2</code> is sometimes called <span class="math inline">\beta</span>. Together these two parameters shape the density curve of the distribution. To highlight this, let’s suppose a participant got 4 out of 6 on a short answer question on a test. We can take the number of correct on that particular test item (4) and divide that by the number of correct (4) + number of incorrect (2) and plot the resulting density curve. <code>Shape1</code> in this example would be 4 (number of points received or successes). <code>Shape2</code> would be 2–the number of points not received (number of failures). Looking at <a href="#fig-beta-dist" class="quarto-xref" aria-expanded="false">Figure&nbsp;2</a> (A) we see the distribution for one of our questions is shifted towards one indicating higher accuracy on the exam. If we reversed the values of the two parameters <a href="#fig-beta-dist" class="quarto-xref" aria-expanded="false">Figure&nbsp;2</a> (B), we would get a distribution shifted towards 0, indicating a lower accuracy. By adjusting the values of two parameters, we can get a wide range of distributions (e.g., u-shaped, inverted u-shaped , normal, or uniform–see <a href="#fig-curves" class="quarto-xref" aria-expanded="false">Figure&nbsp;1</a>)–highlighting the incredible flexibility of the Beta distribution. In mathematical statistics, the Beta distribution is often used to model probabilities or proportions that can vary continuously between 0 and 1, but do not take the exact values of 0 or 1.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-beta-dist" class="quarto-float quarto-figure quarto-figure-center" data-fignum="1" prefix="">
+<div id="fig-curves" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="1">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="FigureTitle" data-custom-style="FigureTitle">
+<p>Figure&nbsp;1</p>
+</div>
+<div class="Caption" data-custom-style="Caption">
+<p>Examples of Beta Distributions with Different Shapes</p>
+</div>
+</figcaption>
+<div aria-describedby="fig-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ms_files/figure-html/fig-curves-1.png" class="img-fluid figure-img" width="768">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
+<div class="cell-output-display">
+<div id="fig-beta-dist" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="2">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-beta-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;1</p>
+<p>Figure&nbsp;2</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
 <p>A. beta distribution with 4 correct and 2 incorrect responses on one test question. B. beta distribution with 2 correct and 4 incorrect responses on one test question</p>
@@ -275,76 +293,6 @@ window.Quarto = {
 </figure>
 </div>
 </div>
-</div>
-<div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
-<p>To make abundantly clear what the beta distribution is let’s look at a political example. For example, suppose we want to come up with our best guess of how Donald Trump might do in the 2024 presidential election given his performance in the 2020 election in terms of the number of electoral college votes he received (which are roughly proportional to the popular vote for president in the United States). In that case, we could use the beta distribution to get a sense of our uncertainty in that statement by plugging in 232 for the number of elector college votes Trump won in 2020 for α and 306 for the number of electoral college votes that Trump didn’t win for <span class="math inline">\beta</span>–i.e., all the electoral college votes Joe Biden won in 2020.</p>
-</div>
-<div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
-<div class="cell-output-display">
-<div id="fig-trump1" class="quarto-float quarto-figure quarto-figure-center" data-fignum="2" prefix="">
-<figure class="quarto-float quarto-float-fig figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-trump1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;2</p>
-</div>
-<div class="Caption" data-custom-style="Caption">
-<p>Density Plot of Electorial College Votes</p>
-</div>
-</figcaption>
-<div aria-describedby="fig-trump1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="ms_files/figure-html/fig-trump1-1.png" class="img-fluid figure-img" width="768">
-</div>
-</figure>
-</div>
-</div>
-</div>
-<div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
-<p>What <a href="#fig-trump1" class="quarto-xref" aria-expanded="false">Figure&nbsp;2</a> above shows is the range around the proportion of electors that Trump could win in 2024 if we use his 2020 performance as our prior knowledge. We would expect, based on chance alone, for his 2024 total to vary between 40% of electors to 48% of electors. In other words, he would be likely to still lose, but he could get a lot closer to a majority of electoral college votes. If we increase the sample size, say by including how many electoral votes Trump won in 2016 (304 out of 531), our uncertainty would decrease:</p>
-</div>
-<div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
-<div class="cell-output-display">
-<div id="fig-trump2" class="quarto-float quarto-figure quarto-figure-center" data-fignum="3" prefix="">
-<figure class="quarto-float quarto-float-fig figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-trump2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;3</p>
-</div>
-<div class="Caption" data-custom-style="Caption">
-<p>Density Plot of Electors</p>
-</div>
-</figcaption>
-<div aria-describedby="fig-trump2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="ms_files/figure-html/fig-trump2-1.png" class="img-fluid figure-img" width="768">
-</div>
-</figure>
-</div>
-</div>
-</div>
-<div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
-<p>The plausible range of percentages/probabilities of <a href="#fig-trump2" class="quarto-xref" aria-expanded="false">Figure&nbsp;3</a> is now within 48% to 52% as taking into account Trump’s 2016 results increases our sample size while also increasing our most likely estimate of his 2024 performance. Importantly, the beta distribution respects bounds.</p>
-</div>
-<p>Suppose, for example, that we only expect Trump to win 1 out of 538 electors. That would concentrate a substantial amount of plausible values at the lower end of the range of the variable:</p>
-<div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
-<div class="cell-output-display">
-<div id="fig-trump0" class="quarto-float quarto-figure quarto-figure-center" data-fignum="4" prefix="">
-<figure class="quarto-float quarto-float-fig figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-trump0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;4</p>
-</div>
-<div class="Caption" data-custom-style="Caption">
-<p>Density Plot of Electors</p>
-</div>
-</figcaption>
-<div aria-describedby="fig-trump0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="ms_files/figure-html/fig-trump0-1.png" class="img-fluid figure-img" width="768">
-</div>
-</figure>
-</div>
-</div>
-</div>
-<div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
-<p>What we can see in <a href="#fig-trump0" class="quarto-xref" aria-expanded="false">Figure&nbsp;4</a> is a unique feature of the beta distribution: it respects upper and lower bounds. Here the beta distribution says it is most likely Trump wins a very small number of electoral college votes– below 1% of them – but it is plausible that he still wins more than 1%. It is impossible, as it should be, for Trump to win less than 0% of electors.</p>
 </div>
 <section id="mean-and-precision" class="level3">
 <h3 data-anchor-id="mean-and-precision">Mean and Precision</h3>
@@ -378,15 +326,15 @@ window.Quarto = {
 <h2 data-anchor-id="data-and-methods">Data and Methods</h2>
 <p>Now that we have built up an intuition about the Beta distribution we can start to analyze some data. The principles of Beta regression are best understood in the context of a real data set. The example we are gonna use comes from the learning and memory literature. A whole host of literature has shown extrinsic cues like fluency (i.e., how easy something is to process) can influence metamemory (i.e., how well we think we will remember something). As an interesting example, a line of research has focused on instructor fluency and how that influences both metamemory and actual learning. When an instructor uses lots of non-verbal gestures, has variable voice dynamics/intonation, is mobile about the space, and includes appropriate pauses when delivering content, participants perceive them as more fluent, but it does not influence actual memory performance, or what we learn from them <span class="citation" data-cites="carpenter2013 toftness2017 witherby2022">(<a href="#ref-carpenter2013" role="doc-biblioref">Carpenter et al., 2013</a>; <a href="#ref-toftness2017" role="doc-biblioref">Toftness et al., 2017</a>; <a href="#ref-witherby2022" role="doc-biblioref">Witherby &amp; Carpenter, 2022</a>)</span>. While fluency of instructor has not been found to impact actual memory across several studies, <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> found that it can. In several experiments, <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> showed that when participants watched two videos of a fluent vs.&nbsp;a disfluent instructor, they remembered more information on a final test. Given the interesting, and contradictory results, we chose this paper to highlight. In the current tutorial we are going to re-analyze the final recall data from Wilford et al(2021; Experiment 1A). In the spirit of open science, the authors made their data available here: <a href="https://osf.io/6tyn4/" class="uri">https://osf.io/6tyn4/</a>.</p>
 <p>Accuracy data is widely used in psychology and is well suited for Beta regression. Despite this, it is common to treat accuracy data as continuous and unbounded, and analyze the resulting proportions using methods that fall under the general linear model. Below we will reproduce the analysis conducted by <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A) and then re-analyze it using Beta regression. We hope to show how Beta regression and its extensions can be a more powerful tool in making inferences about your data.</p>
-<p>In <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A), they presented participants with two short videos highlighting two different concepts: (1) genetics of calico cats and (2) an explanation as to why skin wrinkles. Participants viewed either disfluent or fluent versions of these videos.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> For each video, metamemory was assessed using JOLs. JOLs require participants to rate an item on scale between 0-100 with 0 representing the item will not be remembered and a 100 representing they will definitely remember the item. In addition, other questions about the instructor were assessed and how much they learned. After a distractor task, a final free recall test was given were participants had to recall as much information about the video as they could in 3 minutes. Participants could score up to 10 points for each video. They looked at the proportion of information recalled (out of 10) as their DV. As a side note, we will only being looking at the final recall data, but you could also analyze the JOL data with a Beta regression.</p>
+<p>In <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A), they presented participants with two short videos highlighting two different concepts: (1) genetics of calico cats and (2) an explanation as to why skin wrinkles. Participants viewed either disfluent or fluent versions of these videos.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> For each video, metamemory was assessed using JOLs. JOLs require participants to rate an item on scale between 0-100 with 0 representing the item will not be remembered and a 100 representing they will definitely remember the item. In addition, other questions about the instructor were assessed and how much they learned. After a distractor task, a final free recall test was given were participants had to recall as much information about the video as they could in 3 minutes. Participants could score up to 10 points for each video. They looked at the proportion of information recalled (out of 10) as their DV. As a side note, we will only being looking at the final recall data, but you could also analyze the JOL data with a Beta regression.</p>
 </section>
 <section id="reanalysis-of-wilford-et-al.-experiment-1a" class="level2">
 <h2 data-anchor-id="reanalysis-of-wilford-et-al.-experiment-1a">Reanalysis of Wilford et al.&nbsp;Experiment 1A</h2>
 <section id="glm-approach" class="level3">
 <h3 data-anchor-id="glm-approach">GLM Approach</h3>
-<p>In Experiment 1A, <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> only used the first time point (one video) and compared fluent and disfluent conditions with a <em>t</em>-test. They found better performance for participants watching the fluency instructor than the disfluency instructor (see <a href="#fig-flu1" class="quarto-xref" aria-expanded="false">Figure&nbsp;5</a>). In our re-analysis, we will also run a <em>t</em>-test, but in a regression context. This allows for easier generalization to the Beta regression approach that follows. Specifically, we will examine accuracy on final test as our DV (because the score was on a 10 point scale we divided by 10 to get a proportion) and look at Fluency (Fluent vs.&nbsp;Disfluent). Fluency was dummy coded with the fluent level serving as the reference level (coded as 0).</p>
+<p>In Experiment 1A, <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> only used the first time point (one video) and compared fluent and disfluent conditions with a <em>t</em>-test. They found better performance for participants watching the fluency instructor than the disfluency instructor (see <a href="#fig-flu1" class="quarto-xref" aria-expanded="false">Figure&nbsp;3</a>). In our re-analysis, we will also run a <em>t</em>-test, but in a regression context. This allows for easier generalization to the Beta regression approach that follows. Specifically, we will examine accuracy on final test as our DV (because the score was on a 10 point scale we divided by 10 to get a proportion) and look at Fluency (Fluent vs.&nbsp;Disfluent). Fluency was dummy coded with the fluent level serving as the reference level (coded as 0).</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="1" data-custom-style="FigureWithoutNote">
-<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="1">
+<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="1" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dataset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -402,8 +350,8 @@ window.Quarto = {
 
     <script>
 
-      function styleCell_k3xw7m51sujlothw94fe(i, j, css_id) {
-          var table = document.getElementById("tinytable_k3xw7m51sujlothw94fe");
+      function styleCell_23uf9kjluq7023pnpghd(i, j, css_id) {
+          var table = document.getElementById("tinytable_23uf9kjluq7023pnpghd");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -413,7 +361,7 @@ window.Quarto = {
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_k3xw7m51sujlothw94fe');
+        var table = document.getElementById('tinytable_23uf9kjluq7023pnpghd');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -421,8 +369,8 @@ window.Quarto = {
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_k3xw7m51sujlothw94fe(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_k3xw7m51sujlothw94fe");
+      function spanCell_23uf9kjluq7023pnpghd(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_23uf9kjluq7023pnpghd");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -452,14 +400,14 @@ window.Quarto = {
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 }, { i: 6, j: 3 },  ], css_id: 'tinytable_css_n6g1y7pz7pnzkdr2gbo4',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_mw4xaekf7zgtjeqi4k95',}, 
+          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 }, { i: 6, j: 3 },  ], css_id: 'tinytable_css_6g8wx2augv2cdibgwdym',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_3fem9fm8zidrn7n9dmzc',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_k3xw7m51sujlothw94fe(cell.i, cell.j, group.css_id);
+                  styleCell_23uf9kjluq7023pnpghd(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -467,11 +415,11 @@ window.Quarto = {
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_n6g1y7pz7pnzkdr2gbo4, .table th.tinytable_css_n6g1y7pz7pnzkdr2gbo4 { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_mw4xaekf7zgtjeqi4k95, .table th.tinytable_css_mw4xaekf7zgtjeqi4k95 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_6g8wx2augv2cdibgwdym, .table th.tinytable_css_6g8wx2augv2cdibgwdym { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_3fem9fm8zidrn7n9dmzc, .table th.tinytable_css_3fem9fm8zidrn7n9dmzc { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_k3xw7m51sujlothw94fe" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_23uf9kjluq7023pnpghd" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -530,11 +478,11 @@ window.Quarto = {
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-flu1" class="quarto-float quarto-figure quarto-figure-center" data-fignum="5" prefix="">
+<div id="fig-flu1" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="3">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-flu1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;5</p>
+<p>Figure&nbsp;3</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
 <p>Raincloud plot for proprotion recalled on final test as a function of fluency</p>
@@ -557,7 +505,7 @@ window.Quarto = {
 </div>
 <p>Next, we read in the data from the repo, but you can also read it the directly from this url: <a href="https://raw.githubusercontent.com/jgeller112/beta_regression_tutorial/refs/heads/main/data/miko_data.csv?token=GHSAT0AAAAAAC4SIEVH762DOKQSI2F52YXYZ4AIT3Q" class="uri">https://raw.githubusercontent.com/jgeller112/beta_regression_tutorial/refs/heads/main/data/miko_data.csv?token=GHSAT0AAAAAAC4SIEVH762DOKQSI2F52YXYZ4AIT3Q</a>. Before we begin, we have to make some modifications to the original dataset. Namely, we rename the columns to make them more informative, and transform the data. Here we transform accuracy so it is a proportion by dividng each score by 10. Finally, we dummy code the <code>Fluency</code> variable (<code>Fluency_dummy</code>) setting the fluent condition to 0 and the disfluent condition to 1. The first few rows of the data are displayed in <a href="#tbl-dataset" class="quarto-xref" aria-expanded="false">Table&nbsp;1</a> along with the data dictionary in <a href="#tbl-columnkey" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="2" data-custom-style="FigureWithoutNote">
-<div id="tbl-columnkey" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="2">
+<div id="tbl-columnkey" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="2" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-columnkey-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -573,8 +521,8 @@ window.Quarto = {
 
     <script>
 
-      function styleCell_r6h94q1drpudj4elgwq9(i, j, css_id) {
-          var table = document.getElementById("tinytable_r6h94q1drpudj4elgwq9");
+      function styleCell_07slpr4wq7ul7c15apiy(i, j, css_id) {
+          var table = document.getElementById("tinytable_07slpr4wq7ul7c15apiy");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -584,7 +532,7 @@ window.Quarto = {
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_r6h94q1drpudj4elgwq9');
+        var table = document.getElementById('tinytable_07slpr4wq7ul7c15apiy');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -592,8 +540,8 @@ window.Quarto = {
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_r6h94q1drpudj4elgwq9(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_r6h94q1drpudj4elgwq9");
+      function spanCell_07slpr4wq7ul7c15apiy(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_07slpr4wq7ul7c15apiy");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -623,14 +571,14 @@ window.Quarto = {
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 },  ], css_id: 'tinytable_css_ykx32tt7zhufotjkhjqt',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_l73vbcrivw8ckm2gxun3',}, 
+          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 },  ], css_id: 'tinytable_css_xf3atsfj3osbk58yk0tl',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_ut86yctx2pijjubof43i',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_r6h94q1drpudj4elgwq9(cell.i, cell.j, group.css_id);
+                  styleCell_07slpr4wq7ul7c15apiy(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -638,11 +586,11 @@ window.Quarto = {
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_ykx32tt7zhufotjkhjqt, .table th.tinytable_css_ykx32tt7zhufotjkhjqt { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_l73vbcrivw8ckm2gxun3, .table th.tinytable_css_l73vbcrivw8ckm2gxun3 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_xf3atsfj3osbk58yk0tl, .table th.tinytable_css_xf3atsfj3osbk58yk0tl { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_ut86yctx2pijjubof43i, .table th.tinytable_css_ut86yctx2pijjubof43i { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_r6h94q1drpudj4elgwq9" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_07slpr4wq7ul7c15apiy" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -682,7 +630,7 @@ window.Quarto = {
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>ols_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Accuracy <span class="sc">~</span> Fluency_dummy, <span class="at">data =</span> fluency_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="3" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-ols" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tbl-cap-location="top" data-tblnum="3">
+<div id="tbl-ols" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tbl-cap-location="top" data-tblnum="3" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ols-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -698,8 +646,8 @@ window.Quarto = {
 
     <script>
 
-      function styleCell_uc4h69jemavjq1alolnu(i, j, css_id) {
-          var table = document.getElementById("tinytable_uc4h69jemavjq1alolnu");
+      function styleCell_zm2iomxrdpxhwts6xw4r(i, j, css_id) {
+          var table = document.getElementById("tinytable_zm2iomxrdpxhwts6xw4r");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -709,7 +657,7 @@ window.Quarto = {
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_uc4h69jemavjq1alolnu');
+        var table = document.getElementById('tinytable_zm2iomxrdpxhwts6xw4r');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -717,8 +665,8 @@ window.Quarto = {
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_uc4h69jemavjq1alolnu(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_uc4h69jemavjq1alolnu");
+      function spanCell_zm2iomxrdpxhwts6xw4r(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_zm2iomxrdpxhwts6xw4r");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -748,14 +696,14 @@ window.Quarto = {
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 }, { i: 2, j: 3 }, { i: 2, j: 4 },  ], css_id: 'tinytable_css_ehh4vkxl3u4okh7vweuy',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_6nqkl0jrzecju740b3kv',}, 
+          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 }, { i: 2, j: 3 }, { i: 2, j: 4 },  ], css_id: 'tinytable_css_g040290ndizl9oxm5rfu',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_jbb59gpmw6ph2pkoit0d',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_uc4h69jemavjq1alolnu(cell.i, cell.j, group.css_id);
+                  styleCell_zm2iomxrdpxhwts6xw4r(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -763,11 +711,11 @@ window.Quarto = {
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_ehh4vkxl3u4okh7vweuy, .table th.tinytable_css_ehh4vkxl3u4okh7vweuy { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_6nqkl0jrzecju740b3kv, .table th.tinytable_css_6nqkl0jrzecju740b3kv { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_g040290ndizl9oxm5rfu, .table th.tinytable_css_g040290ndizl9oxm5rfu { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_jbb59gpmw6ph2pkoit0d, .table th.tinytable_css_jbb59gpmw6ph2pkoit0d { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_uc4h69jemavjq1alolnu" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_zm2iomxrdpxhwts6xw4r" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -828,7 +776,7 @@ window.Quarto = {
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"model_ols_bayes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="4" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-brms-ols" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tbl-cap-location="top" data-tblnum="4">
+<div id="tbl-brms-ols" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tbl-cap-location="top" data-tblnum="4" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-brms-ols-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -947,20 +895,20 @@ window.Quarto = {
 </div>
 </div>
 <div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
-<p><a href="#tbl-brms-ols" class="quarto-xref" aria-expanded="false">Table&nbsp;4</a> displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. Comparing results with the OLS model we ran above our results are very similar. Additionally, the parameters can be interpreted in a similar manner. There are some notable differences, such as the absence of <em>t</em>- and <em>p</em>-values. There is a metric in the table that is included with models fit when using the <code>bayestestr</code> function from <code>easystats</code> called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with <em>p</em>-values (see <span class="citation" data-cites="makowski2019 makowski2019a">(<a href="#ref-makowski2019" role="doc-biblioref">Makowski, Ben-Shachar, &amp; Lüdecke, 2019</a>; <a href="#ref-makowski2019a" role="doc-biblioref">Makowski, Ben-Shachar, Chen, et al., 2019</a>)</span>). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending omn the package being used) to see if it includes 0–if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the <code>CI_low</code> and <code>CI_high</code> columns.</p>
+<p><a href="#tbl-brms-ols" class="quarto-xref" aria-expanded="false">Table&nbsp;4</a> displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. Comparing results with the OLS model we ran above our results are very similar. Additionally, the parameters can be interpreted in a similar manner. There are some notable differences, such as the absence of <em>t</em>- and <em>p</em>-values. There is a metric in the table that is included with models fit when using the <code>bayestestr</code> function from <code>easystats</code> called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with <em>p</em>-values (see <span class="citation" data-cites="makowski2019 makowski2019a">(<a href="#ref-makowski2019" role="doc-biblioref">Makowski, Ben-Shachar, &amp; Lüdecke, 2019</a>; <a href="#ref-makowski2019a" role="doc-biblioref">Makowski, Ben-Shachar, Chen, et al., 2019</a>)</span>). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending on the package being used) to see if it includes 0–if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the 95% CrIs column.</p>
 </div>
 <p>The <code>b_Intercept</code> value refers to the accuracy in the fluent condition (because we dummy coded our variable). The Fluency coefficient (<code>b_Fluency_dummy1</code>) highlights the difference between the fluent and disfluent conditions, b = -0.084, 95% CrIs = [-0.17,0.003], pd =1. These results map onto the results from the regression analysis above.</p>
 </section>
 <section id="beta-regression-1" class="level3">
 <h3 data-anchor-id="beta-regression-1">Beta Regression</h3>
-<p><span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span>, using a traditional OLS approach, observed that instructor fluency impacts actual learning (<em>p</em> = 0.048). Keep in mind the traditional approach assumes normality of residuals and homoscadacity or constant variance. These assumptions are tricky to maintain when the continuous response approaches either the upper or lower boundary of the scale and are almost never true (see <span class="citation" data-cites="sladekova2024unicorns">(<a href="#ref-sladekova2024unicorns" role="doc-biblioref">Sladekova &amp; Field, 2024</a>)</span>. Does the model <code>ols_model_new</code> meet those assumptions? Using <code>easystats</code> <span class="citation" data-cites="easystats">(<a href="#ref-easystats" role="doc-biblioref">Lüdecke et al., 2022</a>)</span> and the <code>check_model()</code> function, we can easily check this. In <a href="#fig-ols-assump" class="quarto-xref" aria-expanded="false">Figure&nbsp;6</a> , we see there definitely some issues with our model. Specifically, there appears to be violations of normality (right figure) and constant variance (homogeneity) (left-hand figure).</p>
+<p><span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span>, using a traditional OLS approach, observed that instructor fluency impacts actual learning (<em>p</em> = 0.048). Keep in mind the traditional approach assumes normality of residuals and homoscadacity or constant variance. These assumptions are tricky to maintain when the continuous response approaches either the upper or lower boundary of the scale and are almost never true (see <span class="citation" data-cites="sladekova2024unicorns">(<a href="#ref-sladekova2024unicorns" role="doc-biblioref">Sladekova &amp; Field, 2024</a>)</span>. Does the model <code>ols_model_new</code> meet those assumptions? Using <code>easystats</code> <span class="citation" data-cites="easystats">(<a href="#ref-easystats" role="doc-biblioref">Lüdecke et al., 2022</a>)</span> and the <code>check_model()</code> function, we can easily check this. In <a href="#fig-ols-assump" class="quarto-xref" aria-expanded="false">Figure&nbsp;4</a> , we see there definitely some issues with our model. Specifically, there appears to be violations of normality (right figure) and constant variance (homogeneity) (left-hand figure).</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-ols-assump" class="quarto-float quarto-figure quarto-figure-center" data-fignum="6" prefix="">
+<div id="fig-ols-assump" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="4">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-ols-assump-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;6</p>
+<p>Figure&nbsp;4</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
 <p>Two assumption checks for our OLS model: Normality (left) and Homogeneity (right)</p>
@@ -986,7 +934,7 @@ window.Quarto = {
 </div>
 <p>If we try to run <code>beta_brms</code> we get an error: <code>Error: Family 'beta' requires response greater than 0</code>. This is by design. If your remember, the Beta distribution can only model responses in the interval [0-1], but not responses that are exactly 0 or 1. We need make sure there are no zeros and ones in our dataset.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="5" data-custom-style="FigureWithoutNote">
-<div id="tbl-01s" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="5">
+<div id="tbl-01s" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="5" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-01s-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1106,16 +1054,16 @@ window.Quarto = {
 </section>
 <section id="model-parameters" class="level3">
 <h3 data-anchor-id="model-parameters">Model Parameters</h3>
-<p><a href="#tbl-beta-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;6</a> displays the summary from our Bayesian implementation. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> The <span class="math inline">\mu</span> parameter estimates, which are labeled with an underscore <code>b_</code>while <span class="math inline">\phi</span> parameter coefficients are tagged with b<code>_phi</code> in the Parameter column.</p>
+<p><a href="#tbl-beta-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;6</a> displays the summary from our Bayesian implementation. <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> The <span class="math inline">\mu</span> parameter estimates, which are labeled with an underscore <code>b_</code>while <span class="math inline">\phi</span> parameter coefficients are tagged with b<code>_phi</code> in the Parameter column.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="6" data-custom-style="FigureWithoutNote">
-<div id="tbl-beta-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="6">
+<div id="tbl-beta-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="6" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-beta-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
 <p>Table&nbsp;6</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p>Posterior summary for beta regression using <code>brms</code></p>
+<p>Regression coefficients of a beta regression <code>(beta_brms</code> model).</p>
 </div>
 </figcaption>
 <div aria-describedby="tbl-beta-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1236,14 +1184,14 @@ window.Quarto = {
 <section id="mean-mu-parameter" class="level3">
 <h3 data-anchor-id="mean-mu-parameter">Mean <span class="math inline">\mu</span> parameter</h3>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="7" data-custom-style="FigureWithoutNote">
-<div id="tbl-beta-mu" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="7">
+<div id="tbl-beta-mu" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="7" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-beta-mu-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
 <p>Table&nbsp;7</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p><span class="math inline">\mu</span> parameter posterior summary</p>
+<p>Regression coefficients for <span class="math inline">\mu</span> parameter (<code>beta_brms</code> model)</p>
 </div>
 </figcaption>
 <div aria-describedby="tbl-beta-mu-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1360,7 +1308,7 @@ window.Quarto = {
 <section id="predicted-probabilities" class="level4">
 <h4 data-anchor-id="predicted-probabilities">Predicted Probabilities.</h4>
 <p>Parameter estimates are usually difficult to intercept on their own. We argue that readers should not spend too much time interpreting single model estimates. Instead they should discuss the effects of the predictor on the actual outcome of interest (in this case the 0-1 scale). The logit link allows us to transform back and forth between the scale of a linear model and the nonlinear scale of the outcome, which is bounded by 0 and 1. By using the inverse of the logit, we can easily transform our linear coefficients to obtain average effects on the scale of the proportions or percentages, which is usually what is interesting to applied researchers. In a simple case, we can do this manually, but when there are many factors in your model this can be quite complex.</p>
-<p>To help us extract predictions from our model we will use a package called <strong><code>marginaleffects</code></strong> <span class="citation" data-cites="margeffects2024">(<a href="#ref-margeffects2024" role="doc-biblioref">Arel-Bundock et al., 2024</a>)</span>. <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called <code>predictions()</code>. These are displayed in <a href="#tbl-predict-prob" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a>.</p>
+<p>To help us extract predictions from our model we will use a package called <strong><code>marginaleffects</code></strong> <span class="citation" data-cites="margeffects2024">(<a href="#ref-margeffects2024" role="doc-biblioref">Arel-Bundock et al., 2024</a>)</span>. <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called <code>predictions()</code>. These are displayed in <a href="#tbl-predict-prob" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load marginaleffects package</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(marginaleffects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1373,7 +1321,7 @@ window.Quarto = {
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="8" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tbl-cap-location="top" data-tblnum="8">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tbl-cap-location="top" data-tblnum="8" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1491,17 +1439,17 @@ window.Quarto = {
 <div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
 <p>For the <code>Fluency</code> factor, we can interpret the <code>Mean</code> column in terms of proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 26% for those who watched the disfluent instructor.</p>
 </div>
-<p>We can also easily visualize these from <code>marginaleffects</code> using the <code>plot_predictions</code> function. After using this function, the proportions are visualized in <a href="#fig-plot-pre" class="quarto-xref" aria-expanded="false">Figure&nbsp;7</a>.</p>
+<p>We can also easily visualize these from <code>marginaleffects</code> using the <code>plot_predictions</code> function. After using this function, the proportions are visualized in <a href="#fig-plot-pre" class="quarto-xref" aria-expanded="false">Figure&nbsp;5</a>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>beta_plot <span class="ot">&lt;-</span> <span class="fu">plot_predictions</span>(beta_brms, <span class="at">condition =</span> <span class="st">"Fluency_dummy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-plot-pre" class="quarto-float quarto-figure quarto-figure-center" data-fignum="7" prefix="">
+<div id="fig-plot-pre" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="5">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-plot-pre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;7</p>
+<p>Figure&nbsp;5</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
 <p>Predicted probablities for fluency factor</p>
@@ -1524,7 +1472,7 @@ window.Quarto = {
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>beta_avg_comp <span class="ot">&lt;-</span> <span class="fu">avg_comparisons</span>(beta_brms)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="9" data-custom-style="FigureWithoutNote">
-<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="9">
+<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="9" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ame1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1641,7 +1589,7 @@ window.Quarto = {
 </div>
 <p>We can also get the odds ratio with <code>avg_comparisons</code> (see <a href="#tbl-or" class="quarto-xref" aria-expanded="false">Table&nbsp;10</a>).</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="10" data-custom-style="FigureWithoutNote">
-<div id="tbl-or" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="10">
+<div id="tbl-or" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="10" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-or-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1773,7 +1721,7 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <p>The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `<code>b_phi</code> in <a href="#tbl-phi-dis" class="quarto-xref" aria-expanded="false">Table&nbsp;11</a>. The dispersion (<span class="math inline">\phi</span>) parameter tells us how precise our estimate is. Specifically, <span class="math inline">\phi</span> in Beta regression tells us about the variability of the response variable around its mean. Specifically, a higher dispersion parameter indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.</p>
 <p>Understanding the dispersion parameter helps us gauge the precision of our predictions and the consistency of the response variable. In <code>beta_brms</code> we only modeled the dispersion of the intercept. When <span class="math inline">\phi</span> is not specified, the intercept is modeled by default (see <a href="#tbl-phi-dis" class="quarto-xref" aria-expanded="false">Table&nbsp;11</a>).</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="11" data-custom-style="FigureWithoutNote">
-<div id="tbl-phi-dis" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="11">
+<div id="tbl-phi-dis" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="11" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-phi-dis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1889,14 +1837,14 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <p>The intercept under the precision heading is not that interesting. It represents the overall dispersion in the model. We can model the dispersion of the <code>Fluency</code> factor—this allows dispersion to differ between the fluent and disfluent conditions. To do this we add <code>Fluency_dummy</code> to the phi model in <code>bf()</code>. We model the precision of the <code>Fluency</code> factor by using a <code>~</code> and adding factors of interest to the right of it.</p>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="12" data-custom-style="FigureWithoutNote">
-<div id="tbl-beta-mu-dis" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="12">
+<div id="tbl-beta-mu-dis" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="12" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-beta-mu-dis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
 <p>Table&nbsp;12</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p><span class="math inline">\mu</span> and <span class="math inline">\phi</span> posterior summary</p>
+<p>Regression coefficients for <span class="math inline">\mu</span> and <span class="math inline">\phi</span> parameters (<code>beta_brms_dis</code> model)</p>
 </div>
 </figcaption>
 <div aria-describedby="tbl-beta-mu-dis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2027,7 +1975,7 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model_parameters</span>(<span class="at">exponentiate=</span><span class="cn">TRUE</span>, <span class="at">centrality =</span> <span class="st">"mean"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="13" data-custom-style="FigureWithoutNote">
-<div id="tbl-phi-beta-exp" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="13">
+<div id="tbl-phi-beta-exp" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="13" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-phi-beta-exp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2149,15 +2097,15 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <p>The <span class="math inline">\phi</span> intercept represents the precision of the fluent condition. The <span class="math inline">\phi</span> coefficient for <code>Fluency_dummy1</code> represents the change in that precision for performance between the fluent vs.&nbsp;disfluent conditions. The Cr.intervals [.235, .684] do not include 0 so our results are statistically significant.</p>
 </div>
 <p>It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion will change the shape of the distribution but not necessarily the average value of the response. This makes dispersion most interesting for research questions that focus on other features of the distribution besides the mean, such as the level of polarization in an outcome.</p>
-<p>A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model increased the uncertainty of the <span class="math inline">\mu</span> coefficient (see <a href="#fig-plt-diff" class="quarto-xref" aria-expanded="false">Figure&nbsp;8</a>)–our Cr.I is now very close to zero. This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like beta regression over a traditional approach as Beta regression can explicitly model dispersion and address issues of heteroscedasticity.</p>
+<p>A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model increased the uncertainty of the <span class="math inline">\mu</span> coefficient (see <a href="#fig-plt-diff" class="quarto-xref" aria-expanded="false">Figure&nbsp;6</a>)–our Cr.I is now very close to zero. This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like beta regression over a traditional approach as Beta regression can explicitly model dispersion and address issues of heteroscedasticity.</p>
 <p>We won’t always need to include dispersion parameters for each of our variables. We advise conducting very simple model comparisons like leave one out (loo) cross validation to examine if a dispersion parameter should be considered in our model.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-plt-diff" class="quarto-float quarto-figure quarto-figure-center" data-fignum="8" prefix="">
+<div id="fig-plt-diff" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="6">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-plt-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;8</p>
+<p>Figure&nbsp;6</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
 <p>Comparison of posterior distributions for the risk difference in fluency: Simple model (no dispersion for Fluency) vs.&nbsp;complex model with dispersion</p>
@@ -2173,14 +2121,14 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 </section>
 <section id="posterior-predictive-check" class="level3">
 <h3 data-anchor-id="posterior-predictive-check">Posterior Predictive Check</h3>
-<p>It is a always a good idea to check how well your data fits the model. The <code>pp_check()</code> function allows us to examine the fit between our data and the model. In <a href="#fig-post-pred" class="quarto-xref" aria-expanded="false">Figure&nbsp;9</a>, multiple draws or repetitions from the posterior distribution are plotted (light blue lines) against the observed data. (dark blue). Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). We see it does a pretty good job capturing the data. Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). We see it does a pretty good job capturing the data.</p>
+<p>It is a always a good idea to check how well your data fits the model. The <code>pp_check()</code> function allows us to examine the fit between our data and the model. In <a href="#fig-post-pred" class="quarto-xref" aria-expanded="false">Figure&nbsp;7</a>, multiple draws or repetitions from the posterior distribution are plotted (light blue lines) against the observed data. (dark blue). Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). We see it does a pretty good job capturing the data. Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). We see it does a pretty good job capturing the data.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-post-pred" class="quarto-float quarto-figure quarto-figure-center" data-fignum="9" prefix="">
+<div id="fig-post-pred" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="7">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-post-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;9</p>
+<p>Figure&nbsp;7</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
 <p>Posterior predictive check for our Beta model with 100 draws.</p>
@@ -2198,39 +2146,34 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <section id="zero-inflated-beta-zib-regression" class="level2">
 <h2 data-anchor-id="zero-inflated-beta-zib-regression">Zero-Inflated Beta (ZIB) Regression</h2>
 <p>A limitation of the beta regression model is it can can only model values between 0 and 1, but not exactly 0 or 1. In our dataset we have 9 rows with <code>Accuracy</code> equal to zero.</p>
-<p>To use the Beta distribution we nudged our zeros to 0.01–which is never a good idea in practice. In our case it might be important to model the structural zeros in our data, as fluency of instructor might be an important factor in predicting the zeros in our model. There is a model called the zero-inflated beta (ZIB) model that takes into account the structural 0s in our data. We’ll still model the <span class="math inline">\mu</span> and <span class="math inline">\phi</span> (or mean and precision) of the beta distribution, but now we’ll also add one new special parameter: <span class="math inline">\alpha</span>.</p>
+<p>To use the Beta distribution we nudged our zeros to 0.01–which is never a good idea in practice. In our case it might be important to model the structural zeros in our data, as fluency of instructor might be an important factor in predicting the zeros in our model. There is a model called the zero-inflated beta (ZIB) model that takes into account the structural 0s in our data. We’ll still model the <span class="math inline">\mu</span> and <span class="math inline">\phi</span> (or mean and precision) of the Beta distribution, but now we’ll also add one new special parameter: <span class="math inline">\alpha</span>.</p>
 <p>With zero-inflated regression, we’re actually modelling a mixture of the data-generating process. The <span class="math inline">\alpha</span> parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset of with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.</p>
-<p>We can fit a ZIB model using <code>brms</code> and use the <code>marginaleffects</code> package to make inferences about our parameters of interest. Similar to our Beta regression model we fit in <code>brms</code>, we will use the <code>bf()</code> function to fit several models. We fit our <span class="math inline">\mu</span> and <span class="math inline">\phi</span> parameters as well as our zero-inflated parameter (<span class="math inline">\alpha</span>; here labeled as <code>zi</code>). In <code>brms</code> we can use the zero_inflated_beta family.</p>
+<p>We can fit a ZIB model using <code>brms</code> and use the <code>marginaleffects</code> package to make inferences about our parameters of interest. Before we run a zero-inflated beta model, we will need to transform <code>fluency_data</code> again and nudge our 1s to .99–we can keep our zeros. Similar to our Beta regression model we fit in <code>brms</code>, we will use the <code>bf()</code> function to fit several models. We fit our <span class="math inline">\mu</span> and <span class="math inline">\phi</span> parameters as well as our zero-inflated parameter (<span class="math inline">\alpha</span>; here labeled as <code>zi</code>). In <code>brms</code> we can use the zero_inflated_beta family.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># keep 0 but transform 1 to .99</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data_beta_0 <span class="ot">&lt;-</span> fluency_data <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Accuracy =</span> <span class="fu">ifelse</span>(Accuracy <span class="sc">==</span> <span class="dv">1</span>, .<span class="dv">99</span>, Accuracy))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit zero-inflated beta in brms</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>zib_model <span class="ot">&lt;-</span> <span class="fu">bf</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  Accuracy <span class="sc">~</span> Fluency_dummy, <span class="co"># The mean of the 0-1 values, or mu</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  phi <span class="sc">~</span> Fluency_dummy, <span class="co"># The precision of the 0-1 values, or phi</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  zi <span class="sc">~</span> Fluency_dummy, <span class="co"># The zero-or-one-inflated part, or alpha</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">zero_inflated_beta</span>()</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit zero-inflated beta in brms</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>zib_model <span class="ot">&lt;-</span> <span class="fu">bf</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  Accuracy <span class="sc">~</span> Fluency_dummy, <span class="co"># The mean of the 0-1 values, or mu</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  phi <span class="sc">~</span> Fluency_dummy, <span class="co"># The precision of the 0-1 values, or phi</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  zi <span class="sc">~</span> Fluency_dummy, <span class="co"># The zero-or-one-inflated part, or alpha</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">zero_inflated_beta</span>()</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Below we pass <code>zib_model</code> to the <code>brm</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit_zi <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> zib_model,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_beta_0,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cores =</span> <span class="dv">4</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">2000</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span>,</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1234</span>,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"model_beta_bayes_zib"</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_zi <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> zib_model,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data_beta_0,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">2000</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">1234</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"model_beta_bayes_zib"</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="14" data-custom-style="FigureWithoutNote">
-<div id="tbl-brms-zib" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="14">
+<div id="tbl-brms-zib" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="14" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-brms-zib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2374,19 +2317,19 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 </div>
 <section id="predicted-probabilities-and-marginal-effects" class="level3">
 <h3 data-anchor-id="predicted-probabilities-and-marginal-effects">Predicted Probabilities and Marginal Effects</h3>
-<p><a href="#tbl-brms-zib" class="quarto-xref" aria-expanded="false">Table&nbsp;14</a> provides a summary of the posterior distribution for each parameter. As stated before, it is preferable to back-transform our estimates to get probabilities. We can model the parameters separately using the <code>dpar</code> argument setting to: <span class="math inline">\mu</span>, <span class="math inline">\phi</span>, <span class="math inline">\alpha</span>. To get the predicted probabilities we can use the <code>avg_predictions()</code> function and to get risk difference between the levels of each factor we can use the <code>avg_comparisons()</code> function from <code>marginaleffects</code> package. Here we look at the risk difference for Fluency under each parameter.</p>
+<p><a href="#tbl-brms-zib" class="quarto-xref" aria-expanded="false">Table&nbsp;14</a> provides a summary of the posterior distribution for each parameter. As stated before, it is preferable to back-transform our estimates to get probabilities. We can model the parameters separately using the <code>dpar</code> argument setting to: <span class="math inline">\mu</span>, <span class="math inline">\phi</span>, <span class="math inline">\alpha</span>. To get the predicted probabilities we can use the <code>avg_predictions()</code> function and to get risk difference between the levels of each factor we can use the <code>avg_comparisons()</code> function from <code>marginaleffects</code> package <span class="citation" data-cites="marginaleffects">(<a href="#ref-marginaleffects" role="doc-biblioref">Arel-Bundock, 2024</a>)</span>. Here we look at the risk difference for Fluency under each parameter.</p>
 <section id="mean-mu" class="level4">
 <h4 data-anchor-id="mean-mu">Mean (<span class="math inline">\mu</span>).</h4>
 <p>Looking at <a href="#tbl-marg-mu-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;15</a> there is no significant effect for Fluency.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="15" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="15">
+<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="15" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-mu-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
 <p>Table&nbsp;15</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p>Risk difference (mu) for fluency factor</p>
+<p>Risk difference (<span class="math inline">\mu</span>) for fluency factor</p>
 </div>
 </figcaption>
 <div aria-describedby="tbl-marg-mu-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2496,14 +2439,14 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <h4 data-anchor-id="dispersion-phi">Dispersion (<span class="math inline">\phi</span>).</h4>
 <p>Looking at <a href="#tbl-marg-phi-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;16</a>, there is a significant effect of fluency on dispersion, with disfluency having a larger variation than fluency.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="16" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="16">
+<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="16" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-phi-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
 <p>Table&nbsp;16</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p>Risk difference (Phi) for fluency factor</p>
+<p>Risk difference (<span class="math inline">\phi</span>) for fluency factor</p>
 </div>
 </figcaption>
 <div aria-describedby="tbl-marg-phi-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2614,14 +2557,14 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <h3 data-anchor-id="zero-inflated-alpha">Zero-Inflated (<span class="math inline">\alpha</span>)</h3>
 <p>In <a href="#tbl-marg-zib-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;17</a> we see that watching a lecture video with a fluent instructor reduces the proportion of zeros by about 13%. The CrI does not include zero.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="17" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-zib-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="17">
+<div id="tbl-marg-zib-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="17" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-zib-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
 <p>Table&nbsp;17</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p>Posterior summary of the risk difference (zero-inflated) for fluency factor</p>
+<p>Regression coefficients for ZIB model (<code>marg_zi_brms</code>)</p>
 </div>
 </figcaption>
 <div aria-describedby="tbl-marg-zib-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2727,15 +2670,15 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 </div>
 </div>
 <div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
-<p>If we wanted we could easily visualize the zero-inflated part of the model (see <a href="#fig-zi-plot" class="quarto-xref" aria-expanded="false">Figure&nbsp;10</a>).</p>
+<p>If we wanted we could easily visualize the zero-inflated part of the model (see <a href="#fig-zi-plot" class="quarto-xref" aria-expanded="false">Figure&nbsp;8</a>).</p>
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-zi-plot" class="quarto-float quarto-figure quarto-figure-center" data-fignum="10" prefix="">
+<div id="fig-zi-plot" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="8">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-zi-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;10</p>
+<p>Figure&nbsp;8</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
 <p>Visualization of predicted probablites for zero-inflated part of model</p>
@@ -2752,36 +2695,36 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 </section>
 <section id="zero-one-inflated-beta-zoib" class="level2">
 <h2 data-anchor-id="zero-one-inflated-beta-zoib">Zero-One-Inflated Beta (ZOIB)</h2>
-<p>The ZIB model works well if you have 0s in your data, but not 1s.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds <span class="citation" data-cites="kong2016">(<a href="#ref-kong2016" role="doc-biblioref">Kong &amp; Edwards, 2016</a>)</span>, in JOL tasks <span class="citation" data-cites="wilford2020">(<a href="#ref-wilford2020" role="doc-biblioref">Wilford et al., 2020</a>)</span>, or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 <span class="citation" data-cites="bendixen2023">(<a href="#ref-bendixen2023" role="doc-biblioref">Bendixen &amp; Purzycki, 2023</a>)</span>. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.</p>
+<p>The ZIB model works well if you have 0s in your data, but not 1s.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds <span class="citation" data-cites="kong2016">(<a href="#ref-kong2016" role="doc-biblioref">Kong &amp; Edwards, 2016</a>)</span>, in JOL tasks <span class="citation" data-cites="wilford2020">(<a href="#ref-wilford2020" role="doc-biblioref">Wilford et al., 2020</a>)</span>, or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 <span class="citation" data-cites="bendixen2023">(<a href="#ref-bendixen2023" role="doc-biblioref">Bendixen &amp; Purzycki, 2023</a>)</span>. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.</p>
 <p>In our data, we have exactly one value equal to 1. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one-inflated beta (ZOIB) model if we believe that both 0s and 1s are distinct outcomes.</p>
 <p>Similar to our beta and zero-inflated models above, we can fit a ZOIB model in <code>brms</code> quite easily using the <code>zero_one_inflated_beta</code> family. In this model, we fit four parameters or sub-models. We fit separate models for the mean (<span class="math inline">\mu</span>) and the precision (<span class="math inline">\phi</span>) of the Beta distribution; a zero-one inflation parameter (i.e.&nbsp;the probability that an observation is either 0 or 1; <span class="math inline">\alpha</span> ) from the zero-inflated model; and a ‘conditional one inflation’ parameter (i.e.&nbsp;the probability that, given an observation is 0 or 1, the observation is 1; <span class="math inline">\gamma</span>). This specification captures the entire range of possible values while still being constrained between zero and one.</p>
 <p>We use the <code>bf()</code> function again to fit models for our four parameters. We model each parameter as a function of Fluency.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the zoib model</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>zoib_model <span class="ot">&lt;-</span> <span class="fu">bf</span>(</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  Accuracy <span class="sc">~</span> Fluency_dummy, <span class="co"># The mean of the 0-1 values, or mu</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  phi <span class="sc">~</span> Fluency_dummy, <span class="co"># The precision of the 0-1 values, or phi</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  zoi <span class="sc">~</span> Fluency_dummy, <span class="co"># The zero-or-one-inflated part, or alpha</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  coi <span class="sc">~</span> Fluency_dummy, <span class="co"># The one-inflated part, conditional on the 0s, or gamma</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">zero_one_inflated_beta</span>()</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the zoib model</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>zoib_model <span class="ot">&lt;-</span> <span class="fu">bf</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  Accuracy <span class="sc">~</span> Fluency_dummy, <span class="co"># The mean of the 0-1 values, or mu</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  phi <span class="sc">~</span> Fluency_dummy, <span class="co"># The precision of the 0-1 values, or phi</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  zoi <span class="sc">~</span> Fluency_dummy, <span class="co"># The zero-or-one-inflated part, or alpha</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  coi <span class="sc">~</span> Fluency_dummy, <span class="co"># The one-inflated part, conditional on the 0s, or gamma</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">zero_one_inflated_beta</span>()</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We then pass the <code>zoib_model</code> to our <code>brm()</code> function. The summary of the output is in <a href="#tbl-zoib" class="quarto-xref" aria-expanded="false">Table&nbsp;18</a> .</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run the zoib mode using brm</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fit_zoib <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> zoib_model,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fluency_data,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>,</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">1234</span>,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"model_beta_zoib_1"</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run the zoib mode using brm</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>fit_zoib <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> zoib_model,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fluency_data,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">seed =</span> <span class="dv">1234</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"model_beta_zoib_1"</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="18" data-custom-style="FigureWithoutNote">
-<div id="tbl-zoib" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="18">
+<div id="tbl-zoib" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="18" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-zoib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2954,33 +2897,33 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <p>To fit an ordered Beta regression in a Bayesian context we use the <code>ordbetareg</code> <span class="citation" data-cites="ordbetareg">(<a href="#ref-ordbetareg" role="doc-biblioref">Kubinec, 2023</a>)</span> package. <code>ordbetareg</code> is a front-end to the <code>brms</code> package that we described earlier; in addition to the functions available in the package, most <code>brms</code> functions and plots, including the diverse array of regression modeling options, will work with <code>ordbetareg</code> models.</p>
 <p>We first load the <code>ordbetareg</code> package. You can download it from CRAN or from here: <a href="https://github.com/saudiwin/ordbetareg_pack" class="uri">https://github.com/saudiwin/ordbetareg_pack</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load ordbetareg package</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ordbetareg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load ordbetareg package</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ordbetareg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>ordbetareg</code> package uses <code>brms</code> on the front-end so all the arguments we used previously apply here. Instead of the <code>brm()</code> function we use <code>ordbetareg()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use ordbetareg to fit model</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ord_fit_brms <span class="ot">&lt;-</span> <span class="fu">ordbetareg</span>(Accuracy <span class="sc">~</span> Fluency_dummy,</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fluency_data,</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">2000</span>,</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"model_beta_ordbeta"</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use ordbetareg to fit model</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ord_fit_brms <span class="ot">&lt;-</span> <span class="fu">ordbetareg</span>(Accuracy <span class="sc">~</span> Fluency_dummy,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fluency_data,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">2000</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"model_beta_ordbeta"</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="model-parameters-2" class="level2">
 <h2 data-anchor-id="model-parameters-2">Model Parameters</h2>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="19" data-custom-style="FigureWithoutNote">
-<div id="tbl-ordbeta-summ" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="19">
+<div id="tbl-ordbeta-summ" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="19" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ordbeta-summ-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
 <p>Table&nbsp;19</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p>Model summary for ordered beta model</p>
+<p>Regression coefficients for ordered beta regression (<code>ord_fit_brms</code> model)</p>
 </div>
 </figcaption>
 <div aria-describedby="tbl-ordbeta-summ-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3105,25 +3048,25 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <h3 data-anchor-id="dispersion-phi-1">Dispersion (<span class="math inline">\phi</span>)</h3>
 <p><a href="#tbl-ordbeta-summ" class="quarto-xref" aria-expanded="false">Table&nbsp;19</a> also includes an overall phi component. When we first fit the model we did not allow fluency to vary on this parameter, but we can easily do this–seen below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>m.phi <span class="ot">&lt;-</span> <span class="fu">ordbetareg</span>(<span class="fu">bf</span>(Accuracy <span class="sc">~</span> Fluency_dummy, </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                       phi <span class="sc">~</span> Fluency_dummy),</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data=</span>fluency_data,</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">file =</span> <span class="st">"model_beta_ordbeta_phi"</span>, </span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">iter =</span> <span class="dv">2000</span>, </span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">cores=</span><span class="dv">4</span>, </span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">phi_reg=</span><span class="st">'both'</span>) <span class="co"># log phi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>m.phi <span class="ot">&lt;-</span> <span class="fu">ordbetareg</span>(<span class="fu">bf</span>(Accuracy <span class="sc">~</span> Fluency_dummy, </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                       phi <span class="sc">~</span> Fluency_dummy),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data=</span>fluency_data,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">file =</span> <span class="st">"model_beta_ordbeta_phi"</span>, </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">iter =</span> <span class="dv">2000</span>, </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">cores=</span><span class="dv">4</span>, </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">phi_reg=</span><span class="st">'both'</span>) <span class="co"># log phi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Note the addition of the <code>phi_reg</code> argument. This argument allows us to include a model that explicitly models the dispersion parameter. Because I am modeling <span class="math inline">\phi</span> as a function of fluency, I set the argument to <code>both</code>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="20" data-custom-style="FigureWithoutNote">
-<div id="tbl-phi-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="20">
+<div id="tbl-phi-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="20" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-phi-ordbeta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
 <p>Table&nbsp;20</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p>Model summary ordered beta regression with dispersion</p>
+<p>Regression coefficients for ordered beta regression with disperison for fluency (<code>m_phi</code> model)</p>
 </div>
 </figcaption>
 <div aria-describedby="tbl-phi-ordbeta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3254,7 +3197,7 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <h3 data-anchor-id="cutpoints">Cutpoints</h3>
 <p>The model cutpoints are not reported by default, but we can access them with the R package <code>posterior</code> and the functions <code>as_draws</code> and <code>summary_draws</code>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="21" data-custom-style="FigureWithoutNote">
-<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="21">
+<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="21" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cutpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -3404,14 +3347,14 @@ $continuous</code></pre>
 <p>Overall, it is clear from the posterior distribution plot that the ordered beta model fits the data well. To fully understand model fit, both of these plots need to be inspected as they are conceptually distinct.</p>
 <section id="model-visualization" class="level4">
 <h4 data-anchor-id="model-visualization">Model Visualization.</h4>
-<p><code>ordbetareg</code> provides a visualization function called <code>plot_hess</code>. This function produces a plot of predicted proportions across the range of our <code>Fluency</code> factor. In <a href="#fig-heiss" class="quarto-xref" aria-expanded="false">Figure&nbsp;11</a> we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between Fluent and Disfluent instructors in the middle portion (<span class="math inline">\mu</span>) . However, we do see some small differences at the zero bounds.</p>
+<p><code>ordbetareg</code> provides a visualization function called <code>plot_hess</code>. This function produces a plot of predicted proportions across the range of our <code>Fluency</code> factor. In <a href="#fig-heiss" class="quarto-xref" aria-expanded="false">Figure&nbsp;9</a> we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between Fluent and Disfluent instructors in the middle portion (<span class="math inline">\mu</span>) . However, we do see some small differences at the zero bounds.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-heiss" class="quarto-float quarto-figure quarto-figure-center" data-fignum="11" prefix="">
+<div id="fig-heiss" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="9">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-heiss-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
-<p>Figure&nbsp;11</p>
+<p>Figure&nbsp;9</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
 <p>Heiss Plot of Predicted Probablities across the scale (0-100)</p>
@@ -3442,7 +3385,7 @@ $continuous</code></pre>
 <p>For instance, if we believe fluency influences the structural zero part of the model, we might want to model this process separately using a ZIB or ZOIB. With the current dataset, fluency might affect specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This effect could be due to participant disengagement during the disfluent lecture. If students fail to pay attention because of features of disfluency, they may miss relevant information, leading to a floor effect at the test. If this is the case, we would want to model this appropriately. However, if we believe fluency effects general performance levels, a model that takes in to account the entire process accounting for the zeros and ones might be appropriate.</p>
 <p>In the discussion section of <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span>, they were unable to offer a tenable explanation for performance differences based on instructor fluency. A model that accounts for the excess zeros in the dataset provides one testable explanation: watching a disfluent lecture may lead to lapses in attention, resulting in poorer performance in that group. These lapses, in turn, contribute to the observed differences in the fluent condition. This modeling approach opens a promising avenue for future research—one that would have remained inaccessible otherwise.</p>
 <p>Not everyone will be eager to implement the techniques discussed herein. In such cases, the key question becomes: What is the least problematic approach to handling proportional data? One reasonable option is to fit multiple models tailored to the specific characteristics of your data. For example, if your data contain zeros, you might fit two models: a traditional OLS regression excluding the zeros, and a logistic model to account for the zero versus non-zero distinction. If your data contain both zeros and ones, you could fit separate models for the zeros and ones in addition to the OLS model. There are many defensible strategies to choose from depending on the context. However, we do not recommend transforming the values of your data (e.g., 0s to .01 and 1s to .99) or ignoring the properties of your data simply to fit traditional statistical models.</p>
-<p>In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward—it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For standard beta regression, the <code>betareg</code> package <span class="citation" data-cites="betareg">(<a href="#ref-betareg" role="doc-biblioref">Cribari-Neto &amp; Zeileis, 2010</a>)</span> is a solid option, while more complex models such as zero-inflated and ordered beta regressions can be implemented using <code>glmmTMB</code> [<span class="citation" data-cites="glmmTMB">Brooks et al. (<a href="#ref-glmmTMB" role="doc-biblioref">2017</a>)</span>]. For fitting zero-one models, there is a new implementation in <span class="citation" data-cites="betareg">Cribari-Neto and Zeileis (<a href="#ref-betareg" role="doc-biblioref">2010</a>)</span>, that allows you to model these types of data.</p>
+<p>In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward—it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For standard beta regression, the <code>betareg</code> package <span class="citation" data-cites="betareg">(<a href="#ref-betareg" role="doc-biblioref">Cribari-Neto &amp; Zeileis, 2010</a>)</span> is a solid option, while more complex models such as zero-inflated and ordered beta regressions can be implemented using <code>glmmTMB</code> <span class="citation" data-cites="glmmTMB">(<a href="#ref-glmmTMB" role="doc-biblioref">Brooks et al., 2017</a>)</span>. For fitting zero-one models, there is a new implementation in <span class="citation" data-cites="betareg">Cribari-Neto and Zeileis (<a href="#ref-betareg" role="doc-biblioref">2010</a>)</span>, that allows you to model these types of data.</p>
 <section id="conclusion" class="level2">
 <h2 data-anchor-id="conclusion">Conclusion</h2>
 <p>Overall, this tutorial emphasizes the importance of modeling the data you have. Although the example provided is relatively simple (a one-factor model with two levels), we hope it demonstrates that even with a basic dataset, there is much nuance in interpretation and inference. Properly modeling your data can lead to deeper insights, far beyond what traditional measures might offer. With the tools introduced in this tutorial, researchers now have the means to analyze their data effectively, uncover patterns, make accurate predictions, and support their findings with robust statistical evidence. By applying these modeling techniques, researchers can improve the validity and reliability of their studies, ultimately leading to more informed decisions and advancements in their respective fields.</p>
@@ -3451,6 +3394,9 @@ $continuous</code></pre>
 <h2 data-anchor-id="references">References</h2>
 <!-- References will auto-populate in the refs div below -->
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-marginaleffects" class="csl-entry" role="listitem">
+Arel-Bundock, V. (2024). <em>Marginaleffects: Predictions, comparisons, slopes, marginal means, and hypothesis tests</em>. <a href="https://CRAN.R-project.org/package=marginaleffects">https://CRAN.R-project.org/package=marginaleffects</a>
+</div>
 <div id="ref-margeffects2024" class="csl-entry" role="listitem">
 Arel-Bundock, V., Greifer, N., &amp; Heiss, A. (2024). How to interpret statistical models using <span class="nocase">marginaleffects</span> for <span>R</span> and <span>Python</span>. <em>Journal of Statistical Software</em>, <em>111</em>(9), 1–32. <a href="https://doi.org/10.18637/jss.v111.i09">https://doi.org/10.18637/jss.v111.i09</a>
 </div>
@@ -3576,10 +3522,11 @@ Witherby, A. E., &amp; Carpenter, S. K. (2022). The impact of lecture fluency an
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>See an example of the fluent video here: <a href="https://osf.io/hwzuk" class="uri">https://osf.io/hwzuk</a>. See an example of the disfluent video here: <a href="https://osf.io/ra7be" class="uri">https://osf.io/ra7be</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p><code>ggeffects</code> is another great package to extract marginal effects and plot <span class="citation" data-cites="ggeffects-2">(<a href="#ref-ggeffects-2" role="doc-biblioref">Lüdecke, 2018</a>)</span><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p>In cases where there are large amounts of 1s but no zeros you can fit a one-inflated model. Currently you can do so with the <code>gamlss</code> package in R<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>In this article, we try to limit code where possible; however, the online version has all the code needed to reproduce all analyses herein. Furthermore, to promote transparency and reproduciblity, the tutorial was written in R version 4.4.3 (<span class="citation" data-cites="R">R Core Team (<a href="#ref-R" role="doc-biblioref">2024</a>)</span>) using Quarto (v.1.5.54), an open-source publishing system that allows for dynamic and static documents. This allows figures, tables, and text to be programmatically included directly in the manuscript, ensuring that all results are seamlessly integrated into the document. In addition, we use the <code>rix</code> <span class="citation" data-cites="rix">(<a href="#ref-rix" role="doc-biblioref">Rodrigues &amp; Baumann, 2025</a>)</span> R package which harnesses the power of the <code>nix</code> <span class="citation" data-cites="nix">(<a href="#ref-nix" role="doc-biblioref">Dolstra &amp; contributors, 2006</a>)</span> ecosystem to to help with computational reproducibility. Not only does this give us a snapshot of the packages used to create the current manuscript, but it also takes a snapshot of system dependencies used at run-time. This way reproducers can easily re-use the exact same environment by installing the <code>nix</code> package manager and using the included default.nix file to set up the right environment. The README file in the GitHub repository contains detailed information on how to set this up to reproduce the contents of the current manuscript, including a video.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>See an example of the fluent video here: <a href="https://osf.io/hwzuk" class="uri">https://osf.io/hwzuk</a>. See an example of the disfluent video here: <a href="https://osf.io/ra7be" class="uri">https://osf.io/ra7be</a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><code>ggeffects</code> is another great package to extract marginal effects and plot <span class="citation" data-cites="ggeffects-2">(<a href="#ref-ggeffects-2" role="doc-biblioref">Lüdecke, 2018</a>)</span><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>In cases where there are large amounts of 1s but no zeros you can fit a one-inflated model. Currently you can do so with the <code>gamlss</code> package in R<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main>
 <!-- /main column -->
