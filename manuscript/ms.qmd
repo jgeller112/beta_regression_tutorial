@@ -126,9 +126,7 @@ Beta regression can be estimated using various tools and approached from either 
 
 In Bayesian estimation, we begin by specifying a prior distribution that reflects our beliefs about the parameters before seeing the data. We then update this prior using the observed data through the likelihood function to produce a posterior distribution. This posterior represents what we believe about the parameters after seeing the data. Unlike frequentist methods, which typically provide point estimates and confidence intervals, Bayesian methods produce full distributions for parameters, allowing us to quantify uncertainty in a more direct and interpretable way.
 
-The posterior is typically summarized using quantities such as means, medians, and credible intervals (the Bayesian analog to confidence intervals), and inference is often based on the entire posterior distribution rather than a single point estimate,
-
-In this paper, we demonstrate how to implement Beta regression models and their extensions using the brms [@brms] package, which is a powerful and flexible Bayesian regression modeling package that offers built in support for the beta distribution and some of the alternatives we discuss in this tutorial. This reduces the number of different packages researchers have to load in to their environment and makes it easier to build more complex models with similar syntax. Additionally, we leverage the powerful `marginaleffects` [@margeffects2024] package to interpret theoretically interesting quantities that go beyond regression parameters.
+In this paper, we demonstrate how to implement Beta regression models and their extensions using the `brms` [@brms] R package, a powerful and flexible tool for Bayesian regression modeling that interfaces with the Stan programming language [@stan2023]. The `brms` package provides built-in support for the Beta distribution and several of the alternatives discussed in this tutorial. These models are estimated via Markov Chain Monte Carlo (MCMC) sampling, which allows us to draw from the full posterior distribution of model parameters. The posterior is typically summarized using measures of central tendency and credible intervals (the Bayesian analog to confidence intervals), and inference is often based on the entire posterior distribution rather than a single point estimate.
 
 ## Beta Distribution
 
@@ -339,7 +337,7 @@ Adopting a Bayesian framework often provides more flexibility and allows us to q
 
 For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with.
 
-We first start out by recreating the regression model from above in `brms` by using the `brm()` function and fitting a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency_dummy`). The syntax is similar to the `lm` function used above. Here we are concerned at modeling mean performance differences between the fluency and disfluency conditions.
+We first start out by recreating the regression model from above in `brms` by using the `brm()` function and fitting a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`Fluency`). The syntax is similar to the `lm` function used above. Here we are concerned at modeling mean performance differences between the fluency and disfluency conditions.
 
 We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages. We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the defaults used to run models. In order to use the `cmdstanr` backend you will need to first install the package and also run `cmdstanr::install_cmdstan()` if you have not done so already.
 
@@ -464,7 +462,7 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 
 To fit our Bayesian regression models, we will be using the `brms` [@brms] R package. For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with. For the purposes of this tutorial, we will not be getting into the minutiae of Bayesian data analysis (i.e., setting informative priors, MCMC sampling, etc,). For a more in-depth look into Bayesian data analysis I refer the reader to @mcelreath2020statistical and @bayes_rules.
 
-To create a regression model from in `brms` we will use the `brm()` function and fit a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency_dummy`). The syntax is similar to how you run a regression using the popular `lm` function in R. Here we are concerned with modeling mean performance differences between the fluency and disfluency conditions.
+To create a regression model from in `brms` we will use the `brm()` function and fit a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency`). The syntax is similar to how you run a regression using the popular `lm` function in R. Here we are concerned with modeling mean performance differences between the fluency and disfluency conditions.
 
 We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages. We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the defaults used to run models.[^4]
 
@@ -488,7 +486,7 @@ options(marginaleffects_posterior_center = mean)
 # get mean instead of median in marginaleffects
 ```
 
-Then we fit the model using the `brm()` function code below. The below model is run with four chains of 2000 Markov chain Monte Carlo iterations. For each chain, there was a 2000-iteration warm-up. The output of these models provides estimates of each effect (the coefficient `b_`, which is the mean of the posterior distribution), it's estimation error (the standard deviation of the posterior distribution), and its 95% credible interval (Crl). We inferred that there was evidence of an effect when the 95% Crl estimates did not include zero.
+We fit the model using the `brm()` function, as shown in the code below. To speed up processing we set `cores` = 4, and use the `cmdstand` backend. The output provides estimates for each effect: the coefficient (`b_,`) representing the mean of the posterior distribution), its estimation error (the standard deviation of the posterior distribution), and the 95% credible intervals (CrIs), which indicate the most credible values within the distribution. We inferred evidence for an effect when the 95% CrI did not include zero.
 
 ```{r}
 #| label: Bayesian_regression_model
@@ -499,14 +497,11 @@ Then we fit the model using the `brm()` function code below. The below model is 
 #| results: hide
 
 # fit ols reg
-bayes_ols_model <- brm(Accuracy ~ Fluency_dummy, data = fluency_data, 
- chains = 4,
-  iter = 2000,
-  warmup = 1000,
-  cores = 4,
-  seed = 1234,
-  backend = "cmdstanr",
-  file = "model_ols_bayes")
+bayes_ols_model <- brm(Accuracy ~ Fluency,
+                       data = fluency_data,
+                       cores=4,
+                       backend = "cmdstanr",
+                       file = "model_ols_bayes")
 ```
 
 ```{r}
@@ -534,30 +529,41 @@ brms_model_new %>%
 
 @tbl-brms-ols displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. Comparing results with the OLS model we ran above our results are very similar. Additionally, the parameters can be interpreted in a similar manner. There are some notable differences, such as the absence of *t*- and *p*-values. There is a metric in the table that is included with models fit when using the `bayestestr` [@makowski2019] function from `easystats` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values (see [@makowski2019; @makowski2019a]). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending on the package being used) to see if it includes 0--if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the 95% CrIs column.
 
-The `b_Intercept` value refers to the accuracy in the disfluent condition (because we dummy coded our variable). The Fluency coefficient (`b_Fluency_dummy1`) highlights the difference between the fluent and disfluent conditions, b = `r round(brms_model_new$Mean[2], 3)`, 95% CrIs = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. These results map onto the results from @wilford2020
+The `b_Intercept` value refers to the accuracy in the disfluent condition (because we dummy coded our variable). The Fluency coefficient (`b_Fluency1`) highlights the difference between the fluent and disfluent conditions, b = `r round(brms_model_new$Mean[2], 3)`, 95% CrIs = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. These results map onto the results from @wilford2020
 
 ### Beta Regression
 
-@wilford2020, using a traditional GLM approach, observed that instructor fluency impacts actual learning (*p* = 0.048). Keep in mind the traditional approach assumes normality of residuals and homoscadacity or constant variance. These assumptions are tricky to maintain when the continuous response approaches either the upper or lower boundary of the scale and are almost never true (see [@sladekova2024unicorns]. Does the model `ols_model_new` meet those assumptions? Using `easystats` [@easystats] and the `check_model()` function, we can easily check this. In @fig-ols-assump , we see there definitely some issues with our model. Specifically, there appears to be violations of normality (right figure) and constant variance (homogeneity) (left-hand figure).
+@wilford2020, using a traditional GLM approach, observed that instructor fluency impacts actual learning (*p* = 0.048). Keep in mind the traditional approach assumes normality of residuals and homoscadacity or constant variance. These assumptions are tricky to maintain when the continuous response approaches either the upper or lower boundary of the scale and are almost never true (see [@sladekova2024unicorns]. Does the data we have meet those assumptions? Using `easystats` [@easystats] and the `check_model()` function, we can easily check this. In @fig-ols-assump , we see there definitely some issues with our model. Specifically, there appears to be violations of normality constant variance (homogeneity).
+
+We can also examine how well the data fits the model by performing a posterior predictive check. In @fig-ppcheck-normal, multiple draws or repetitions from the posterior distribution are plotted (light blue lines) against the observed data. (dark green). Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). In our example, the model-predicted density is slightly too peaked and narrow compared to the data. In addition, some of the draws extend into negative accuracy values.
 
 ```{r}
 #| label: fig-ols-assump
 #| fig-cap: "Two assumption checks for our OLS model: Normality (left) and Homogeneity (right)"
 #| echo: false
 
-check_model(ols_model, check = c("homogeneity", "normality"))
+check_model(bayes_ols_model, check = c( "homogeneity", "normality"))
+```
+
+```{r}
+#| label: fig-ppcheck-normal
+#| fig-cap: "Posterior predictive check"
+#| echo: false
+
+check_model(bayes_ols_model, check = "pp_check")
+
 ```
 
 Given the outcome variable is proportional, one solution would be to run a beta regression model.
 
-We can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we fit two parameters—$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms`. `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
+Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we fit two parameters—$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms`. `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
 
 ```{r}
 #| label: brms model beta
 #| echo: true
 # fit model with mu and phi
 model_beta_bayes <- bf(
-  Accuracy ~ Fluency_dummy, # fit mu model
+  Accuracy ~ Fluency, # fit mu model
   phi ~ 1 # fit phi model
 ) 
 ```
@@ -700,7 +706,7 @@ library(marginaleffects)
 # use predictions to get predicted probs for each condition
 
 predictions(beta_brms,
-  newdata = datagrid(Fluency_dummy = c("0", "1"))
+  newdata = datagrid(Fluency = c("0", "1"))
 )
 ```
 
@@ -713,15 +719,15 @@ predictions(beta_brms,
 
 # get the predicted probablities for each level of fluency
 predictions(beta_brms,
-  newdata = datagrid(Fluency_dummy = c("0", "1"))
+  newdata = datagrid(Fluency = c("0", "1"))
 ) %>%
-  mutate(Fluency_dummy = ifelse(Fluency_dummy == 0, "Fluent", "Disfluent")) %>%
+  mutate(Fluency = ifelse(Fluency == 0, "Fluent", "Disfluent")) %>%
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
          `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) %>%
   rename("Mean" = "estimate") %>% 
-  select(Fluency_dummy, Mean, `95% CrI`) %>% 
-  relocate(Fluency_dummy) %>%
+  select(Fluency, Mean, `95% CrI`) %>% 
+  relocate(Fluency) %>%
   tt(digits = 3)%>%
   format_tt(escape=TRUE)
 ```
@@ -733,7 +739,7 @@ We can also easily visualize these from `marginaleffects` using the `plot_predic
 ```{r}
 #| label: plot-beta
 #| echo: true
-beta_plot <- plot_predictions(beta_brms, condition = "Fluency_dummy")
+beta_plot <- plot_predictions(beta_brms, condition = "Fluency")
 ```
 
 ```{r}
@@ -864,12 +870,12 @@ model_parameters(beta_brms, "mean") %>%
    format_tt(escape = TRUE)
 ```
 
-The intercept under the precision heading is not that interesting. It represents the overall dispersion in the model. We can model the dispersion of the `Fluency` factor—this allows dispersion to differ between the fluent and disfluent conditions. To do this we add `Fluency_dummy` to the phi model in `bf()`. We model the precision of the `Fluency` factor by using a `~` and adding factors of interest to the right of it.
+The intercept under the precision heading is not that interesting. It represents the overall dispersion in the model. We can model the dispersion of the `Fluency` factor—this allows dispersion to differ between the fluent and disfluent conditions. To do this we add `Fluency` to the phi model in `bf()`. We model the precision of the `Fluency` factor by using a `~` and adding factors of interest to the right of it.
 
 ```{r}
 model_beta_bayes_disp <- bf(
-  Accuracy ~ Fluency_dummy, # fit mu model
-  phi ~ Fluency_dummy # fit phi model with fluency 
+  Accuracy ~ Fluency, # fit mu model
+  phi ~ Fluency # fit phi model with fluency 
 ) 
 ```
 
@@ -936,7 +942,7 @@ beta_model_dis_exp %>%
 
 ```
 
-The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `Fluency_dummy1` represents the change in that precision for performance between the fluent vs. disfluent conditions. The Cr.intervals \[.235, .684\] do not include 0 so our results are statistically significant.
+The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `Fluency1` represents the change in that precision for performance between the fluent vs. disfluent conditions. The Cr.intervals \[.235, .684\] do not include 0 so our results are statistically significant.
 
 It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion will change the shape of the distribution but not necessarily the average value of the response. This makes dispersion most interesting for research questions that focus on other features of the distribution besides the mean, such as the level of polarization in an outcome.
 
@@ -951,11 +957,11 @@ We won't always need to include dispersion parameters for each of our variables.
 #| 
 
 # Add a model identifier to each dataset
-pred_no <- avg_comparisons(beta_brms, variables = "Fluency_dummy") %>%  
+pred_no <- avg_comparisons(beta_brms, variables = "Fluency") %>%  
   posterior_draws() %>%
   mutate(model = "No_Disp")
 
-pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency_dummy") %>% 
+pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") %>% 
   posterior_draws() %>%
   mutate(model = "Disp")
 
@@ -1012,9 +1018,9 @@ data_beta_0 <- fluency_data %>%
 #|
 # fit zero-inflated beta in brms
 zib_model <- bf(
-  Accuracy ~ Fluency_dummy, # The mean of the 0-1 values, or mu
-  phi ~ Fluency_dummy, # The precision of the 0-1 values, or phi
-  zi ~ Fluency_dummy, # The zero-or-one-inflated part, or alpha
+  Accuracy ~ Fluency, # The mean of the 0-1 values, or mu
+  phi ~ Fluency, # The precision of the 0-1 values, or phi
+  zi ~ Fluency, # The zero-or-one-inflated part, or alpha
   family = zero_inflated_beta()
 )
 ```
@@ -1066,7 +1072,7 @@ Looking at @tbl-marg-mu-brms there is no significant effect for Fluency.
 
 marg_zi_brms <- fit_zi %>%
   avg_comparisons(
-    variables = "Fluency_dummy",
+    variables = "Fluency",
     dpar = "mu",
     comparison = "difference"
   )
@@ -1100,7 +1106,7 @@ Looking at @tbl-marg-phi-brms, there is a significant effect of fluency on dispe
 
 marg_phi_brms <- fit_zi %>%
   avg_comparisons(
-    variables = "Fluency_dummy",
+    variables = "Fluency",
     dpar = "phi",
     comparison = "difference"
   )
@@ -1135,7 +1141,7 @@ In @tbl-marg-zib-brms we see that watching a lecture video with a fluent instruc
 
 marg_zi_brms <- fit_zi %>%
   avg_comparisons(
-    variables = "Fluency_dummy",
+    variables = "Fluency",
     dpar = "zi",
     comparison = "difference"
   )
@@ -1169,7 +1175,7 @@ If we wanted we could easily visualize the zero-inflated part of the model (see 
 #| fig-cap: "Visualization of predicted probablites for zero-inflated part of model"
 #| echo: false
 
-zi_plot <- plot_predictions(fit_zi, by = c("Fluency_dummy"), dpar = "zi") +
+zi_plot <- plot_predictions(fit_zi, by = c("Fluency"), dpar = "zi") +
   scale_x_discrete(
     breaks = c("0", "1"),
     labels = c("Fluent", "Disfluent")
@@ -1200,10 +1206,10 @@ We use the `bf()` function again to fit models for our four parameters. We model
 # fit the zoib model
 
 zoib_model <- bf(
-  Accuracy ~ Fluency_dummy, # The mean of the 0-1 values, or mu
-  phi ~ Fluency_dummy, # The precision of the 0-1 values, or phi
-  zoi ~ Fluency_dummy, # The zero-or-one-inflated part, or alpha
-  coi ~ Fluency_dummy, # The one-inflated part, conditional on the 0s, or gamma
+  Accuracy ~ Fluency, # The mean of the 0-1 values, or mu
+  phi ~ Fluency, # The precision of the 0-1 values, or phi
+  zoi ~ Fluency, # The zero-or-one-inflated part, or alpha
+  coi ~ Fluency, # The one-inflated part, conditional on the 0s, or gamma
   family = zero_one_inflated_beta()
 )
 ```
@@ -1283,7 +1289,7 @@ The `ordbetareg` package uses `brms` on the front-end so all the arguments we us
 #| results: hide
 #| echo: true
 # use ordbetareg to fit model
-ord_fit_brms <- ordbetareg(Accuracy ~ Fluency_dummy,
+ord_fit_brms <- ordbetareg(Accuracy ~ Fluency,
   data = fluency_data,
   chains = 4,
   iter = 2000,
@@ -1326,8 +1332,8 @@ ord_fit_brms %>%
 #| echo: true
 
 
-m.phi <- ordbetareg(bf(Accuracy ~ Fluency_dummy, 
-                       phi ~ Fluency_dummy),
+m.phi <- ordbetareg(bf(Accuracy ~ Fluency, 
+                       phi ~ Fluency),
                     data=fluency_data,
                     backend = "cmdstanr",
                      file = "model_beta_ordbeta_phi", 
@@ -1356,7 +1362,7 @@ m.phi %>%
 
 ```
 
-In @tbl-phi-ordbeta, `b_phi_Fluency_dummy1` is close enough to 0 relative to its uncertainty, we can say that in this case there likely aren’t major differences in variance between the fluent disfluent conditions. Looking at are $\mu$ we see that the 95% CrI includes zero, indicating no effect for fluency.
+In @tbl-phi-ordbeta, `b_phi_Fluency1` is close enough to 0 relative to its uncertainty, we can say that in this case there likely aren’t major differences in variance between the fluent disfluent conditions. Looking at are $\mu$ we see that the 95% CrI includes zero, indicating no effect for fluency.
 
 ### Cutpoints
 
@@ -1412,7 +1418,7 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 #| label: fig-heiss
 #| fig-cap: "Heiss Plot of Predicted Probablities across the scale (0-100)"
 
-plot_heiss(ord_fit_brms, grouping_fac="Fluency_dummy", recode_group_labels = c("Fluency","Disfluency"))
+plot_heiss(ord_fit_brms, grouping_fac="Fluency", recode_group_labels = c("Fluency","Disfluency"))
 
 ```
 
