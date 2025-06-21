@@ -187,7 +187,6 @@ theme_publication <- function(base_size = 14, base_family = "Times") {
       axis.text = element_text(size = base_size - 1),
       axis.line = element_line(color = "black"),
       axis.ticks = element_line(color = "black"),
-      x
       # Panel
       panel.grid.major = element_line(color = "gray80"),
       panel.grid.minor = element_blank(), # APA style minimizes gridlines
