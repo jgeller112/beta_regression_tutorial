@@ -3,7 +3,7 @@
 
 
 required_packages  = c("tidyverse", "brms", "quarto", "tinytable", "marginaleffects", "extraDistr","easystats",
-                       "scales", "tidybayes","ggrain", "posterior", "ggokabeito", "patchwork", "cowplot", "viridis", "collapse", "transformr")
+                       "scales", "tidybayes","ggrain", "posterior", "ggokabeito", "patchwork", "cowplot", "viridis", "collapse", "transformr", "glmmTMB")
 
 library(rix)
 
