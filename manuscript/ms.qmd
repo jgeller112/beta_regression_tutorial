@@ -1439,18 +1439,14 @@ combined_table <- bind_rows(
 # Make value column with estimate + CI + pd
 combined_table_clean <- combined_table %>%
   mutate(
-    value = glue("{Mean} {`95% Cr.I`}<br>(pd = {pd})")
+    value = str_glue("{Mean} {`95% Cr.I`}<br>(pd = {pd})")
   ) |>
   select(Parameter, Model, value) %>%
   pivot_wider(names_from = Model, values_from = value) |>
   mutate(across(everything(), ~ replace_na(.x, "-")))
 
 # View
-combined_table_clean
-
-# OPTIONAL: order nicely
-combined_table <- combined_table %>%
-  arrange(Parameter, Model) %>% 
+combined_table_clean %>% 
  tt(digits = 3) %>%
    format_tt(escape = TRUE)
 
