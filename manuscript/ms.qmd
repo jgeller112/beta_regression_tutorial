@@ -373,7 +373,7 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
   geom_half_boxplot(aes(fill = Fluency), side = "r") + 
   scale_y_continuous(labels = label_percent()) + 
   theme_publication() +  # Ensure this function is available
-  scale_fill_okabe_ito() + 
+  ggokabeito::scale_fill_okabe_ito() + 
   theme(legend.position = "none") # Using fill instead of color 
 
 ```
