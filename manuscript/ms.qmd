@@ -1398,34 +1398,34 @@ In the `ordbetareg` function there is a `true_bound` argument. In the case where
 brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
   filter(Parameter != "sigma") %>%
   mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = glue("[{CI_low}, {CI_high}]"),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
          Model = "Bayesian OLS") %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
 # BETA REGRESSION
 beta_model_new <- model_parameters(beta_brms, centrality = "mean") %>%
   mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = glue("[{CI_low}, {CI_high}]"),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
          Model = "Beta Regression") %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
 # BETA REGRESSION
 beta_model_dis <- model_parameters(beta_brms_dis, centrality = "mean") %>%
   mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = glue("[{CI_low}, {CI_high}]"),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
          Model = "Beta Regression (Dispersion") %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 # ZERO-INFLATED REGRESSION
 zi_model_new <- model_parameters(fit_zi, centrality = "mean") %>%
   mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = glue("[{CI_low}, {CI_high}]"),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
          Model = "Zero-Inflated") %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
 # ZERO-ONE INFLATED BETA REGRESSION
 zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
   mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = glue("[{CI_low}, {CI_high}]"),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
          Model = "Zero-One Inflated Beta") %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
@@ -1433,7 +1433,7 @@ zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
 # BETA REGRESSION
 ord_beta <- model_parameters(m.phi, centrality = "mean") %>%
   mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = glue("[{CI_low}, {CI_high}]"),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
          Model = "Ordered Beta") %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 # ZERO-INFLATED REGRESSION
