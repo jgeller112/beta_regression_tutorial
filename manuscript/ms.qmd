@@ -50,9 +50,9 @@ author-note:
     deceased: ~
   disclosures:
     # Example: This study was registered at X (Identifier Y).
-    study-registration: "No preregistration"
+    study-registration: "No preregistration for this paper."
     # Acknowledge and cite data/materials to be shared.
-    data-sharing: Data, code, and materials for this manusCr.Ipt can be found at. 
+    data-sharing: Data, code, and materials for this manusscript can be found at. 
     related-report: ~
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
