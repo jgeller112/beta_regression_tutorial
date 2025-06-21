@@ -366,22 +366,22 @@ In Experiment 1A, @wilford2020 only used the first time point (one video) and co
 #| label: data
 #| echo: false
 
-fluency_data <- read.csv("data/miko_data.csv") %>%
+fluency_data <- read.csv("data/miko_data.csv") |>
   # Rename the columns for better readability
   rename(
     "Participant" = "ResponseID", # Rename "ResponseID" to "Participant"
     "Fluency" = "Condition", # Rename "Condition" to "Fluency"
     "Time" = "name", # Rename "name" to "Time"
     "Accuracy" = "value" # Rename "value" to "Accuracy"
-  ) %>%
+  ) |>
   # Transform the data
   mutate(
     Accuracy = Accuracy / 10, # Convert Accuracy values to proportions
-    Fluency = ifelse(Fluency == 1, "Fluent", "Disflueny"),
-  ) %>%
-  filter(Time == "FreeCt1AVG") %>% # Only choose first time point
-  select(-X, -Time) %>% # Drop unnecessary columns
-  mutate(Participant = dense_rank(Participant)) %>% # Assign sequential participant numbers
+    Fluency = ifelse(Fluency == 1, "Fluent", "Disfluent"),
+  ) |>
+  filter(Time == "FreeCt1AVG") |> # Only choose first time point
+  select(-X, -Time) |> # Drop unnecessary columns
+  mutate(Participant = dense_rank(Participant)) |> # Assign sequential participant numbers
   relocate(Accuracy, .after = last_col()) # Move Accuracy to the end
 
 ```
@@ -395,8 +395,8 @@ fluency_data <- read.csv("data/miko_data.csv") %>%
 library(tinytable)
 # Display the first few rows of the modified dataframe
 # underscore won't display in Latex
-head(fluency_data) %>%
-  tt() %>%
+head(fluency_data) |>
+  tt() |>
   format_tt(escape=TRUE)
 ```
 
@@ -515,14 +515,14 @@ bayes_ols_model <- brm(Accuracy ~ Fluency,
 
 brms_model_new <- model_parameters(bayes_ols_model, centrality="mean")
 
-brms_model_new %>%
-  select(-Component) %>%
-  filter(Parameter!="sigma") %>%
+brms_model_new |>
+  select(-Component) |>
+  filter(Parameter!="sigma") |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd)%>% 
-   tt(digits = 2) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd)|> 
+   tt(digits = 2) |>
    format_tt(escape=TRUE)
 
 ```
@@ -575,15 +575,12 @@ If we try to run `beta_brms` we get an error: `Error: Family 'beta' requires res
 #| results: hide
 #| eval: false
 
-
 # run model
 
 beta_brms <- brm(model_beta_bayes,
   data = fluency_data,
   family = Beta(),
   chains = 4,
-  iter = 2000,
-  warmup = 1000,
   cores = 4,
   seed = 1234,
   backend = "cmdstanr",
@@ -598,20 +595,20 @@ beta_brms <- brm(model_beta_bayes,
 #| after-caption-space: 0pt
 
 
-fluency_data %>%
-  filter(Accuracy == 0 | Accuracy == 1) %>% # get onlys 0s and 1s
-  count(Accuracy) %>% # count them
-  rename("Count" = "n") %>% 
-  tt() %>%
+fluency_data |>
+  filter(Accuracy == 0 | Accuracy == 1) |> # get onlys 0s and 1s
+  count(Accuracy) |> # count them
+  rename("Count" = "n") |> 
+  tt() |>
    format_tt(escape = TRUE)
 ```
 
-Looking at our dataset (\@tbl-01s) shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\]. In the below code, the object `data_beta` has the transformed accuracy values that we will use to re-run our Beta regression.
+@tbl-01s shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\]. In the below code, the object `data_beta` has the transformed accuracy values that we will use to re-run our Beta regression.
 
 ```{r}
 
 # transform 0 to 0.1 and 1 to .99
-data_beta <- fluency_data %>%
+data_beta <- fluency_data |>
   mutate(
     Accuracy = ifelse(Accuracy == 0, .01, 
                       ifelse(Accuracy == 1, .99, Accuracy))
@@ -628,10 +625,7 @@ beta_brms <- brm(model_beta_bayes,
   data = data_beta,
   family = Beta(),
   chains = 4,
-  iter = 2000,
-  warmup = 1000,
   cores = 4,
-  seed = 1234,
   backend = "cmdstanr",
   file = "model_beta_bayes_reg_1" # Save this so it doesn't have to always rerun
 )
@@ -639,7 +633,7 @@ beta_brms <- brm(model_beta_bayes,
 
 No errors this time! We will perform the Beta regression using the nudged values of .01 and .99 values and report our results.
 
-### Model Parameters
+#### Model Parameters
 
 @tbl-beta-brms displays the summary from our Bayesian implementation. [^5] The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the Parameter column.
 
@@ -651,13 +645,13 @@ No errors this time! We will perform the Beta regression using the nudged values
 #| echo: false
 #| after-caption-space: 0pt
 
-model_parameters(beta_brms, "mean") %>%
+model_parameters(beta_brms, "mean") |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd) %>% 
-  tt() %>%
-  format_tt(digits = 3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd) |> 
+  tt() |>
+  format_tt(digits = 3) |>
   format_tt(escape = TRUE)
 ```
 
@@ -671,19 +665,19 @@ model_parameters(beta_brms, "mean") %>%
 #| after-caption-space: 0pt
 
 
-model_parameters(beta_brms, "mean") %>%
-  filter(!startsWith(Parameter, "b_phi")) %>% 
+model_parameters(beta_brms, "mean") |>
+  filter(!startsWith(Parameter, "b_phi")) |> 
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd) %>% 
-  tt() %>%
-  format_tt(digits = 3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd) |> 
+  tt() |>
+  format_tt(digits = 3) |>
   format_tt(escape = TRUE)
 
 ```
 
-In @tbl-beta-mu the first set of coefficients (first two rows in the table) represent how factors influence the $\mu$ parameter, which is the mean of the beta distribution. These coefficients are interpreted on the scale of the logit, meaning they represent linear changes on a nonlinear space. The intercept term `(b_Intercept)` represents the log odds of the mean on accuracy for the fluent instructor condition. Log odds that are negative indicate that it is more likely a "success" (like getting the correct answer) will NOT happen than that it will happen. Similarly, regression coefficients in log odds forms that are negative indicate that an increase in that predictor leads to a decrease in the predicted probability of a "success".
+In @tbl-beta-mu the first set of coefficients (first two rows in the table) represent how factors influence the $\mu$ parameter, which is the mean of the beta distribution. These coefficients are interpreted on the scale of the logit, meaning they represent linear changes on a nonlinear space. The intercept term `(b_Intercept)` represents the log odds of the mean on accuracy for the fluent instructor. Log odds that are negative indicate that it is more likely a "success" (like getting the correct answer) will NOT happen than that it will happen. Similarly, regression coefficients in log odds forms that are negative indicate that an increase in that predictor leads to a decrease in the predicted probability of a "success".
 
 #### Predicted Probabilities
 
@@ -706,7 +700,7 @@ library(marginaleffects)
 # use predictions to get predicted probs for each condition
 
 predictions(beta_brms,
-  newdata = datagrid(Fluency = c("0", "1"))
+  newdata = datagrid(Fluency = c("Disfluent", "Fluent")) 
 )
 ```
 
@@ -719,16 +713,16 @@ predictions(beta_brms,
 
 # get the predicted probablities for each level of fluency
 predictions(beta_brms,
-  newdata = datagrid(Fluency = c("0", "1"))
-) %>%
-  mutate(Fluency = ifelse(Fluency == 0, "Fluent", "Disfluent")) %>%
+  newdata = datagrid(Fluency = c("Disfluent", "Fluent"))
+) |>
+  mutate(Fluency = ifelse(Fluency == "Fluent", "Fluent", "Disfluent")) |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) %>%
-  rename("Mean" = "estimate") %>% 
-  select(Fluency, Mean, `95% CrI`) %>% 
-  relocate(Fluency) %>%
-  tt(digits = 3)%>%
+         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) |>
+  rename("Mean" = "estimate") |> 
+  select(Fluency, Mean, `95% CrI`) |> 
+  relocate(Fluency) |>
+  tt(digits = 3)|>
   format_tt(escape=TRUE)
 ```
 
@@ -779,15 +773,15 @@ beta_avg_comp <- avg_comparisons(beta_brms)
 #| after-caption-space: 0pt
 
 
-beta_avg_comp %>%
+beta_avg_comp |>
   # remove unwanted variables
-  select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted) %>%
+  select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted) |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) %>%
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") %>%
-  select(Term, Contrast, Mean,`95% CrI`) %>% 
-  tt(digits = 2) %>%
+         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) |>
+  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean,`95% CrI`) |> 
+  tt(digits = 2) |>
   format_tt(escape=TRUE)
 ```
 
@@ -806,18 +800,18 @@ We can also get the odds ratio with `avg_comparisons` (see @tbl-or).
 avg_comparisons(beta_brms,
   comparison = "lnoravg",
   transform = "exp"
-) %>%
-  select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted)%>% 
+) |>
+  select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted)|> 
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) %>%
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") %>%
-  select(Term, Contrast, Mean,`95% CrI`) %>% 
-  tt()  %>%
+         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) |>
+  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean,`95% CrI`) |> 
+  tt()  |>
    format_tt(escape = TRUE)
 ```
 
-In psychology, it is common to report effect size measures like Cohen's D. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation to calculate Cohen's *h* along with the 95% Cr.Is around it.
+In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation to calculate Cohen's *h* along with the 95% Cr.Is around it.
 
 $$
 h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)
@@ -859,14 +853,14 @@ Understanding the dispersion parameter helps us gauge the precision of our predi
 #| tbl-cap: Dispersion parameter
 #| after-caption-space: 0pt
 
-model_parameters(beta_brms, "mean") %>%
-  filter(startsWith(Parameter, "b_phi")) %>% 
+model_parameters(beta_brms, "mean") |>
+  filter(startsWith(Parameter, "b_phi")) |> 
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd)%>%
-  tt() %>%
-  format_tt(digits = 3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd)|>
+  tt() |>
+  format_tt(digits = 3) |>
    format_tt(escape = TRUE)
 ```
 
@@ -904,13 +898,13 @@ beta_brms_dis <- brm(model_beta_bayes_disp,
 #| after-caption-space: 0pt
 
 
-model_parameters(beta_brms_dis, "mean") %>%
+model_parameters(beta_brms_dis, "mean") |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd) %>% 
-  tt() %>%
-  format_tt(digits = 3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd) |> 
+  tt() |>
+  format_tt(digits = 3) |>
   format_tt(escape = TRUE)
 ```
 
@@ -921,7 +915,7 @@ model_parameters(beta_brms_dis, "mean") %>%
 #| echo: true
 #| after-caption-space: 0pt
 
-beta_model_dis_exp <- beta_brms_dis %>%
+beta_model_dis_exp <- beta_brms_dis |>
   model_parameters(exponentiate=TRUE, centrality = "mean") 
 ```
 
@@ -931,13 +925,13 @@ beta_model_dis_exp <- beta_brms_dis %>%
 #| tbl-cap: Beta regression model summary for fluency factor with $\phi$ parameter exponentiated
 #| after-caption-space: 0pt
 
-beta_model_dis_exp %>%
-    filter(startsWith(Parameter, "b_phi")) %>% 
+beta_model_dis_exp |>
+    filter(startsWith(Parameter, "b_phi")) |> 
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd) %>% 
-  tt(digits=3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd) |> 
+  tt(digits=3) |>
   format_tt(escape=TRUE)
 
 ```
@@ -957,12 +951,12 @@ We won't always need to include dispersion parameters for each of our variables.
 #| 
 
 # Add a model identifier to each dataset
-pred_no <- avg_comparisons(beta_brms, variables = "Fluency") %>%  
-  posterior_draws() %>%
+pred_no <- avg_comparisons(beta_brms, variables = "Fluency") |>  
+  posterior_draws() |>
   mutate(model = "No_Disp")
 
-pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") %>% 
-  posterior_draws() %>%
+pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") |> 
+  posterior_draws() |>
   mutate(model = "Disp")
 
 # Combine both datasets
@@ -1008,7 +1002,7 @@ We can fit a ZIB model using `brms` and use the `marginaleffects` package to mak
 #| label: change 1s
 #| echo: false 
 # keep 0 but transform 1 to .99
-data_beta_0 <- fluency_data %>%
+data_beta_0 <- fluency_data |>
   mutate(Accuracy = ifelse(Accuracy == 1, .99, Accuracy))
 ```
 
@@ -1050,13 +1044,13 @@ fit_zi <- brm(
 #| after-caption-space: 0pt
 
 
-model_parameters(fit_zi, "mean")  %>%
+model_parameters(fit_zi, "mean")  |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd) %>% 
-  tt() %>%
-  format_tt(digits = 3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd) |> 
+  tt() |>
+  format_tt(digits = 3) |>
   format_tt(escape = TRUE)
 ```
 
@@ -1070,7 +1064,7 @@ Looking at @tbl-marg-mu-brms there is no significant effect for Fluency.
 
 ```{r}
 
-marg_zi_brms <- fit_zi %>%
+marg_zi_brms <- fit_zi |>
   avg_comparisons(
     variables = "Fluency",
     dpar = "mu",
@@ -1085,15 +1079,15 @@ marg_zi_brms <- fit_zi %>%
 #| after-caption-space: 0pt
 
 
-marg_zi_brms %>%
-  select(term,contrast, estimate, conf.low, conf.high) %>% 
+marg_zi_brms |>
+  select(term,contrast, estimate, conf.low, conf.high) |> 
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) %>%
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") %>%
-  select(Term, Contrast, Mean,`95% CrI`) %>% 
-   tt() %>%
-   format_tt(digits = 3) %>%
+         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) |>
+  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean,`95% CrI`) |> 
+   tt() |>
+   format_tt(digits = 3) |>
    format_tt(escape = TRUE)
 
 ```
@@ -1104,7 +1098,7 @@ Looking at @tbl-marg-phi-brms, there is a significant effect of fluency on dispe
 
 ```{r}
 
-marg_phi_brms <- fit_zi %>%
+marg_phi_brms <- fit_zi |>
   avg_comparisons(
     variables = "Fluency",
     dpar = "phi",
@@ -1119,15 +1113,15 @@ marg_phi_brms <- fit_zi %>%
 #| after-caption-space: 0pt
 
 
-marg_phi_brms %>%
-  select(term,contrast, estimate, conf.low, conf.high) %>% 
+marg_phi_brms |>
+  select(term,contrast, estimate, conf.low, conf.high) |> 
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) %>%
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") %>%
-  select(Term, Contrast, Mean,`95% CrI`) %>%
-   tt() %>%
-   format_tt(digits = 3) %>%
+         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) |>
+  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean,`95% CrI`) |>
+   tt() |>
+   format_tt(digits = 3) |>
    format_tt(escape = TRUE)
 
 ```
@@ -1139,7 +1133,7 @@ In @tbl-marg-zib-brms we see that watching a lecture video with a fluent instruc
 ```{r}
 #| label: marg-zib-brms 
 
-marg_zi_brms <- fit_zi %>%
+marg_zi_brms <- fit_zi |>
   avg_comparisons(
     variables = "Fluency",
     dpar = "zi",
@@ -1154,15 +1148,15 @@ marg_zi_brms <- fit_zi %>%
 #| after-caption-space: 0pt
 
 
-marg_zi_brms %>%
-  select(term,contrast, estimate, conf.low, conf.high) %>% 
+marg_zi_brms |>
+  select(term,contrast, estimate, conf.low, conf.high) |> 
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) %>%
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") %>%
-  select(Term, Contrast, Mean,`95% CrI`) %>% 
-   tt() %>%
-   format_tt(digits = 3) %>%
+         `95% CrI` = str_glue("[{conf.low}, {conf.high}]")) |>
+  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean,`95% CrI`) |> 
+   tt() |>
+   format_tt(digits = 3) |>
    format_tt(escape = TRUE)
 
 
@@ -1243,12 +1237,12 @@ fit_zoib <- brm(
 
 zoib_model <- parameters::model_parameters(fit_zoib, "mean")
 
-zoib_model %>%
+zoib_model |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd) %>% 
-  tt(digits = 3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd) |> 
+  tt(digits = 3) |>
   format_tt(escape=TRUE)
 ```
 
@@ -1307,14 +1301,14 @@ ord_fit_brms <- ordbetareg(Accuracy ~ Fluency,
 #| after-caption-space: 0pt
 
 
-ord_fit_brms %>%
-  model_parameters(centrality = "mean") %>%
+ord_fit_brms |>
+  model_parameters(centrality = "mean") |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd) %>% 
-  tt() %>% 
-  format_tt(digits = 3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd) |> 
+  tt() |> 
+  format_tt(digits = 3) |>
    format_tt(escape = TRUE)
 ```
 
@@ -1350,14 +1344,14 @@ Note the addition of the `phi_reg` argument. This argument allows us to include 
 #| echo: false
 #| after-caption-space: 0pt
 
-m.phi %>%
-  model_parameters(centrality = "mean") %>%
+m.phi |>
+  model_parameters(centrality = "mean") |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Mean, `95% CrI`, pd) %>% 
-  tt() %>% 
-  format_tt(digits = 3) %>%
+  `95% CrI` = str_glue("[{CI_low}, {CI_high}]")) |> 
+  select(Parameter, Mean, `95% CrI`, pd) |> 
+  tt() |> 
+  format_tt(digits = 3) |>
    format_tt(escape = TRUE)
 
 ```
@@ -1376,14 +1370,14 @@ The model cutpoints are not reported by default, but we can access them with the
 
 library(posterior)
 
-as_draws(m.phi, c("cutzero", "cutone")) %>%
-  summarize_draws() %>%
-  select(variable, mean, q5, q95) %>%
-  mutate(across(c(mean, q5, q95), ~ round(.x, 2))) %>%
-  mutate(`95% CrI` = str_glue("[{q5}, {q95}]")) %>% 
-  rename("Parameter" = "variable", "Mean" = "mean") %>% 
-  select(Parameter, Mean, `95% CrI`) %>%
-  tt() %>%
+as_draws(m.phi, c("cutzero", "cutone")) |>
+  summarize_draws() |>
+  select(variable, mean, q5, q95) |>
+  mutate(across(c(mean, q5, q95), ~ round(.x, 2))) |>
+  mutate(`95% CrI` = str_glue("[{q5}, {q95}]")) |> 
+  rename("Parameter" = "variable", "Mean" = "mean") |> 
+  select(Parameter, Mean, `95% CrI`) |>
+  tt() |>
   format_tt(escape = TRUE)
 
 ```
