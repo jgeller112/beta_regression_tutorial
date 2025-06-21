@@ -120,11 +120,15 @@ In this tutorial, we provide (a) give a brief, non-technical overview of the pri
 
 [^1]: In this article, we try to limit code where possible; however, the online version has all the code needed to reproduce all analyses herein. Furthermore, to promote transparency and reproduciblity, the tutorial was written in R version 4.4.3 (@R) using Quarto (v.1.5.54), an open-source publishing system that allows for dynamic and static documents. This allows figures, tables, and text to be programmatically included directly in the manuscript, ensuring that all results are seamlessly integrated into the document. In addition, we use the `rix` [@rix] R package which harnesses the power of the `nix` [@nix] ecosystem to to help with computational reproducibility. Not only does this give us a snapshot of the packages used to create the current manuscript, but it also takes a snapshot of system dependencies used at run-time. This way reproducers can easily re-use the exact same environment by installing the `nix` package manager and using the included default.nix file to set up the right environment. The README file in the GitHub repository contains detailed information on how to set this up to reproduce the contents of the current manuscript, including a video.
 
-## Bayesian Regression Modeling
+## Bayesian Approach to Beta Regression
 
-Beta regression can be estimated using various tools and approached from either a frequentist or Bayesian methods. We adopt a Bayesian framework primarily due to its practicality and the availability of advanced computational techniques [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules]. However, similar implementations are available within the frequentist framework.
+Beta regression can be estimated using various tools and approached from either a frequentist or Bayesian perspective. We adopt a Bayesian framework primarily due to its practicality and the availability of advanced computational techniques that make it easier to fit complex models [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules]. However, similar implementations are available within the frequentist framework.
 
-In this paper, we demonstrate how to implement Beta regression models and their extensions using the brms [@brms] package. Additionally, we leverage the powerful `marginaleffects` [@margeffects2024] package to interpret theoretically interesting quantities that go beyond regression parameters.
+In Bayesian estimation, we begin by specifying a prior distribution that reflects our beliefs about the parameters before seeing the data. We then update this prior using the observed data through the likelihood function to produce a posterior distribution. This posterior represents what we believe about the parameters after seeing the data. Unlike frequentist methods, which typically provide point estimates and confidence intervals, Bayesian methods produce full distributions for parameters, allowing us to quantify uncertainty in a more direct and interpretable way.
+
+The posterior is typically summarized using quantities such as means, medians, and credible intervals (the Bayesian analog to confidence intervals), and inference is often based on the entire posterior distribution rather than a single point estimate,
+
+In this paper, we demonstrate how to implement Beta regression models and their extensions using the brms [@brms] package, which is a powerful and flexible Bayesian regression modeling package that offers built in support for the beta distribution and some of the alternatives we discuss in this tutorial. This reduces the number of different packages researchers have to load in to their environment and makes it easier to build more complex models with similar syntax. Additionally, we leverage the powerful `marginaleffects` [@margeffects2024] package to interpret theoretically interesting quantities that go beyond regression parameters.
 
 ## Beta Distribution
 
@@ -132,9 +136,9 @@ Proportional data are bounded between 0 and 1 and often exhibit heteroscedastici
 
 In any statistical model, the expected value (or mean) of the response variable serves as the central estimand we aim to describe and predict. The model specifies how this expected value depends on explanatory variables through several components: a random component that specifies the distribution of the response variable around its expected value (such as a Poisson or binomial, which are part of the exponential family), a linear predictor that combines explanatory variables in a linear form, and a link function that connects the mean of the response variable to the linear predictor (also referred to as the expected value) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
 
-To deal with proportional data, we can fit a model with a Beta distribution \[@ferrari2004\]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha\$) and shape2 ($\beta\$)—govern the distribution’s location, skewness, and spread. This is similar to how the Gaussian distribution is determined by its mean ($\mu\$) and standard deviation ($\sigma\$). These shape parameters allow the Beta distribution to take on a wide variety of forms, including symmetric, positively or negatively skewed, U-shaped, and uniform-like distributions (see \@fig-curves).
+To deal with proportional data, we can fit a model with a Beta distribution [@ferrari2004]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha\$) and shape2 ($\beta\$)—govern the distribution’s location, skewness, and spread. This is similar to how the Gaussian distribution is determined by its mean and standard deviation. These shape parameters allow the Beta distribution to take on a wide variety of forms, including symmetric, positively or negatively skewed, U-shaped, and uniform-like distributions (see @fig-curves).
 
-To highlight this, let's go back to our hypothetical example from the introduction. Let's suppose a participant got 4 out of 6 on a short answer question on a test. We can take the number of correct on that particular test item (4) and divide that by the number of correct (4) + number of incorrect (2) and plot the resulting density curve. `Shape1` in this example would be 4 (number of points received or successes). `Shape2` would be 2--the number of points not received (number of failures). Looking at @fig-beta-dist (A) we see the distribution for one of our questions is shifted towards one indicating higher accuracy on the exam. If we reversed the values of the two parameters @fig-beta-dist (B), we would get a distribution shifted towards 0, indicating a lower accuracy. By adjusting the values of two parameters, we can get a wide range of distributions (e.g., u-shaped, inverted u-shaped , normal, or uniform--see @fig-curves)--highlighting the incredible flexibility of the Beta distribution. In mathematical statistics, the Beta distribution is often used to model probabilities or proportions that can vary continuously between 0 and 1, but do not take the exact values of 0 or 1.
+To highlight this, let's go back to our hypothetical example from the introduction. Let's suppose a participant got 4 out of 6 on a short answer question on a test. We can take the number of correct on that particular test item (4) and divide that by the number of correct (4) + number of incorrect (2) and plot the resulting density curve. `Shape1` in this example would be 4 (number of points received or successes). `Shape2` would be 2--the number of points not received (number of failures). Looking at @fig-beta-dist (A) we see the distribution for one of our questions is shifted towards one indicating higher accuracy on the exam. If we reversed the values of the two parameters @fig-beta-dist (B), we would get a distribution shifted towards 0, indicating a lower accuracy. In mathematical statistics, the Beta distribution is often used to model probabilities or proportions that can vary continuously between 0 and 1, but do not take the exact values of 0 or 1.
 
 ```{r}
 #| label: packages_1
@@ -323,9 +327,40 @@ In @wilford2020 (Experiment 1A), they presented participants with two short vide
 
 ## Reanalysis of Wilford et al. Experiment 1A
 
-### GLM Approach
+In Experiment 1A, @wilford2020 only used the first time point (one video) and compared fluent and disfluent conditions with a *t*-test. They found better performance for participants watching the fluency instructor than the disfluency instructor (see @fig-flu1). In our re-analysis, we will run a Bayesain regression model that is comparable to analysis used by @wilford2020. Specifically, we will examine accuracy on final test as our DV (because the score was on a 10 point scale we divided by 10 to get a proportion) and look at fluency of the instructor as our outcome measure (Fluent vs. Disfluent). We used the default treatment (dummy) coding in R, which sets the first level of a factor (alphabetically) as the reference level. In this case, the disfluent level served as the reference. In addition we used default (noninformative priors).
 
-In Experiment 1A, @wilford2020 only used the first time point (one video) and compared fluent and disfluent conditions with a *t*-test. They found better performance for participants watching the fluency instructor than the disfluency instructor (see @fig-flu1). In our re-analysis, we will also run a *t*-test, but in a regression context. This allows for easier generalization to the Beta regression approach that follows. Specifically, we will examine accuracy on final test as our DV (because the score was on a 10 point scale we divided by 10 to get a proportion) and look at Fluency of the instructor as our outcome measure (Fluent vs. Disfluent). We used the default treatment/dummy coding in R with the disfluent level serving as the reference or baseline (coded as 0).
+### Bayesian Regression
+
+We used `brms` [@brms] to run our model. `brms` is a powerful and flexible Bayesian regression modeling package that offers built in support for the beta distribution and some of the alternatives we discuss in this tutorial. This reduces the number of different packages researchers have to load in to their environment and makes it easier to build more complex models with similar syntax.
+
+Adopting a Bayesian framework often provides more flexibility and allows us to quantity uncertainty around our estimates which makes it more powerful than the frequentist/MLE alternative. For the purposes of this tutorial, we will not be getting into the minutiae of Bayesian data analysis (i.e., setting informative priors, MCMC sampling, etc,). For a more in-depth look into Bayesian data analysis I refer the reader to @mcelreath2020statistical and @bayes_rules.
+
+For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with.
+
+We first start out by recreating the regression model from above in `brms` by using the `brm()` function and fitting a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency_dummy`). The syntax is similar to the `lm` function used above. Here we are concerned at modeling mean performance differences between the fluency and disfluency conditions.
+
+We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages. We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the defaults used to run models. In order to use the `cmdstanr` backend you will need to first install the package and also run `cmdstanr::install_cmdstan()` if you have not done so already.
+
+```{r}
+# load brms and cmdstanr
+library(brms)
+library(cmdstanr) 
+```
+
+```{r}
+#| eval: false
+cmdstanr::install_cmdstan()
+```
+
+```{r}
+#| echo: false
+options(marginaleffects_posterior_center = mean)
+# get mean instead of median in marginaleffects
+```
+
+Then we fit the model using the `brm()` function. The below model is run with four chains of 2000 Markov chain Monte Carlo iterations. For each chain, there was a 2000-iteration warm-up. The output of these models provides estimates of each effect (the coefficient `b_`, which is the mean of the posterior distribution), it's estimation error (the standard deviation of the posterior distribution), and its 95% credible interval (Crl). We inferred that there was evidence of an effect when the 95% Crl estimates did not include zero. Additional arguments were set to speed up the fitting of the models (`cores` = 4 and `backend` = `cmdstanr`) which we will not explain herein.
+
+In Experiment 1A, @wilford2020 only used the first time point (one video) and compared fluent and disfluent conditions with a *t*-test. They found better performance for participants watching the fluency instructor than the disfluency instructor (see @fig-flu1). In our re-analysis, we will also run a *t*-test, but in a regression context. This allows for easier generalization to the Beta regression approach that follows. Specifically, we will examine accuracy on final test as our DV (because the score was on a 10 point scale we divided by 10 to get a proportion) and look at fluency of the instructor as our outcome measure (Fluent vs. Disfluent). We used the default treatment (dummy) coding in R, which sets the first level of a factor (alphabetically) as the reference level. In this case, the disfluency level served as the reference.
 
 ```{r}
 #| label: data
@@ -342,9 +377,7 @@ fluency_data <- read.csv("data/miko_data.csv") %>%
   # Transform the data
   mutate(
     Accuracy = Accuracy / 10, # Convert Accuracy values to proportions
-    Fluency = ifelse(Fluency == 1, "Fluent", "Disflueny"), # Rename levels
-    Fluency_dummy = ifelse(Fluency == "Fluent", 0, 1), # Recode
-    Fluency_dummy = as.factor(Fluency_dummy) # Convert to factor
+    Fluency = ifelse(Fluency == 1, "Fluent", "Disflueny"),
   ) %>%
   filter(Time == "FreeCt1AVG") %>% # Only choose first time point
   select(-X, -Time) %>% # Drop unnecessary columns
@@ -391,96 +424,52 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
   scale_fill_okabe_ito() + 
   theme(legend.position = "none") # Using fill instead of color 
 
-
 ```
 
-#### Load Packages and Data
-
-As a first step, we will load the necessary packages along with the data we will be using.
+#### Data
 
 ```{r}
 #| label: setup
-#| echo: true
 #| message: false
 #| warning: false
 packages <- c("tidyverse", "easystats", "scales", "tinytable", "marginaleffects",
               "extraDistr", "brms", "posterior", "bayesplot", "ggdist")
-purrr::walk(packages, library, character.only = TRUE)
+```
 
+```{r}
+purrr::walk(packages, library, character.only = TRUE)
 ```
 
 ```{r}
 options(scipen = 999)
 ```
 
-Next, we read in the data from the repo, but you can also read it the directly from this url: <https://raw.githubusercontent.com/jgeller112/beta_regression_tutorial/refs/heads/main/data/miko_data.csv?token=GHSAT0AAAAAAC4SIEVH762DOKQSI2F52YXYZ4AIT3Q>. Before we begin, we have to make some modifications to the original dataset. Namely, we rename the columns to make them more informative, and transform the data. Here we transform accuracy so it is a proportion by dividng each score by 10. Finally, we dummy code the `Fluency` variable (`Fluency_dummy`) setting the fluent condition to 0 and the disfluent condition to 1. The first few rows of the data are displayed in @tbl-dataset along with the data dictionary in @tbl-columnkey.
+Before we fit the regression model, we will read in the data.
 
 ```{r}
-#| label: tbl-columnkey
-#| tbl-cap: Data dictionary
-#| echo: false
-#| after-caption-space: 0pt
 
-
-tibble(
-  Column = c("Participant", "Fluency", "FluencyDummy", "Accuracy"),
-  Key = c(
-    "Participant ID number",
-    "Fluent vs. Disfluent", "Fluent: 0; Disfluent: 1",
-    "Proportion recalled (idea units)"
-  )
-) %>%
-  tt() %>%
-   format_tt(escape = TRUE)
 ```
 
-```{r}
-#| label: ols regression
-#| echo: true
-#| warning: false
-#| message: false
+The first few rows of the data are displayed in @tbl-dataset. The dataset contains three columns:
 
-# fit ols reg
-ols_model <- lm(Accuracy ~ Fluency_dummy, data = fluency_data)
-```
+-   **Participant:** Participant ID number
 
-```{r}
-#| label: tbl-ols
-#| tbl-cap: "OLS  regression model coefficents"
-#| tbl-cap-location: top
-#| echo: false
-#| after-caption-space: 0pt
+-   **Fluency:** Fluent vs. Disfluent
 
-
-# for regression model
-ols_model_new <- model_parameters(ols_model)
-
-
-ols_model_new %>%
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% CI` = str_glue("[{CI_low}, {CI_high}]")) %>% 
-  select(Parameter, Coefficient, SE, `95% CI`, p)%>% 
-  tt(digits = 2) %>%
-  format_tt(j = "p", fn = scales::label_pvalue()) %>%
-  format_tt(escape = TRUE)
-```
-
-@tbl-ols displays the summary of the OLS regression model. The table shows two coefficients. The `Intercept` value refers to the accuracy in the fluent condition (because we dummy coded our variable). The `Fluency` coefficient (`Fluency_dummy1`) highlights the difference between the fluent and disfluent condition, which is statistically significant, b = `r round(ols_model_new$Coefficient[2], 3)` , SE = `r round(ols_model_new$SE[2], 3)` , 95% CIs = \[`r round(ols_model_new$CI_low[2], 3)`,`r round(ols_model_new$CI_high[2], 3)`\], p = `r round(ols_model_new$p[2], 3)`. The results reproduce the findings from @wilford2020 —better memory when watching the fluent instructor video.
+-   **Accuracy:** Proportion recalled (idea units)
 
 ### Bayesian Regression
 
-To fit our Bayesian models, we will be using a Bayesian package called `brms` [@brms] . `brms` is a powerful and flexible Bayesian regression modeling package that offers built in support for the beta distribution and some of the alternatives we discuss in this tutorial. This reduces the number of different packages researchers have to load in to their environment and makes it easier to build more complex models with similar syntax.
+To fit our Bayesian regression model, we will be using `brms` [@brms].
 
-Adopting a Bayesian framework often provides more flexibility and allows us to quantity uncertainty around our estimates which makes it more powerful than the frequentist/MLE alternative. For the purposes of this tutorial, we will not be getting into the minutiae of Bayesian data analysis (i.e., setting informative priors, MCMC sampling, etc,). For a more in-depth look into Bayesian data analysis I refer the reader to @mcelreath2020statistical and @bayes_rules.
+For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with. For the purposes of this tutorial, we will not be getting into the minutiae of Bayesian data analysis (i.e., setting informative priors, MCMC sampling, etc,). For a more in-depth look into Bayesian data analysis I refer the reader to @mcelreath2020statistical and @bayes_rules.
 
-For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with.
-
-We first start out by recreating the regression model from above in `brms` by using the `brm()` function and fitting a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency_dummy`). The syntax is similar to the `lm` function used above. Here we are concerned at modeling mean performance differences between the fluency and disfluency conditions.
+To create a regression model from in `brms` we will use the `brm()` function and fit a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency_dummy`). The syntax is similar to the `lm` function most users are familar with. Here we are concerned with modeling mean performance differences between the fluency and disfluency conditions.
 
 We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages. We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the defaults used to run models. In order to use the `cmdstanr` backend you will need to first install the package and also run `cmdstanr::install_cmdstan()` if you have not done so already.
 
 ```{r}
+#| echo: true
 # load brms and cmdstanr
 library(brms)
 library(cmdstanr) 
@@ -497,7 +486,7 @@ options(marginaleffects_posterior_center = mean)
 # get mean instead of median in marginaleffects
 ```
 
-Then we fit the model using the `brm()` function. The below model is run with four chains of 2000 Markov chain Monte Carlo iterations. For each chain, there was a 2000-iteration warm-up. The output of these models provides estimates of each effect (the coefficient `b_`, which is the mean of the posterior distribution), it's estimation error (the standard deviation of the posterior distribution), and its 95% credible interval (Crl). We inferred that there was evidence of an effect when the 95% Crl estimates did not include zero. Additional arguments were set to speed up the fitting of the models (`cores` = 4 and `backend` = `cmdstanr`) which we will not explain herein.
+Then we fit the model using the `brm()` function code below. The below model is run with four chains of 2000 Markov chain Monte Carlo iterations. For each chain, there was a 2000-iteration warm-up. The output of these models provides estimates of each effect (the coefficient `b_`, which is the mean of the posterior distribution), it's estimation error (the standard deviation of the posterior distribution), and its 95% credible interval (Crl). We inferred that there was evidence of an effect when the 95% Crl estimates did not include zero.
 
 ```{r}
 #| label: Bayesian_regression_model
