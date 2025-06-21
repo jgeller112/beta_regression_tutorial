@@ -155,10 +155,12 @@ library(marginaleffects) # marginal effects
 library(extraDistr) # Use extra distributions like dprop()
 library(brms) # bayesian models
 library(posterior) # cutpoints
-library(bayesplot)
+library(bayesplot) # bayes
 library(ggdist) # stat_halfeye viz bayes
-library(patchwork)
-library(cowplot)
+library(patchwork)# combine figure
+library(cowplot) # combine figures
+library(ggbeeswarm) # Special distribution-shaped point jittering
+library(gghalves)
 
 options(scipen = 999) # get rid of scienitifc notation
 ```
@@ -352,8 +354,6 @@ fluency_data <- read.csv("data/miko_data.csv") |>
 #| tbl-cap: "First six rows of dataset"
 #| echo: false
 #| after-caption-space: 0pt
-
-library(tinytable)
 # Display the first few rows of the modified dataframe
 # underscore won't display in Latex
 head(fluency_data) |>
@@ -365,22 +365,13 @@ head(fluency_data) |>
 #| label: fig-flu1
 #| fig-cap: "Raincloud plot for proportion recalled on final test as a function of fluency"
 #| echo: false
-
-library(ggrain)
-library(ggokabeito)
-library(ggdist)
-
+#| 
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
-  
-  # Density (raincloud)
-  stat_slab(aes(thickness = after_stat(pdf * n)), 
-            scale = 0.7, alpha = 0.5) +
-  
-  # Dot + interval representation
-  stat_dotsinterval(side = "bottom", scale = 0.2, slab_linewidth = NA) +
-  
-  labs(x = "Fluency", y = "Percentage Idea Units Recalled on Final Test") +
-  scale_y_continuous(labels = scales::label_percent()) +
+  geom_half_point(aes(color = Fluency), 
+                  transformation = position_quasirandom(width = 0.1),
+                  side = "l", size = 0.8, alpha = 0.5) +
+  geom_half_boxplot(aes(fill = Fluency), side = "r") + 
+  scale_y_continuous(labels = label_percent()) + 
   theme_publication() +  # Ensure this function is available
   scale_fill_okabe_ito() + 
   theme(legend.position = "none") # Using fill instead of color 
@@ -393,8 +384,7 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
 #| label: setup
 #| message: false
 #| warning: false
-packages <- c("tidyverse", "easystats", "scales", "tinytable", "marginaleffects",
-              "extraDistr", "brms", "posterior", "bayesplot", "ggdist")
+packages <- c("tidyverse", "easystats", "scales", "tinytable", "marginaleffects","cowplot", "ggbeeswarm", "gghalves", "extraDistr", "brms", "posterior", "bayesplot", "ggdist")
 ```
 
 ```{r}
@@ -730,7 +720,7 @@ beta_avg_comp <- avg_comparisons(beta_brms)
 ```{r}
 #| label: tbl-ame1
 #| echo: false
-#| tbl-cap: Risk difference for fluency
+#| tbl-cap: Risk difference for instructor fluency
 #| after-caption-space: 0pt
 
 
@@ -1361,11 +1351,8 @@ plots <- pp_check_ordbeta(m.phi,
   outcome_label = "Final Test Accuracy"
 ) 
 
-# Add tags manually
-plots$discrete <- plots$discrete + ggplot2::labs(tag = "A")
-plots$continuous <- plots$continuous + ggplot2::labs(tag = "B")
+plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
 
-combined_plot <- plots$discrete + plots$continuous
 ```
 
 The discrete plot which is a bar graph, shows that the posterior distribution accurately captures the number of different types of responses (discrete or continuous) in the data.
