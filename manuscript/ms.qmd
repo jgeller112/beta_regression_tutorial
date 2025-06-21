@@ -893,7 +893,7 @@ beta_brms_dis <- brm(model_beta_bayes_disp,
 
 ```{r}
 #| label: tbl-beta-mu-dis
-#| tbl-cap: Regression coefficients for $\mu$ and $\phi$  parameters (`beta_brms_dis` model)
+#| tbl-cap: Regression coefficients for $\mu$ and $\phi$ parameters (`beta_brms_dis` model)
 #| echo: false
 #| after-caption-space: 0pt
 
