@@ -303,9 +303,7 @@ The logit link is defined as: \[ \text{logit}(\mu) = \log \left( \frac{\mu}{1 - 
 
 It transforms the mean proportion, $\mu$, into log-odds, which can take any real value between $-\infty$ and $+\infty$. This makes it suitable for linear modeling. The inverse of the logit, called the logistic function, maps predictions back onto the 0 to 1 scale: \[ \mu = \frac{1}{1 + e^{-\eta}} \] where $\eta$ is the linear predictor (a combination of your model’s coefficients and predictors).
 
-Similarly, the dispersion parameter, which must be positive, is often modeled using a log link: \[ \log(\phi) = \text{linear predictor} \]
-
-This ensures the estimated dispersion is strictly positive.
+Similarly, the dispersion parameter, which must be positive, is often modeled using a log link: \[ \log(\phi) = \text{linear predictor} \]. This ensures the estimated dispersion is strictly positive.
 
 Overall, Beta regression is well suited for proportional data because it respects the bounded nature of the outcome and can account for heteroscedasticity (i.e., non-constant variance across levels of predictors).
 
