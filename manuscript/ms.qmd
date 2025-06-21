@@ -217,7 +217,7 @@ p <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
   stat_function(fun = dbeta, args = list(shape1 = 2, shape2 = 5), 
                 aes(color = "shape1=2, shape2=5"), size = 1.2) +
   labs(
-    x= "Proportions"
+    x= "Proportion",
     y = "Density", 
     color = "Parameters"
   ) +
