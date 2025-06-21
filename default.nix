@@ -58,8 +58,9 @@ let
       cowplot
       easystats
       extraDistr
+      ggbeeswarm
+      gghalves
       ggokabeito
-      ggrain
       glmmTMB
       languageserver
       marginaleffects
