@@ -136,7 +136,9 @@ Proportional data are bounded between 0 and 1 and often exhibit heteroscedastici
 
 In any statistical model, the expected value (or mean) of the response variable serves as the central estimand we aim to describe and predict. The model specifies how this expected value depends on explanatory variables through several components: a random component that specifies the distribution of the response variable around its expected value (such as a Poisson or binomial, which are part of the exponential family), a linear predictor that combines explanatory variables in a linear form, and a link function that connects the mean of the response variable to the linear predictor (also referred to as the expected value) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
 
-To deal with proportional data, we can fit a model with a Beta distribution [@ferrari2004]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha\$) and shape2 ($\beta\$)—govern the distribution’s location, skewness, and spread. This is similar to how the Gaussian distribution is determined by its mean and standard deviation. These shape parameters allow the Beta distribution to take on a wide variety of forms, including symmetric, positively or negatively skewed, U-shaped, and uniform-like distributions (see @fig-curves).
+To deal with proportional data, we can fit a model with a Beta distribution [@ferrari2004]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. This is similar to how the Gaussian distribution is determined by its mean and standard deviation. These shape parameters allow the Beta distribution to take on a wide variety of forms, including symmetric, positively or negatively skewed, U-shaped, and uniform-like distributions (see @fig-curves).
+
+To deal with proportional data, we can fit a model with a Beta distribution [@ferrari2004]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. This is similar to how the Gaussian distribution is determined by its mean ($\mu$) and standard deviation ($\sigma$). These shape parameters allow the Beta distribution to take on a wide variety of forms, including symmetric, positively or negatively skewed, U-shaped, and uniform-like distributions (see \@fig-curves).
 
 To highlight this, let's go back to our hypothetical example from the introduction. Let's suppose a participant got 4 out of 6 on a short answer question on a test. We can take the number of correct on that particular test item (4) and divide that by the number of correct (4) + number of incorrect (2) and plot the resulting density curve. `Shape1` in this example would be 4 (number of points received or successes). `Shape2` would be 2--the number of points not received (number of failures). Looking at @fig-beta-dist (A) we see the distribution for one of our questions is shifted towards one indicating higher accuracy on the exam. If we reversed the values of the two parameters @fig-beta-dist (B), we would get a distribution shifted towards 0, indicating a lower accuracy. In mathematical statistics, the Beta distribution is often used to model probabilities or proportions that can vary continuously between 0 and 1, but do not take the exact values of 0 or 1.
 
@@ -221,7 +223,7 @@ p <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
   stat_function(fun = dbeta, args = list(shape1 = 2, shape2 = 5), 
                 aes(color = "shape1=2, shape2=5"), size = 1.2) +
   labs(
-    x= "Proportions"
+    x= "Proportion",
     y = "Density", 
     color = "Parameters"
   ) +
@@ -460,13 +462,13 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 
 ### Bayesian Regression
 
-To fit our Bayesian regression model, we will be using `brms` [@brms].
+To fit our Bayesian regression models, we will be using the `brms` [@brms] R package. For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with. For the purposes of this tutorial, we will not be getting into the minutiae of Bayesian data analysis (i.e., setting informative priors, MCMC sampling, etc,). For a more in-depth look into Bayesian data analysis I refer the reader to @mcelreath2020statistical and @bayes_rules.
 
-For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with. For the purposes of this tutorial, we will not be getting into the minutiae of Bayesian data analysis (i.e., setting informative priors, MCMC sampling, etc,). For a more in-depth look into Bayesian data analysis I refer the reader to @mcelreath2020statistical and @bayes_rules.
+To create a regression model from in `brms` we will use the `brm()` function and fit a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency_dummy`). The syntax is similar to how you run a regression using the popular `lm` function in R. Here we are concerned with modeling mean performance differences between the fluency and disfluency conditions.
 
-To create a regression model from in `brms` we will use the `brm()` function and fit a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency_dummy`). The syntax is similar to the `lm` function most users are familar with. Here we are concerned with modeling mean performance differences between the fluency and disfluency conditions.
+We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages. We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the defaults used to run models.[^4]
 
-We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages. We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the defaults used to run models. In order to use the `cmdstanr` backend you will need to first install the package and also run `cmdstanr::install_cmdstan()` if you have not done so already.
+[^4]: In order to use the `cmdstanr` backend you will need to first install the package and also run `cmdstanr::install_cmdstan()` if you have not done so already.
 
 ```{r}
 #| echo: true
@@ -530,9 +532,9 @@ brms_model_new %>%
 
 ```
 
-@tbl-brms-ols displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. Comparing results with the OLS model we ran above our results are very similar. Additionally, the parameters can be interpreted in a similar manner. There are some notable differences, such as the absence of *t*- and *p*-values. There is a metric in the table that is included with models fit when using the `bayestestr` function from `easystats` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values (see [@makowski2019; @makowski2019a]). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending on the package being used) to see if it includes 0--if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the 95% CrIs column.
+@tbl-brms-ols displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. Comparing results with the OLS model we ran above our results are very similar. Additionally, the parameters can be interpreted in a similar manner. There are some notable differences, such as the absence of *t*- and *p*-values. There is a metric in the table that is included with models fit when using the `bayestestr` [@makowski2019] function from `easystats` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values (see [@makowski2019; @makowski2019a]). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending on the package being used) to see if it includes 0--if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the 95% CrIs column.
 
-The `b_Intercept` value refers to the accuracy in the fluent condition (because we dummy coded our variable). The Fluency coefficient (`b_Fluency_dummy1`) highlights the difference between the fluent and disfluent conditions, b = `r round(brms_model_new$Mean[2], 3)`, 95% CrIs = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. These results map onto the results from the regression analysis above.
+The `b_Intercept` value refers to the accuracy in the disfluent condition (because we dummy coded our variable). The Fluency coefficient (`b_Fluency_dummy1`) highlights the difference between the fluent and disfluent conditions, b = `r round(brms_model_new$Mean[2], 3)`, 95% CrIs = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. These results map onto the results from @wilford2020
 
 ### Beta Regression
 
@@ -633,9 +635,9 @@ No errors this time! We will perform the Beta regression using the nudged values
 
 ### Model Parameters
 
-@tbl-beta-brms displays the summary from our Bayesian implementation. [^4] The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the Parameter column.
+@tbl-beta-brms displays the summary from our Bayesian implementation. [^5] The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the Parameter column.
 
-[^4]: We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)
+[^5]: We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)
 
 ```{r}
 #| label: tbl-beta-brms
@@ -681,9 +683,9 @@ In @tbl-beta-mu the first set of coefficients (first two rows in the table) repr
 
 Parameter estimates are usually difficult to intercept on their own. We argue that readers should not spend too much time interpreting single model estimates. Instead they should discuss the effects of the predictor on the actual outcome of interest (in this case the 0-1 scale). The logit link allows us to transform back and forth between the scale of a linear model and the nonlinear scale of the outcome, which is bounded by 0 and 1. By using the inverse of the logit, we can easily transform our linear coefficients to obtain average effects on the scale of the proportions or percentages, which is usually what is interesting to applied researchers. In a simple case, we can do this manually, but when there are many factors in your model this can be quite complex.
 
-To help us extract predictions from our model we will use a package called **`marginaleffects`** [@margeffects2024]. [^5] To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob.
+To help us extract predictions from our model we will use a package called **`marginaleffects`** [@margeffects2024]. [^6] To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob.
 
-[^5]: `ggeffects` is another great package to extract marginal effects and plot [@ggeffects-2]
+[^6]: `ggeffects` is another great package to extract marginal effects and plot [@ggeffects-2]
 
 ```{r}
 #| echo: true
@@ -1182,9 +1184,9 @@ zi_plot
 
 ## Zero-One-Inflated Beta (ZOIB)
 
-The ZIB model works well if you have 0s in your data, but not 1s.[^6] Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
+The ZIB model works well if you have 0s in your data, but not 1s.[^7] Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
-[^6]: In cases where there are large amounts of 1s but no zeros you can fit a one-inflated model. Currently you can do so with the `gamlss` package in R
+[^7]: In cases where there are large amounts of 1s but no zeros you can fit a one-inflated model. Currently you can do so with the `gamlss` package in R
 
 In our data, we have exactly one value equal to 1. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one-inflated beta (ZOIB) model if we believe that both 0s and 1s are distinct outcomes.
 
