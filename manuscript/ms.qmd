@@ -366,12 +366,9 @@ head(fluency_data) |>
 #| echo: false
 #| 
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
-  geom_half_point(
-    aes(color = Fluency),
-    transformation = position_quasirandom(width = 0.1),
-    side = "l",
-    size = 0.8,
-    alpha = 0.5
+  stat_dots(
+    side = "bottom",
+    scale = 0.2
   ) +
   geom_half_boxplot(
     side = "r"
@@ -388,6 +385,7 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
   ggokabeito::scale_fill_okabe_ito() +
   theme_publication() +
   theme(legend.position = "none")
+
 
 ```
 
