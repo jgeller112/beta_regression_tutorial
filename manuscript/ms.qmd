@@ -423,6 +423,7 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 
 ```{r}
 #| label: models
+#| eval: false
 # fit each model to put in table
 # fit ols reg
 
@@ -476,6 +477,7 @@ m.phi <- ordbetareg(bf(Accuracy ~ Fluency,
 
 ```{r}
 #| label: combined models
+#| eval: false
 
 # BAYESIAN REGRESSION
 brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
@@ -1619,7 +1621,7 @@ Throughout this tutorial our main aim was to help guide researchers in running a
 
 Comparing our analysis with that of @wilford2020, we demonstrated that using traditional approaches (e.g., *t*-tests) to analyze accuracy data can lead to inaccurate inferences. Although we successfully reproduced one of their key findings, our use of Beta regression and its extensions revealed important nuances in the results. With a traditional Beta regression model—which accounts for both the mean and the precision (dispersion)—we observed similar effects of instructor fluency on performance. However, the standard Beta model does not accommodate boundary values (i.e., 0s and 1s).
 
-When we applied a zero-inflated Beta regression model, which explicitly accounts for structural zeros, we found no effect of fluency on the mean ($\mu$) part of the model. Instead, the effect of fluency emerged in the structural zero (inflated zero; $\alpha$) component. This pattern was consistent when using a zero-one-inflated Beta (ZOIB) model. Furthermore, we fit an ordered Beta regression model \[@kubinec2022\], which appropriately models the full range of values, including 0s and 1s. Here, we did not observe a reliable effect of fluency on the mean once we accounted for dispersion.
+When we applied a zero-inflated Beta regression model, which explicitly accounts for structural zeros, we found no effect of fluency on the mean ($\mu$) part of the model. Instead, the effect of fluency emerged in the structural zero (inflated zero; $\alpha$) component. This pattern was consistent when using a zero-one-inflated Beta (ZOIB) model. Furthermore, we fit an ordered Beta regression model [@kubinec2022], which appropriately models the full range of values, including 0s and 1s. Here, we did not observe a reliable effect of fluency on the mean once we accounted for dispersion.
 
 These analyses emphasize the importance of fitting a model that aligns with the nature of the data. The simplest and recommended approach when dealing with data that contains zeros and/or ones is to fit an ordered Beta model, assuming the process is truly continuous. However, if you believe the process is distinct in nature, a ZIB or ZOIB model might be a better choice. Ultimately, this decision should be guided by theory.
 
