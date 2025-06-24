@@ -1384,7 +1384,8 @@ p <- ggplot() +
     title = "Zero-One Inflated Beta: Alpha and Gamma Effects",
     x = "Accuracy on Test",
     y = "Count"
-  )
+  ) + 
+  theme_publication()
 
 p
 
