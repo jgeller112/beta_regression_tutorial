@@ -104,17 +104,17 @@ knitr:
     dev: "ragg_png"
 ---
 
-In psychological research, it is common to measure performance, attitudes, or choices using outcomes expressed as proportions or percentages. For instance, in educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome could be the proportion of points earned on each question relative to the total possible points for each question.
+In psychological research, it is common to run experiments or administer surveys in which the primary outcomes of interest—such as task performance, attitudes, or choices—are expressed as proportions or percentages. For instance, in educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question.
 
 A key question arises: how should proportional data like this be analyzed? In psychology, such outcomes are often analyzed using models from the general linear model (GLM) or generalized linear model (GLiM) frameworks. General linear models — including t-tests, ANOVAs, and linear regression — assume the outcome is normally distributed, unbounded, and exhibits constant variance. However, these assumptions are frequently violated when working with proportional data, which are bounded between 0 and 1 and tend to show non-constant variance, especially near the boundaries [@ferrari2004; @paolino2001]. This can lead to biased estimates and invalid inferences, making general linear models an unsuitable choice for analyzing proportions.
 
 Another option are GLiMs, which extend the linear model framework to accommodate non-normal outcome distributions and different link functions. For example, binomial or Bernoulli models with a logit link (commonly referred to as logistic regression) are well-suited for binary outcomes or counts of successes out of a fixed number of trials. However, these models may still fall short when proportions are treated as continuous outcomes or when data exhibit overdispersion or cluster near 0 or 1.
 
-The challenges of analyzing proportional data are not new [see @bartlett1936]. Fortunately, several alternative approaches address the limitations of commonly used models. One such approach is Beta regression, an extension of the GLiM that employs the Beta distribution (desCr.Ibed in-depth below) [@ferrari2004; @paolino2001]. Beta regression offers a flexible and robust solution for modeling proportional data by accounting for boundary effects and overdispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets.
+The challenges of analyzing proportional data are not new [see @bartlett1936]. Fortunately, several alternative approaches address the limitations of commonly used models. One such approach is Beta regression, an extension of the GLiM that employs the Beta distribution (described in-depth below) [@ferrari2004; @paolino2001]. Beta regression offers a flexible and robust solution for modeling proportional data by accounting for boundary effects and overdispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets.
 
 ## A Beginners Guide to Beta Regression
 
-With the combination of open-source programming languages like R [@R] and the vibrant community of package developers, running analyses such as Beta regression has become increasingly accessible. Yet, adoption of these methods—especially in psychology—remains limited. One reason may be the lack of resources tailored to the needs of psychologists conducting applied research. Although recent years have seen a surge of interest in Beta regression [@heiss2021; @vuorre2019; @bendixen2023; @coretta2025bayesian], these introductions narrowly focus on a few Beta regression models and cover only a limited range of applications. This tutorial aims to fill that gap by providing a more comprehensive overview of Beta regression and its extensions, along with the tools and code psychologists need to apply these methods in their own research.
+With the combination of open-source programming languages like R \[\@R\] and a vibrant community of package developers, analyses such as Beta regression have become increasingly accessible. Yet, adoption of these methods—particularly in psychology—remains limited. One reason may be the lack of resources tailored to the needs of psychologists conducting applied research. Although recent years have seen a surge of interest in Beta regression [@heiss2021; @vuorre2019; @bendixen2023; @coretta2025bayesian], most introductions focus narrowly on a small subset of Beta regression models. This tutorial aims to address that gap by offering a more comprehensive overview of Beta regression and its extensions, along with practical tools and code to help psychologists apply these methods in their own work. While previous tutorials have largely focused on interpreting model summaries, we emphasize the importance of interpreting estimates on the response scale.
 
 In this tutorial, we provide (a) give a brief, non-technical overview of the principles underlying beta regression, (b) walk-through an empirical example of applying Beta regression in the popular R programming language and (c) highlight the the extensions which are most relevant to researchers in psychology (e.g., zero-inflated, zero-one-inflated, and ordered Beta regressions). Moreover, we provide a fully reproducible code supplement at <https://github.com/jgeller112/beta_regression_tutorial> that provides more detailed code examples.[^1]
 
@@ -130,13 +130,11 @@ In this paper, we demonstrate how to implement Beta regression models and their 
 
 ## Beta Distribution
 
-Proportional data are bounded between 0 and 1 and often exhibit heteroscedasticity. Common distributions used within the GLM or GLiM frameworks often fail to capture these properties adequately, which can necessitate alternative modeling strategies.
+Proportional data are bounded between 0 and 1 and often exhibit heteroscedasticity @ferrari2004; @paolino2001\]. Common distributions used within the GLM or GLiM frameworks often fail to capture these properties adequately, which can necessitate alternative modeling strategies.
 
-In any statistical model, the expected value (or mean) of the response variable serves as the central estimand we aim to desCr.Ibe and predict. The model specifies how this expected value depends on explanatory variables through several components: a random component that specifies the distribution of the response variable around its expected value (such as a Poisson or binomial, which are part of the exponential family), a linear predictor that combines explanatory variables in a linear form, and a link function that connects the mean of the response variable to the linear predictor (also referred to as the expected value) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
+In any statistical model, the expected value (or mean) of the response variable serves as the central estimand we aim to describe and predict. The model specifies how this expected value depends on explanatory variables through several components: a random component that specifies the distribution of the response variable around its expected value (such as a Poisson or binomial, which are part of the exponential family), a linear predictor that combines explanatory variables in a linear form, and a link function that connects the mean of the response variable to the linear predictor (also referred to as the expected value) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
 
-To deal with proportional data, we can fit a model with a Beta distribution [@ferrari2004]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. This is similar to how the Gaussian distribution is determined by its mean and standard deviation. These shape parameters allow the Beta distribution to take on a wide variety of forms, including symmetric, positively or negatively skewed, U-shaped, and uniform-like distributions (see @fig-curves).
-
-To deal with proportional data, we can fit a model with a Beta distribution [@ferrari2004]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. This is similar to how the Gaussian distribution is determined by it's mean ($\mu$) and standard deviation ($\sigma$). These shape parameters allow the Beta distribution to take on a wide variety of forms, including symmetric, positively or negatively skewed, U-shaped, and uniform-like distributions (see @fig-curves).
+To deal with proportional data, we can fit a model with a Beta distribution [@ferrari2004]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. This is similar to how the Gaussian distribution is determined by its mean (\$\\mu\$) and standard deviation (\$\\sigma\$). These shape parameters allow the Beta distribution to take on a wide variety of forms, including symmetric, positively or negatively skewed, U-shaped, and uniform-like distributions (see @fig-curves).
 
 To highlight this, let's go back to our hypothetical example from the introduction. Let's suppose a participant got 4 out of 6 on a short answer question on a test. We can take the number of correct on that particular test item (4) and divide that by the number of correct (4) + number of incorrect (2) and plot the resulting density curve. `Shape1` in this example would be 4 (i.e., number of points received or successes). `Shape2` would be 2--the number of points not received (i.e., number of failures). Looking at @fig-beta-dist (A) we see the distribution for one of our questions is shifted towards one indicating higher accuracy on the exam. If we reversed the values of the two parameters @fig-beta-dist (B), we would get a distribution shifted towards 0, indicating a lower accuracy. In mathematical statistics, the Beta distribution is often used to model probabilities or proportions that can vary continuously between 0 and 1, but do not take the exact values of 0 or 1.
 
@@ -230,6 +228,8 @@ p <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
 
 p
 
+ggsave("fig-shapes.png", path=here::here("manuscript", "Figures"), dpi=300)
+
 ```
 
 ```{r}
@@ -267,6 +267,8 @@ p2 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
   labs(x = "Proportion Correct on Question", y = "Density") 
 
 plot_grid(p1, p2, labels = c("A", "B"))
+
+ggsave("fig-test-beta.png", path=here::here("manuscript", "Figures"), dpi=300)
 ```
 
 ### Mean and Precision
@@ -295,7 +297,7 @@ Importantly, *the variance depends on the average value of the response*, which 
 
 ### Beta Regression
 
-We can use the Beta distribution in regression models to desCr.Ibe a continuous response variable that is bounded between 0 and 1. Although the Beta distribution applies to values in this interval, it is straightforward to rescale other variables to fit this range using normalization formulas.
+We can use the Beta distribution in regression models to describe a continuous response variable that is bounded between 0 and 1. Although the Beta distribution applies to values in this interval, it is straightforward to rescale other variables to fit this range using normalization formulas.
 
 In Beta regression, the goal is to model the mean of the response variable (often denoted $\mu$) as a function of predictor variables, while optionally modeling a precision or dispersion parameter (often denoted $\phi$) that captures variability around the mean. To ensure that $\mu$ stays between 0 and 1, we apply a link function, which transforms the mean so that it can be modeled on an unbounded scale. A common choice is the logit link (which is used by default), but other links (such as the probit or complementary log-log) are also available; the logit is not required.
 
@@ -365,10 +367,9 @@ head(fluency_data) |>
 #| echo: false
 #| 
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
-  stat_dots(
-    side = "bottom",
-    scale = 0.2
-  ) +
+   geom_half_point(aes(color = Fluency), 
+                  transformation = position_quasirandom(width = 0.1),
+                  side = "l", size = 1, alpha = 0.5) +
   geom_half_boxplot(
     side = "r"
   ) +
@@ -377,15 +378,15 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
     geom = "point",
     shape = 23,  # diamond shape
     size = 4,
-    color = "black",
-    fill = "black"
+    color = "blue",
+    fill = "blue"
   ) +
   scale_y_continuous(labels = scales::label_percent()) +
   ggokabeito::scale_fill_okabe_ito() +
   theme_publication() +
   theme(legend.position = "none")
 
-
+ggsave("fig-accuracy-data.png", path=here::here("manuscript", "Figures"), dpi=300)
 ```
 
 ### Data
@@ -394,7 +395,7 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
 #| label: setup
 #| message: false
 #| warning: false
-packages <- c("tidyverse", "easystats", "scales", "tinytable", "marginaleffects","cowplot", "ggbeeswarm", "gghalves", "extraDistr", "brms", "posterior", "bayesplot", "ggdist")
+packages <- c("tidyverse", "easystats", "scales", "tinytable", "marginaleffects","cowplot", "ggbeeswarm", "gghalves","webshot2",  "extraDistr", "brms", "posterior", "bayesplot", "ggdist")
 ```
 
 ```{r}
@@ -418,6 +419,143 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 -   **`Fluency`:** Fluent vs. Disfluent
 
 -   **`Accuracy`:** Proportion recalled (idea units)
+
+```{r}
+#| label: models
+# fit each model to put in table
+# fit ols reg
+
+bayes_ols_model <- brm(Accuracy ~ Fluency,
+                       data = fluency_data,
+                       cores=4,
+                       backend = "cmdstanr",
+                       file = "model_ols_bayes")
+
+beta_brms_dis <- brm(model_beta_bayes_disp,
+  data = data_beta,
+  family = Beta(),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  cores = 4,
+  seed = 1234,
+  backend = "cmdstanr",
+  file = "model_beta_bayes_dis_run" # Save this so it doesn't have to always rerun
+)
+
+fit_zoib <- brm(
+  formula = zoib_model,
+  data = fluency_data,
+  chains = 4, iter = 2000, warmup = 1000,
+  cores = 4, seed = 1234,
+  backend = "cmdstanr",
+  file = "model_beta_zoib_1"
+)
+
+
+fit_zoib <- brm(
+  formula = zoib_model,
+  data = fluency_data,
+  chains = 4, iter = 2000, warmup = 1000,
+  cores = 4, seed = 1234,
+  backend = "cmdstanr",
+  file = "model_beta_zoib_1"
+)
+
+
+m.phi <- ordbetareg(bf(Accuracy ~ Fluency, 
+                       phi ~ Fluency),
+                    data=fluency_data,
+                    backend = "cmdstanr",
+                     file = "model_beta_ordbeta_phi", 
+                    iter = 2000, 
+                    cores=4, 
+                    phi_reg='both') # log phi
+```
+
+```{r}
+#| label: combined models
+
+# BAYESIAN REGRESSION
+brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
+  filter(Parameter != "sigma") %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+         Model = "Bayesian LM") %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+# BETA REGRESSION
+beta_model_new <- model_parameters(beta_brms, centrality = "mean") %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+         Model = "Beta Regression") %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+# BETA REGRESSION
+beta_model_dis <- model_parameters(beta_brms_dis, centrality = "mean") %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+         Model = "Beta Regression") %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+# ZERO-INFLATED REGRESSION
+zi_model_new <- model_parameters(fit_zi, centrality = "mean") %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+         Model = "ZIB") %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+# ZERO-ONE INFLATED BETA REGRESSION
+zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+         Model = "ZOIB") %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+
+# BETA REGRESSION
+ord_beta <- model_parameters(m.phi, centrality = "mean") %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3)),
+         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+         Model = "Ordered Beta") %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+# ZERO-INFLATED REGRESSION
+
+
+# COMBINE ALL MODELS
+combined_table <- bind_rows(
+  brms_model_new,
+  beta_model_dis, 
+  zi_model_new,
+  zoib_model_new, 
+  ord_beta
+)
+
+# Make value column with estimate + CI + pd
+combined_table_clean <- combined_table %>%
+    mutate(
+        value = str_glue("{Mean} {`95% Cr.I`} (pd = {pd})")
+    ) |>
+    select(Parameter, Model, value) %>%
+    pivot_wider(names_from = Model, values_from = value) |>
+    mutate(across(everything(), ~ replace_na(.x, "-")))
+
+# View
+combined_table_clean |> 
+  tt(digits = 3) |>
+  format_tt(escape = TRUE) |> 
+    save_tt(here::here("manuscript", "Figures", "combined_table.png"))
+```
+
+```{r}
+#| label: tbl-all
+#| tbl-align: "center"
+#| tbl-cap: "Regression model summaries for each model"
+#| apa-note: "Mean[95% Cr.I](pd = {pd}"
+
+knitr::include_graphics(here::here("manuscript","Figures",   "combined_table.png"))
+
+```
 
 ## Bayesian Regression
 
@@ -488,7 +626,7 @@ brms_model_new |>
 
 ```
 
-@tbl-all displays the summary of the Bayesian regression model under the Bayesian regression header. To make the output more readable, each model parameter is labeled with a prefix before the variable name. The `b_Intercept` value refers to the accuracy in the disfluent condition (because we dummy coded our variable). The Fluency coefficient (`b_FluencyFluent`) highlights the difference between the fluent and disfluent conditions, b = `r round(brms_model_new$Mean[2], 3)`, 95% Cr.Is = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. Our results are very similar to the results reported by @wilford2020 : *t*(94) = 2.00, *p = .048,* 95% CI: 0.06, 16.56\].
+@tbl-all displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. The `b_Intercept` value refers to the accuracy in the disfluent condition (because we dummy coded our variable). The Fluency coefficient (`b_FluencyFluent`) highlights the difference between the fluent and disfluent conditions, b = `r round(brms_model_new$Mean[2], 3)`, 95% Cr.Is = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. Our results are very similar to the results reported by @wilford2020 : *t*(94) = 2.00, *p = .048,* 95% CI: 0.06, 16.56\].
 
 There are some notable differences between our Bayesian analysis and the frequenist analyses readers might be more sued to seeing, such as the absence of *t*- and *p*-values. There is a metric in the table that is included with models fit when using the `bayestestr` [@makowski2019] function from `easystats` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values (see [@makowski2019; @makowski2019a]). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending on the package being used) to see if it includes 0--if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the 95% Cr.Is column.
 
@@ -596,7 +734,7 @@ No errors this time! We will perform the Beta regression using the nudged values
 
 #### Model Parameters
 
-@tbl-all displays the summary from our Bayesian implementation. [^5] The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the Parameter column.
+@tbl-all displays the summary from our Bayesian implementation. [^5] The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the `Parameter` column.
 
 [^5]: We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)
 
@@ -642,9 +780,9 @@ In @tbl-all under the Beta Regression column, the first set of coefficients repr
 
 #### Predicted Probabilities
 
-Parameter estimates are usually difficult to intercept on their own. We argue that researchers should not spend too much time interpreting single model estimates. We report them in this tutorial for completeness. Instead should discuss the effects of the predictor on the actual outcome of interest (in this case the 0-1 scale). The logit link allows us to transform back and forth between the scale of a linear model and the nonlinear scale of the outcome, which is bounded by 0 and 1. By using the inverse of the logit, we can easily transform our linear coefficients to obtain average effects on the scale of the proportions or percentages, which is usually what is interesting to applied researchers. In a simple case, we can do this manually, but when there are many factors in your model this can be quite complex.
+Parameter estimates are usually difficult to intercept on their own. We argue that researchers should not spend too much time interpreting single model estimates. We report them in this tutorial for completeness. Instead researchers should discuss the effects of the predictor on the actual outcome of interest (in this case the 0-1 scale). The logit link allows us to transform back and forth between the scale of a linear model and the nonlinear scale of the outcome, which is bounded by 0 and 1. By using the inverse of the logit, we can easily transform our linear coefficients to obtain average effects on the scale of the proportions or percentages, which is usually what is interesting to applied researchers. In a simple case, we can do this manually, but when there are many factors in your model this can be quite complex.
 
-To help us extract predictions from our model we will use a package called **`marginaleffects`** [@margeffects2024]. [^6] To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob.
+To help us extract predictions from our model and visualize them we will use a package called **`marginaleffects`** [@margeffects2024]. [^6] To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob.
 
 [^6]: `ggeffects` is another great package to extract marginal effects and plot [@ggeffects-2]
 
@@ -701,13 +839,39 @@ beta_plot <- plot_predictions(beta_brms, condition = "Fluency")
 #| fig-cap: Predicted probablities for fluency factor
 
 beta_plot + 
-  theme_publication() +
   scale_x_discrete(
     breaks = c("0", "1"),
     labels = c("Fluent", "Disfluent")
   ) +
   labs(x="Fluency") + 
-  scale_y_continuous(labels = label_percent())
+  scale_y_continuous(labels = label_percent()) + 
+  theme_publication()
+
+ggsave("fig-plot-pre.png", path=here::here("manuscript", "Figures"), dpi=300,)
+```
+
+Readers might notice that @fig-plot-pre displays a single point estimate along with its 95% Cr.I.. In Bayesian data analysis, MCMC sampling generates a distribution for each parameter of interest. This approach allows us to visualize the uncertainty surrounding our estimates. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function. We can then plot this information to illustrate the range of plausible values for our estimates (see @fig-draws-fluency).
+
+```{r}
+# Add a model identifier to each dataset
+pred_draws_beta <- avg_predictions(beta_brms, variables = "Fluency") |>  
+  posterior_draws()
+```
+
+```{r}
+#| label: fig-draws-fluency
+# Plot both models
+ggplot(pred_draws_beta, aes(x = draw, y = estimate, fill = Fluency)) +
+  stat_halfeye(.width = c(.95), alpha = 0.7) +
+  ggokabeito::scale_fill_okabe_ito() +
+  guides(fill = guide_legend(title = "Model")) +
+  labs(x = expression("Fluency " * mu),
+       y = "Final Recall Performance by Fluency ",
+       caption = "95% credible intervals shown in black") +
+  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) + 
+  theme_publication()
+
+ggsave("fig-draws-fluency.png", path=here::here("manuscript", "Figures"), dpi=300,)
 ```
 
 ##### Marginal Effects
@@ -721,7 +885,6 @@ One practical application of AMEs is calculating the risk difference for categor
 ```{r}
 #| label: ame1
 #| echo: true
-
 # get risk difference by default
 beta_avg_comp <- avg_comparisons(beta_brms)
 ```
@@ -933,6 +1096,8 @@ ggplot(pred_combined, aes(x = draw, y = estimate, fill = model)) +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) + 
   theme_publication()
 
+ggsave("fig-plot-dis.png", path=here::here("manuscript", "Figures"), dpi=300,)
+
 ```
 
 ### Posterior Predictive Check
@@ -1117,8 +1282,6 @@ marg_zi_brms |>
    tt() |>
    format_tt(digits = 3) |>
    format_tt(escape = TRUE)
-
-
 ```
 
 If we wanted we could easily visualize the zero-inflated part of the model (see @fig-zi-plot).
@@ -1143,15 +1306,93 @@ zi_plot
 
 ## Zero-One-Inflated Beta (ZOIB)
 
-The ZIB model works well if you have 0s in your data, but not 1s.[^7] In our previous example, we nudged our 1s to .99. \@kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
+The ZIB model works well if you have 0s in your data, but not 1s.[^7] In our previous example, we nudged our 1s to .99. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
 [^7]: In cases where there are large amounts of 1s but no zeros you can fit a one-inflated model. Currently you can do so with the `gamlss` package in R
 
 In our data, we have exactly one value equal to 1. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one-inflated beta (ZOIB) model if we believe that both 0s and 1s are distinct outcomes.
 
-Similar to our beta and zero-inflated models above, we can fit a ZOIB model in `brms` quite easily using the `zero_one_inflated_beta` family. In this model, we fit four parameters or sub-models. We fit separate models for the mean ($\mu$) and the precision ($\phi$) of the Beta distribution; a zero-one inflation parameter (i.e. the probability that an observation is either 0 or 1; $\alpha$ ) from the zero-inflated model; and a ‘conditional one inflation’ parameter (i.e. the probability that, given an observation is 0 or 1, the observation is 1; $\gamma$). This specification captures the entire range of possible values while still being constrained between zero and one.
+Similar to our beta and zero-inflated models above, we can fit a ZOIB model in **brms** quite easily using the `zero_one_inflated_beta` family. In this model, we simultaneously estimate the mean ($\mu$) and precision ($\phi$) of the Beta distribution, a zero-one inflation parameter ($\alpha$) that represents the probability that an observation is either exactly 0 or 1, and a conditional one-inflation parameter ($\gamma$) that represents the probability that, given an observation is at one of the endpoints, it is 1. This specification captures the entire range of possible values while remaining constrained between 0 and 1. To get a better sense of how $\alpha$ and $\gamma$ control the distribution of values, @fig-zoib presents simulated data across combinations of these parameters. As $\alpha$ increases, we see a greater proportion of responses at the endpoints. As $\gamma$ increases, the proportion of endpoint responses at 1 grows relative to 0, making the spikes at 1 more prominent as $\gamma$ approaches 1. This visualization illustrates how the ZOIB model flexibly accounts for both the continuous portion of the distribution and the occurrence of exact 0s and 1s.
 
-We use the `bf()` function again to fit models for our four parameters. We model each parameter as a function of Fluency.
+```{r}
+#| label: fig-zoib
+#| fig-cap: Simulated data from a ZOIB model illustrating the effects of the zero-one inflation parameter ($\alpha$) and the conditional one-inflation parameter ($\gamma$).
+# Zero-one inflated beta generator
+# Matti V blog post
+rzoib <- function(n = 1000, alpha = 0.1, gamma = 0.45, mu = 0.7, phi = 3) {
+  a <- mu * phi
+  b <- (1 - mu) * phi
+  y <- ifelse(
+    rbinom(n, 1, alpha),
+    rbinom(n, 1, gamma),
+    rbeta(n, a, b)
+  )
+  y
+}
+
+# Optimized parameter grid
+param_grid <- expand_grid(
+  alpha = c(0.05, 0.2, 0.4),
+  gamma = c(0.1, 0.5, 0.9),
+  mu = 0.7,
+  phi = 3
+)
+
+# Simulate data
+set.seed(123)
+sim_data <- param_grid %>%
+  mutate(data = pmap(list(alpha, gamma, mu, phi),
+                     ~ rzoib(1000, ..1, ..2, ..3, ..4))) %>%
+  unnest(data) %>%
+  rename(Accuracy = data)
+
+# Classify type
+plot_data <- sim_data %>%
+  mutate(Type = case_when(
+    Accuracy == 0 ~ "Zero",
+    Accuracy == 1 ~ "One",
+    TRUE ~ "Beta"
+  ))
+
+# Plot
+p <- ggplot() +
+  # Beta histogram
+  geom_histogram(
+    data = plot_data %>% filter(Type == "Beta"),
+    aes(x = Accuracy, y = after_stat(count)),
+    bins = 50,
+    fill = "gray60",
+    color = "white",
+    alpha = 0.8
+  ) +
+  # Spikes at 0 and 1
+  geom_col(
+    data = plot_data %>%
+      filter(Type != "Beta") %>%
+      group_by(alpha, gamma, Accuracy, Type) %>%
+      summarise(count = n(), .groups = "drop"),
+    aes(x = Accuracy, y = count, fill = Type),
+    width = 0.01
+  ) +
+  scale_fill_manual(
+    values = c("Zero" = "red", "One" = "blue"),
+    name = "Type"
+  ) +
+  facet_grid(gamma ~ alpha, labeller = label_both, scales = "free_y") +
+  theme_minimal() +
+  labs(
+    title = "Zero-One Inflated Beta: Alpha and Gamma Effects",
+    x = "Accuracy on Test",
+    y = "Count"
+  )
+
+p
+
+ggsave("fig-zoib-plot.png", path=here::here("manuscript", "Figures"))
+
+```
+
+To fit a ZOIB model we use the `bf()` function. We model each parameter as a function of Fluency.
 
 ```{r}
 #| echo: true
@@ -1167,7 +1408,7 @@ zoib_model <- bf(
 )
 ```
 
-We then pass the `zoib_model` to our `brm()` function. The summary of the output is in @tbl-zoib .
+We then pass the `zoib_model` to our `brm()` function. The summary of the output is in @tbl-all (under `ZOIB`).
 
 ```{r}
 #| label: fit zoib model
@@ -1202,16 +1443,16 @@ zoib_model |>
   `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")) |> 
   select(Parameter, Mean, `95% Cr.I`, pd) |> 
   tt(digits = 3) |>
-  format_tt(escape=TRUE)
+  format_tt(escape=TRUE) 
 ```
 
 ### Model Parameters
 
-The output for the model is pretty lengthy (see @tbl-all column labeled ZOIB)—we are estimating four parameters each with their own independent responses and sub-models. All the coefficients are on the logit scale, except $\phi$ , which is on the log scale. Thankfully drawing inferences for all these different parameters, plotting their distributions, and estimating their average marginal effects looks exactly the same—all the `brms` and `marginaleffects` functions we used work the same.
+The output for the model is pretty lengthy we are estimating four parameters each with their own independent responses and sub-models. All the coefficients are on the logit scale, except $\phi$ , which is on the log scale. Thankfully drawing inferences for all these different parameters, plotting their distributions, and estimating their average marginal effects looks exactly the same—all the `brms` and `marginaleffects` functions we used work the same.
 
 ### Predictions and Marginal Effects
 
-With `marginaleffects` we can choose marginalize over all the sub-models, averaged across the 0s, continuous responses, and 1s in the data, or we can model the parameters separately using the `dpar` argument like we did above setting it to: $\mu$, $\phi$, $\alpha$, $\gamma$. Using `avg_predictions()` and not setting `dpar` we can get the predicted probabilities across all the sub-models. We can also plot the overall difference between fluency and disfluency for the whole model with `plot_predictions`. Our results are very similar to the zero-inflated model from above.
+With `marginaleffects` we can choose marginalize over all the sub-models, averaged across the 0s, continuous responses, and 1s in the data, or we can model the parameters separately using the `dpar` argument like we did above setting it to: $\mu$, $\phi$, $\alpha$, $\gamma$. Using `avg_predictions()` and not setting `dpar` we can get the predicted probabilities across all the sub-models. We can also plot the overall difference between fluency and disfluency for the whole model with `plot_predictions()`. Our results are very similar to the zero-inflated model from above.
 
 ## Ordered Beta Regression
 
@@ -1231,13 +1472,13 @@ We first load the `ordbetareg` package. You can download it from CRAN or from he
 #| echo: true
 #| label: load ordbetareg
 
-# load ordbetareg package
+# load ordbetareg package need to have it installed
 library(ordbetareg)
 ```
 
 The `ordbetareg` package uses `brms` on the front-end so all the arguments we used previously apply here. Instead of the `brm()` function we use `ordbetareg()`.
 
-When we first fit the model we can fit a model that does not allow dispersion to vary as a function of fluency.
+To fit a model where dispersion does not vary as a function of fluency we can use the below code.
 
 ```{r}
 #| label: brms ordered beta model
@@ -1253,7 +1494,7 @@ ord_fit_brms <- ordbetareg(Accuracy ~ Fluency,
 )
 ```
 
-However, if we want dispersion to vary as a fucntion of fluency we can easily do that.
+However, if we want dispersion to vary as a function of fluency we can easily do that. Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because I am modeling $\phi$ as a function of fluency, I set the argument to `both`.
 
 ```{r}
 #| label: brms ordered beta model phi
@@ -1271,38 +1512,37 @@ m.phi <- ordbetareg(bf(Accuracy ~ Fluency,
                     phi_reg='both') # log phi
 ```
 
-Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because I am modeling $\phi$ as a function of fluency, I set the argument to `both`.
+## Marginal effects
 
-## Model Parameters
-
-### Mean ($\mu$) and Dispersion ($\phi$)
-
-@tbl-one presents the overall model summary (under `Ordered Beta`). We can use `marginaleffects` again to examine differences between the conditions on each paramter of interest.
+@tbl-all presents the overall model summary (under `Ordered Beta`). We can use `marginaleffects` to calculate differences on the response scale that average over (or marginalize over) all our parameters.
 
 ```{r}
+#| label: fit ordbeta
 
 ord_beta_avg <- m.phi |>
   avg_comparisons(
     variables = "Fluency",
-    dpar = "mu",
     comparison = "difference"
-  )
-
+  ) 
 ```
 
 ```{r}
-{r}
-
-ord_beta_dis <- m.phi |>
-  avg_comparisons(
-    variables = "Fluency",
-    dpar = "phi",
-    comparison = "difference"
-  )
+#| label: tbl-ordbeta
+#| 
+ord_beta_avg |> 
+ select(term,contrast, estimate, conf.low, conf.high) |> 
+  mutate(
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
+         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
+  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean,`95% Cr.I`) |> 
+   tt() |>
+   format_tt(digits = 3) |>
+   format_tt(escape = TRUE)
 
 ```
 
-The credible interval is close enough to zero relative to its uncertainty that we can conclude there likely aren’t substantial differences in dispersion or mean accuracy between the fluent and disfluent conditions.
+In @tbl-ordbeta the credible interval is close enough to zero relative to its uncertainty that we can conclude there likely aren’t substantial differences between the conditions after taking dispersion and the zeros and ones in our data into account.
 
 ### Cutpoints
 
@@ -1336,8 +1576,8 @@ The best way to visualize model fit is to plot the full predictive distribution 
 
 ```{r}
 #| label: fig-ppcheckord
-#| fig-width: 8
-#| fig-height: 12
+#| fig-width: 12
+#| fig-height: 8
 #| fig-cap: Posterior predictive check for ordered beta regression model. A. Discrete posterior check. B. Continuous posterior check. 
 
 plots <- pp_check_ordbeta(m.phi,
@@ -1349,15 +1589,13 @@ plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
 
 ```
 
-The discrete plot which is a bar graph, shows that the posterior distribution accurately captures the number of different types of responses (discrete or continuous) in the data.
-
-For the continuous plot shown as a density plot with one line per posterior draw, the model does a very good job at capturing the distribution.
+The discrete plot which is a bar graph, shows that the posterior distribution accurately captures the number of different types of responses (discrete or continuous) in the data. For the continuous plot shown as a density plot with one line per posterior draw, the model does a very good job at capturing the distribution.
 
 Overall, it is clear from the posterior distribution plot that the ordered beta model fits the data well. To fully understand model fit, both of these plots need to be inspected as they are conceptually distinct.
 
 #### Model Visualization
 
-`ordbetareg` provides a visualization function called `plot_hess`. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between Fluent and Disfluent instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
+`ordbetareg` provides a visualization function called `plot_hess`. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
 
 ```{r}
 #| label: fig-heiss
@@ -1371,94 +1609,17 @@ plot_heiss(ord_fit_brms, grouping_fac="Fluency", recode_group_labels = c("Fluenc
 
 In the `ordbetareg` function there is a `true_bound` argument. In the case where you data in not bounded between 0-1, you can use the argument to specify the bounds of the argument to fit the ordered beta regression. For example, you data might be bounded between 1 and 12. If so, you can model it as such.
 
-```{r}
-#| label: tbl-all
-#| tbl-align: "center"
-#| tbl-cap: "Regression model summaries for each model"
-#| apa-note: "Mean[95% Cr.I](pd = {pd}"
-
-# BAYESIAN REGRESSION
-brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
-  filter(Parameter != "sigma") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "Bayesian LM") %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-# BETA REGRESSION
-beta_model_new <- model_parameters(beta_brms, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "Beta Regression") %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-# BETA REGRESSION
-beta_model_dis <- model_parameters(beta_brms_dis, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "Beta Regression") %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-# ZERO-INFLATED REGRESSION
-zi_model_new <- model_parameters(fit_zi, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "ZIB") %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-# ZERO-ONE INFLATED BETA REGRESSION
-zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "ZOIB") %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-
-# BETA REGRESSION
-ord_beta <- model_parameters(m.phi, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "Ordered Beta") %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-# ZERO-INFLATED REGRESSION
-
-
-# COMBINE ALL MODELS
-combined_table <- bind_rows(
-  brms_model_new,
-  beta_model_dis, 
-  zi_model_new,
-  zoib_model_new, 
-  ord_beta
-)
-
-# Make value column with estimate + CI + pd
-combined_table_clean <- combined_table %>%
-    mutate(
-        value = str_glue("{Mean} {`95% Cr.I`} (pd = {pd})")
-    ) |>
-    select(Parameter, Model, value) %>%
-    pivot_wider(names_from = Model, values_from = value) |>
-    mutate(across(everything(), ~ replace_na(.x, "-")))
-
-# View
-combined_table_clean %>% 
-  tt(digits = 3) %>%
-  format_tt(escape = TRUE)
-
-```
-
 # Discussion
 
 The use of Beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to turn the tides. Beta regression models are an attractive alternative to models that impose unrealistic assumptions like normality, linearity, homoscedasticity, and unbounded data. Beyond these models, there are a diverse array of different models that can be used depending on your outcome of interest.
 
 Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using Beta regression and some of it's alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results.
 
-Comparing our analysis with that of \@wilford2020, we demonstrated that using traditional approaches (e.g., *t*-tests) to analyze accuracy data can lead to inaccurate inferences. Although we successfully reproduced one of their key findings, our use of Beta regression and its extensions revealed important nuances in the results. With a traditional Beta regression model—which accounts for both the mean and the precision (dispersion)—we observed similar effects of instructor fluency on performance. However, the standard Beta model does not accommodate boundary values (i.e., 0s and 1s).
+Comparing our analysis with that of @wilford2020, we demonstrated that using traditional approaches (e.g., *t*-tests) to analyze accuracy data can lead to inaccurate inferences. Although we successfully reproduced one of their key findings, our use of Beta regression and its extensions revealed important nuances in the results. With a traditional Beta regression model—which accounts for both the mean and the precision (dispersion)—we observed similar effects of instructor fluency on performance. However, the standard Beta model does not accommodate boundary values (i.e., 0s and 1s).
 
-When we applied a zero-inflated Beta regression model, which explicitly accounts for structural zeros, we found no effect of fluency on the mean (\$\\mu\$) part of the model. Instead, the effect of fluency emerged in the structural zero (inflated zero; \$\\alpha\$) component. This pattern was consistent when using a zero-one-inflated Beta (ZOIB) model. Furthermore, we fit an ordered Beta regression model \[\@kubinec2022\], which appropriately models the full range of values, including 0s and 1s. Here, we did not observe a reliable effect of fluency on the mean once we accounted for dispersion.
+When we applied a zero-inflated Beta regression model, which explicitly accounts for structural zeros, we found no effect of fluency on the mean ($\mu$) part of the model. Instead, the effect of fluency emerged in the structural zero (inflated zero; $\alpha$) component. This pattern was consistent when using a zero-one-inflated Beta (ZOIB) model. Furthermore, we fit an ordered Beta regression model \[@kubinec2022\], which appropriately models the full range of values, including 0s and 1s. Here, we did not observe a reliable effect of fluency on the mean once we accounted for dispersion.
 
-These analyses emphasize the importance of fitting a model that aligns with the nature of the data. The simplest and recommended approach when dealing with data that contains zeros and/or ones is to fit an ordered beta model, assuming the process is truly continuous. However, if you believe the process is distinct in nature, a ZIB or ZOIB model might be a better choice. Ultimately, this decision should be guided by theory.
+These analyses emphasize the importance of fitting a model that aligns with the nature of the data. The simplest and recommended approach when dealing with data that contains zeros and/or ones is to fit an ordered Beta model, assuming the process is truly continuous. However, if you believe the process is distinct in nature, a ZIB or ZOIB model might be a better choice. Ultimately, this decision should be guided by theory.
 
 For instance, if we believe fluency influences the structural zero part of the model, we might want to model this process separately using a ZIB or ZOIB. With the current dataset, fluency might affect specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This effect could be due to participant disengagement during the disfluent lecture. If students fail to pay attention because of features of disfluency, they may miss relevant information, leading to a floor effect at the test. If this is the case, we would want to model this appropriately. However, if we believe fluency effects general performance levels, a model that takes in to account the entire process accounting for the zeros and ones might be appropriate.
 
