@@ -158,6 +158,7 @@ library(ggdist) # stat_halfeye viz bayes
 library(patchwork)# combine figure
 library(cowplot) # combine figures
 library(gghalves) # box plot
+library(ggbeeswarm) # raw data plot
 
 options(scipen = 999) # get rid of scientific notation
 ```
@@ -368,7 +369,7 @@ head(fluency_data) |>
 #| 
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
    geom_half_point(aes(color = Fluency), 
-                  transformation = position_quasirandom(width = 0.1),
+                  transformation = ggbeeswarm::position_quasirandom(width = 0.1),
                   side = "l", size = 1, alpha = 0.5) +
   geom_half_boxplot(
     side = "r"
