@@ -1284,25 +1284,12 @@ Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us 
 ord_beta_avg <- m.phi |>
   avg_comparisons(
     variables = "Fluency",
-    dpar = "mu",
     comparison = "difference"
   )
 
 ```
 
-```{r}
-{r}
-
-ord_beta_dis <- m.phi |>
-  avg_comparisons(
-    variables = "Fluency",
-    dpar = "phi",
-    comparison = "difference"
-  )
-
-```
-
-The credible interval is close enough to zero relative to its uncertainty that we can conclude there likely aren’t substantial differences in dispersion or mean accuracy between the fluent and disfluent conditions.
+The Cr.I is close enough to zero relative to its uncertainty that we can conclude there likely aren’t substantial differences in dispersion or mean accuracy between the fluent and disfluent conditions.
 
 ### Cutpoints
 
