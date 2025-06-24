@@ -552,8 +552,8 @@ combined_table_clean |>
 
 ```{r}
 #| label: tbl-all
-#| tbl-align: "center"
 #| tbl-cap: "Regression model summaries for each model"
+#| tbl-align: "center"
 #| apa-note: "Mean[95% Cr.I](pd = {pd}"
 
 knitr::include_graphics(here::here("manuscript","Figures",   "combined_table.png"))
@@ -562,7 +562,7 @@ knitr::include_graphics(here::here("manuscript","Figures",   "combined_table.png
 
 ## Bayesian Regression
 
-To fit our Bayesian regression models, we will be using the `brms` [@brms] R package. For reference, @tbl-all lists each model that was run, along with the model parameters and posterior summaries, including the mean, 95% credible intervals (Cr.I), and posterior probabilities of direction (pd). For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with. For the purposes of this tutorial, we will not be getting into the minutiae of Bayesian data analysis (i.e., setting informative priors, MCMC sampling, etc,). For a more in-depth look into Bayesian data analysis I refer the reader to @mcelreath2020statistical and @bayes_rules.
+To fit our Bayesian regression models, we will be using the `brms` [@brms] R package. For reference, lists each model that was run, along with the model parameters and posterior summaries, including the mean, 95% credible intervals (Cr.I), and posterior probabilities of direction (pd). For the following analyses we will be using default priors provided by `brms`, which are non-informative or weak. This will get us something tantamount to a frequentist model with maximum likelihood estimates most of the readers should be familiar with. For the purposes of this tutorial, we will not be getting into the minutiae of Bayesian data analysis (i.e., setting informative priors, MCMC sampling, etc,). For a more in-depth look into Bayesian data analysis I refer the reader to @mcelreath2020statistical and @bayes_rules.
 
 To create a regression model from in `brms` we will use the `brm()` function and fit a model looking at final test accuracy (`Accuracy`) as a function of instructor fluency (`fluency`). The syntax is similar to how you run a regression using the popular `lm` function in R. Here we are concerned with modeling mean performance differences between the fluency and disfluency conditions.
 
@@ -742,9 +742,9 @@ No errors this time! We will perform the Beta regression using the nudged values
 [^5]: We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)
 
 ```{r}
-#| label: tbl-beta-brms
-#| tbl-cap: Regression coefficients of a beta regression `(beta_brms` model).
+#| label: beta-brms
 #| echo: false
+#| eval: false
 #| after-caption-space: 0pt
 
 model_parameters(beta_brms, "mean") |>
@@ -757,12 +757,11 @@ model_parameters(beta_brms, "mean") |>
   format_tt(escape = TRUE)
 ```
 
-### Mean $\mu$ parameter
+### Mean $\mu$
 
 ```{r}
-#| label: tbl-beta-mu
-#| tbl-cap: Regression coefficients for $\mu$ parameter (`beta_brms` model)
-#| 
+#| label: beta-mu
+#| eval: false
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -853,7 +852,7 @@ beta_plot +
 ggsave("fig-plot-pre.png", path=here::here("manuscript", "Figures"), dpi=300,)
 ```
 
-Readers might notice that @fig-plot-pre displays a single point estimate along with its 95% Cr.I.. In Bayesian data analysis, MCMC sampling generates a distribution for each parameter of interest. This approach allows us to visualize the uncertainty surrounding our estimates. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function. We can then plot this information to illustrate the range of plausible values for our estimates (see @fig-draws-fluency).
+Readers might notice that @fig-plot-pre displays a single point estimate along with its 95% Cr.I.. In Bayesian data analysis, MCMC sampling generates a distribution for each parameter of interest. This approach allows us to visualize the uncertainty surrounding our estimates. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function. We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (e.g., 80% or 95%) (see @fig-draws-fluency).
 
 ```{r}
 # Add a model identifier to each dataset
@@ -864,15 +863,16 @@ pred_draws_beta <- avg_predictions(beta_brms, variables = "Fluency") |>
 ```{r}
 #| label: fig-draws-fluency
 # Plot both models
-ggplot(pred_draws_beta, aes(x = draw, y = estimate, fill = Fluency)) +
-  stat_halfeye(.width = c(.95), alpha = 0.7) +
+ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill= Fluency)) +
+  stat_halfeye(.width = c(.5, .8, .95), alpha = 0.7) +
   ggokabeito::scale_fill_okabe_ito() +
-  guides(fill = guide_legend(title = "Model")) +
-  labs(x = expression("Fluency " * mu),
-       y = "Final Recall Performance by Fluency ",
-       caption = "95% credible intervals shown in black") +
+  scale_x_continuous(labels = label_percent()) +
+  labs(x = "Accuracy",
+       y = "Fluency",
+       caption = "50%, 80% and 95% credible intervals shown in black") +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) + 
-  theme_publication()
+  theme_publication() +
+  theme(legend.position = "none")
 
 ggsave("fig-draws-fluency.png", path=here::here("manuscript", "Figures"), dpi=300,)
 ```
@@ -993,6 +993,7 @@ model_parameters(beta_brms, "mean") |>
 The intercept under the precision heading is not that interesting. It represents the overall dispersion in the model. We can model the dispersion of the `Fluency` factor—this allows dispersion to differ between the fluent and disfluent conditions. To do this we add `Fluency` to the phi model in `bf()`. We model the precision of the `Fluency` factor by using a `~` and adding factors of interest to the right of it.
 
 ```{r}
+#| echo: true
 model_beta_bayes_disp <- bf(
   Accuracy ~ Fluency, # fit mu model
   phi ~ Fluency # fit phi model with fluency 
@@ -1002,6 +1003,7 @@ model_beta_bayes_disp <- bf(
 ```{r}
 #| label: brms-model-dis
 #| results: hide
+#| echo: true
 
 beta_brms_dis <- brm(model_beta_bayes_disp,
   data = data_beta,
@@ -1018,11 +1020,10 @@ beta_brms_dis <- brm(model_beta_bayes_disp,
 ```
 
 ```{r}
-#| label: tbl-beta-mu-dis
-#| tbl-cap: Regression coefficients for $\mu$ and $\phi$ parameters (`beta_brms_dis` model)
+#| label: tbl beta mu dis
 #| echo: false
 #| after-caption-space: 0pt
-
+#| eval: false 
 
 model_parameters(beta_brms_dis, "mean") |>
   mutate(
@@ -1088,16 +1089,16 @@ pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") |>
 # Combine both datasets
 pred_combined <- bind_rows(pred_no, pred_yes)
 
-# Plot both models
-ggplot(pred_combined, aes(x = draw, y = estimate, fill = model)) +
+ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
   stat_halfeye(.width = c(.8, .95), alpha = 0.7) +
   ggokabeito::scale_fill_okabe_ito() +
-  guides(fill = guide_legend(title = "Model")) +
+  # guides(fill = guide_legend(title = "Model")) +  # Remove or comment out
   labs(x = "Fluency", 
        y = "Difference in Final Recall Performance",
        caption = "80% and 95% credible intervals shown in black") +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) + 
-  theme_publication()
+  theme_publication() +
+  theme(legend.position = "none")
 
 ggsave("fig-plot-dis.png", path=here::here("manuscript", "Figures"), dpi=300,)
 
@@ -1165,9 +1166,9 @@ fit_zi <- brm(
 ```
 
 ```{r}
-#| label: tbl-brms-zib
-#| tbl-cap: Model summary (posterior distribution) for zero-inflated beta model
+#| label: tbl brms zib
 #| echo: false
+#| eval: false
 #| after-caption-space: 0pt
 
 
@@ -1320,6 +1321,8 @@ Similar to our beta and zero-inflated models above, we can fit a ZOIB model in *
 ```{r}
 #| label: fig-zoib
 #| fig-cap: Simulated data from a ZOIB model illustrating the effects of the zero-one inflation parameter ($\alpha$) and the conditional one-inflation parameter ($\gamma$).
+#| fig-width: 8
+#| fig-height: 8
 # Zero-one inflated beta generator
 # Matti V blog post
 rzoib <- function(n = 1000, alpha = 0.1, gamma = 0.45, mu = 0.7, phi = 3) {
@@ -1433,11 +1436,10 @@ fit_zoib <- brm(
 ```
 
 ```{r}
-#| label: tbl-zoib
-#| tbl-cap: "Model summary (posterior distribution) for the  zero-one inflated beta model"
+#| label: tbl zoib
 #| echo: false
 #| after-caption-space: 0pt
-
+#| eval: false 
 
 zoib_model <- parameters::model_parameters(fit_zoib, "mean")
 
