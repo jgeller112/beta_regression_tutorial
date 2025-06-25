@@ -554,7 +554,7 @@ combined_table_clean |>
 #| label: tbl-all
 #| tbl-cap: "Regression model summaries for each model"
 #| tbl-align: "center"
-#| apa-note: "Mean[95% Cr.I](pd = {pd}"
+#| apa-note: "Mean[95% Cr.I](pd)"
 
 knitr::include_graphics(here::here("manuscript","Figures",   "combined_table.png"))
 
@@ -607,7 +607,8 @@ bayes_ols_model <- brm(Accuracy ~ Fluency,
 ```
 
 ```{r}
-#| label: tbl-brms-ols
+#| label: tbl brms ols
+#| eval: false
 #| tbl-cap: "Bayesian regression model coefficents"
 #| tbl-cap-location: top
 #| echo: false
@@ -629,7 +630,7 @@ brms_model_new |>
 
 ```
 
-@tbl-all displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. The `b_Intercept` value refers to the accuracy in the disfluent condition (because we dummy coded our variable). The Fluency coefficient (`b_FluencyFluent`) highlights the difference between the fluent and disfluent conditions, b = `r round(brms_model_new$Mean[2], 3)`, 95% Cr.Is = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. Our results are very similar to the results reported by @wilford2020 : *t*(94) = 2.00, *p = .048,* 95% CI: 0.06, 16.56\].
+@tbl-all displays the summary of the Bayesian regression model. To make the output more readable, each model parameter is labeled with a prefix before the variable name. The `b_Intercept` value refers to the accuracy in the disfluent condition (because we dummy coded our variable). The Fluency coefficient (`b_FluencyFluent`) highlights the difference between the fluent and disfluent conditions, *b* = `r round(brms_model_new$Mean[2], 3)`, 95% Cr.Is = \[`r round(brms_model_new$CI_low[2], 3)`,`r round(brms_model_new$CI_high[2], 3)`\], pd =`r round(brms_model_new$pd[2])`. Our results are very similar to the results reported by @wilford2020 : *t*(94) = 2.00, *p = .048,* 95% CI: 0.06, 16.56\].
 
 There are some notable differences between our Bayesian analysis and the frequenist analyses readers might be more sued to seeing, such as the absence of *t*- and *p*-values. There is a metric in the table that is included with models fit when using the `bayestestr` [@makowski2019] function from `easystats` called probability of direction (pd) that gives an indication of how much of the posterior distribution estimate is in one direction (positive or negative). The pd measure appears to correlated with *p*-values (see [@makowski2019; @makowski2019a]). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. In addition to the pd value, one can look at the 95% credible interval (sometimes called highest probability density, depending on the package being used) to see if it includes 0--if it does not then the effect can be said to be significant. In the table below, the 95% credible intervals are located in the 95% Cr.Is column.
 
@@ -862,6 +863,7 @@ pred_draws_beta <- avg_predictions(beta_brms, variables = "Fluency") |>
 
 ```{r}
 #| label: fig-draws-fluency
+#| fig-cap: Predicted probablity posterior distributions by fluency 
 # Plot both models
 ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill= Fluency)) +
   stat_halfeye(.width = c(.5, .8, .95), alpha = 0.7) +
@@ -877,7 +879,7 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill= Fluency)) +
 ggsave("fig-draws-fluency.png", path=here::here("manuscript", "Figures"), dpi=300,)
 ```
 
-##### Marginal Effects
+#### Marginal Effects
 
 Marginal effects provide a way to understand how changes in a predictor influence an outcome, holding all other factors constant in a specific manner. Technically, marginal effects are calculated using partial derivatives for continuous variables or finite differences for categorical and continuous variables, depending on the nature of the data and the research question. Substantively, these effects translate regression coefficients into a form that can be interpreted directly on the outcome scale of interest.
 
@@ -1035,7 +1037,7 @@ model_parameters(beta_brms_dis, "mean") |>
   format_tt(escape = TRUE)
 ```
 
-@tbl-all displays the model summary with the precision parameter added to our model as a function of fluency. It is important to note that the estimates are logged and not on the original scale (this is only the case when additional parameters are modeled). To interpret them on the original scale, we can exponentiate the log-transformed value—this transformation gets us back to our original scale (see @tbl-phi-beta-exp). In below model call, we set `exponentiate` = TRUE.
+@tbl-all displays the model summary with the precision parameter added to our model as a function of fluency. It is important to note that the estimates are logged and not on the original scale (this is only the case when additional parameters are modeled). To interpret them on the original scale, we can exponentiate the log-transformed value—this transformation gets us back to our original scale . In below model call, we set `exponentiate` = TRUE.
 
 ```{r}
 #| label: phi-beta
@@ -1385,13 +1387,13 @@ p <- ggplot() +
     name = "Type"
   ) +
   facet_grid(gamma ~ alpha, labeller = label_both, scales = "free_y") +
-  theme_minimal() +
   labs(
-    title = "Zero-One Inflated Beta: Alpha and Gamma Effects",
-    x = "Accuracy on Test",
+    x = "Accuracy",
     y = "Count"
   ) + 
-  theme_publication()
+  theme_publication() + 
+    scale_x_continuous(labels = label_percent())
+
 
 p
 
@@ -1592,7 +1594,6 @@ plots <- pp_check_ordbeta(m.phi,
 ) 
 
 plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
-
 ```
 
 The discrete plot which is a bar graph, shows that the posterior distribution accurately captures the number of different types of responses (discrete or continuous) in the data. For the continuous plot shown as a density plot with one line per posterior draw, the model does a very good job at capturing the distribution.
