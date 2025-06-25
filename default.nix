@@ -61,6 +61,7 @@ let
       ggbeeswarm
       gghalves
       ggokabeito
+      ggrain
       glmmTMB
       here
       languageserver
