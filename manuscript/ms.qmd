@@ -116,7 +116,9 @@ The challenges of analyzing proportional data are not new [see @bartlett1936]. F
 
 With the combination of open-source programming languages like R \[@R\] and a vibrant community of package developers, analyses such as Beta regression have become increasingly accessible. Yet, adoption of these methods—particularly in psychology—remains limited. One reason may be the lack of resources tailored to the needs of psychologists. Although recent years have seen a surge of interest in Beta regression with excellent tutorials [@heiss2021; @vuorre2019; @bendixen2023; @coretta2025bayesian], its adoption in psychology remains limited.
 
-This tutorial aims to address that gap by offering a more comprehensive overview of Beta regression and its extensions, along with practical tools and code to help psychologists apply these methods in their own work. While previous tutorials have largely focused on Beta regression, or a few of its alternatives, we seek to go over several extensions of the Beta model that should cover all applications and interpreting model summaries, we emphasize the importance of interpreting estimates on the response scale.
+While previous tutorials have introduced Beta regression, most have been limited in scope—focusing either on the basic model or offering only brief mentions of more complex alternatives. This tutorial aims to fill that gap by offering a comprehensive and practical overview of Beta regression and its extensions. In addition to covering the standard Beta model, we walk through advanced variants such as zero-inflated, zero-one-inflated, and ordered Beta regression. These models are critical for researchers dealing with boundary values (e.g., exact 0s or 1s) or ordinal response structures, yet they remain underutilized in psychology.
+
+Beyond model specification, we place strong emphasis on interpreting results on the response scale—that is, in terms of predicted probabilities and proportions—rather than relying solely on log-odds or latent parameters. This focus makes the models more accessible and meaningful for psychological applications, where effect sizes are often easier to communicate when framed in terms of expected outcomes (e.g., changes in recall accuracy or task performance). Throughout, we provide reproducible code and annotated examples to help readers implement and interpret these models in their own work
 
 In this tutorial, we provide a comprehensive and accessible introduction to Beta regression for psychological research. We begin with a non-technical overview of the Beta distribution and its core parameters, laying the foundation for understanding how the model works. We then walk through the process of fitting Beta regression models using the R package `brms`, illustrating each step with applied examples. To help researchers make sense of model output, we offer guidance on interpreting coefficients, predicted probabilities, and marginal effects using the `marginaleffects` package [@margeffects2024]. We also introduce several useful extensions—such as zero-inflated (ZIB), zero-one-inflated (ZOIB), and ordered Beta regression models—that enable researchers to model outcomes that include exact boundary values like 0 and 1. Finally, all code and materials used in this tutorial are fully reproducible and available via our GitHub repository: <https://github.com/jgeller112/beta_regression_tutorial>[^1]
 
@@ -266,7 +268,7 @@ plot_grid(p1, p2, labels = c("A", "B"))
 ggsave("fig-test-beta.png", path=here::here("manuscript", "Figures"), dpi=300)
 ```
 
-### Mean and Precision
+## Beta Regression
 
 While $\alpha$ and $\beta$ are useful for defining the distribution, regression modeling typically uses a reparameterized form involving the **mean** $\mu$ and **precision** $\phi$ . The mean ($\mu$) represents the expected value of the distribution, while the dispersion ($\phi$), which is inversely related to variance, reflects how concentrated the distribution is around the mean, with higher values of $\phi$ representing a narrower distribution while lower values of $\phi$ represent a wider, more spread out, distribution. These are connected to $\alpha$ and $\beta$ as follows:
 
@@ -289,10 +291,6 @@ $$
 $$
 
 Importantly, *the variance depends on the average value of the response*, which is what allows the model to non-linearly adjust to the bounds of the outcome.
-
-### Beta Regression
-
-We can use the Beta distribution in regression models to describe a continuous response variable that is bounded between 0 and 1. Although the Beta distribution applies to values in this interval, it is straightforward to rescale other variables to fit this range using normalization formulas.
 
 In Beta regression, the goal is to model the mean of the response variable (often denoted $\mu$) as a function of predictor variables, while optionally modeling a precision or dispersion parameter (often denoted $\phi$) that captures variability around the mean. To ensure that $\mu$ stays between 0 and 1, we apply a link function, which transforms the mean so that it can be modeled on an unbounded scale. A common choice is the logit link (which is used by default), but other links (such as the probit or complementary log-log) are also available; the logit is not required.
 
