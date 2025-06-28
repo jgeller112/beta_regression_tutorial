@@ -359,8 +359,8 @@ window.Quarto = {
 
     <script>
 
-      function styleCell_1lnd0zksc3y71byp8z4c(i, j, css_id) {
-          var table = document.getElementById("tinytable_1lnd0zksc3y71byp8z4c");
+      function styleCell_b8vpej0vmxv2um4heqsz(i, j, css_id) {
+          var table = document.getElementById("tinytable_b8vpej0vmxv2um4heqsz");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -370,7 +370,7 @@ window.Quarto = {
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_1lnd0zksc3y71byp8z4c');
+        var table = document.getElementById('tinytable_b8vpej0vmxv2um4heqsz');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -378,8 +378,8 @@ window.Quarto = {
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_1lnd0zksc3y71byp8z4c(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_1lnd0zksc3y71byp8z4c");
+      function spanCell_b8vpej0vmxv2um4heqsz(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_b8vpej0vmxv2um4heqsz");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -409,14 +409,14 @@ window.Quarto = {
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 },  ], css_id: 'tinytable_css_oo08nclqscbjwkixq0xu',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_djrvsfnhs5qsw2bjbwbw',}, 
+          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 },  ], css_id: 'tinytable_css_peq9dv2qa5bl1566p78p',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_klhf7dxizvoq5gq1dagf',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_1lnd0zksc3y71byp8z4c(cell.i, cell.j, group.css_id);
+                  styleCell_b8vpej0vmxv2um4heqsz(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -424,11 +424,11 @@ window.Quarto = {
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_oo08nclqscbjwkixq0xu, .table th.tinytable_css_oo08nclqscbjwkixq0xu { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_djrvsfnhs5qsw2bjbwbw, .table th.tinytable_css_djrvsfnhs5qsw2bjbwbw { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_peq9dv2qa5bl1566p78p, .table th.tinytable_css_peq9dv2qa5bl1566p78p { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_klhf7dxizvoq5gq1dagf, .table th.tinytable_css_klhf7dxizvoq5gq1dagf { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_1lnd0zksc3y71byp8z4c" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_b8vpej0vmxv2um4heqsz" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -507,7 +507,7 @@ window.Quarto = {
 <li><p><strong><code>Accuracy</code>:</strong> Proportion recalled (idea units)</p></li>
 </ul>
 <div class="cell FigureWithNote" data-tbl-align="center" data-apa-note="Mean[95% Cr.I](pd); mu = logit; phi = log; zi= logit;  zoi = logit; coi = logit" prefix="" data-tblnum="2" data-custom-style="FigureWithNote">
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="2" data-apa-note="Mean[95% Cr.I](pd); mu = logit; phi = log; zi= logit;  zoi = logit; coi = logit" data-tbl-align="center" prefix="">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="2" data-apa-note="Mean[95% Cr.I](pd); mu = logit; phi = log; zi= logit;  zoi = logit; coi = logit" prefix="" data-tbl-align="center">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
