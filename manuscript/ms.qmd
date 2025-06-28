@@ -347,7 +347,7 @@ fluency_data <- read.csv("data/miko_data.csv") |>
     Accuracy = Accuracy / 10, # Convert Accuracy values to proportions
     Fluency = ifelse(Fluency == 1, "Fluent", "Disfluent"),
   ) |>
-  filter(Time == "FreeCt1AVG") |> # Only choose first time point
+filter(Time == "FreeCt1AVG") |> # Only choose first time point
   select(-X, -Time) |> # Drop unnecessary columns
   mutate(Participant = dense_rank(Participant)) |> # Assign sequential participant numbers
   relocate(Accuracy, .after = last_col()) # Move Accuracy to the end
@@ -1282,10 +1282,6 @@ If we wanted we could easily visualize the zero-inflated part of the model (see 
 #| echo: false
 
 zi_plot <- plot_predictions(fit_zi, by = c("Fluency"), dpar = "zi") +
-  scale_x_discrete(
-    breaks = c("0", "1"),
-    labels = c("Fluent", "Disfluent")
-  ) +
   scale_y_continuous(labels = label_percent()) +
   labs(x = "Fluency", y = "Probablity of 0") + 
   theme_publication()
