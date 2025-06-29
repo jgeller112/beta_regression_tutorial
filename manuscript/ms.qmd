@@ -315,7 +315,7 @@ Throughout the tutorial, we will demonstrate how to fit these Bayesian Beta regr
 
 To demonstrate how Beta regression can be applied in practice, we re-analyze data from a memory experiment conducted by @wilford2020; Experiment 1A. This study investigated whether the fluency of an instructor’s delivery influenced participants’ memory performance on a final recall test. By working through this dataset, we illustrate each stage of Beta modeling—from basic regression to more advanced extensions—and show how Beta regression can offer more accurate and interpretable inferences for bounded outcome variables.
 
-The idea that extrinsic cues, such as how easily information is processed, influence metamemory has been widely documented. In particular, a growing body of research has examined the role of instructor fluency—characterized by dynamic vocal intonation, purposeful gestures, mobility, and natural pacing—in shaping students' perceptions of learning. Although fluent instructors are often judged as more effective, several studies have shown that fluency has little to no impact on actual memory performance [e.g., @carpenter2013 @toftness2017; @witherby2022]. However, Wilford et al. (2020) reported the opposite: in a series of experiments, they found that participants recalled more information when watching a fluent versus a disfluent instructor. This contradictory pattern makes the dataset especially useful for illustrating statistical approaches to analyzing proportion data
+The idea that extrinsic cues, such as how easily information is processed, influence metamemory has been widely documented. In particular, a growing body of research has examined the role of instructor fluency—characterized by dynamic vocal intonation, purposeful gestures, mobility, and natural pacing—in shaping students' perceptions of learning. Although fluent instructors are often judged as more effective, several studies have shown that fluency has little to no impact on actual memory performance [e.g., @carpenter2013 @toftness2017; @witherby2022]. However, Wilford et al. (2020) reported the opposite: in a series of experiments, they found that participants recalled more information when watching a fluent versus a disfluent instructor. This contradictory pattern makes the dataset especially useful for illustrating statistical approaches to analyzing proportion data.
 
 In Experiment 1A of Wilford et al. (2020), participants watched two brief instructional videos—one on the genetics of calico cats, the other on the biology of skin wrinkling. Each video was presented in either a fluent or disfluent style. The fluent condition featured instructors with smooth delivery, clear vocal modulation, and confident pacing. The disfluent condition included hesitations, monotone delivery, and unnatural pauses. After viewing the videos, participants made judgments of learning (JOLs), rating how likely they were to remember the material on a scale from 0 to 100. They also answered questions about the instructor and self-reported how much they believed they had learned. Following a distractor task, participants completed a free recall test, writing down as much information as they could remember from each video within a three-minute time limit. Each response was scored out of 10 possible idea units per video.
 
@@ -728,7 +728,7 @@ No errors this time! We will perform the Beta regression using the nudged values
 
 #### Model Parameters
 
-@tbl-all displays the summary from our Bayesian implementation. [^3] The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the `Parameter` column.
+@tbl-all displays the summary from all out Bayesian implementation. [^3] The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the `Parameter` column.
 
 [^3]: We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)
 
@@ -775,26 +775,26 @@ In @tbl-all under the Beta Regression column, the first set of coefficients repr
 
 Parameter estimates are usually difficult to intercept on their own. We argue that researchers should not spend too much time interpreting single model estimates. We report them in this tutorial for completeness. Instead researchers should discuss the effects of the predictor on the actual outcome of interest (in this case the 0-1 scale). The logit link allows us to transform back and forth between the scale of a linear model and the nonlinear scale of the outcome, which is bounded by 0 and 1. By using the inverse of the logit, we can easily transform our linear coefficients to obtain average effects on the scale of the proportions or percentages, which is usually what is interesting to applied researchers. In a simple case, we can do this manually, but when there are many factors in your model this can be quite complex.
 
-In our example, we can use the `plogis()` function in base R to convert estimates from the log-odds (logit) scale to the probability scale. The intercept of our model is -0.918, which reflects the log-odds of a response being 1 in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the log-odds scale, we can compute the predicted probabilities as follows:
+In our example, we can use the `plogis()` function in base R to convert estimates from the log-odds (logit) scale to the probability scale. The intercept of our model is -0.918, which reflects the log-odds of the mean accuracy in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the log-odds scale, we first add this value to the intercept to get the log-odds for the fluent condition: `-0.918 + 0.24 = -0.678`. We then use `plogis()` to convert both log-odds values to probabilities:
 
 ```{r}
 #| eval: false
 #| echo: true
 # Log-odds for each condition
-log_odds_disfluent <- -0.918
-log_odds_fluent <- log_odds_disfluent + 0.24 
+log_odds_disfluent <- -1.036
+log_odds_fluent <- log_odds_disfluent + 0.24
 
 # Convert to probabilities
 prob_disfluent <- plogis(log_odds_disfluent)
 prob_fluent <- plogis(log_odds_fluent)
 
 # View results
-prob_disfluent  # ≈ 0.285
-prob_fluent     # ≈ 0.336
+prob_disfluent  # ≈ 0.262
+prob_fluent     # ≈ 0.355
 
 ```
 
-This is a bit cumbersome. To help us extract predictions from our model and visualize them we will use a package called **`marginaleffects`** [@margeffects2024]. [^4] To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob.
+This is pretty easy to do manually, but when your model has many predictors, it can be quite cumbersome. To help us extract predictions from our model and visualize them we will use a package called **`marginaleffects`** [@margeffects2024]. [^4] To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob.
 
 [^4]: `ggeffects` is another great package to extract marginal effects and plot [@ggeffects-2]
 
@@ -809,7 +809,7 @@ library(marginaleffects)
 #| echo: true
 
 # use predictions to get predicted probs for each condition
-predictions(beta_brms,
+redictions(beta_brms,
   newdata = datagrid(Fluency = c("Disfluent", "Fluent")) # need to specify the levels of the categorical predictor
 )
 ```
@@ -1296,7 +1296,7 @@ In our data, we have exactly one value equal to 1[^6]. While probably not signif
 
 [^6]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1.
 
-Similar to our beta and zero-inflated models above, we can fit a ZOIB model in **brms** quite easily using the `zero_one_inflated_beta` family. In this model, we simultaneously estimate the mean ($\mu$) and precision ($\phi$) of the Beta distribution, a zero-one inflation parameter ($\alpha$) that represents the probability that an observation is either exactly 0 or 1, and a conditional one-inflation parameter ($\gamma$) that represents the probability that, given an observation is at one of the endpoints, it is 1. This specification captures the entire range of possible values while remaining constrained between 0 and 1. To get a better sense of how $\alpha$ and $\gamma$ control the distribution of values, @fig-zoib presents simulated data across combinations of these parameters. As $\alpha$ increases, we see a greater proportion of responses at the endpoints. As $\gamma$ increases, the proportion of endpoint responses at 1 grows relative to 0, making the spikes at 1 more prominent as $\gamma$ approaches 1. This visualization illustrates how the ZOIB model flexibly accounts for both the continuous portion of the distribution and the occurrence of exact 0s and 1s.
+Similar to our beta and zero-inflated models above, we can fit a ZOIB model in brms quite easily using the `zero_one_inflated_beta` family. In this model, we simultaneously estimate the mean ($\mu$) and precision ($\phi$) of the Beta distribution, a zero-one inflation parameter ($\alpha$) that represents the probability that an observation is either exactly 0 or 1 (i.e., 0 or 1 vs. not 0 or 1) and a conditional one-inflation parameter ($\gamma$) that represents the probability that, given an observation is at one of the endpoints, it is 1 (i.e, 1 vs. not 1). This specification captures the entire range of possible values while remaining constrained between 0 and 1. To get a better sense of how $\alpha$ and $\gamma$ control the distribution of values, @fig-zoib presents simulated data across combinations of these parameters. As $\alpha$ increases, we see a greater proportion of responses at the endpoints. As $\gamma$ increases, the proportion of endpoint responses at 1 grows relative to 0, making the spikes at 1 more prominent as $\gamma$ approaches 1. This visualization illustrates how the ZOIB model flexibly accounts for both the continuous portion of the distribution and the occurrence of exact 0s and 1s.
 
 ```{r}
 #| label: fig-zoib
@@ -1445,7 +1445,7 @@ The output for the model is pretty lengthy we are estimating four parameters eac
 
 With `marginaleffects` we can choose marginalize over all the sub-models, averaged across the 0s, continuous responses, and 1s in the data, or we can model the parameters separately using the `dpar` argument like we did above setting it to: $\mu$, $\phi$, $\alpha$, $\gamma$ (see below). Using `avg_predictions()` and not setting `dpar` we can get the predicted probabilities across all the sub-models. We can also plot the overall difference between fluency and disfluency for the whole model with `plot_predictions()`.
 
-We wont highlight all the parameters for this model $\mu$, $phi$ and $\alpha$ are the same as above, but below we can see predicted probabilities for $\gamma$ (see @tbl-coi). For 0s and 1s, the probability of a 1 is higher in the fluent condition than the disfluent condition. In our dataset, we only have one participant with a perfect score.
+We wont highlight all the parameters for this model $\mu$, $\phi$ and $\alpha$ are the same as above, but below I show how one can extract the predicted probabilities and marginal effects for $\gamma$ .
 
 ### $\gamma$
 
@@ -1453,22 +1453,9 @@ We wont highlight all the parameters for this model $\mu$, $phi$ and $\alpha$ ar
 #| label: avg coi 
 # get average predictions for coi param 
 coi_probs <- avg_predictions(fit_zoib, by = c("Fluency"), dpar = "coi")
+# get differene between the two conditions
+coi_me <- avg_comparisons(fit_zoib, variables = c("Fluency"), dpar = "coi")
 
-```
-
-```{r}
-#| label: tbl-coi
-#| tbl-cap: Predicted fluency probablities for coi parameter 
-#| echo: false
-coi_probs |> 
- select(Fluency, estimate, conf.low, conf.high) |> 
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
-  rename("Mean" = "estimate") |>
-  select(Fluency, Mean,`95% Cr.I`) |>
-   tt() |>
-   format_tt(digits = 3)
 ```
 
 ## Ordered Beta Regression
