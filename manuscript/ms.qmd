@@ -150,7 +150,7 @@ library(brms) # bayesian models
 library(posterior) # cutpoints
 library(bayesplot) # bayes
 library(ggdist) # stat_halfeye viz bayes
-library(patchwork)# combine figure
+library(patchwork) # combine figure
 library(cowplot) # combine figures
 library(gghalves) # box plot
 library(ggbeeswarm) # raw data plot
@@ -164,37 +164,41 @@ options(scipen = 999) # get rid of scientific notation
 # Define the custom publication theme
 
 theme_publication <- function(base_size = 14, base_family = "Times") {
-    theme(
-      # General text
-      text = element_text(size = base_size, family = base_family, color = "black"),
-      
-      # Titles
-      plot.title = element_text(face = "bold", hjust = 0.5, size = base_size + 2),
-      plot.subtitle = element_text(hjust = 0.5, size = base_size),
-      plot.caption = element_text(hjust = 0.5, size = base_size - 2),
-      
-      # Axis
-      axis.title = element_text(face = "bold", size = base_size),
-      axis.title.x = element_text(margin = margin(t = 10)), # Add space below axis title
-      axis.title.y = element_text(margin = margin(r = 10)), # Add space beside axis title
-      axis.text = element_text(size = base_size - 1),
-      axis.line = element_line(color = "black"),
-      axis.ticks = element_line(color = "black"),
-      # Panel
-      panel.grid.major = element_line(color = "gray80"),
-      panel.grid.minor = element_blank(), # APA style minimizes gridlines
-      panel.background = element_blank(),
-      
-      # Legend
-      legend.position = "bottom",
-      legend.title = element_text(face = "bold", size = base_size),
-      legend.text = element_text(size = base_size - 1),
-      legend.background = element_blank(),
-      
-      # Strip (for facets)
-      strip.text = element_text(face = "bold", size = base_size),
-      strip.background = element_rect(fill = "gray90", color = "black")
-    )
+  theme(
+    # General text
+    text = element_text(
+      size = base_size,
+      family = base_family,
+      color = "black"
+    ),
+
+    # Titles
+    plot.title = element_text(face = "bold", hjust = 0.5, size = base_size + 2),
+    plot.subtitle = element_text(hjust = 0.5, size = base_size),
+    plot.caption = element_text(hjust = 0.5, size = base_size - 2),
+
+    # Axis
+    axis.title = element_text(face = "bold", size = base_size),
+    axis.title.x = element_text(margin = margin(t = 10)), # Add space below axis title
+    axis.title.y = element_text(margin = margin(r = 10)), # Add space beside axis title
+    axis.text = element_text(size = base_size - 1),
+    axis.line = element_line(color = "black"),
+    axis.ticks = element_line(color = "black"),
+    # Panel
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_blank(), # APA style minimizes gridlines
+    panel.background = element_blank(),
+
+    # Legend
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold", size = base_size),
+    legend.text = element_text(size = base_size - 1),
+    legend.background = element_blank(),
+
+    # Strip (for facets)
+    strip.text = element_text(face = "bold", size = base_size),
+    strip.background = element_rect(fill = "gray90", color = "black")
+  )
 }
 
 ```
@@ -204,19 +208,39 @@ theme_publication <- function(base_size = 14, base_family = "Times") {
 #| fig-cap: "Beta distributions with different shape parameters"
 # Create base plot over the interval [0,1]
 p <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
-  stat_function(fun = dbeta, args = list(shape1 = 0.5, shape2 = 0.5), 
-                aes(color = "shape1=0.5, shape2=0.5"), size = 1.2) +
-  stat_function(fun = dbeta, args = list(shape1 = 2, shape2 = 2), 
-                aes(color = "shape1=2, shape2=2"), size = 1.2) +
-  stat_function(fun = dbeta, args = list(shape1 = 5, shape2 = 1), 
-                aes(color = "shape1=5, shape2=1"), size = 1.2) +
-  stat_function(fun = dbeta, args = list(shape1 = 1, shape2 = 3), 
-                aes(color = "shape1=1, shape2=3"), size = 1.2) +
-  stat_function(fun = dbeta, args = list(shape1 = 2, shape2 = 5), 
-                aes(color = "shape1=2, shape2=5"), size = 1.2) +
+  stat_function(
+    fun = dbeta,
+    args = list(shape1 = 0.5, shape2 = 0.5),
+    aes(color = "shape1=0.5, shape2=0.5"),
+    size = 1.2
+  ) +
+  stat_function(
+    fun = dbeta,
+    args = list(shape1 = 2, shape2 = 2),
+    aes(color = "shape1=2, shape2=2"),
+    size = 1.2
+  ) +
+  stat_function(
+    fun = dbeta,
+    args = list(shape1 = 5, shape2 = 1),
+    aes(color = "shape1=5, shape2=1"),
+    size = 1.2
+  ) +
+  stat_function(
+    fun = dbeta,
+    args = list(shape1 = 1, shape2 = 3),
+    aes(color = "shape1=1, shape2=3"),
+    size = 1.2
+  ) +
+  stat_function(
+    fun = dbeta,
+    args = list(shape1 = 2, shape2 = 5),
+    aes(color = "shape1=2, shape2=5"),
+    size = 1.2
+  ) +
   labs(
-    x= "Proportion",
-    y = "Density", 
+    x = "Proportion",
+    y = "Density",
     color = "Parameters"
   ) +
   theme_publication()
@@ -224,7 +248,7 @@ p <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
 
 p
 
-ggsave("fig-shapes.png", path=here::here("manuscript", "Figures"), dpi=300)
+ggsave("fig-shapes.png", path = here::here("manuscript", "Figures"), dpi = 300)
 
 ```
 
@@ -237,11 +261,15 @@ ggsave("fig-shapes.png", path=here::here("manuscript", "Figures"), dpi=300)
 # Create the plot with a filled beta distribution density
 p1 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
   stat_function(
-    fun = dbeta, args = list(shape1 = 4, shape2 = 2),
-    geom = "area", fill = "blue", alpha = 0.5
+    fun = dbeta,
+    args = list(shape1 = 4, shape2 = 2),
+    geom = "area",
+    fill = "blue",
+    alpha = 0.5
   ) +
   stat_function(
-    fun = dbeta, args = list(shape1 = 4, shape2 = 2),
+    fun = dbeta,
+    args = list(shape1 = 4, shape2 = 2),
     aes(color = "beta(shape1 = 4, shape2 = 2)")
   ) +
   theme_publication() +
@@ -251,20 +279,28 @@ p1 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
 # Create the plot with a filled beta distribution density
 p2 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
   stat_function(
-    fun = dbeta, args = list(shape1 = 2, shape2 = 4),
-    geom = "area", fill = "red", alpha = 0.5
+    fun = dbeta,
+    args = list(shape1 = 2, shape2 = 4),
+    geom = "area",
+    fill = "red",
+    alpha = 0.5
   ) +
   stat_function(
-    fun = dbeta, args = list(shape1 = 2, shape2 = 4),
+    fun = dbeta,
+    args = list(shape1 = 2, shape2 = 4),
     aes(color = "beta(shape1 = 4, shape2 = 2)")
   ) +
   theme_publication() +
   theme(legend.position = "none") +
-  labs(x = "Proportion Correct on Question", y = "Density") 
+  labs(x = "Proportion Correct on Question", y = "Density")
 
 plot_grid(p1, p2, labels = c("A", "B"))
 
-ggsave("fig-test-beta.png", path=here::here("manuscript", "Figures"), dpi=300)
+ggsave(
+  "fig-test-beta.png",
+  path = here::here("manuscript", "Figures"),
+  dpi = 300
+)
 ```
 
 ## Beta Regression
@@ -348,7 +384,7 @@ fluency_data <- read.csv("data/miko_data.csv") |>
     Accuracy = Accuracy / 10, # Convert Accuracy values to proportions
     Fluency = ifelse(Fluency == 1, "Fluent", "Disfluent"),
   ) |>
-filter(Time == "FreeCt1AVG") |> # Only choose first time point
+  filter(Time == "FreeCt1AVG") |> # Only choose first time point
   select(-X, -Time) |> # Drop unnecessary columns
   mutate(Participant = dense_rank(Participant)) |> # Assign sequential participant numbers
   relocate(Accuracy, .after = last_col()) # Move Accuracy to the end
@@ -364,25 +400,29 @@ filter(Time == "FreeCt1AVG") |> # Only choose first time point
 # underscore won't display in Latex
 head(fluency_data) |>
   tt() |>
-  format_tt(escape=TRUE)
+  format_tt(escape = TRUE)
 ```
 
 ```{r}
 #| label: fig-flu1
 #| fig-cap: "Fluency accuracy: Raw data (points), half-boxplot, and Mean marker (diamond)"
 #| echo: false
-#| 
+#|
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
-   geom_half_point(aes(color = Fluency), 
-                  transformation = ggbeeswarm::position_quasirandom(width = 0.1),
-                  side = "l", size = 1, alpha = 0.5) +
+  geom_half_point(
+    aes(color = Fluency),
+    transformation = ggbeeswarm::position_quasirandom(width = 0.1),
+    side = "l",
+    size = 1,
+    alpha = 0.5
+  ) +
   geom_half_boxplot(
     side = "r"
   ) +
   stat_summary(
     fun = mean,
     geom = "point",
-    shape = 17,  # triangle
+    shape = 17, # triangle
     size = 4,
     color = "blue",
     fill = "blue"
@@ -392,7 +432,11 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
   theme_publication() +
   theme(legend.position = "none")
 
-ggsave("fig-accuracy-data.png", path=here::here("manuscript", "Figures"), dpi=300)
+ggsave(
+  "fig-accuracy-data.png",
+  path = here::here("manuscript", "Figures"),
+  dpi = 300
+)
 ```
 
 ### Data
@@ -401,7 +445,22 @@ ggsave("fig-accuracy-data.png", path=here::here("manuscript", "Figures"), dpi=30
 #| label: setup
 #| message: false
 #| warning: false
-packages <- c("tidyverse", "easystats", "scales", "tinytable", "marginaleffects","cowplot", "ggbeeswarm", "gghalves","webshot2",  "extraDistr", "brms", "posterior", "bayesplot", "ggdist")
+packages <- c(
+  "tidyverse",
+  "easystats",
+  "scales",
+  "tinytable",
+  "marginaleffects",
+  "cowplot",
+  "ggbeeswarm",
+  "gghalves",
+  "webshot2",
+  "extraDistr",
+  "brms",
+  "posterior",
+  "bayesplot",
+  "ggdist"
+)
 ```
 
 ```{r}
@@ -432,13 +491,16 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 # fit each model to put in table
 # fit ols reg
 
-bayes_ols_model <- brm(Accuracy ~ Fluency,
-                       data = fluency_data,
-                       cores=4,
-                       backend = "cmdstanr",
-                       file = "model_ols_bayes")
+bayes_ols_model <- brm(
+  Accuracy ~ Fluency,
+  data = fluency_data,
+  cores = 4,
+  backend = "cmdstanr",
+  file = "model_ols_bayes"
+)
 
-beta_brms_dis <- brm(model_beta_bayes_disp,
+beta_brms_dis <- brm(
+  model_beta_bayes_disp,
   data = data_beta,
   family = Beta(),
   chains = 4,
@@ -453,8 +515,11 @@ beta_brms_dis <- brm(model_beta_bayes_disp,
 fit_zoib <- brm(
   formula = zoib_model,
   data = fluency_data,
-  chains = 4, iter = 2000, warmup = 1000,
-  cores = 4, seed = 1234,
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  cores = 4,
+  seed = 1234,
   backend = "cmdstanr",
   file = "model_beta_zoib_1"
 )
@@ -463,21 +528,25 @@ fit_zoib <- brm(
 fit_zoib <- brm(
   formula = zoib_model,
   data = fluency_data,
-  chains = 4, iter = 2000, warmup = 1000,
-  cores = 4, seed = 1234,
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  cores = 4,
+  seed = 1234,
   backend = "cmdstanr",
   file = "model_beta_zoib_1"
 )
 
 
-m.phi <- ordbetareg(bf(Accuracy ~ Fluency, 
-                       phi ~ Fluency),
-                    data=fluency_data,
-                    backend = "cmdstanr",
-                     file = "model_beta_ordbeta_phi", 
-                    iter = 2000, 
-                    cores=4, 
-                    phi_reg='both') # log phi
+m.phi <- ordbetareg(
+  bf(Accuracy ~ Fluency, phi ~ Fluency),
+  data = fluency_data,
+  backend = "cmdstanr",
+  file = "model_beta_ordbeta_phi",
+  iter = 2000,
+  cores = 4,
+  phi_reg = 'both'
+) # log phi
 ```
 
 ```{r}
@@ -487,72 +556,83 @@ m.phi <- ordbetareg(bf(Accuracy ~ Fluency,
 # BAYESIAN REGRESSION
 brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
   filter(Parameter != "sigma") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "Bayesian LM") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "Bayesian LM"
+  ) %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
 # BETA REGRESSION
 beta_model_new <- model_parameters(beta_brms, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "Beta Regression") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "Beta Regression"
+  ) %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
 # BETA REGRESSION
 beta_model_dis <- model_parameters(beta_brms_dis, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "Beta Regression") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "Beta Regression"
+  ) %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
 # ZERO-INFLATED REGRESSION
 zi_model_new <- model_parameters(fit_zi, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "ZIB") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "ZIB"
+  ) %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
 # ZERO-ONE INFLATED BETA REGRESSION
 zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "ZOIB") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "ZOIB"
+  ) %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 
 
 # BETA REGRESSION
 ord_beta <- model_parameters(m.phi, centrality = "mean") %>%
-  mutate(across(where(is.numeric), ~ round(.x, 3)),
-         `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-         Model = "Ordered Beta") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "Ordered Beta"
+  ) %>%
   select(Model, Parameter, Mean, `95% Cr.I`, pd)
 # ZERO-INFLATED REGRESSION
-
 
 # COMBINE ALL MODELS
 combined_table <- bind_rows(
   brms_model_new,
-  beta_model_dis, 
+  beta_model_dis,
   zi_model_new,
-  zoib_model_new, 
+  zoib_model_new,
   ord_beta
 )
 
 # Make value column with estimate + CI + pd
 combined_table_clean <- combined_table %>%
-    mutate(
-        value = str_glue("{Mean} {`95% Cr.I`} (pd = {pd})")
-    ) |>
-    select(Parameter, Model, value) %>%
-    pivot_wider(names_from = Model, values_from = value) |>
-    mutate(across(everything(), ~ replace_na(.x, "-")))
+  mutate(
+    value = str_glue("{Mean} {`95% Cr.I`} (pd = {pd})")
+  ) |>
+  select(Parameter, Model, value) %>%
+  pivot_wider(names_from = Model, values_from = value) |>
+  mutate(across(everything(), ~ replace_na(.x, "-")))
 
 # View
-combined_table_clean |> 
+combined_table_clean |>
   tt(digits = 3) |>
-  format_tt(escape = TRUE) |> 
-    save_tt(here::here("manuscript", "Figures", "combined_table.png"))
+  format_tt(escape = TRUE) |>
+  save_tt(here::here("manuscript", "Figures", "combined_table.png"))
 ```
 
 ```{r}
@@ -561,7 +641,11 @@ combined_table_clean |>
 #| tbl-align: "center"
 #| apa-note: Mean[95% Cr.I](pd); mu = logit; phi = log; zi= logit;  zoi = logit; coi = logit
 
-knitr::include_graphics(here::here("manuscript","Figures",   "combined_table.png"))
+knitr::include_graphics(here::here(
+  "manuscript",
+  "Figures",
+  "combined_table.png"
+))
 
 ```
 
@@ -579,7 +663,7 @@ We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages
 #| echo: true
 # load brms and cmdstanr
 library(brms)
-library(cmdstanr) 
+library(cmdstanr)
 ```
 
 ```{r}
@@ -604,11 +688,13 @@ We fit the model using the `brm()` function, as shown in the code below. To spee
 #| results: hide
 
 # fit ols reg
-bayes_ols_model <- brm(Accuracy ~ Fluency,
-                       data = fluency_data,
-                       cores=4,
-                       backend = "cmdstanr",
-                       file = "model_ols_bayes")
+bayes_ols_model <- brm(
+  Accuracy ~ Fluency,
+  data = fluency_data,
+  cores = 4,
+  backend = "cmdstanr",
+  file = "model_ols_bayes"
+)
 ```
 
 ```{r}
@@ -619,7 +705,7 @@ bayes_ols_model <- brm(Accuracy ~ Fluency,
 
 # for regression model
 
-brms_model_new <- model_parameters(bayes_ols_model, centrality="mean")
+brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean")
 
 ```
 
@@ -638,7 +724,7 @@ We can also examine how well the data fits the model by performing a posterior p
 #| fig-cap: "Two assumption checks for our OLS model: Normality (left) and Homogeneity (right)"
 #| echo: false
 
-check_model(bayes_ols_model, check = c( "homogeneity", "normality"))
+check_model(bayes_ols_model, check = c("homogeneity", "normality"))
 ```
 
 ```{r}
@@ -661,7 +747,7 @@ Again, we can create the beta regression model in `brms`. In `brms`, we model ea
 model_beta_bayes <- bf(
   Accuracy ~ Fluency, # fit mu model
   phi ~ 1 # fit phi model
-) 
+)
 ```
 
 If we try to run `beta_brms`, however, we get an error: `Error: Family 'beta' requires response greater than 0`. This is by design. If your remember, the Beta distribution can only model responses in the interval \[0-1\], but not responses that are exactly 0 or 1. We need make sure there are no zeros and ones in our dataset.
@@ -673,7 +759,8 @@ If we try to run `beta_brms`, however, we get an error: `Error: Family 'beta' re
 
 # run model
 
-beta_brms <- brm(model_beta_bayes,
+beta_brms <- brm(
+  model_beta_bayes,
   data = fluency_data,
   family = Beta(),
   chains = 4,
@@ -689,13 +776,12 @@ beta_brms <- brm(model_beta_bayes,
 #| echo: false
 #| after-caption-space: 0pt
 
-
 fluency_data |>
   filter(Accuracy == 0 | Accuracy == 1) |> # get onlys 0s and 1s
   count(Accuracy) |> # count them
-  rename("Count" = "n") |> 
+  rename("Count" = "n") |>
   tt() |>
-   format_tt(escape = TRUE)
+  format_tt(escape = TRUE)
 ```
 
 @tbl-01s shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\]. The model `beta_brms` uses data where 0s and 1s are changed to .01 and .99, respectively.
@@ -705,8 +791,7 @@ fluency_data |>
 # transform 0 to 0.1 and 1 to .99
 data_beta <- fluency_data |>
   mutate(
-    Accuracy = ifelse(Accuracy == 0, .01, 
-                      ifelse(Accuracy == 1, .99, Accuracy))
+    Accuracy = ifelse(Accuracy == 0, .01, ifelse(Accuracy == 1, .99, Accuracy))
   )
 ```
 
@@ -716,7 +801,8 @@ We can rerun our model replacing `fluency_data` with `data_beta` in the below fu
 #| label: beta_brms_01s
 #| results: hide
 #| cache: true
-beta_brms <- brm(model_beta_bayes,
+beta_brms <- brm(
+  model_beta_bayes,
   data = data_beta,
   family = Beta(),
   backend = "cmdstanr",
@@ -740,9 +826,10 @@ No errors this time! We will perform the Beta regression using the nudged values
 
 model_parameters(beta_brms, "mean") |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")) |> 
-  select(Parameter, Mean, `95% Cr.I`, pd) |> 
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
@@ -756,13 +843,13 @@ model_parameters(beta_brms, "mean") |>
 #| echo: false
 #| after-caption-space: 0pt
 
-
 model_parameters(beta_brms, "mean") |>
-  filter(!startsWith(Parameter, "b_phi")) |> 
+  filter(!startsWith(Parameter, "b_phi")) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")) |> 
-  select(Parameter, Mean, `95% Cr.I`, pd) |> 
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
@@ -789,8 +876,8 @@ prob_disfluent <- plogis(log_odds_disfluent)
 prob_fluent <- plogis(log_odds_fluent)
 
 # View results
-prob_disfluent  # ≈ 0.262
-prob_fluent     # ≈ 0.355
+prob_disfluent # ≈ 0.262
+prob_fluent # ≈ 0.355
 
 ```
 
@@ -809,7 +896,8 @@ library(marginaleffects)
 #| echo: true
 
 # use predictions to get predicted probs for each condition
-redictions(beta_brms,
+redictions(
+  beta_brms,
   newdata = datagrid(Fluency = c("Disfluent", "Fluent")) # need to specify the levels of the categorical predictor
 )
 ```
@@ -822,18 +910,20 @@ redictions(beta_brms,
 #| after-caption-space: 0pt
 
 # get the predicted probablities for each level of fluency
-predictions(beta_brms,
+predictions(
+  beta_brms,
   newdata = datagrid(Fluency = c("Disfluent", "Fluent"))
 ) |>
   mutate(Fluency = ifelse(Fluency == "Fluent", "Fluent", "Disfluent")) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
-  rename("Mean" = "estimate") |> 
-  select(Fluency, Mean, `95% Cr.I`) |> 
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
+  ) |>
+  rename("Mean" = "estimate") |>
+  select(Fluency, Mean, `95% Cr.I`) |>
   relocate(Fluency) |>
-  tt(digits = 3)|>
-  format_tt(escape=TRUE)
+  tt(digits = 3) |>
+  format_tt(escape = TRUE)
 ```
 
 For the `Fluency` factor, we can interpret the `Mean` column in terms of proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 26% for those who watched the disfluent instructor.
@@ -850,38 +940,48 @@ beta_plot <- plot_predictions(beta_brms, condition = "Fluency")
 #| label: fig-plot-pre
 #| fig-cap: Predicted probablities for fluency factor
 
-beta_plot  +
-  labs(x="Fluency") + 
-  scale_y_continuous(labels = label_percent()) + 
+beta_plot +
+  labs(x = "Fluency") +
+  scale_y_continuous(labels = label_percent()) +
   theme_publication()
 
-ggsave("fig-plot-pre.png", path=here::here("manuscript", "Figures"), dpi=300,)
+ggsave(
+  "fig-plot-pre.png",
+  path = here::here("manuscript", "Figures"),
+  dpi = 300,
+)
 ```
 
 Readers might notice that @fig-plot-pre displays a single point estimate along with its 95% Cr.I.. In Bayesian data analysis, MCMC sampling generates a distribution for each parameter of interest. This approach allows us to visualize the uncertainty surrounding our estimates. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function. We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (e.g., 80% or 95%) (see @fig-draws-fluency).
 
 ```{r}
 # Add a model identifier to each dataset
-pred_draws_beta <- avg_predictions(beta_brms, variables = "Fluency") |>  
+pred_draws_beta <- avg_predictions(beta_brms, variables = "Fluency") |>
   posterior_draws()
 ```
 
 ```{r}
 #| label: fig-draws-fluency
-#| fig-cap: Predicted probablity posterior distributions by fluency 
+#| fig-cap: Predicted probablity posterior distributions by fluency
 # Plot both models
-ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill= Fluency)) +
+ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
   stat_halfeye(.width = c(.5, .8, .95), alpha = 0.7) +
   ggokabeito::scale_fill_okabe_ito() +
   scale_x_continuous(labels = label_percent()) +
-  labs(x = "Accuracy",
-       y = "Fluency",
-       caption = "50%, 80% and 95% credible intervals shown in black") +
-  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) + 
+  labs(
+    x = "Accuracy",
+    y = "Fluency",
+    caption = "50%, 80% and 95% credible intervals shown in black"
+  ) +
+  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
   theme_publication() +
   theme(legend.position = "none")
 
-ggsave("fig-draws-fluency.png", path=here::here("manuscript", "Figures"), dpi=300,)
+ggsave(
+  "fig-draws-fluency.png",
+  path = here::here("manuscript", "Figures"),
+  dpi = 300,
+)
 ```
 
 #### Marginal Effects
@@ -905,17 +1005,17 @@ beta_avg_comp <- avg_comparisons(beta_brms)
 #| tbl-cap: Risk difference for instructor fluency
 #| after-caption-space: 0pt
 
-
 beta_avg_comp |>
   # remove unwanted variables
   select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean,`95% Cr.I`) |> 
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
+  ) |>
+  rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
   tt(digits = 2) |>
-  format_tt(escape=TRUE)
+  format_tt(escape = TRUE)
 ```
 
 @tbl-ame1 displays the risk difference for the fluency factor (`estimate` column). The difference between the fluent and disfluent conditions is .09. That is, participants who watched a fluent instructor scored 9% higher on the final recall test than participants who watched the disfluent instructor. Our credible interval \[-.0174, -0.011\] shows that zero is not among the 95% most credible values.
@@ -928,20 +1028,17 @@ We can also get the odds ratio with `avg_comparisons` (see @tbl-or).
 #| tbl-cap: Odds ratio for fluency factor
 #| after-caption-space: 0pt
 
-
 # get odds ratios as an example
-avg_comparisons(beta_brms,
-  comparison = "lnoravg",
-  transform = "exp"
-) |>
-  select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted)|> 
+avg_comparisons(beta_brms, comparison = "lnoravg", transform = "exp") |>
+  select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean,`95% Cr.I`) |> 
-  tt()  |>
-   format_tt(escape = TRUE)
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
+  ) |>
+  rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
+  tt() |>
+  format_tt(escape = TRUE)
 ```
 
 In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation to calculate Cohen's *h* along with the 95% Cr.Is around it.
@@ -952,8 +1049,8 @@ $$
 
 ```{r}
 # Proportions
-p1 <- 0.37  # Fluent
-p2 <- 0.29  # Disfluent
+p1 <- 0.37 # Fluent
+p2 <- 0.29 # Disfluent
 
 # Cohen's h formula
 cohens_h <- 2 * (asin(sqrt(p1)) - asin(sqrt(p2)))
@@ -978,22 +1075,24 @@ Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% 
 
 The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as \``b_phi` in @tbl-all. The dispersion ($\phi$) parameter tells us how precise our estimate is. Specifically, $\phi$ in Beta regression tells us about the variability of the response variable around its mean. Specifically, a higher dispersion parameter indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.
 
-Understanding the dispersion parameter helps us gauge the precision of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-phi-dis).
+Understanding the dispersion parameter helps us gauge the precision of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all).
 
 ```{r}
-#| label: tbl-phi-dis
+#| label: tbl phi dis
 #| tbl-cap: Dispersion parameter
+#| eval: false
 #| after-caption-space: 0pt
 
 model_parameters(beta_brms, "mean") |>
-  filter(startsWith(Parameter, "b_phi")) |> 
+  filter(startsWith(Parameter, "b_phi")) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")) |> 
-  select(Parameter, Mean, `95% Cr.I`, pd)|>
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
   tt() |>
   format_tt(digits = 3) |>
-   format_tt(escape = TRUE)
+  format_tt(escape = TRUE)
 ```
 
 The intercept under the precision heading is not that interesting. It represents the overall dispersion in the model. We can model the dispersion of the `Fluency` factor—this allows dispersion to differ between the fluent and disfluent conditions. To do this we add `Fluency` to the phi model in `bf()`. We model the precision of the `Fluency` factor by using a `~` and adding factors of interest to the right of it.
@@ -1002,8 +1101,8 @@ The intercept under the precision heading is not that interesting. It represents
 #| echo: true
 model_beta_bayes_disp <- bf(
   Accuracy ~ Fluency, # fit mu model
-  phi ~ Fluency # fit phi model with fluency 
-) 
+  phi ~ Fluency # fit phi model with fluency
+)
 ```
 
 ```{r}
@@ -1011,10 +1110,11 @@ model_beta_bayes_disp <- bf(
 #| results: hide
 #| echo: true
 
-beta_brms_dis <- brm(model_beta_bayes_disp,
+beta_brms_dis <- brm(
+  model_beta_bayes_disp,
   data = data_beta,
   family = Beta(),
-  chain=4, 
+  chain = 4,
   cores = 4,
   backend = "cmdstanr",
   file = "model_beta_bayes_dis_run" # Save this so it doesn't have to always rerun
@@ -1026,13 +1126,14 @@ beta_brms_dis <- brm(model_beta_bayes_disp,
 #| label: tbl beta mu dis
 #| echo: false
 #| after-caption-space: 0pt
-#| eval: false 
+#| eval: false
 
 model_parameters(beta_brms_dis, "mean") |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")) |> 
-  select(Parameter, Mean, `95% Cr.I`, pd) |> 
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
@@ -1046,7 +1147,7 @@ model_parameters(beta_brms_dis, "mean") |>
 #| after-caption-space: 0pt
 
 beta_model_dis_exp <- beta_brms_dis |>
-  model_parameters(exponentiate=TRUE, centrality = "mean") 
+  model_parameters(exponentiate = TRUE, centrality = "mean")
 ```
 
 ```{r}
@@ -1056,13 +1157,14 @@ beta_model_dis_exp <- beta_brms_dis |>
 #| after-caption-space: 0pt
 
 beta_model_dis_exp |>
-    filter(startsWith(Parameter, "b_phi")) |> 
+  filter(startsWith(Parameter, "b_phi")) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")) |> 
-  select(Parameter, Mean, `95% Cr.I`, pd) |> 
-  tt(digits=3) |>
-  format_tt(escape=TRUE)
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
+  tt(digits = 3) |>
+  format_tt(escape = TRUE)
 
 ```
 
@@ -1078,14 +1180,14 @@ We won't always need to include dispersion parameters for each of our variables.
 #| label: fig-plt-diff
 #| fig-cap: "Comparison of posterior distributions for the risk difference in fluency: Simple model  (no dispersion for Fluency) vs. complex model with  dispersion"
 #| echo: false
-#| 
+#|
 
 # Add a model identifier to each dataset
-pred_no <- avg_comparisons(beta_brms, variables = "Fluency") |>  
+pred_no <- avg_comparisons(beta_brms, variables = "Fluency") |>
   posterior_draws() |>
   mutate(model = "No_Disp")
 
-pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") |> 
+pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") |>
   posterior_draws() |>
   mutate(model = "Disp")
 
@@ -1096,14 +1198,20 @@ ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
   stat_halfeye(.width = c(.8, .95), alpha = 0.7) +
   ggokabeito::scale_fill_okabe_ito() +
   # guides(fill = guide_legend(title = "Model")) +  # Remove or comment out
-  labs(x = "Fluency", 
-       y = "Difference in Final Recall Performance",
-       caption = "80% and 95% credible intervals shown in black") +
-  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) + 
+  labs(
+    x = "Fluency",
+    y = "Difference in Final Recall Performance",
+    caption = "80% and 95% credible intervals shown in black"
+  ) +
+  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
   theme_publication() +
   theme(legend.position = "none")
 
-ggsave("fig-plot-dis.png", path=here::here("manuscript", "Figures"), dpi=300,)
+ggsave(
+  "fig-plot-dis.png",
+  path = here::here("manuscript", "Figures"),
+  dpi = 300,
+)
 
 ```
 
@@ -1115,7 +1223,7 @@ It is a always a good idea to check how well your data fits the model. The `pp_c
 #| label: fig-post-pred
 #| fig-cap: Posterior predictive check for our Beta model with 100 draws.
 
-pp_check(beta_brms_dis, ndraws = 100)  + # ndraws is nu 
+pp_check(beta_brms_dis, ndraws = 100) + # ndraws is nu
   theme_publication()
 ```
 
@@ -1131,7 +1239,7 @@ We can fit a ZIB model using `brms` and use the `marginaleffects` package to mak
 
 ```{r}
 #| label: change 1s
-#| echo: false 
+#| echo: false
 # keep 0 but transform 1 to .99
 data_beta_0 <- fluency_data |>
   mutate(Accuracy = ifelse(Accuracy == 1, .99, Accuracy))
@@ -1159,7 +1267,7 @@ Below we pass `zib_model` to the `brm` function.
 fit_zi <- brm(
   formula = zib_model,
   data = data_beta_0,
-  chain=4, 
+  chain = 4,
   cores = 4,
   backend = "cmdstanr",
   file = "model_beta_bayes_zib"
@@ -1172,12 +1280,12 @@ fit_zi <- brm(
 #| eval: false
 #| after-caption-space: 0pt
 
-
-model_parameters(fit_zi, "mean")  |>
+model_parameters(fit_zi, "mean") |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")) |> 
-  select(Parameter, Mean, `95% Cr.I`, pd) |> 
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
@@ -1207,17 +1315,17 @@ marg_zi_brms <- fit_zi |>
 #| echo: false
 #| after-caption-space: 0pt
 
-
 marg_zi_brms |>
-  select(term,contrast, estimate, conf.low, conf.high) |> 
+  select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean,`95% Cr.I`) |> 
-   tt() |>
-   format_tt(digits = 3) |>
-   format_tt(escape = TRUE)
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
+  ) |>
+  rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
+  tt() |>
+  format_tt(digits = 3) |>
+  format_tt(escape = TRUE)
 
 ```
 
@@ -1241,17 +1349,17 @@ marg_phi_brms <- fit_zi |>
 #| echo: false
 #| after-caption-space: 0pt
 
-
 marg_phi_brms |>
-  select(term,contrast, estimate, conf.low, conf.high) |> 
+  select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean,`95% Cr.I`) |>
-   tt() |>
-   format_tt(digits = 3) |>
-   format_tt(escape = TRUE)
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
+  ) |>
+  rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
+  tt() |>
+  format_tt(digits = 3) |>
+  format_tt(escape = TRUE)
 
 ```
 
@@ -1260,7 +1368,7 @@ marg_phi_brms |>
 In @tbl-marg-zib-brms we see that watching a lecture video with a fluent instructor reduces the proportion of zeros by about 13%. The Cr.I does not include zero.
 
 ```{r}
-#| label: tbl-marg-zib-brms 
+#| label: tbl-marg-zib-brms
 
 marg_zi_brms <- fit_zi |>
   avg_comparisons(
@@ -1279,7 +1387,7 @@ If we wanted we could easily visualize the zero-inflated part of the model (see 
 
 zi_plot <- plot_predictions(fit_zi, by = c("Fluency"), dpar = "zi") +
   scale_y_continuous(labels = label_percent()) +
-  labs(x = "Fluency", y = "Probablity of 0") + 
+  labs(x = "Fluency", y = "Probablity of 0") +
   theme_publication()
 
 zi_plot
@@ -1327,18 +1435,21 @@ param_grid <- expand_grid(
 # Simulate data
 set.seed(123)
 sim_data <- param_grid %>%
-  mutate(data = pmap(list(alpha, gamma, mu, phi),
-                     ~ rzoib(1000, ..1, ..2, ..3, ..4))) %>%
+  mutate(
+    data = pmap(list(alpha, gamma, mu, phi), ~ rzoib(1000, ..1, ..2, ..3, ..4))
+  ) %>%
   unnest(data) %>%
   rename(Accuracy = data)
 
 # Classify type
 plot_data <- sim_data %>%
-  mutate(Type = case_when(
-    Accuracy == 0 ~ "Zero",
-    Accuracy == 1 ~ "One",
-    TRUE ~ "Beta"
-  ))
+  mutate(
+    Type = case_when(
+      Accuracy == 0 ~ "Zero",
+      Accuracy == 1 ~ "One",
+      TRUE ~ "Beta"
+    )
+  )
 
 # Ensure 'Zero' comes before 'One'
 plot_data <- plot_data %>%
@@ -1368,19 +1479,23 @@ p <- ggplot() +
     values = c("Zero" = "red", "One" = "blue"),
     name = "Type"
   ) +
-  facet_grid(gamma ~ alpha, labeller = label_both, scales = "free_y", switch = "y") +
+  facet_grid(
+    gamma ~ alpha,
+    labeller = label_both,
+    scales = "free_y",
+    switch = "y"
+  ) +
   labs(
     x = "Accuracy",
     y = "Count"
-  ) + 
-  theme_publication() + 
+  ) +
+  theme_publication() +
   scale_x_continuous(labels = label_percent())
-
 
 
 p
 
-ggsave("fig-zoib-plot.png", path=here::here("manuscript", "Figures"))
+ggsave("fig-zoib-plot.png", path = here::here("manuscript", "Figures"))
 
 ```
 
@@ -1413,7 +1528,7 @@ We then pass the `zoib_model` to our `brm()` function. The summary of the output
 fit_zoib <- brm(
   formula = zoib_model,
   data = fluency_data,
-  chains = 4, 
+  chains = 4,
   cores = 4,
   backend = "cmdstanr",
   file = "model_beta_zoib_1"
@@ -1424,17 +1539,18 @@ fit_zoib <- brm(
 #| label: tbl zoib
 #| echo: false
 #| after-caption-space: 0pt
-#| eval: false 
+#| eval: false
 
 zoib_model <- parameters::model_parameters(fit_zoib, "mean")
 
 zoib_model |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-  `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")) |> 
-  select(Parameter, Mean, `95% Cr.I`, pd) |> 
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
   tt(digits = 3) |>
-  format_tt(escape=TRUE) 
+  format_tt(escape = TRUE)
 ```
 
 ### Model Parameters
@@ -1450,8 +1566,8 @@ We wont highlight all the parameters for this model $\mu$, $\phi$ and $\alpha$ a
 ### $\gamma$
 
 ```{r}
-#| label: avg coi 
-# get average predictions for coi param 
+#| label: avg coi
+# get average predictions for coi param
 coi_probs <- avg_predictions(fit_zoib, by = c("Fluency"), dpar = "coi")
 # get differene between the two conditions
 coi_me <- avg_comparisons(fit_zoib, variables = c("Fluency"), dpar = "coi")
@@ -1489,10 +1605,11 @@ To fit a model where dispersion does not vary as a function of fluency we can us
 #| results: hide
 #| echo: true
 # use ordbetareg to fit model
-ord_fit_brms <- ordbetareg(Accuracy ~ Fluency,
+ord_fit_brms <- ordbetareg(
+  Accuracy ~ Fluency,
   data = fluency_data,
   chains = 4,
-  cores=4,
+  cores = 4,
   backend = "cmdstanr",
   file = "model_beta_ordbeta"
 )
@@ -1502,8 +1619,7 @@ However, if we want dispersion to vary as a function of fluency we can easily do
 
 ```{r}
 
-ord_beta_phi <- bf(Accuracy ~ Fluency, 
-                       phi ~ Fluency)
+ord_beta_phi <- bf(Accuracy ~ Fluency, phi ~ Fluency)
 
 ```
 
@@ -1512,14 +1628,15 @@ ord_beta_phi <- bf(Accuracy ~ Fluency,
 #| results: hide
 #| echo: true
 
-
-m.phi <- ordbetareg(ord_beta_phi,
-                    data=fluency_data,
-                    cores=4, 
-                    chains=4, 
-                    backend = "cmdstanr",
-                    file = "model_beta_ordbeta_phi", 
-                    phi_reg='both') # log phi
+m.phi <- ordbetareg(
+  ord_beta_phi,
+  data = fluency_data,
+  cores = 4,
+  chains = 4,
+  backend = "cmdstanr",
+  file = "model_beta_ordbeta_phi",
+  phi_reg = 'both'
+) # log phi
 ```
 
 ## Marginal effects
@@ -1533,22 +1650,23 @@ ord_beta_avg <- m.phi |>
   avg_comparisons(
     variables = "Fluency",
     comparison = "difference"
-  ) 
+  )
 ```
 
 ```{r}
 #| label: tbl-ordbeta
-#| 
-ord_beta_avg |> 
- select(term,contrast, estimate, conf.low, conf.high) |> 
+#|
+ord_beta_avg |>
+  select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean,`95% Cr.I`) |> 
-   tt() |>
-   format_tt(digits = 3) |>
-   format_tt(escape = TRUE)
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
+  ) |>
+  rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
+  tt() |>
+  format_tt(digits = 3) |>
+  format_tt(escape = TRUE)
 
 ```
 
@@ -1570,8 +1688,8 @@ as_draws(m.phi, c("cutzero", "cutone")) |>
   summarize_draws() |>
   select(variable, mean, q5, q95) |>
   mutate(across(c(mean, q5, q95), ~ round(.x, 2))) |>
-  mutate(`95% Cr.I` = str_glue("[{q5}, {q95}]")) |> 
-  rename("Parameter" = "variable", "Mean" = "mean") |> 
+  mutate(`95% Cr.I` = str_glue("[{q5}, {q95}]")) |>
+  rename("Parameter" = "variable", "Mean" = "mean") |>
   select(Parameter, Mean, `95% Cr.I`) |>
   tt() |>
   format_tt(escape = TRUE)
@@ -1588,12 +1706,13 @@ The best way to visualize model fit is to plot the full predictive distribution 
 #| label: fig-ppcheckord
 #| fig-width: 12
 #| fig-height: 8
-#| fig-cap: Posterior predictive check for ordered beta regression model. A. Discrete posterior check. B. Continuous posterior check. 
+#| fig-cap: Posterior predictive check for ordered beta regression model. A. Discrete posterior check. B. Continuous posterior check.
 
-plots <- pp_check_ordbeta(m.phi,
+plots <- pp_check_ordbeta(
+  m.phi,
   ndraws = 100,
   outcome_label = "Final Test Accuracy"
-) 
+)
 
 plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
 ```
@@ -1610,7 +1729,11 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 #| label: fig-heiss
 #| fig-cap: "Heiss Plot of Predicted Probablities across the scale (0-100)"
 
-plot_heiss(ord_fit_brms, grouping_fac="Fluency", recode_group_labels = c("Fluency","Disfluency"))
+plot_heiss(
+  ord_fit_brms,
+  grouping_fac = "Fluency",
+  recode_group_labels = c("Fluency", "Disfluency")
+)
 
 ```
 
