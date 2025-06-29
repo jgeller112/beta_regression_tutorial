@@ -86,7 +86,6 @@ format:
     documentmode: doc
   apaquarto-docx: default
   apaquarto-html: default
-  apaquarto-typst: default
 execute: 
   echo: false
   warning: false
