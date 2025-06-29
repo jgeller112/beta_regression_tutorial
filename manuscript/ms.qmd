@@ -86,6 +86,7 @@ format:
     documentmode: doc
   apaquarto-docx: default
   apaquarto-html: default
+  apaquarto-typst: default
 execute: 
   echo: false
   warning: false
@@ -774,7 +775,26 @@ In @tbl-all under the Beta Regression column, the first set of coefficients repr
 
 Parameter estimates are usually difficult to intercept on their own. We argue that researchers should not spend too much time interpreting single model estimates. We report them in this tutorial for completeness. Instead researchers should discuss the effects of the predictor on the actual outcome of interest (in this case the 0-1 scale). The logit link allows us to transform back and forth between the scale of a linear model and the nonlinear scale of the outcome, which is bounded by 0 and 1. By using the inverse of the logit, we can easily transform our linear coefficients to obtain average effects on the scale of the proportions or percentages, which is usually what is interesting to applied researchers. In a simple case, we can do this manually, but when there are many factors in your model this can be quite complex.
 
-To help us extract predictions from our model and visualize them we will use a package called **`marginaleffects`** [@margeffects2024]. [^4] To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob.
+In our example, we can use the `plogis()` function in base R to convert estimates from the log-odds (logit) scale to the probability scale. The intercept of our model is -0.918, which reflects the log-odds of a response being 1 in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the log-odds scale, we can compute the predicted probabilities as follows:
+
+```{r}
+#| eval: false
+#| echo: true
+# Log-odds for each condition
+log_odds_disfluent <- -0.918
+log_odds_fluent <- log_odds_disfluent + 0.24 
+
+# Convert to probabilities
+prob_disfluent <- plogis(log_odds_disfluent)
+prob_fluent <- plogis(log_odds_fluent)
+
+# View results
+prob_disfluent  # ≈ 0.285
+prob_fluent     # ≈ 0.336
+
+```
+
+This is a bit cumbersome. To help us extract predictions from our model and visualize them we will use a package called **`marginaleffects`** [@margeffects2024]. [^4] To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob.
 
 [^4]: `ggeffects` is another great package to extract marginal effects and plot [@ggeffects-2]
 
@@ -830,11 +850,7 @@ beta_plot <- plot_predictions(beta_brms, condition = "Fluency")
 #| label: fig-plot-pre
 #| fig-cap: Predicted probablities for fluency factor
 
-beta_plot + 
-  scale_x_discrete(
-    breaks = c("0", "1"),
-    labels = c("Fluent", "Disfluent")
-  ) +
+beta_plot  +
   labs(x="Fluency") + 
   scale_y_continuous(labels = label_percent()) + 
   theme_publication()
@@ -941,7 +957,6 @@ p2 <- 0.29  # Disfluent
 
 # Cohen's h formula
 cohens_h <- 2 * (asin(sqrt(p1)) - asin(sqrt(p2)))
-round(cohens_h, 3)
 
 
 #CI lower and upper bounds
@@ -1245,7 +1260,7 @@ marg_phi_brms |>
 In @tbl-marg-zib-brms we see that watching a lecture video with a fluent instructor reduces the proportion of zeros by about 13%. The Cr.I does not include zero.
 
 ```{r}
-#| label: marg-zib-brms 
+#| label: tbl-marg-zib-brms 
 
 marg_zi_brms <- fit_zi |>
   avg_comparisons(
@@ -1253,25 +1268,6 @@ marg_zi_brms <- fit_zi |>
     dpar = "zi",
     comparison = "difference"
   )
-```
-
-```{r}
-#| label: tbl-marg-zib-brms
-#| tbl-cap: Regression coefficients for ZIB model (`marg_zi_brms`)
-#| echo: false
-#| after-caption-space: 0pt
-
-
-marg_zi_brms |>
-  select(term,contrast, estimate, conf.low, conf.high) |> 
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
-         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
-  rename("Contrast" = "contrast","Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean,`95% Cr.I`) |> 
-   tt() |>
-   format_tt(digits = 3) |>
-   format_tt(escape = TRUE)
 ```
 
 If we wanted we could easily visualize the zero-inflated part of the model (see @fig-zi-plot).
@@ -1296,7 +1292,9 @@ The ZIB model works well if you have 0s in your data, but not 1s.[^5] In our pre
 
 [^5]: In cases where there are large amounts of 1s but no zeros you can fit a one-inflated model. Currently you can do so with the `gamlss` package in R
 
-In our data, we have exactly one value equal to 1. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one-inflated beta (ZOIB) model if we believe that both 0s and 1s are distinct outcomes.
+In our data, we have exactly one value equal to 1[^6]. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
+
+[^6]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1.
 
 Similar to our beta and zero-inflated models above, we can fit a ZOIB model in **brms** quite easily using the `zero_one_inflated_beta` family. In this model, we simultaneously estimate the mean ($\mu$) and precision ($\phi$) of the Beta distribution, a zero-one inflation parameter ($\alpha$) that represents the probability that an observation is either exactly 0 or 1, and a conditional one-inflation parameter ($\gamma$) that represents the probability that, given an observation is at one of the endpoints, it is 1. This specification captures the entire range of possible values while remaining constrained between 0 and 1. To get a better sense of how $\alpha$ and $\gamma$ control the distribution of values, @fig-zoib presents simulated data across combinations of these parameters. As $\alpha$ increases, we see a greater proportion of responses at the endpoints. As $\gamma$ increases, the proportion of endpoint responses at 1 grows relative to 0, making the spikes at 1 more prominent as $\gamma$ approaches 1. This visualization illustrates how the ZOIB model flexibly accounts for both the continuous portion of the distribution and the occurrence of exact 0s and 1s.
 
@@ -1342,6 +1340,10 @@ plot_data <- sim_data %>%
     TRUE ~ "Beta"
   ))
 
+# Ensure 'Zero' comes before 'One'
+plot_data <- plot_data %>%
+  mutate(Type = factor(Type, levels = c("Zero", "One", "Beta")))
+
 # Plot
 p <- ggplot() +
   # Beta histogram
@@ -1366,13 +1368,14 @@ p <- ggplot() +
     values = c("Zero" = "red", "One" = "blue"),
     name = "Type"
   ) +
-  facet_grid(gamma ~ alpha, labeller = label_both, scales = "free_y") +
+  facet_grid(gamma ~ alpha, labeller = label_both, scales = "free_y", switch = "y") +
   labs(
     x = "Accuracy",
     y = "Count"
   ) + 
   theme_publication() + 
-    scale_x_continuous(labels = label_percent())
+  scale_x_continuous(labels = label_percent())
+
 
 
 p
@@ -1440,11 +1443,37 @@ The output for the model is pretty lengthy we are estimating four parameters eac
 
 ### Predictions and Marginal Effects
 
-With `marginaleffects` we can choose marginalize over all the sub-models, averaged across the 0s, continuous responses, and 1s in the data, or we can model the parameters separately using the `dpar` argument like we did above setting it to: $\mu$, $\phi$, $\alpha$, $\gamma$. Using `avg_predictions()` and not setting `dpar` we can get the predicted probabilities across all the sub-models. We can also plot the overall difference between fluency and disfluency for the whole model with `plot_predictions()`. Our results are very similar to the zero-inflated model from above.
+With `marginaleffects` we can choose marginalize over all the sub-models, averaged across the 0s, continuous responses, and 1s in the data, or we can model the parameters separately using the `dpar` argument like we did above setting it to: $\mu$, $\phi$, $\alpha$, $\gamma$ (see below). Using `avg_predictions()` and not setting `dpar` we can get the predicted probabilities across all the sub-models. We can also plot the overall difference between fluency and disfluency for the whole model with `plot_predictions()`.
+
+We wont highlight all the parameters for this model $\mu$, $phi$ and $\alpha$ are the same as above, but below we can see predicted probabilities for $\gamma$ (see @tbl-coi). For 0s and 1s, the probability of a 1 is higher in the fluent condition than the disfluent condition. In our dataset, we only have one participant with a perfect score.
+
+### $\gamma$
+
+```{r}
+#| label: avg coi 
+# get average predictions for coi param 
+coi_probs <- avg_predictions(fit_zoib, by = c("Fluency"), dpar = "coi")
+
+```
+
+```{r}
+#| label: tbl-coi
+#| tbl-cap: Predicted fluency probablities for coi parameter 
+#| echo: false
+coi_probs |> 
+ select(Fluency, estimate, conf.low, conf.high) |> 
+  mutate(
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))), 
+         `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")) |>
+  rename("Mean" = "estimate") |>
+  select(Fluency, Mean,`95% Cr.I`) |>
+   tt() |>
+   format_tt(digits = 3)
+```
 
 ## Ordered Beta Regression
 
-Looking at the output from the ZOIB model, we can see how running a model like this can become vastly complex and computational intensive as it is fitting sub-models for each parameter. The ability to consider 0s and 1s as distinct processes from continuous values comes at a price in terms of complexity. A special version of the ZOIB was recently developed called ordered beta regression [@kubinec2022]. The ordered beta regression model allows for the analysis of continuous data (between 0-1) and discrete outcomes (e.g., 0 or 1) without requiring that either be fully distinct from the other. In the simplest sense, the ordered beta regression model is a hybrid model that estimates a weighted combination of a beta regression model for continuous responses and a logit model for the discrete values of the response.
+Looking at the output from the ZOIB model (@tbl-all), we can see how running a model like this can become vastly complex and computational intensive as it is fitting sub-models for each parameter. The ability to consider 0s and 1s as distinct processes from continuous values comes at a price in terms of complexity. A special version of the ZOIB was recently developed called ordered beta regression [@kubinec2022]. The ordered beta regression model allows for the analysis of continuous data (between 0-1) and discrete outcomes (e.g., 0 or 1) without requiring that either be fully distinct from the other. In the simplest sense, the ordered beta regression model is a hybrid model that estimates a weighted combination of a beta regression model for continuous responses and a logit model for the discrete values of the response.
 
 The weights that average together the two parts of the outcome (i.e., discrete and continuous) are determined by cutpoints that are estimated in conjunction with the data in a similar manner to what is known as an ordered logit model. An in-depth explanation of ordinal regression is beyond the scope of this tutorial [but see @Fullerton2023; @bürkner2019]. At a basic level, ordinal regression models are useful for outcome variables that are categorical in nature and have some inherent ordering (e.g., Likert scale items). To preserve this ordering, ordinal models rely on the cumulative probability distribution. Within an ordinal regression model it is assumed that there is a continuous but unobserved latent variable that determines which of $k$ ordinal responses will be selected. For example on a typical Likert scale from 'Strongly Disagree' to 'Strongly Agree', you could assume that there is a continuous, unobserved variable called 'Agreement'. While we cannot measure Agreement directly, the ordinal response gives us some indication about where participants are on the continuous Agreement scale. $k - 1$ cutoffs are then estimated to indicate the point on the continuous Agreement scale at which your Agreement level is high enough to push you into the next ordinal category (say Agree to Strongly Agree). Coefficients in the model estimate how much different predictors change the estimated *continuous* scale (here, Agreement). Since there’s only one underlying process, there’s only one set of coefficients to work with (proportional odds assumption). In an ordered beta regression, three ordered categories are modeled: (1) exactly zero, (2) somewhere between zero and one, and (3) exactly one. In an ordered beta regression, (1) and (2) are modeled with cumulative logits, where one cutpoint is the the boundary between Exactly 0 and Between 0 and 1 and the other cutpoint is the boundary between *Between 0 and 1* and *Exactly 1.* Somewhere between 0-1 (3) is modeled as a beta regression with parameters reflecting the mean response on the logit scale. Ultimately, employing cutpoints allows for a smooth transition between the bounds and the continuous values, permitting both to be considered together rather than modeled separately as the ZOIB requires.
 
