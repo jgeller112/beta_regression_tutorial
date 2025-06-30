@@ -58,6 +58,7 @@ let
       cowplot
       easystats
       extraDistr
+      geomtextpath
       ggbeeswarm
       gghalves
       ggokabeito
