@@ -237,7 +237,7 @@ p <- ggplot(
   geom_textpath(
     size = 2.5,
     linetype = "solid",
-    hjust = .5,
+    hjust = .1,
     linewidth = 2,
     fontface = 2
   ) +
