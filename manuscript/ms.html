@@ -236,14 +236,14 @@ window.Quarto = {
 <p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a Beta regression model in R with the Bayesian package <code>brms</code> and how to interpret results using the <code>marginaleffects</code> package. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. To promote wider adoption of these methods, we provide detailed code and materials at https://github.com/jgeller112/beta_regression_tutorial.</p>
 </div>
 <p><em>Keywords</em>: beta regression, beta distribution, R, tutorial, psychology, learning and memory</p>
-<p><em>Word Count</em>: 9777</p>
+<p><em>Word Count</em>: 9769</p>
 <br>
 </section>
 <section id="firstheader" class="level1 title unnumbered unlisted">
 <h1 class="title unnumbered unlisted">A Beta Way: A Tutorial For Using Beta Regression in Psychological Research</h1>
 <p>Many important outcomes in psychological research can be expressed as proportions or percentages: the proportion of correct responses on a test, the proportion of looks on a particular stimulus in an eye-tracking task, or the percentage of agreement with a given statement. As a practical example from educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question.</p>
 <p>A key question arises: how should proportional data like this be analyzed? In psychology, such outcomes are often analyzed using models from the general linear model (GLM) or generalized linear model (GLiM) frameworks. GLMs — including t-tests, ANOVAs, and linear regression — assume the outcome is normally distributed, unbounded, and exhibits constant variance. However, these assumptions are frequently violated when working with proportional data, which are bounded between 0 and 1 and tend to show non-constant variance, especially near the boundaries <span class="citation" data-cites="ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>)</span>. This can lead to biased estimates and invalid inferences, making general linear models an unsuitable choice for analyzing proportions.</p>
-<p>Another option are GLiMs, which extend the linear model framework to accommodate non-normal outcome distributions and different link functions. For example, binomial or Bernoulli models with a logit link (commonly referred to as logistic regression) are well-suited for binary outcomes or counts of successes out of a fixed number of trials. However, these models may still fall short when proportions are treated as continuous outcomes or when data exhibit overdispersion or cluster near 0 or 1.</p>
+<p>Another option are GLiMs, which extend the linear model framework to accommodate non-normal outcome distributions and different link functions. For example, binomial or Bernoulli models with a logit link (commonly referred to as logistic regression) are well-suited for binary outcomes or counts of successes out of a fixed number of trials. However, these models may still fall short when data exhibit overdispersion or cluster near 0 or 1.</p>
 <p>The challenges of analyzing proportional data are not new <span class="citation" data-cites="bartlett1936">(see <a href="#ref-bartlett1936" role="doc-biblioref">Bartlett, 1936</a>)</span>. Fortunately, several alternative approaches address the limitations of commonly used models. One such approach is Beta regression, an extension of the GLiM that employs the Beta distribution (described in-depth below) <span class="citation" data-cites="ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>)</span>. Beta regression offers a flexible and robust solution for modeling proportional data by accounting for boundary effects and overdispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets.</p>
 <section id="a-beta-way-forward" class="level2">
 <h2 data-anchor-id="a-beta-way-forward">A Beta Way Forward</h2>
@@ -260,7 +260,7 @@ window.Quarto = {
 <p>To see this intuitively, consider a test question worth six points. Suppose a participant scores four out of six. The number of points received (4) can be treated as <span class="math inline">\alpha</span>, and the number of points missed (2) as <span class="math inline">\beta</span>. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance. Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (see <a href="#fig-beta-dist" class="quarto-xref" aria-expanded="false">Figure&nbsp;2</a>). These parameterizations offer a natural way to visualize performance data as probability densities.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-curves" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="1">
+<div id="fig-curves" class="quarto-float quarto-figure quarto-figure-center" data-fignum="1" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -279,7 +279,7 @@ window.Quarto = {
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-beta-dist" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="2">
+<div id="fig-beta-dist" class="quarto-float quarto-figure quarto-figure-center" data-fignum="2" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-beta-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -361,8 +361,8 @@ window.Quarto = {
 
     <script>
 
-      function styleCell_5r03mhiylmin5vx8tnlb(i, j, css_id) {
-          var table = document.getElementById("tinytable_5r03mhiylmin5vx8tnlb");
+      function styleCell_tewchh7sn2469rorfb0c(i, j, css_id) {
+          var table = document.getElementById("tinytable_tewchh7sn2469rorfb0c");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -372,7 +372,7 @@ window.Quarto = {
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_5r03mhiylmin5vx8tnlb');
+        var table = document.getElementById('tinytable_tewchh7sn2469rorfb0c');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -380,8 +380,8 @@ window.Quarto = {
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_5r03mhiylmin5vx8tnlb(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_5r03mhiylmin5vx8tnlb");
+      function spanCell_tewchh7sn2469rorfb0c(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_tewchh7sn2469rorfb0c");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -411,14 +411,14 @@ window.Quarto = {
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 },  ], css_id: 'tinytable_css_l4b6swx72mxcxb9zr00y',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_92q4ylp2iatuibtl5b6q',}, 
+          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 },  ], css_id: 'tinytable_css_8wdry2olm4ihfywtg6gv',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_vvx1rvbecuv8ju08ke75',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_5r03mhiylmin5vx8tnlb(cell.i, cell.j, group.css_id);
+                  styleCell_tewchh7sn2469rorfb0c(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -426,11 +426,11 @@ window.Quarto = {
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_l4b6swx72mxcxb9zr00y, .table th.tinytable_css_l4b6swx72mxcxb9zr00y { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_92q4ylp2iatuibtl5b6q, .table th.tinytable_css_92q4ylp2iatuibtl5b6q { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_8wdry2olm4ihfywtg6gv, .table th.tinytable_css_8wdry2olm4ihfywtg6gv { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_vvx1rvbecuv8ju08ke75, .table th.tinytable_css_vvx1rvbecuv8ju08ke75 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_5r03mhiylmin5vx8tnlb" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_tewchh7sn2469rorfb0c" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -482,7 +482,7 @@ window.Quarto = {
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-flu1" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="3">
+<div id="fig-flu1" class="quarto-float quarto-figure quarto-figure-center" data-fignum="3" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-flu1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -509,7 +509,7 @@ window.Quarto = {
 <li><p><strong><code>Accuracy</code>:</strong> Proportion recalled (idea units)</p></li>
 </ul>
 <div class="cell FigureWithNote" data-tbl-align="center" data-apa-note="Mean[95% Cr.I](pd); mu = logit; phi = log; zi= logit;  zoi = logit; coi = logit" prefix="" data-tblnum="2" data-custom-style="FigureWithNote">
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="2" data-tbl-align="center" data-apa-note="Mean[95% Cr.I](pd); mu = logit; phi = log; zi= logit;  zoi = logit; coi = logit">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-align="center" data-apa-note="Mean[95% Cr.I](pd); mu = logit; phi = log; zi= logit;  zoi = logit; coi = logit" data-tblnum="2" prefix="">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -571,7 +571,7 @@ window.Quarto = {
 <p>We can also examine how well the data fits the model by performing a posterior predictive check. In <a href="#fig-ppcheck-normal" class="quarto-xref" aria-expanded="false">Figure&nbsp;5</a>, multiple draws or repetitions from the posterior distribution are plotted (light blue lines) against the observed data. (dark green). Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). In our example, the model-predicted density is slightly too peaked and narrow compared to the data. In addition, some of the draws extend into negative accuracy values.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-ols-assump" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="4">
+<div id="fig-ols-assump" class="quarto-float quarto-figure quarto-figure-center" data-fignum="4" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-ols-assump-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -590,7 +590,7 @@ window.Quarto = {
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-ppcheck-normal" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="5">
+<div id="fig-ppcheck-normal" class="quarto-float quarto-figure quarto-figure-center" data-fignum="5" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-ppcheck-normal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -774,7 +774,7 @@ window.Quarto = {
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="4" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="4" data-tbl-cap-location="top" prefix="">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tbl-cap-location="top" data-tblnum="4" prefix="">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -898,7 +898,7 @@ window.Quarto = {
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-plot-pre" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="6">
+<div id="fig-plot-pre" class="quarto-float quarto-figure quarto-figure-center" data-fignum="6" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-plot-pre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -920,7 +920,7 @@ window.Quarto = {
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-draws-fluency" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="7">
+<div id="fig-draws-fluency" class="quarto-float quarto-figure quarto-figure-center" data-fignum="7" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-draws-fluency-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1340,7 +1340,7 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <p>We won’t always need to include dispersion parameters for each of our variables. We advise conducting very simple model comparisons like leave one out (loo) cross validation to examine if a dispersion parameter should be considered in our model.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-plt-diff" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="8">
+<div id="fig-plt-diff" class="quarto-float quarto-figure quarto-figure-center" data-fignum="8" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-plt-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1363,7 +1363,7 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <p>It is a always a good idea to check how well your data fits the model. The <code>pp_check()</code> function allows us to examine the fit between our data and the model. In <a href="#fig-post-pred" class="quarto-xref" aria-expanded="false">Figure&nbsp;9</a>, multiple draws or repetitions from the posterior distribution are plotted (light blue lines) against the observed data. (dark blue). Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). We see it does a pretty good job capturing the data. Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). We see it does a pretty good job capturing the data.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-post-pred" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="9">
+<div id="fig-post-pred" class="quarto-float quarto-figure quarto-figure-center" data-fignum="9" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-post-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1650,7 +1650,7 @@ h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\righ
 <section id="zero-inflated-alpha" class="level3">
 <h3 data-anchor-id="zero-inflated-alpha">Zero-Inflated (<span class="math inline">\alpha</span>)</h3>
 <p>In <a href="#tbl-marg-zib-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;10</a> we see that watching a lecture video with a fluent instructor reduces the proportion of zeros by about 13%. The Cr.I does not include zero.</p>
-<div id="tbl-marg-zib-brms" class="cell quarto-float quarto-figure quarto-figure-center FigureWithoutNote" prefix="" data-tblnum="10" data-custom-style="FigureWithoutNote">
+<div id="tbl-marg-zib-brms" class="cell quarto-float quarto-figure quarto-figure-center FigureWithoutNote" data-tblnum="10" prefix="" data-custom-style="FigureWithoutNote">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-marg-zib-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;10
@@ -1667,7 +1667,7 @@ Table&nbsp;10
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-zi-plot" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="10">
+<div id="fig-zi-plot" class="quarto-float quarto-figure quarto-figure-center" data-fignum="10" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-zi-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1693,7 +1693,7 @@ Table&nbsp;10
 <p>Similar to our beta and zero-inflated models above, we can fit a ZOIB model in brms quite easily using the <code>zero_one_inflated_beta</code> family. In this model, we simultaneously estimate the mean (<span class="math inline">\mu</span>) and precision (<span class="math inline">\phi</span>) of the Beta distribution, a zero-one inflation parameter (<span class="math inline">\alpha</span>) that represents the probability that an observation is either exactly 0 or 1 (i.e., 0 or 1 vs.&nbsp;not 0 or 1) and a conditional one-inflation parameter (<span class="math inline">\gamma</span>) that represents the probability that, given an observation is at one of the endpoints, it is 1 (i.e, 1 vs.&nbsp;not 1). This specification captures the entire range of possible values while remaining constrained between 0 and 1. To get a better sense of how <span class="math inline">\alpha</span> and <span class="math inline">\gamma</span> control the distribution of values, <a href="#fig-zoib" class="quarto-xref" aria-expanded="false">Figure&nbsp;11</a> presents simulated data across combinations of these parameters. As <span class="math inline">\alpha</span> increases, we see a greater proportion of responses at the endpoints. As <span class="math inline">\gamma</span> increases, the proportion of endpoint responses at 1 grows relative to 0, making the spikes at 1 more prominent as <span class="math inline">\gamma</span> approaches 1. This visualization illustrates how the ZOIB model flexibly accounts for both the continuous portion of the distribution and the occurrence of exact 0s and 1s.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-zoib" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="11">
+<div id="fig-zoib" class="quarto-float quarto-figure quarto-figure-center" data-fignum="11" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-zoib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1794,7 +1794,7 @@ Table&nbsp;10
 <h2 data-anchor-id="marginal-effects-1">Marginal effects</h2>
 <p><a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a> presents the overall model summary (under <code>Ordered Beta</code>). We can use <code>marginaleffects</code> to calculate differences on the response scale that average over (or marginalize over) all our parameters.</p>
 <div class="cell FigureWithoutNote" prefix="" data-tblnum="11" data-custom-style="FigureWithoutNote">
-<div id="tbl-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="11">
+<div id="tbl-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="11" prefix="">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-ordbeta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;11
@@ -2032,7 +2032,7 @@ Table&nbsp;11
 <p>The best way to visualize model fit is to plot the full predictive distribution relative to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, a separate plotting function, <code>pp_check_ordbetareg</code>, is included in the <code>ordbetareg</code> package that accurately handles the unique features of this distribution. The default plot in <code>brms</code> will collapse these two features of the outcome together, which will make the fit look worse than it actually is. The <code>ordbetareg</code> function returns a list with two plots, <code>discrete</code> and <code>continuous</code>, which can either be printed and plotted or further modified as <code>ggplot2</code> objects (see <a href="#fig-ppcheckord" class="quarto-xref" aria-expanded="false">Figure&nbsp;12</a>).</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-ppcheckord" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="12">
+<div id="fig-ppcheckord" class="quarto-float quarto-figure quarto-figure-center" data-fignum="12" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-ppcheckord-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2058,7 +2058,7 @@ Table&nbsp;11
 <p><code>ordbetareg</code> provides a visualization function called <code>plot_hess</code>. This function produces a plot of predicted proportions across the range of our <code>Fluency</code> factor. In <a href="#fig-heiss" class="quarto-xref" aria-expanded="false">Figure&nbsp;13</a> we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion (<span class="math inline">\mu</span>) . However, we do see some small differences at the zero bounds.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-heiss" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="13">
+<div id="fig-heiss" class="quarto-float quarto-figure quarto-figure-center" data-fignum="13" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-heiss-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
