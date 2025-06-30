@@ -4,6 +4,7 @@
 required_packages = c(
   "tidyverse",
   "brms",
+  "geomtextpath",
   "quarto",
   "tinytable",
   "marginaleffects",
