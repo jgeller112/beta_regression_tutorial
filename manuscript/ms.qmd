@@ -1298,7 +1298,7 @@ model_parameters(fit_zi, "mean") |>
 
 ### Posterior Predictive Check
 
-Looking at our model fit with `pp_check()` (see @fig-ppcheckzib) we see it does a bit better at capturing the sturture of the data then the Beta regression model. Specifically, the ZIB model more accurately captures the increased density of values near the lower end of the scale (i.e., near zero), which the standard Beta model underestimates. The ZIB model’s predictive distributions also align more closely with the observed data across the entire range, particularly in the peak and tail regions. This improved fit likely reflects the ZIB model’s ability to explicitly model excess zeros (or near-zero values) via its inflation component, allowing it to better account for features in the data that a standard Beta distribution cannot accommodate. 
+The ZIB model does a bit better at capturing the sturture of the data then the Beta regression model (see @fig-ppcheckzib). Specifically, the ZIB model more accurately captures the increased density of values near the lower end of the scale (i.e., near zero), which the standard Beta model underestimates. The ZIB model’s predictive distributions also align more closely with the observed data across the entire range, particularly in the peak and tail regions. This improved fit likely reflects the ZIB model’s ability to explicitly model excess zeros (or near-zero values) via its inflation component, allowing it to better account for features in the data that a standard Beta distribution cannot accommodate. 
 
 ```{r}
 #| label: fig-ppcheckzib
