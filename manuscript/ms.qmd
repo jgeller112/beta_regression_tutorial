@@ -435,7 +435,7 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
     size = 4,
     color = "black",
     fill = "black",
-    position = position_nudge(x = 0)  # Center the mean dot
+    position = position_nudge(x = .2)  # Center the mean dot
   ) +
   scale_y_continuous(labels = scales::label_percent()) +
   ggokabeito::scale_fill_okabe_ito() +
@@ -648,9 +648,9 @@ combined_table_clean |>
 
 ```{r}
 #| label: tbl-all
-#| tbl-cap: "Regression model summaries for each model"
+#| tbl-cap: "Bayesian Regression summaries for each model"
 #| tbl-align: "center"
-#| apa-note: Mean[95% Cr.I](pd); mu = logit; phi = log; zi= logit;  zoi = logit; coi = logit
+#| apa-note: "Reported as: Mean \\[95% CrI\\] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit."
 
 knitr::include_graphics(here::here(
   "manuscript",
@@ -827,7 +827,7 @@ No errors this time! We will perform the Beta regression using the nudged values
 
 @tbl-all displays the summary from all out Bayesian implementation. [^3] The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the `Parameter` column.
 
-[^3]: We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out Gelman et al., 2013; Kruschke, 2014; McElreath, 2020)
+[^3]: We have chain diagnostics included like Rhat and ESS which indicates how the MCMC sampling performed. For more information check out @gelman2013bayesian; @mcelreath2020statistical; @kruschke2015doing)
 
 ```{r}
 #| label: beta-brms
@@ -939,7 +939,7 @@ predictions(
 
 For the `Fluency` factor, we can interpret the `Mean` column in terms of proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 26% for those who watched the disfluent instructor.
 
-We can also easily visualize these from `marginaleffects` using the `plot_predictions` function. After using this function, the proportions are visualized in @fig-plot-pre.
+We can also easily visualize these from `marginaleffects` using the `plot_predictions()` function. After using this function, the proportions are visualized in @fig-plot-pre.
 
 ```{r}
 #| label: plot-beta
@@ -1001,7 +1001,7 @@ Marginal effects provide a way to understand how changes in a predictor influenc
 
 There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular `emmeans` package \[\] computes marginal effects by holding all predictors at their means. In this tutorial, we will use the `marginaleffects` package, which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.
 
-One practical application of AMEs is calculating the risk difference for categorical variables. The risk difference represents the difference in average outcomes between two groups or conditions. Using the `avg_comparisons()` function in the `marginaleffects` package, we can compute this metric directly. By default, the function calculates the discrete difference between groups. It can also compute other effect size metrics, such as odds ratios and risk ratios, depending on the research question (see @tbl-or for more details). This flexibility makes it a powerful tool for interpreting regression results in a meaningful way.
+One practical application of AMEs is calculating the risk difference for categorical variables. The risk difference represents the difference in average outcomes between two groups or conditions. Using the `avg_comparisons()` function in the `marginaleffects` package, we can compute this metric directly. By default, the function calculates the discrete difference between groups. It can also compute other effect size metrics, such as odds ratios and isk ratios, depending on the research question (see @tbl-or for more details). This flexibility makes it a powerful tool for interpreting regression results in a meaningful way.
 
 ```{r}
 #| label: ame1
@@ -1150,7 +1150,7 @@ model_parameters(beta_brms_dis, "mean") |>
   format_tt(escape = TRUE)
 ```
 
-@tbl-all displays the model summary with the precision parameter added to our model as a function of fluency. It is important to note that the estimates are logged and not on the original scale (this is only the case when additional parameters are modeled). To interpret them on the original scale, we can exponentiate the log-transformed value—this transformation gets us back to our original scale . In below model call, we set `exponentiate` = TRUE.
+@tbl-all displays the model summary with the precision parameter added to our model as a function of fluency. It is important to note that the estimates are logged and not on the original scale (this is only the case when additional parameters are modeled). To interpret them on the original scale, we can exponentiate the log-transformed value—this transformation gets us back to our original scale . In the below model call, we set `exponentiate` = TRUE.
 
 ```{r}
 #| label: phi-beta
@@ -1304,11 +1304,11 @@ model_parameters(fit_zi, "mean") |>
 
 ### Predicted Probabilities and Marginal Effects
 
-@tbl-all under the zero-inflated Beta regression column provides a summary of the posterior distribution for each parameter. As stated before, it is preferable to back-transform our estimates to get probabilities. To get the predicted probabilities we can use the `avg_predictions()` function and to get risk difference between the levels of each factor we can use the `avg_comparisons()` function from `marginaleffects` package [@marginaleffects]. We can model the parameters separately using the `dpar` argument setting to: $\mu$, $\phi$, $\alpha$. Here we look at the risk difference for Fluency under each parameter.
+@tbl-all under the zero-inflated Beta regression column provides a summary of the posterior distribution for each parameter. As stated before, it is preferable to back-transform our estimates to get probabilities. To get the predicted probabilities we can again use the `avg_predictions()` and `avg_comparisons()` functions from `marginaleffects` package [@marginaleffects] to get predicted probablities and the risk difference between the levels of each factor. We can model the parameters separately using the `dpar` argument setting to: $\mu$, $\phi$, $\alpha$. Here we look at the risk difference for Fluency under each parameter.
 
 #### Mean ($\mu$)
 
-Looking at @tbl-marg-mu-brms there is no significant effect for Fluency.
+As shown in @tbl-marg-mu-brms, there is little evidence for an effect of Fluency — the 95% Cr.I includes zero, suggesting substantial uncertainty about the direction and magnitude of the effect.
 
 ```{r}
 
@@ -1342,7 +1342,7 @@ marg_zi_brms |>
 
 #### Dispersion ($\phi$)
 
-Looking at @tbl-marg-phi-brms, there is a significant effect of fluency on dispersion, with disfluency having a larger variation than fluency.
+As shown in @tbl-marg-phi-brms, the posterior estimates suggest a credible effect of Fluency on dispersion (ϕ), with disfluent responses showing greater variability. The 95% Cr.I for the fluency contrast does not include zero, indicating meaningful differences in precision.
 
 ```{r}
 
@@ -1376,7 +1376,7 @@ marg_phi_brms |>
 
 ### Zero-Inflated ($\alpha$)
 
-In @tbl-marg-zib-brms we see that watching a lecture video with a fluent instructor reduces the proportion of zeros by about 13%. The Cr.I does not include zero.
+In @tbl-marg-zib-brms, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% Cr.I for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction."
 
 ```{r}
 #| label: tbl-marg-zib-brms
@@ -1389,7 +1389,7 @@ marg_zi_brms <- fit_zi |>
   )
 ```
 
-If we wanted we could easily visualize the zero-inflated part of the model (see @fig-zi-plot).
+We can easily visualize the zero-inflated part of the model with `plot_predictions()` (see @fig-zi-plot).
 
 ```{r}
 #| label: fig-zi-plot
