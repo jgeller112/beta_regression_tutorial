@@ -414,7 +414,7 @@ head(fluency_data) |>
 
 ```{r}
 #| label: fig-flu1
-#| fig-cap: "Fluency accuracy: Raw data (points), half-boxplot, and Mean marker (diamond)"
+#| fig-cap: "Fluency accuracy: Raw data (points), half-boxplot, and Mean marker (dot)"
 #| echo: false
 #|
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
@@ -435,6 +435,7 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
     size = 4,
     color = "black",
     fill = "black",
+    position = position_nudge(x = 0)  # Center the mean dot
   ) +
   scale_y_continuous(labels = scales::label_percent()) +
   ggokabeito::scale_fill_okabe_ito() +
