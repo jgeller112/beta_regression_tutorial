@@ -274,7 +274,7 @@ p1 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
     fun = dbeta,
     args = list(shape1 = 4, shape2 = 2),
     geom = "area",
-    fill = "blue",
+    fill = "black",
     alpha = 0.5
   ) +
   stat_function(
@@ -292,7 +292,7 @@ p2 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
     fun = dbeta,
     args = list(shape1 = 2, shape2 = 4),
     geom = "area",
-    fill = "red",
+    fill = "black",
     alpha = 0.5
   ) +
   stat_function(
@@ -1618,21 +1618,10 @@ ggsave(here::here("manuscript", "Figures", "heiss_plot.png"), width=8, height=4,
 
 ### Ordered Beta Scale
 
-In the `ordbetareg` function there is a `true_bound` argument. In the case where you data in not bounded between 0-1, you can use the argument to specify the bounds of the argument to fit the ordered beta regression. For example, you data might be bounded between 1 and 7. If so, you can model it as such. \`\`{r} #\| label: models #\| eval: false \# fit each model to put in table \# fit ols reg
-
-bayes_ols_model \<- brm( Accuracy \~ Fluency, data = fluency_data, cores = 4, backend = "cmdstanr", file = "model_ols_bayes" )
-
-beta_brms_dis \<- brm( model_beta_bayes_disp, data = data_beta, family = Beta(), chains = 4, iter = 2000, warmup = 1000, cores = 4, seed = 1234, backend = "cmdstanr", file = "model_beta_bayes_dis_run" \# Save this so it doesn't have to always rerun )
-
-fit_zoib \<- brm( formula = zoib_model, data = fluency_data, chains = 4, iter = 2000, warmup = 1000, cores = 4, seed = 1234, backend = "cmdstanr", file = "model_beta_zoib_1" )
-
-fit_zoib \<- brm( formula = zoib_model, data = fluency_data, chains = 4, iter = 2000, warmup = 1000, cores = 4, seed = 1234, backend = "cmdstanr", file = "model_beta_zoib_1" )
-
-m.phi \<- ordbetareg( bf(Accuracy \~ Fluency, phi \~ Fluency), data = fluency_data, backend = "cmdstanr", file = "model_beta_ordbeta_phi", iter = 2000, cores = 4, phi_reg = 'both' ) \# log phi
+In the `ordbetareg` function there is a `true_bound` argument. In the case where you data in not bounded between 0-1, you can use the argument to specify the bounds of the argument to fit the ordered beta regression. For example, you data might be bounded between 1 and 7. If so, you can model it as such.
 
 ```{r}
 #| eval: false
-#| 
 # BAYESIAN REGRESSION
 brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
   filter(Parameter != "sigma") %>%
