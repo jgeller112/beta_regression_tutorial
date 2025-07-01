@@ -158,6 +158,7 @@ library(gghalves) # box plot
 library(ggbeeswarm) # raw data plot
 
 options(scipen = 999) # get rid of scientific notation
+set.seed(666)
 ```
 
 ```{r}
@@ -362,7 +363,7 @@ To demonstrate how Beta regression can be applied in practice, we re-analyze dat
 
 The idea that extrinsic cues, such as how easily information is processed, influence metamemory has been widely documented. In particular, a growing body of research has examined the role of instructor fluency—characterized by dynamic vocal intonation, purposeful gestures, mobility, and natural pacing—in shaping students' perceptions of learning. Although fluent instructors are often judged as more effective, several studies have shown that fluency has little to no impact on actual memory performance [e.g., @carpenter2013 @toftness2017; @witherby2022]. However, Wilford et al. (2020) reported the opposite: in a series of experiments, they found that participants recalled more information when watching a fluent versus a disfluent instructor. This contradictory pattern makes the dataset especially useful for illustrating statistical approaches to analyzing proportion data.
 
-In Experiment 1A of Wilford et al. (2020), participants watched two brief instructional videos—one on the genetics of calico cats, the other on the biology of skin wrinkling. Each video was presented in either a fluent or disfluent style. The fluent condition featured instructors with smooth delivery, clear vocal modulation, and confident pacing. The disfluent condition included hesitations, monotone delivery, and unnatural pauses. After viewing the videos, participants made judgments of learning (JOLs), rating how likely they were to remember the material on a scale from 0 to 100. They also answered questions about the instructor and self-reported how much they believed they had learned. Following a distractor task, participants completed a free recall test, writing down as much information as they could remember from each video within a three-minute time limit. Each response was scored out of 10 possible idea units per video.
+In Experiment 1A of  @wilford2020, participants watched two brief instructional videos—one on the genetics of calico cats, the other on the biology of skin wrinkling. Each video was presented in either a fluent or disfluent style. The fluent condition featured instructors with smooth delivery, clear vocal modulation, and confident pacing. The disfluent condition included hesitations, monotone delivery, and unnatural pauses. After viewing the videos, participants made judgments of learning (JOLs), rating how likely they were to remember the material on a scale from 0 to 100. They also answered questions about the instructor and self-reported how much they believed they had learned. Following a distractor task, participants completed a free recall test, writing down as much information as they could remember from each video within a three-minute time limit. Each response was scored out of 10 possible idea units per video.
 
 Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of models like linear regression that treat outcomes as unbounded and homoscedastic. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce Wilford et al.’s original analysis and then re-analyze the data using Beta regression. Our goal is to highlight how Beta regression—and its extensions—can offer a more robust, flexible, and interpretable framework for modeling proportional outcomes.
 
@@ -497,160 +498,11 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 -   **`Accuracy`:** Proportion recalled (idea units)
 
 ```{r}
-#| label: models
-#| eval: false
-# fit each model to put in table
-# fit ols reg
-
-bayes_ols_model <- brm(
-  Accuracy ~ Fluency,
-  data = fluency_data,
-  cores = 4,
-  backend = "cmdstanr",
-  file = "model_ols_bayes"
-)
-
-beta_brms_dis <- brm(
-  model_beta_bayes_disp,
-  data = data_beta,
-  family = Beta(),
-  chains = 4,
-  iter = 2000,
-  warmup = 1000,
-  cores = 4,
-  seed = 1234,
-  backend = "cmdstanr",
-  file = "model_beta_bayes_dis_run" # Save this so it doesn't have to always rerun
-)
-
-fit_zoib <- brm(
-  formula = zoib_model,
-  data = fluency_data,
-  chains = 4,
-  iter = 2000,
-  warmup = 1000,
-  cores = 4,
-  seed = 1234,
-  backend = "cmdstanr",
-  file = "model_beta_zoib_1"
-)
-
-
-fit_zoib <- brm(
-  formula = zoib_model,
-  data = fluency_data,
-  chains = 4,
-  iter = 2000,
-  warmup = 1000,
-  cores = 4,
-  seed = 1234,
-  backend = "cmdstanr",
-  file = "model_beta_zoib_1"
-)
-
-
-m.phi <- ordbetareg(
-  bf(Accuracy ~ Fluency, phi ~ Fluency),
-  data = fluency_data,
-  backend = "cmdstanr",
-  file = "model_beta_ordbeta_phi",
-  iter = 2000,
-  cores = 4,
-  phi_reg = 'both'
-) # log phi
-```
-
-```{r}
-#| label: combined models
-#| eval: false
-
-# BAYESIAN REGRESSION
-brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
-  filter(Parameter != "sigma") %>%
-  mutate(
-    across(where(is.numeric), ~ round(.x, 3)),
-    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-    Model = "Bayesian LM"
-  ) %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-# BETA REGRESSION
-beta_model_new <- model_parameters(beta_brms, centrality = "mean") %>%
-  mutate(
-    across(where(is.numeric), ~ round(.x, 3)),
-    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-    Model = "Beta Regression"
-  ) %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-# BETA REGRESSION
-beta_model_dis <- model_parameters(beta_brms_dis, centrality = "mean") %>%
-  mutate(
-    across(where(is.numeric), ~ round(.x, 3)),
-    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-    Model = "Beta Regression"
-  ) %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-# ZERO-INFLATED REGRESSION
-zi_model_new <- model_parameters(fit_zi, centrality = "mean") %>%
-  mutate(
-    across(where(is.numeric), ~ round(.x, 3)),
-    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-    Model = "ZIB"
-  ) %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-# ZERO-ONE INFLATED BETA REGRESSION
-zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
-  mutate(
-    across(where(is.numeric), ~ round(.x, 3)),
-    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-    Model = "ZOIB"
-  ) %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-
-
-# BETA REGRESSION
-ord_beta <- model_parameters(m.phi, centrality = "mean") %>%
-  mutate(
-    across(where(is.numeric), ~ round(.x, 3)),
-    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
-    Model = "Ordered Beta"
-  ) %>%
-  select(Model, Parameter, Mean, `95% Cr.I`, pd)
-# ZERO-INFLATED REGRESSION
-
-# COMBINE ALL MODELS
-combined_table <- bind_rows(
-  brms_model_new,
-  beta_model_dis,
-  zi_model_new,
-  zoib_model_new,
-  ord_beta
-)
-
-# Make value column with estimate + CI + pd
-combined_table_clean <- combined_table %>%
-  mutate(
-    value = str_glue("{Mean} {`95% Cr.I`} (pd = {pd})")
-  ) |>
-  select(Parameter, Model, value) %>%
-  pivot_wider(names_from = Model, values_from = value) |>
-  mutate(across(everything(), ~ replace_na(.x, "-")))
-
-# View
-combined_table_clean |>
-  tt(digits = 3) |>
-  format_tt(escape = TRUE) |>
-  save_tt(here::here("manuscript", "Figures", "combined_table.png"))
-```
-
-```{r}
 #| label: tbl-all
 #| tbl-cap: "Bayesian Regression summaries for each model"
 #| tbl-align: "center"
 #| apa-note: "Reported as: Mean \\[95% CrI\\] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit."
+
 
 knitr::include_graphics(here::here(
   "manuscript",
@@ -735,7 +587,10 @@ There are some notable differences between our Bayesian analysis and the frequen
 #| echo: true
 
 performance::check_model(bayes_ols_model, check = c("homogeneity", "normality"))
+```
 
+
+```{r}
 ggsave(here::here("manuscript", "Figures", "bayes_assumpcheck.png"), width=8, height=4, dpi=300)
 ```
 
@@ -753,9 +608,7 @@ ggsave(here::here("manuscript", "Figures", "bayes_ppcheck.png"), width=8, height
 ```
 
 
-Given the outcome variable is proportional, one solution would be to run a beta regression model.
-
-Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we model two parameters—$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms`. `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
+Given the outcome variable is proportional, one solution would be to run a beta regression model. Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we model two parameters—$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms`. `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
 
 ```{r}
 #| label: brms model beta
@@ -1640,6 +1493,7 @@ ord_fit_brms <- ordbetareg(
 However, if we want dispersion to vary as a function of fluency we can easily do that. Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because we are modeling $\phi$ as a function of fluency, we set the the argument to `both`.
 
 ```{r}
+#| echo: true
 
 ord_beta_phi <- bf(Accuracy ~ Fluency, phi ~ Fluency)
 
@@ -1767,6 +1621,153 @@ ggsave(here::here("manuscript", "Figures", "heiss_plot.png"), width=8, height=4,
 ### Ordered Beta Scale
 
 In the `ordbetareg` function there is a `true_bound` argument. In the case where you data in not bounded between 0-1, you can use the argument to specify the bounds of the argument to fit the ordered beta regression. For example, you data might be bounded between 1 and 7. If so, you can model it as such.
+``{r}
+#| label: models
+#| eval: false
+# fit each model to put in table
+# fit ols reg
+
+bayes_ols_model <- brm(
+  Accuracy ~ Fluency,
+  data = fluency_data,
+  cores = 4,
+  backend = "cmdstanr",
+  file = "model_ols_bayes"
+)
+
+beta_brms_dis <- brm(
+  model_beta_bayes_disp,
+  data = data_beta,
+  family = Beta(),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  cores = 4,
+  seed = 1234,
+  backend = "cmdstanr",
+  file = "model_beta_bayes_dis_run" # Save this so it doesn't have to always rerun
+)
+
+fit_zoib <- brm(
+  formula = zoib_model,
+  data = fluency_data,
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  cores = 4,
+  seed = 1234,
+  backend = "cmdstanr",
+  file = "model_beta_zoib_1"
+)
+
+
+fit_zoib <- brm(
+  formula = zoib_model,
+  data = fluency_data,
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  cores = 4,
+  seed = 1234,
+  backend = "cmdstanr",
+  file = "model_beta_zoib_1"
+)
+
+m.phi <- ordbetareg(
+  bf(Accuracy ~ Fluency, phi ~ Fluency),
+  data = fluency_data,
+  backend = "cmdstanr",
+  file = "model_beta_ordbeta_phi",
+  iter = 2000,
+  cores = 4,
+  phi_reg = 'both'
+) # log phi
+
+```{r}
+#| eval: false
+#| 
+# BAYESIAN REGRESSION
+brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
+  filter(Parameter != "sigma") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "Bayesian LM"
+  ) %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+# BETA REGRESSION
+beta_model_new <- model_parameters(beta_brms, centrality = "mean") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "Beta Regression"
+  ) %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+# BETA REGRESSION
+beta_model_dis <- model_parameters(beta_brms_dis, centrality = "mean") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "Beta Regression"
+  ) %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+# ZERO-INFLATED REGRESSION
+zi_model_new <- model_parameters(fit_zi, centrality = "mean") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "ZIB"
+  ) %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+# ZERO-ONE INFLATED BETA REGRESSION
+zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "ZOIB"
+  ) %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+
+
+# BETA REGRESSION
+ord_beta <- model_parameters(m.phi, centrality = "mean") %>%
+  mutate(
+    across(where(is.numeric), ~ round(.x, 3)),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]"),
+    Model = "Ordered Beta"
+  ) %>%
+  select(Model, Parameter, Mean, `95% Cr.I`, pd)
+# ZERO-INFLATED REGRESSION
+
+# COMBINE ALL MODELS
+combined_table <- bind_rows(
+  brms_model_new,
+  beta_model_dis,
+  zi_model_new,
+  zoib_model_new,
+  ord_beta
+)
+
+# Make value column with estimate + CI + pd
+combined_table_clean <- combined_table %>%
+  mutate(
+    value = str_glue("{Mean} {`95% Cr.I`} (pd = {pd})")
+  ) |>
+  select(Parameter, Model, value) %>%
+  pivot_wider(names_from = Model, values_from = value) |>
+  mutate(across(everything(), ~ replace_na(.x, "-")))
+
+# View
+combined_table_clean |>
+  tt(digits = 2) |>
+  format_tt(escape = TRUE) |>
+  save_tt(here::here("manuscript", "Figures", "combined_table.png"), overwrite=TRUE)
+```
+
 
 # Discussion
 
