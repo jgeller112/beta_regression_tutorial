@@ -45,14 +45,14 @@ author:
       - editing
       - formal analysis
 author-note:
-  status-changes: 
+  status-changes:
     affiliation-change: ~
     deceased: ~
   disclosures:
     # Example: This study was registered at X (Identifier Y).
     study-registration: "No preregistration for this paper."
     # Acknowledge and cite data/materials to be shared.
-    data-sharing: Data, code, and materials for this manusscript can be found at. 
+    data-sharing: Data, code, and materials for this manusscript can be found at.
     related-report: ~
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
@@ -68,7 +68,7 @@ suppress-title-page: false
 link-citations: true
 # Masks references that appear in the masked-citations list
 mask: false
-word-count: true 
+word-count: true
 # Language options. See https://quarto.org/docs/authoring/language.html
 lang: en
 language:
@@ -82,11 +82,11 @@ language:
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
 format:
-  apaquarto-pdf: 
+  apaquarto-pdf:
     documentmode: doc
   apaquarto-docx: default
   apaquarto-html: default
-execute: 
+execute:
   echo: false
   warning: false
   message: false
@@ -98,9 +98,9 @@ execute:
   keep-with-next: true
   code-overflow: wrap
   fig-width: 8
-  fig-height: 4 
+  fig-height: 4
 knitr:
-  opts_chunk: 
+  opts_chunk:
     dev: "ragg_png"
 ---
 
@@ -250,15 +250,6 @@ p <- ggplot(
   theme(legend.position = "none")
 
 p
-
-ggsave(
-  "fig-shapes.png",
-  plot = p,
-  path = here::here("manuscript", "Figures"),
-  dpi = 300
-)
-
-
 ```
 
 ```{r}
@@ -304,12 +295,6 @@ p2 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
   labs(x = "Proportion Correct on Question", y = "Density")
 
 plot_grid(p1, p2, labels = c("A", "B"))
-
-ggsave(
-  "fig-test-beta.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300
-)
 ```
 
 ## Beta Regression
@@ -435,18 +420,12 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
     size = 4,
     color = "black",
     fill = "black",
-    position = position_nudge(x = .2)  # Center the mean dot
+    position = position_nudge(x = .2) # Center the mean dot
   ) +
   scale_y_continuous(labels = scales::label_percent()) +
   ggokabeito::scale_fill_okabe_ito() +
   theme_publication() +
   theme(legend.position = "none")
-
-ggsave(
-  "fig-accuracy-data.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300
-)
 ```
 
 ### Data
@@ -955,12 +934,6 @@ beta_plot +
   labs(x = "Fluency") +
   scale_y_continuous(labels = label_percent()) +
   theme_publication()
-
-ggsave(
-  "fig-plot-pre.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300,
-)
 ```
 
 Readers might notice that @fig-plot-pre displays a single point estimate along with its 95% Cr.I.. In Bayesian data analysis, MCMC sampling generates a distribution for each parameter of interest. This approach allows us to visualize the uncertainty surrounding our estimates. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function. We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (e.g., 80% or 95%) (see @fig-draws-fluency).
@@ -987,12 +960,6 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
   theme_publication() +
   theme(legend.position = "none")
-
-ggsave(
-  "fig-draws-fluency.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300,
-)
 ```
 
 #### Marginal Effects
@@ -1217,13 +1184,6 @@ ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
   theme_publication() +
   theme(legend.position = "none")
-
-ggsave(
-  "fig-plot-dis.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300,
-)
-
 ```
 
 ### Posterior Predictive Check
@@ -1502,12 +1462,7 @@ p <- ggplot() +
   ) +
   theme_publication() +
   scale_x_continuous(labels = label_percent())
-
-
 p
-
-ggsave("fig-zoib-plot.png", path = here::here("manuscript", "Figures"))
-
 ```
 
 To fit a ZOIB model we use the `bf()` function. We model each parameter as a function of Fluency.
