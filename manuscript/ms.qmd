@@ -99,8 +99,8 @@ execute:
   code-line-numbers: true
   keep-with-next: true
   code-overflow: wrap
-  fig-width: 4
-  fig-height: 4
+  fig-width: 6
+  fig-asp: 0.618
   fig-pos: "h"
   tbl-pos: "h"
   fig-dpi: 300
@@ -117,31 +117,29 @@ knitr:
 #| warning: false
 
 # All packages loaded once up front
-packages <- c(
-  "tidyverse",
-  "easystats",
-  "geomtextpath",
-  "scales",
-  "tinytable",
-  "marginaleffects",
-  "extraDistr",
-  "brms",
-  "posterior",
-  "bayesplot",
-  "ggdist",
-  "patchwork",
-  "cowplot",
-  "gghalves",
-  "posterior",
-  "ggbeeswarm",
-  "ggokabeito",
-  "ordbetareg",
-  "here",
-  "knitr",
-  "cmdstanr",
-  "webshot2"
-)
-purrr::walk(packages, library, character.only = TRUE)
+library(easystats)
+library(geomtextpath)
+library(scales)
+library(tinytable)
+library(marginaleffects)
+library(extraDistr)
+library(brms)
+library(posterior)
+library(bayesplot)
+library(ggdist)
+library(patchwork)
+library(cowplot)
+library(gghalves)
+library(ggbeeswarm)
+library(ggokabeito)
+library(ordbetareg)
+library(here)
+library(knitr)
+library(cmdstanr)
+library(webshot2)
+library(performance)
+library(parameters)
+library(tidyverse)
 options(scipen = 999, marginaleffects_posterior_center = mean)
 set.seed(666)
 ```
@@ -185,7 +183,7 @@ theme_publication <- function(base_size = 14, base_family = "Times") {
 #| label: data-import
 #| echo: false
 
-fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
+fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
     Fluency = "Condition",
@@ -262,7 +260,7 @@ p <- ggplot(
   aes(x = x, y = y, label = label, group = label, color = label)
 ) +
   geom_line(linewidth = 1) +
-  ggokabeito::scale_color_okabe_ito(
+  scale_color_okabe_ito(
     name = "Distribution"
   ) +
   labs(
@@ -358,7 +356,7 @@ head(fluency_data) |>
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
   geom_half_point(
     aes(color = Fluency),
-    transformation = ggbeeswarm::position_quasirandom(width = 0.1),
+    transformation = position_quasirandom(width = 0.1),
     side = "l",
     size = 1,
     alpha = 0.5
@@ -375,8 +373,8 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
     fill = "black",
     position = position_nudge(x = .2) # Center the mean dot
   ) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  ggokabeito::scale_fill_okabe_ito() +
+  scale_y_continuous(labels = label_percent()) +
+  scale_fill_okabe_ito() +
   theme_publication() +
   theme(legend.position = "none")
 ```
@@ -408,7 +406,7 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 #| tbl-align: "center"
 #| apa-note: "Reported as: Mean \\[95% CrI\\] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit."
 
-knitr::include_graphics(here::here(
+include_graphics(here(
   "manuscript",
   "Figures",
   "combined_table.png"
@@ -487,7 +485,7 @@ There are some notable differences between our Bayesian analysis and the frequen
 #| fig-cap: "Two assumption checks for our OLS model: Normality (left) and Homogeneity (right)"
 #| echo: true
 
-performance::check_model(bayes_ols_model, check = c("homogeneity", "normality"))
+check_model(bayes_ols_model, check = c("homogeneity", "normality"))
 ```
 
 We can also examine how well the data fits the model by performing a posterior predictive check. In @fig-ppcheck-normal, multiple draws or repetitions from the posterior distribution are plotted (light blue lines) against the observed data. (dark green). Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). In our example, the model-predicted density is slightly too peaked and narrow compared to the data. In addition, some of the draws extend into negative accuracy values.
@@ -708,7 +706,7 @@ pred_draws_beta <- avg_predictions(beta_brms, variables = "Fluency") |>
 # Plot both models
 ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
   stat_halfeye(.width = c(.5, .8, .95), alpha = 0.7) +
-  ggokabeito::scale_fill_okabe_ito() +
+  scale_fill_okabe_ito() +
   scale_x_continuous(labels = label_percent()) +
   labs(
     x = "Accuracy",
@@ -943,7 +941,7 @@ pred_combined <- bind_rows(pred_no, pred_yes)
 
 ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
   stat_halfeye(.width = c(.8, .95), alpha = 0.7) +
-  ggokabeito::scale_fill_okabe_ito() +
+  scale_fill_okabe_ito() +
   # guides(fill = guide_legend(title = "Model")) +  # Remove or comment out
   labs(
     x = "Fluency",
@@ -1285,7 +1283,7 @@ fit_zoib <- brm(
 #| after-caption-space: 0pt
 #| eval: false
 
-zoib_model <- parameters::model_parameters(fit_zoib, "mean")
+zoib_model <- model_parameters(fit_zoib, "mean")
 
 zoib_model |>
   mutate(
@@ -1568,7 +1566,7 @@ combined_table_clean |>
   tt(digits = 2) |>
   format_tt(escape = TRUE) |>
   save_tt(
-    here::here("manuscript", "Figures", "combined_table.png"),
+    here("manuscript", "Figures", "combined_table.png"),
     overwrite = TRUE
   )
 ```
