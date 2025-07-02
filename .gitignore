@@ -6,5 +6,7 @@
 manuscript/model_*
 manuscript/ms_cache/
 manuscript/ms_files/
-rendered_output/
+manuscript/*.pdf
+manuscript/*.html
+manuscript/*.docx
 
