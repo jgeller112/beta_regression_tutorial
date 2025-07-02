@@ -44,6 +44,7 @@ author:
       - writing
       - editing
       - formal analysis
+      
 author-note:
   status-changes: 
     affiliation-change: ~
@@ -81,11 +82,13 @@ language:
   title-block-correspondence-note: "Correspondence concerning this article should be addressed to"
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
+
 format:
   apaquarto-pdf: 
     documentmode: doc
   apaquarto-docx: default
   apaquarto-html: default
+  
 execute: 
   echo: false
   warning: false
@@ -97,12 +100,86 @@ execute:
   code-line-numbers: true
   keep-with-next: true
   code-overflow: wrap
-  fig-width: 8
+  fig-width: 4
   fig-height: 4 
+  fig-pos: "h"
+  tbl-pos: "h"
+  
 knitr:
   opts_chunk: 
     dev: "ragg_png"
 ---
+
+```{r}
+#| label: packages_1
+#| echo: false
+#| message: false
+#| warning: false
+
+# All packages loaded once up front
+packages <- c(
+  "tidyverse", "easystats", "geomtextpath", "scales", "tinytable",
+  "marginaleffects", "extraDistr", "brms", "posterior", "bayesplot",
+  "ggdist", "patchwork", "cowplot", "gghalves", "posterior", "ggbeeswarm", "ggokabeito", "ordbetareg", 
+  "here", "knitr", "cmdstanr", "webshot2"
+)
+purrr::walk(packages, library, character.only = TRUE)
+options(scipen = 999, marginaleffects_posterior_center = mean)
+set.seed(666)
+```
+
+```{r}
+#| label: ggplot theme
+#| echo: false
+# Define the custom publication theme
+
+theme_publication <- function(base_size = 14, base_family = "Times") {
+  theme(
+    text = element_text(size = base_size, family = base_family, color = "black"),
+    plot.title = element_text(face = "bold", hjust = 0.5, size = base_size + 2),
+    plot.subtitle = element_text(hjust = 0.5, size = base_size),
+    plot.caption = element_text(hjust = 0.5, size = base_size - 2),
+    axis.title = element_text(face = "bold", size = base_size),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10)),
+    axis.text = element_text(size = base_size - 1),
+    axis.line = element_line(color = "black"),
+    axis.ticks = element_line(color = "black"),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold", size = base_size),
+    legend.text = element_text(size = base_size - 1),
+    legend.background = element_blank(),
+    strip.text = element_text(face = "bold", size = base_size),
+    strip.background = element_rect(fill = "gray90", color = "black")
+  )
+}
+
+```
+
+```{r}
+#| label: data-import
+#| echo: false
+
+fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
+  rename(
+    Participant = "ResponseID",
+    Fluency = "Condition",
+    Time = "name",
+    Accuracy = "value"
+  ) %>%
+  mutate(
+    Accuracy = Accuracy / 10,
+    Fluency = ifelse(Fluency == 1, "Fluent", "Disfluent")
+  ) %>%
+  filter(Time == "FreeCt1AVG") %>%
+  select(-X, -Time) %>%
+  mutate(Participant = dense_rank(Participant)) %>%
+  relocate(Accuracy, .after = last_col()) 
+
+```
 
 Many important outcomes in psychological research can be expressed as proportions or percentages: the proportion of correct responses on a test, the proportion of looks on a particular stimulus in an eye-tracking task, or the percentage of agreement with a given statement. As a practical example from educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question.
 
@@ -133,78 +210,6 @@ In any statistical model, the expected value (or mean) of the response variable 
 The Beta distribution offers a compelling solution [@paolino2001]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. By adjusting its two shape parameters it can take on many functional forms (e.g., it can be symmetric, skewed, U-shaped, or even approximately uniform; see @fig-curves).
 
 To see this intuitively, consider a test question worth six points. Suppose a participant scores four out of six. The number of points received (4) can be treated as $\alpha$, and the number of points missed (2) as $\beta$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance. Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (see @fig-beta-dist). These parameterizations offer a natural way to visualize performance data as probability densities.
-
-```{r}
-#| label: packages_1
-#| echo: false
-#| message: false
-#| warning: false
-
-# packages needed
-library(tidyverse) # tidy functions/data wrangling/viz
-library(easystats)
-library(geomtextpath) # text on line figures
-library(scales) # percentage
-library(tinytable) # tables
-library(marginaleffects) # marginal effects
-library(extraDistr) # Use extra distributions like dprop()
-library(brms) # bayesian models
-library(posterior) # cutpoints
-library(bayesplot) # bayes
-library(ggdist) # stat_halfeye viz bayes
-library(patchwork) # combine figure
-library(cowplot) # combine figures
-library(gghalves) # box plot
-library(ggbeeswarm) # raw data plot
-
-options(scipen = 999) # get rid of scientific notation
-set.seed(666)
-```
-
-```{r}
-#| label: ggplot theme
-#| echo: false
-# Define the custom publication theme
-
-theme_publication <- function(base_size = 14, base_family = "Times") {
-  theme(
-    # General text
-    text = element_text(
-      size = base_size,
-      family = base_family,
-      color = "black"
-    ),
-
-    # Titles
-    plot.title = element_text(face = "bold", hjust = 0.5, size = base_size + 2),
-    plot.subtitle = element_text(hjust = 0.5, size = base_size),
-    plot.caption = element_text(hjust = 0.5, size = base_size - 2),
-
-    # Axis
-    axis.title = element_text(face = "bold", size = base_size),
-    axis.title.x = element_text(margin = margin(t = 10)), # Add space below axis title
-    axis.title.y = element_text(margin = margin(r = 10)), # Add space beside axis title
-    axis.text = element_text(size = base_size - 1),
-    axis.line = element_line(color = "black"),
-    axis.ticks = element_line(color = "black"),
-    # Panel
-    panel.grid.major = element_line(color = "gray80"),
-    panel.grid.minor = element_blank(), # APA style minimizes gridlines
-    panel.background = element_blank(),
-
-    # Legend
-    legend.position = "bottom",
-    legend.title = element_text(face = "bold", size = base_size),
-    legend.text = element_text(size = base_size - 1),
-    legend.background = element_blank(),
-
-    # Strip (for facets)
-    strip.text = element_text(face = "bold", size = base_size),
-    strip.background = element_rect(fill = "gray90", color = "black")
-  )
-}
-
-```
 
 ```{r}
 #| label: fig-curves
@@ -305,12 +310,6 @@ p2 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
   labs(x = "Proportion Correct on Question", y = "Density")
 
 plot_grid(p1, p2, labels = c("A", "B"))
-
-ggsave(
-  "fig-test-beta.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300
-)
 ```
 
 ## Beta Regression
@@ -378,30 +377,6 @@ We use treatment (dummy) coding, which is the default in R. This coding scheme s
 We estimate the model using the `brm()` function from the `brms` package, with default (weakly informative) priors. This choice mirrors a common starting point for applied researchers and ensures that the results are primarily driven by the data. By using Bayesian estimation, we can go beyond simple group comparisons to quantify uncertainty, interpret results on the probability scale, and visualize the posterior distribution of the fluency effect.
 
 ```{r}
-#| label: data
-#| echo: false
-
-fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) |>
-  # Rename the columns for better readability
-  rename(
-    "Participant" = "ResponseID", # Rename "ResponseID" to "Participant"
-    "Fluency" = "Condition", # Rename "Condition" to "Fluency"
-    "Time" = "name", # Rename "name" to "Time"
-    "Accuracy" = "value" # Rename "value" to "Accuracy"
-  ) |>
-  # Transform the data
-  mutate(
-    Accuracy = Accuracy / 10, # Convert Accuracy values to proportions
-    Fluency = ifelse(Fluency == 1, "Fluent", "Disfluent"),
-  ) |>
-  filter(Time == "FreeCt1AVG") |> # Only choose first time point
-  select(-X, -Time) |> # Drop unnecessary columns
-  mutate(Participant = dense_rank(Participant)) |> # Assign sequential participant numbers
-  relocate(Accuracy, .after = last_col()) # Move Accuracy to the end
-
-```
-
-```{r}
 #| label: tbl-dataset
 #| tbl-cap: "First six rows of dataset"
 #| echo: false
@@ -442,51 +417,17 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
   ggokabeito::scale_fill_okabe_ito() +
   theme_publication() +
   theme(legend.position = "none")
-
-ggsave(
-  "fig-accuracy-data.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300
-)
 ```
 
 ### Data
 
-```{r}
-#| label: setup
-#| message: false
-#| warning: false
-packages <- c(
-  "tidyverse",
-  "easystats",
-  "scales",
-  "tinytable",
-  "marginaleffects",
-  "cowplot",
-  "ggbeeswarm",
-  "gghalves",
-  "webshot2",
-  "extraDistr",
-  "brms",
-  "posterior",
-  "bayesplot",
-  "ggdist"
-)
-```
-
-```{r}
-purrr::walk(packages, library, character.only = TRUE)
-```
-
-```{r}
-options(scipen = 999)
-```
-
 Before we fit the regression model, we will read in the data.
 
 ```{r}
-# get data here
+#| eval: false
 
+# get data here from github
+fluency_data <- read.csv("")
 ```
 
 The first few rows of the data are displayed in @tbl-dataset. The dataset contains three columns:
@@ -524,7 +465,8 @@ We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages
 
 ```{r}
 #| echo: true
-# load brms and cmdstanr
+#| eval: false
+# load brms and cmdstanr 
 library(brms)
 library(cmdstanr)
 ```
@@ -532,12 +474,6 @@ library(cmdstanr)
 ```{r}
 #| eval: false
 cmdstanr::install_cmdstan()
-```
-
-```{r}
-#| echo: false
-options(marginaleffects_posterior_center = mean)
-# get mean instead of median in marginaleffects
 ```
 
 We fit the model using the `brm()` function, as shown in the code below. To speed up processing we set `cores` = 4, and use the `cmdstand` backend. The output provides estimates for each effect: the coefficient (`b_,`) representing the mean of the posterior distribution), its estimation error (the standard deviation of the posterior distribution), and the 95% credible interval (Cr.I), which indicate the most credible values within the distribution. We inferred evidence for an effect when the 95% Cr.I did not include zero.
@@ -589,10 +525,6 @@ There are some notable differences between our Bayesian analysis and the frequen
 performance::check_model(bayes_ols_model, check = c("homogeneity", "normality"))
 ```
 
-```{r}
-ggsave(here::here("manuscript", "Figures", "bayes_assumpcheck.png"), width=8, height=4, dpi=300)
-```
-
 We can also examine how well the data fits the model by performing a posterior predictive check. In @fig-ppcheck-normal, multiple draws or repetitions from the posterior distribution are plotted (light blue lines) against the observed data. (dark green). Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). In our example, the model-predicted density is slightly too peaked and narrow compared to the data. In addition, some of the draws extend into negative accuracy values.
 
 ```{r}
@@ -601,8 +533,6 @@ We can also examine how well the data fits the model by performing a posterior p
 #| echo: false
 
 check_model(bayes_ols_model, check = "pp_check") 
-
-ggsave(here::here("manuscript", "Figures", "bayes_ppcheck.png"), width=8, height=4, dpi=300)
 
 ```
 
@@ -797,12 +727,6 @@ beta_plot +
   labs(x = "Fluency") +
   scale_y_continuous(labels = label_percent()) +
   theme_publication()
-
-ggsave(
-  "fig-plot-pre.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300,
-)
 ```
 
 Readers might notice that @fig-plot-pre displays a single point estimate along with its 95% Cr.I.. In Bayesian data analysis, MCMC sampling generates a distribution for each parameter of interest. This approach allows us to visualize the uncertainty surrounding our estimates. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function. We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (e.g., 80% or 95%) (see @fig-draws-fluency).
@@ -829,12 +753,6 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
   theme_publication() +
   theme(legend.position = "none")
-
-ggsave(
-  "fig-draws-fluency.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300,
-)
 ```
 
 #### Marginal Effects
@@ -871,9 +789,20 @@ beta_avg_comp |>
   format_tt(escape = TRUE)
 ```
 
-@tbl-ame1 displays the risk difference for the fluency factor (`estimate` column). The difference between the fluent and disfluent conditions is .09. That is, participants who watched a fluent instructor scored 9% higher on the final recall test than participants who watched the disfluent instructor. Our credible interval \[-.0174, -0.011\] shows that zero is not among the 95% most credible values.
+@tbl-ame1 displays the risk difference for the fluency factor (`Mean` column). The difference between the fluent and disfluent conditions is .09. That is, participants who watched a fluent instructor scored 9% higher on the final recall test than participants who watched the disfluent instructor. Our credible interval \[-.0174, -0.011\] shows that zero is not among the 95% most credible values.
 
 We can also get the odds ratio with `avg_comparisons` (see @tbl-or).
+
+```{r}
+#| label: tbl or
+#| echo: false
+#| tbl-cap: Odds ratio for fluency factor
+#| after-caption-space: 0pt
+
+# get odds ratios as an example
+or <- avg_comparisons(beta_brms, comparison = "lnoravg", transform = "exp")
+
+```
 
 ```{r}
 #| label: tbl-or
@@ -1060,11 +989,6 @@ ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
   theme_publication() +
   theme(legend.position = "none")
 
-ggsave(
-  "fig-plot-dis.png",
-  path = here::here("manuscript", "Figures"),
-  dpi = 300,
-)
 
 ```
 
@@ -1078,9 +1002,6 @@ It is a always a good idea to check how well your data fits the model. The `pp_c
 
 pp_check(beta_brms_dis, ndraws = 100) + # ndraws is nu
   theme_publication()
-
-
-ggsave(here::here("manuscript", "Figures", "bayes_betappcheck.png"), width=8, height=4, dpi=300)
 ```
 
 ## Zero-Inflated Beta (ZIB) Regression
@@ -1125,9 +1046,7 @@ fit_zi <- brm(
   data = data_beta_0,
   chain = 4,
   cores = 4,
-  backend = "cmdstanr",
-  file = "model_beta_bayes_zib"
-)
+  backend = "cmdstanr")
 ```
 
 ```{r}
@@ -1156,10 +1075,6 @@ The ZIB model does a bit better at capturing the sturture of the data then the B
 #| fig-cap: Posterior predictive check for the zib model
 pp_check(fit_zi, ndraws = 100) + # ndraws is nu
   theme_publication()
-
-
-ggsave(here::here("manuscript", "Figures", "bayes_zibppcheck.png"), width=8, height=4, dpi=300)
-
 ```
 
 ### Predicted Probabilities and Marginal Effects
@@ -1262,8 +1177,6 @@ zi_plot <- plot_predictions(fit_zi, by = c("Fluency"), dpar = "zi") +
   theme_publication()
 
 zi_plot
-
-ggsave(here::here("manuscript", "Figures", "zi_plot.png"), width=8, height=4, dpi=300)
 
 ```
 
@@ -1368,8 +1281,6 @@ p <- ggplot() +
 
 p
 
-ggsave("fig-zoib-plot.png", path = here::here("manuscript", "Figures"))
-
 ```
 
 To fit a ZOIB model we use the `bf()` function. We model each parameter as a function of Fluency.
@@ -1403,9 +1314,7 @@ fit_zoib <- brm(
   data = fluency_data,
   chains = 4,
   cores = 4,
-  backend = "cmdstanr",
-  file = "model_beta_zoib_1"
-)
+  backend = "cmdstanr")
 ```
 
 ```{r}
@@ -1464,6 +1373,7 @@ We first load the `ordbetareg` package. You can download it from CRAN or from he
 ```{r}
 #| echo: true
 #| label: load ordbetareg
+#| eval: false
 
 # load ordbetareg package need to have it installed
 library(ordbetareg)
@@ -1483,9 +1393,7 @@ ord_fit_brms <- ordbetareg(
   data = fluency_data,
   chains = 4,
   cores = 4,
-  backend = "cmdstanr",
-  file = "model_beta_ordbeta"
-)
+  backend = "cmdstanr")
 ```
 
 However, if we want dispersion to vary as a function of fluency we can easily do that. Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because we are modeling $\phi$ as a function of fluency, we set the the argument to `both`.
@@ -1508,7 +1416,6 @@ m.phi <- ordbetareg(
   cores = 4,
   chains = 4,
   backend = "cmdstanr",
-  file = "model_beta_ordbeta_phi",
   phi_reg = 'both' # log phi
 )
 ```
@@ -1548,15 +1455,13 @@ In @tbl-ordbeta the credible interval is close enough to zero relative to its un
 
 ### Cutpoints
 
-The model cutpoints are not reported by default in the summary output, but we can access them with the R package `posterior` and the functions `as_draws` and `summary_draws`.
+The model cutpoints are not reported by default in the summary output, but we can access them with the R package `posterior` [@posterior2025a] and the functions `as_draws` and `summary_draws`.
 
 ```{r}
 #| label: tbl-cutpoints
 #| tbl-cap: Cutzero and cutone parameter summary
 #| after-caption-space: 0pt
 #| echo: false
-
-library(posterior)
 
 as_draws(m.phi, c("cutzero", "cutone")) |>
   summarize_draws() |>
@@ -1590,7 +1495,6 @@ plots <- pp_check_ordbeta(
 
 plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
 
-ggsave(here::here("manuscript", "Figures", "bayes_ordbeta-ppcheck.png"), width=12, height=8, dpi=300)
 ```
 
 The discrete plot which is a bar graph, shows that the posterior distribution accurately captures the number of different types of responses (discrete or continuous) in the data. For the continuous plot shown as a density plot with one line per posterior draw, the model does a very good job at capturing the distribution.
@@ -1610,10 +1514,6 @@ plot_heiss(
   grouping_fac = "Fluency",
   recode_group_labels = c("Fluency", "Disfluency")
 )
-
-ggsave(here::here("manuscript", "Figures", "heiss_plot.png"), width=8, height=4, dpi=300)
-
-
 ```
 
 ### Ordered Beta Scale
@@ -1622,6 +1522,9 @@ In the `ordbetareg` function there is a `true_bound` argument. In the case where
 
 ```{r}
 #| eval: false
+
+# this code runs all models from above and creates table. This does not run each time and it set not to run. 
+
 # BAYESIAN REGRESSION
 brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
   filter(Parameter != "sigma") %>%
