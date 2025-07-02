@@ -1,14 +1,15 @@
 This repository contains  materials and code for our manuscript "A Beta Way: A Tutorial For Using Beta Regression in Psychological Research to Analyze Proportional and Percentage Data" 
 
 Authors: 
-Jason Geller* (drjasongeller@gmail.com)
-Robert Kubinec
-Chelsea M. Parlett Pelleriti
-Matti Vuorre
+- Jason Geller* (drjasongeller@gmail.com)
+- Robert Kubinec
+- Chelsea M. Parlett Pelleriti
+- Matti Vuorre
 
 ```
 beta_regression_tutorial/
 |-- README.md (project directory information)
+|-- .vscode (contains air formatter settings for Positron)
 |-- data
 |   |-- miko_data.csv (data file for example in paper)
 |-- .Rprofile
