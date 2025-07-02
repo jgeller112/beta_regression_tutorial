@@ -357,31 +357,23 @@ head(fluency_data) |>
 
 ```{r}
 #| label: fig-flu1
-#| fig-cap: "Fluency accuracy: Raw data (points), half-boxplot, and Mean marker (dot)"
-#| echo: false
-#|
+#| fig-cap: "Raw accuracy observations and means with 95% CIs."
+
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
-  geom_half_point(
+  geom_point(
     aes(color = Fluency),
-    transformation = position_quasirandom(width = 0.1),
-    side = "l",
-    size = 1,
-    alpha = 0.5
-  ) +
-  geom_half_boxplot(
-    side = "r"
+    position = position_quasirandom(width = 0.1),
+    size = 1
   ) +
   stat_summary(
-    fun = mean,
-    geom = "point",
-    shape = 21, # triangle
-    size = 4,
-    color = "black",
-    fill = "black",
-    position = position_nudge(x = .2) # Center the mean dot
+    fun.data = mean_cl_normal,
+    geom = "pointrange",
+    shape = 21,
+    size = 1,
+    linewidth = 1
   ) +
   scale_y_continuous(labels = label_percent()) +
-  scale_fill_okabe_ito() +
+  scale_fill_okabe_ito(aesthetics = c("fill", "color")) +
   theme_publication() +
   theme(legend.position = "none")
 ```
@@ -1412,10 +1404,10 @@ ord_beta_avg |>
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-select(Term, Contrast, Mean, `95% Cr.I`) |>
-tt() |>
-format_tt(digits = 3) |>
-format_tt(escape = TRUE)
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
+  tt() |>
+  format_tt(digits = 3) |>
+  format_tt(escape = TRUE)
 
 ```
 
