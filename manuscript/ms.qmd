@@ -530,21 +530,7 @@ beta_brms <- brm(
 )
 ```
 
-```{r}
-#| label: tbl-01s
-#| tbl-cap: Number of zeros and ones in our dataset
-#| echo: false
-#| after-caption-space: 0pt
-
-fluency_data |>
-  filter(Accuracy == 0 | Accuracy == 1) |> # get onlys 0s and 1s
-  count(Accuracy) |> # count them
-  rename("Count" = "n") |>
-  tt() |>
-  format_tt(escape = TRUE)
-```
-
-@tbl-01s shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\]. The model `beta_brms` uses data where 0s and 1s are changed to .01 and .99, respectively.
+However, the dataset has nine zeros and one 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the [0, 1] interval. The model `beta_brms` uses data where 0s and 1s are changed to .01 and .99, respectively.
 
 ```{r}
 
