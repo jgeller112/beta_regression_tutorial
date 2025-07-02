@@ -62,10 +62,11 @@ jobs:
         if: env.changed == 'true'
         run: nix-build
 
-      - name: Quarto render manuscript
+      - name: Quarto render manuscript (to temp dir)
         if: env.changed == 'true'
         run: |
-          nix-shell --run "quarto render manuscript/ms.qmd --output-dir rendered"
+          mkdir -p rendered_output
+          nix-shell --run "quarto render manuscript/ms.qmd --output-dir rendered_output"
 
       - name: Checkout 'rendered' branch separately
         if: env.changed == 'true'
@@ -88,9 +89,9 @@ jobs:
           git fetch origin main
           git merge origin/main --no-edit || git rebase origin/main
 
-          # Copy new manuscript output into the subfolder
+          # Replace old rendered outputs with new ones
           rm -rf manuscript/*
-          cp -r ../rendered/* manuscript/
+          cp -r ../rendered_output/* manuscript/
 
           git add manuscript/
           git commit -m "Rendered manuscript output [ci skip]" || echo "No changes to commit"
