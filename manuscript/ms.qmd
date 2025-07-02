@@ -425,10 +425,8 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 -   **`Accuracy`:** Proportion recalled (idea units)
 
 ```{r}
-#| label: models
-#| eval: false
-# fit each model to put in table
-# fit ols reg
+#| label: fit-gauss
+#| echo: false
 
 bayes_ols_model <- brm(
   Accuracy ~ Fluency,
@@ -437,6 +435,36 @@ bayes_ols_model <- brm(
   backend = "cmdstanr",
   file = "model_ols_bayes"
 )
+```
+
+```{r}
+#| label: model-beta
+#| echo: false
+
+model_beta_bayes <- bf(
+  Accuracy ~ Fluency,
+  phi ~ 1
+)
+```
+
+```{r}
+#| label: fit-beta
+#| echo: false
+
+beta_brms <- brm(
+  model_beta_bayes,
+  data = fluency_data,
+  family = Beta(),
+  chains = 4,
+  cores = 4,
+  backend = "cmdstanr",
+  file = "model_beta_bayes_reg"
+)
+```
+
+```{r}
+#| label: models
+# fit each model to put in table
 
 beta_brms_dis <- brm(
   model_beta_bayes_disp,
@@ -616,24 +644,14 @@ options(marginaleffects_posterior_center = mean)
 # get mean instead of median in marginaleffects
 ```
 
-We fit the model using the `brm()` function, as shown in the code below. To speed up processing we set `cores` = 4, and use the `cmdstand` backend. The output provides estimates for each effect: the coefficient (`b_,`) representing the mean of the posterior distribution), its estimation error (the standard deviation of the posterior distribution), and the 95% credible interval (Cr.I), which indicate the most credible values within the distribution. We inferred evidence for an effect when the 95% Cr.I did not include zero.
+We fit the model using the `brm()` function, as shown in @lst-gauss. To speed up processing we set `cores` = 4, and use the `cmdstand` backend. The output provides estimates for each effect: the coefficient (`b_,`) representing the mean of the posterior distribution), its estimation error (the standard deviation of the posterior distribution), and the 95% credible interval (Cr.I), which indicate the most credible values within the distribution. We inferred evidence for an effect when the 95% Cr.I did not include zero.
 
 ```{r}
-#| label: Bayesian_regression_model
+#| label: fit-gauss
+#| lst-label: lst-gauss
+#| lst-cap: Fitting a gaussian model with brm().
 #| echo: true
-#| warning: false
-#| message: false
-#| cache: true
-#| results: hide
 
-# fit ols reg
-bayes_ols_model <- brm(
-  Accuracy ~ Fluency,
-  data = fluency_data,
-  cores = 4,
-  backend = "cmdstanr",
-  file = "model_ols_bayes"
-)
 ```
 
 ```{r}
