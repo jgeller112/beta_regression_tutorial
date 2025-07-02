@@ -427,7 +427,7 @@ Before we fit the regression model, we will read in the data.
 #| eval: false
 
 # get data here from github
-fluency_data <- read.csv("")
+fluency_data <- read.csv("https://raw.githubusercontent.com/jgeller112/beta_regression_tutorial/refs/heads/main/manuscript/data/fluency_data.csv?token=GHSAT0AAAAAADGFWDDEGP3PKLA26WYDLYG62DFKN3Q")
 ```
 
 The first few rows of the data are displayed in @tbl-dataset. The dataset contains three columns:
