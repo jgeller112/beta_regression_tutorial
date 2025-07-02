@@ -702,7 +702,7 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
 
 Marginal effects provide a way to understand how changes in a predictor influence an outcome, holding all other factors constant in a specific manner. Technically, marginal effects are calculated using partial derivatives for continuous variables or finite differences for categorical and continuous variables, depending on the nature of the data and the research question. Substantively, these effects translate regression coefficients into a form that can be interpreted directly on the outcome scale of interest.
 
-There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular `emmeans` package \[\] computes marginal effects by holding all predictors at their means. In this tutorial, we will use the `marginaleffects` package, which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.
+There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular `emmeans` package [@emmeans]computes marginal effects by holding all predictors at their means. In this tutorial, we will use the `marginaleffects` package [@margeffects2024], which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.
 
 One practical application of AMEs is calculating the risk difference for categorical variables. The risk difference represents the difference in average outcomes between two groups or conditions. Using the `avg_comparisons()` function in the `marginaleffects` package, we can compute this metric directly. By default, the function calculates the discrete difference between groups. It can also compute other effect size metrics, such as odds ratios and isk ratios, depending on the research question (see @tbl-or for more details). This flexibility makes it a powerful tool for interpreting regression results in a meaningful way.
 
@@ -1094,7 +1094,7 @@ marg_phi_brms |>
 
 ### Zero-Inflated ($\alpha$)
 
-In @tbl-marg-zib-brms, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% Cr.I for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction."
+In @tbl-marg-zib-brms, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% Cr.I for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction.
 
 ```{r}
 #| label: tbl-marg-zib-brms
@@ -1379,7 +1379,7 @@ ord_beta_avg <- m.phi |>
 
 ```{r}
 #| label: tbl-ordbeta
-#|
+#| tbl-cap: "Marginal effect for fluency factor in ordered Beta model"
 ord_beta_avg |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
@@ -1387,10 +1387,10 @@ ord_beta_avg |>
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean, `95% Cr.I`) |>
-  tt() |>
-  format_tt(digits = 3) |>
-  format_tt(escape = TRUE)
+select(Term, Contrast, Mean, `95% Cr.I`) |>
+tt() |>
+format_tt(digits = 3) |>
+format_tt(escape = TRUE)
 
 ```
 
