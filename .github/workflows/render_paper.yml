@@ -2,9 +2,15 @@ name: Render paper with Nix and Quarto
 
 on:
   push:
-    branches: [main, master]
+    branches:
+      - main
+      - master
+    paths:
+      - manuscript/**
   pull_request:
-    branches: [main, master]
+    branches:
+      - main
+      - master
 
 permissions:
   contents: write
@@ -14,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code (main)
+    - name: Checkout main branch
       uses: actions/checkout@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -24,7 +30,7 @@ jobs:
       id: check_changes
       run: |
         if git rev-list --count HEAD >/dev/null 2>&1 && [ "$(git rev-list --count HEAD)" -gt 1 ]; then
-          if git diff --name-only HEAD^ HEAD | grep -q "^manuscript/ms.qmd$"; then
+          if git diff --name-only HEAD^ HEAD | grep -q "^manuscript/"; then
             echo "changed=true" >> $GITHUB_ENV
           else
             echo "changed=false" >> $GITHUB_ENV
@@ -41,10 +47,10 @@ jobs:
       if: env.changed == 'true'
       uses: DeterminateSystems/magic-nix-cache-action@v3
 
-    - name: Quarto render manuscript
+    - name: Render manuscript with Quarto (in-place)
       if: env.changed == 'true'
       run: |
-        nix-shell --run "quarto render manuscript/ms.qmd --output-dir manuscript"
+        nix-shell --run "quarto render manuscript/ms.qmd"
 
     - name: Checkout rendered branch
       if: env.changed == 'true'
@@ -55,7 +61,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
 
-    - name: Commit and push to 'rendered' branch
+    - name: Copy and commit manuscript to rendered branch
       if: env.changed == 'true'
       working-directory: rendered-branch
       env:
@@ -67,7 +73,8 @@ jobs:
         git fetch origin main
         git merge origin/main --no-edit || git rebase origin/main
 
-        cp -r ../manuscript/* manuscript/
+        rm -rf manuscript
+        cp -r ../manuscript manuscript
 
         git add manuscript/
         git commit -m "Rendered manuscript output [ci skip]" || echo "No changes to commit"
