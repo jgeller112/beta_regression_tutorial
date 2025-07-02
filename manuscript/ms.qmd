@@ -132,7 +132,7 @@ In any statistical model, the expected value (or mean) of the response variable 
 
 The Beta distribution offers a compelling solution [@paolino2001]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. By adjusting its two shape parameters it can take on many functional forms (e.g., it can be symmetric, skewed, U-shaped, or even approximately uniform; see @fig-curves).
 
-To see this intuitively, consider a test question worth six points. Suppose a participant scores four out of six. The number of points received (4) can be treated as $\alpha$, and the number of points missed (2) as $\beta$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance. Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (see @fig-beta-dist). These parameterizations offer a natural way to visualize performance data as probability densities.
+To see this intuitively, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as $\alpha$, and the number of points missed (2) as $\beta$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance (yellow line in @fig-curves; "Beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (blue line in @fig-curves; "Beta(2, 5)"). These parameterizations offer a natural way to visualize performance data as probability densities.
 
 ```{r}
 #| label: packages_1
@@ -223,8 +223,7 @@ make_beta_df <- function(shape1, shape2, n = 1000) {
 beta_df <- bind_rows(
   make_beta_df(0.5, 0.5),
   make_beta_df(2, 2),
-  make_beta_df(5, 1),
-  make_beta_df(1, 3),
+  make_beta_df(5, 2),
   make_beta_df(2, 5)
 ) %>%
   mutate(label = factor(label))
@@ -234,67 +233,17 @@ p <- ggplot(
   beta_df,
   aes(x = x, y = y, label = label, group = label, color = label)
 ) +
-  geom_textpath(
-    size = 2.5,
-    linetype = "solid",
-    hjust = .1,
-    linewidth = 2,
-    fontface = 2
+  geom_line(linewidth = 1) +
+  ggokabeito::scale_color_okabe_ito(
+    name = "Distribution"
   ) +
-  ggokabeito::scale_color_okabe_ito() +
   labs(
     x = "Proportion",
     y = "Density"
   ) +
   theme_publication() +
-  theme(legend.position = "none")
-
+  theme(legend.position = "right")
 p
-```
-
-```{r}
-#| label: fig-beta-dist
-#| fig-cap: "A. beta distribution with 4 correct (`shape1`) and 2 incorrect (`shape2`) responses (`shape2`) on one test question. B. beta distribution with 2 correct (`shape1`) and 4 incorrect (`shape2`) responses on one test question"
-#| echo: false
-#| message: false
-
-# Create the plot with a filled beta distribution density
-p1 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
-  stat_function(
-    fun = dbeta,
-    args = list(shape1 = 4, shape2 = 2),
-    geom = "area",
-    fill = "blue",
-    alpha = 0.5
-  ) +
-  stat_function(
-    fun = dbeta,
-    args = list(shape1 = 4, shape2 = 2),
-    aes(color = "beta(shape1 = 4, shape2 = 2)")
-  ) +
-  theme_publication() +
-  theme(legend.position = "none") +
-  labs(x = "Proportion Correct on Question", y = "Density")
-
-# Create the plot with a filled beta distribution density
-p2 <- ggplot(data.frame(x = c(0, 1)), aes(x = x)) +
-  stat_function(
-    fun = dbeta,
-    args = list(shape1 = 2, shape2 = 4),
-    geom = "area",
-    fill = "red",
-    alpha = 0.5
-  ) +
-  stat_function(
-    fun = dbeta,
-    args = list(shape1 = 2, shape2 = 4),
-    aes(color = "beta(shape1 = 4, shape2 = 2)")
-  ) +
-  theme_publication() +
-  theme(legend.position = "none") +
-  labs(x = "Proportion Correct on Question", y = "Density")
-
-plot_grid(p1, p2, labels = c("A", "B"))
 ```
 
 ## Beta Regression
@@ -1488,7 +1437,7 @@ We then pass the `zoib_model` to our `brm()` function. The summary of the output
 #| echo: true
 #| results: hide
 #| message: false
-
+#|
 # run the zoib mode using brm
 
 fit_zoib <- brm(
