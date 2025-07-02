@@ -1339,7 +1339,7 @@ ord_fit_brms <- ordbetareg(
   backend = "cmdstanr")
 ```
 
-However, if we want dispersion to vary as a function of fluency we can easily do that. Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because we are modeling $\phi$ as a function of fluency, we set the the argument to `both`.
+However, if we want dispersion to vary as a function of fluency we can easily do that. Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because we are modeling $\phi$ as a function of fluency, we set the the argument to `both.`
 
 ```{r}
 #| echo: true
