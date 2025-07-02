@@ -5,16 +5,16 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-    
+
 permissions:
   contents: write
-  
+
 jobs:
-  build: 
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
+    - name: Checkout code (main)
       uses: actions/checkout@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -23,16 +23,13 @@ jobs:
     - name: Check if manuscript changed
       id: check_changes
       run: |
-        # Check if there is at least one commit
         if git rev-list --count HEAD >/dev/null 2>&1 && [ "$(git rev-list --count HEAD)" -gt 1 ]; then
-          # Check against the previous commit
           if git diff --name-only HEAD^ HEAD | grep -q "^manuscript/ms.qmd$"; then
             echo "changed=true" >> $GITHUB_ENV
           else
             echo "changed=false" >> $GITHUB_ENV
           fi
         else
-          # Handle initial commit or shallow clone (always render)
           echo "changed=true" >> $GITHUB_ENV
         fi
 
@@ -43,7 +40,6 @@ jobs:
         logger: pretty
         log-directives: nix_installer=trace
         backtrace: full
-
 
     - name: Use rstats-on-nix cache
       if: env.changed == 'true'
@@ -64,22 +60,26 @@ jobs:
 
     - name: Build development environment
       if: env.changed == 'true'
-      run: |
-        nix-build
+      run: nix-build
 
-    - name: Quarto Render paper
+    - name: Quarto render manuscript
       if: env.changed == 'true'
       run: |
-        nix-shell --run "quarto render manuscript/ms.qmd"
+        nix-shell --run "quarto render manuscript/ms.qmd --output-dir rendered"
 
-    - name: Upload rendered paper
+    - name: Commit and push to 'rendered' branch
       if: env.changed == 'true'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add .
-        git commit -m "Rendered manuscript"
-        git push origin main
-  
+
+        git fetch origin rendered || true
+        git switch --force-create rendered || git switch rendered
+
+        cp -r rendered/* .
+        git add ms.*
+        git commit -m "Rendered manuscript output [ci skip]" || echo "No changes to commit"
+        git push origin HEAD:rendered
+
