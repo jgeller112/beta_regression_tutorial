@@ -148,8 +148,11 @@ set.seed(666)
 #| label: ggplot theme
 #| echo: false
 # Define the custom publication theme
-
-theme_publication <- function(base_size = 14, base_family = "Times") {
+IS_HTML <- knitr::is_html_output()
+theme_publication <- function(
+  base_size = ifelse(IS_HTML, 12, 14),
+  base_family = "Times"
+) {
   theme(
     text = element_text(
       size = base_size,
@@ -229,14 +232,15 @@ In any statistical model, the expected value (or mean) of the response variable 
 
 The Beta distribution offers a compelling solution [@paolino2001]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. By adjusting its two shape parameters it can take on many functional forms (e.g., it can be symmetric, skewed, U-shaped, or even approximately uniform; see @fig-curves).
 
-To see this intuitively, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as \$\\alpha\$, and the number of points missed (2) as \$\\beta\$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance (yellow line in @fig-curves; "Beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (blue line in @fig-curves; "Beta(2, 5)"). These parameterizations offer a natural way to visualize performance data as probability densities.
+To illustrate, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as $\alpha$, and the number of points missed (2) as $\beta$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance (yellow line in @fig-curves; "Beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (green line in @fig-curves; "Beta(2, 5)"). These parameterizations offer a natural way to visualize performance data as probability densities.
 
 ```{r}
 #| label: fig-curves
-#| fig-cap: "Beta distributions with different shape1 and shape2 parameters"
+#| fig-cap: "Beta distributions with different shape1 and shape2 parameters."
+#| fig-asp: 0.52
 
 # Function to generate Beta distribution data
-make_beta_df <- function(shape1, shape2, n = 1000) {
+make_beta_df <- function(shape1, shape2, n = 9000) {
   x <- seq(0.001, 0.999, length.out = n)
   data.frame(
     x = x,
@@ -254,22 +258,25 @@ beta_df <- bind_rows(
 ) %>%
   mutate(label = factor(label))
 
-# Plot with Okabe-Ito colors
-p <- ggplot(
+ggplot(
   beta_df,
   aes(x = x, y = y, label = label, group = label, color = label)
 ) +
-  geom_line(linewidth = 1) +
+  geom_line(linewidth = 0.9) +
   scale_color_okabe_ito(
     name = "Distribution"
   ) +
-  labs(
-    x = "Proportion",
-    y = "Density"
+  scale_x_continuous(
+    "Proportion",
+    expand = expansion(0.01)
+  ) +
+  scale_y_continuous(
+    "Density",
+    limits = c(0, 5),
+    expand = expansion(0.01)
   ) +
   theme_publication() +
   theme(legend.position = "right")
-p
 ```
 
 ## Beta Regression
