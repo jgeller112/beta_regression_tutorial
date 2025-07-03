@@ -54,8 +54,8 @@ jobs:
 
     - name: Generate default.nix
       if: env.changed == 'true'
-      run: nix-shell -p R rPackages.rix --run "R -e 'source(\"create_env_dev.R\")'"
-
+      run: nix-shell -p R rPackages.rix --run 'R -e "source(\"create_env_dev.R\")"'
+      
     - name: Checkout rendered branch
       if: env.changed == 'true'
       uses: actions/checkout@v3
