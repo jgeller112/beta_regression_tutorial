@@ -212,7 +212,7 @@ fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
 
 Many important outcomes in psychological research can be expressed as proportions or percentages: the proportion of correct responses on a test, the proportion of looks on a particular stimulus in an eye-tracking task, or the percentage of agreement with a given statement. As a practical example from educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question.
 
-A key question arises: **how should proportional data be analyzed?** In psychology, there is a strong reliance on linear models (e.g., *t*-tests, ANOVAs, and regressions). However, linear models assume: (1) a normally distributed (Gaussian) outcome, (2) an unbounded response scale (ranging from $-\infty$ to @\infty$), and (3) constant variance (homoscedasticity). These assumptions are rarely met in psychological data [@sladekova2024unicorns]. They are especially problematic for proportional data, which are naturally bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance—particularly near the boundaries [@smithson2006; @ferrari2004; @paolino2001]. Violating these assumptions can lead to biased estimates and misleading inferences.
+A key question arises: **how should proportional data be analyzed?** In psychology, there is a strong reliance on linear models (e.g., *t*-tests, ANOVAs, and regressions). However, linear models assume: (1) a normally distributed (Gaussian) outcome, (2) an unbounded response scale (ranging from $-\infty$ to $-\infty$), and (3) constant variance (homoscedasticity). These assumptions are rarely met in psychological data [@sladekova2024unicorns]. They are especially problematic for proportional data, which are naturally bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance—particularly near the boundaries [@smithson2006; @ferrari2004; @paolino2001]. Violating these assumptions can lead to biased estimates and misleading inferences.
 
 Another option extends the linear model framework to accommodate non-normal outcome distributions. For example, binomial or Bernoulli models (commonly referred to as logistic regression when a logit link function is used) are well-suited for binary outcomes or counts of successes out of a fixed number of trials. However, these models may still fall short when data exhibit overdispersion or cluster near 0 or 1.
 
@@ -426,6 +426,7 @@ library(cmdstanr)
 #| lst-label: lst-gauss
 #| lst-cap: Fitting a gaussian model with brm().
 #| collapse: true
+#| hide: false
 #| echo: true
 
 bayes_reg_model <- brm(
@@ -435,9 +436,8 @@ bayes_reg_model <- brm(
   #file = "model_reg_bayes"
 )
 
-summary(bayes_reg_model)
-
 ```
+
 
 ```{r}
 #| label: fit-gauss-parameters
@@ -450,6 +450,13 @@ brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 We fit the model using the `brm()` function from the `brms` package (@lst-loadbrms). The output from `brm` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval (CI), which indicate the 95% of the most credible parameter values. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is reccomended [@gelman2013bayesian].
 
 When you run the model in @lst-gauss, the following output will appear in your console. This output summarizes the results of the Bayesian regression model. Going forward, we will present model summaries in a table (@tbl-all).[^3] The `Intercept` refers to the mean accuracy in the *disfluent* condition, as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% credible interval for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% CI" columns of the output. These results closely mirror the findings reported by @wilford2020: *t*(94) = 2.00, *p* = .048, 95% CI \[0.06, 16.56\].
+
+```{r}
+#| label: show reg model
+
+summary(bayes_reg_model)
+
+```
 
 [^3]: We used the **`easystats`** ecosystem—specifically the `modelsummary` and `parameters` packages—to generate clean, publication-ready summaries of our Bayesian models. This approach improves upon the default output from `brms` by presenting estimates in a more readable format and by including useful Bayesian diagnostics
 
@@ -519,12 +526,12 @@ In @tbl-all under the Beta Regression column, the first set of coefficients repr
 
 The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `b_phi` in @tbl-all. The dispersion ($\phi$) parameter tells us how precise our estimate is. Specifically, $\phi$ in Beta regression tells us about the variability of the response variable around its mean. Specifically, a higher dispersion parameter indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.
 
-Understanding the dispersion parameter helps us gauge the precision of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all). The intercept under the precision heading is not that interesting. It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the phi model in `bf()`. We model the precision of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
+Understanding the dispersion parameter helps us gauge the precision of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all). The intercept under the precision heading is not that interesting. It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the phi model in `bf()`. We model the precision (`phi`) of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
 
 ```{r}
 #| label: brms-model-dis
 #| lst-label: lst-betadis
-#  lst-cap: Fitting Beta model with dispersion in `brm()`.
+#| lst-cap: Fitting Beta model with dispersion in `brm()`.
 #| results: hide
 #| echo: true
 
