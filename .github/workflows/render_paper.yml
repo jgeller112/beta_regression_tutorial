@@ -72,11 +72,11 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
         git fetch origin main
-        git reset --hard origin/main
+        git reset --hard origin/main  # ⬅️ ensure we start clean
 
         rm -rf manuscript
-        cp -r ../manuscript manuscript
+        cp -r ../manuscript manuscript  # ⬅️ copy rendered outputs from build
 
         git add manuscript/
         git commit -m "Rendered manuscript output [ci skip]" || echo "No changes to commit"
-        git push origin rendered
+        git push --force origin rendered  # ⬅️ force push to prevent conflict
