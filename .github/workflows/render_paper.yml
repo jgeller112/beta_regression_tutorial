@@ -48,7 +48,7 @@ jobs:
     - name: Render manuscript
       if: env.changed == 'true'
       run: |
-        nix-shell --run "quarto render manuscript/ms.qmd --to html,pdf,docx"
+        nix-shell --run "quarto render manuscript/ms.qmd"
 
     - name: Checkout rendered branch
       if: env.changed == 'true'
