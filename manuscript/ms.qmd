@@ -492,7 +492,7 @@ If we try to run `beta_brms`, however, we get an error: `Error: Family 'beta' re
 #| lst-label: lst-beta
 #| lst-cap: Setting up and fitting a beta model with brm().
 #| results: hide
-#| eval: false
+#| eval: true
 #| echo: true
 
 # set up model formual
