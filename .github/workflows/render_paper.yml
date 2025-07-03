@@ -39,16 +39,22 @@ jobs:
 
     - name: Install Nix
       if: env.changed == 'true'
-      uses: DeterminateSystems/nix-installer-action@v9
+      uses: DeterminateSystems/nix-installer-action@main
+      with:
+        logger: pretty
+        log-directives: nix_installer=trace
+        backtrace: full
 
-    - name: Set up Nix cache
-      if: env.changed == 'true'
-      uses: DeterminateSystems/magic-nix-cache-action@v3
 
-    - name: Render manuscript
+    - name: Use rstats-on-nix cache
       if: env.changed == 'true'
-      run: |
-        nix-shell --run "quarto render manuscript/ms.qmd"
+      uses: cachix/cachix-action@v15
+      with:
+        name: rstats-on-nix
+
+    - name: Generate default.nix
+      if: env.changed == 'true'
+      run: nix-shell -p R rPackages.rix --run "R -e 'source(\"create_dev_env.R\")'"
 
     - name: Checkout rendered branch
       if: env.changed == 'true'
