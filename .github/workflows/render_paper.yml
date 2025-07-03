@@ -2,22 +2,19 @@ name: Render paper with Nix and Quarto
 
 on:
   push:
-    branches:
-      - main
-      - master
+    branches-ignore:
+      - rendered
     paths:
       - manuscript/ms.qmd
   pull_request:
-    branches:
-      - main
-      - master
+    branches-ignore:
+      - rendered
 
 permissions:
   contents: write
 
 jobs:
   build:
-    if: github.ref != 'refs/heads/rendered'  # Prevent rerun on rendered branch
     runs-on: ubuntu-latest
 
     steps:
@@ -72,11 +69,11 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
         git fetch origin main
-        git reset --hard origin/main  # ⬅️ ensure we start clean
+        git reset --hard origin/main
 
         rm -rf manuscript
-        cp -r ../manuscript manuscript  # ⬅️ copy rendered outputs from build
+        cp -r ../manuscript manuscript
 
         git add manuscript/
         git commit -m "Rendered manuscript output [ci skip]" || echo "No changes to commit"
-        git push --force origin rendered  # ⬅️ force push to prevent conflict
+        git push --force origin rendered
