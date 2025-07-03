@@ -11,7 +11,6 @@ required_packages = c(
   "extraDistr",
   "easystats",
   "scales",
-  "ggrain",
   "tidybayes",
   "webshot2",
   "here",
