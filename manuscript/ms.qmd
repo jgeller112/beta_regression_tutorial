@@ -44,16 +44,16 @@ author:
       - writing
       - editing
       - formal analysis
-      
+
 author-note:
-  status-changes: 
+  status-changes:
     affiliation-change: ~
     deceased: ~
   disclosures:
     # Example: This study was registered at X (Identifier Y).
     study-registration: "No preregistration for this paper."
     # Acknowledge and cite data/materials to be shared.
-    data-sharing: Data, code, and materials for this manusscript can be found at. 
+    data-sharing: Data, code, and materials for this manusscript can be found at.
     related-report: ~
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
@@ -69,7 +69,7 @@ suppress-title-page: false
 link-citations: true
 # Masks references that appear in the masked-citations list
 mask: false
-word-count: true 
+word-count: true
 # Language options. See https://quarto.org/docs/authoring/language.html
 lang: en
 language:
@@ -84,12 +84,11 @@ language:
 bibliography: bibliography.bib
 
 format:
-  apaquarto-pdf: 
+  apaquarto-pdf:
     documentmode: doc
   apaquarto-docx: default
   apaquarto-html: default
-  
-execute: 
+execute:
   echo: false
   warning: false
   message: false
@@ -100,14 +99,14 @@ execute:
   code-line-numbers: true
   keep-with-next: true
   code-overflow: wrap
-  fig-width: 4
-  fig-height: 4 
+  fig-width: 6
+  fig-asp: 0.618
   fig-pos: "h"
   tbl-pos: "h"
   fig-dpi: 300
-  
+
 knitr:
-  opts_chunk: 
+  opts_chunk:
     dev: "ragg_png"
 ---
 
@@ -118,13 +117,29 @@ knitr:
 #| warning: false
 
 # All packages loaded once up front
-packages <- c(
-  "tidyverse", "easystats", "geomtextpath", "scales", "tinytable",
-  "marginaleffects", "extraDistr", "brms", "posterior", "bayesplot",
-  "ggdist", "patchwork", "cowplot", "gghalves", "posterior", "ggbeeswarm", "ggokabeito", "ordbetareg", 
-  "here", "knitr", "cmdstanr", "webshot2"
-)
-purrr::walk(packages, library, character.only = TRUE)
+library(easystats)
+library(geomtextpath)
+library(scales)
+library(tinytable)
+library(marginaleffects)
+library(extraDistr)
+library(brms)
+library(posterior)
+library(bayesplot)
+library(ggdist)
+library(patchwork)
+library(cowplot)
+library(gghalves)
+library(ggbeeswarm)
+library(ggokabeito)
+library(ordbetareg)
+library(here)
+library(knitr)
+library(cmdstanr)
+library(webshot2)
+library(performance)
+library(parameters)
+library(tidyverse)
 options(scipen = 999, marginaleffects_posterior_center = mean)
 set.seed(666)
 ```
@@ -133,10 +148,17 @@ set.seed(666)
 #| label: ggplot theme
 #| echo: false
 # Define the custom publication theme
-
-theme_publication <- function(base_size = 14, base_family = "Times") {
+IS_HTML <- knitr::is_html_output()
+theme_publication <- function(
+  base_size = ifelse(IS_HTML, 12, 14),
+  base_family = "Times"
+) {
   theme(
-    text = element_text(size = base_size, family = base_family, color = "black"),
+    text = element_text(
+      size = base_size,
+      family = base_family,
+      color = "black"
+    ),
     plot.title = element_text(face = "bold", hjust = 0.5, size = base_size + 2),
     plot.subtitle = element_text(hjust = 0.5, size = base_size),
     plot.caption = element_text(hjust = 0.5, size = base_size - 2),
@@ -164,7 +186,7 @@ theme_publication <- function(base_size = 14, base_family = "Times") {
 #| label: data-import
 #| echo: false
 
-fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
+fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
     Fluency = "Condition",
@@ -178,7 +200,7 @@ fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
   filter(Time == "FreeCt1AVG") %>%
   select(-X, -Time) %>%
   mutate(Participant = dense_rank(Participant)) %>%
-  relocate(Accuracy, .after = last_col()) 
+  relocate(Accuracy, .after = last_col())
 
 ```
 
@@ -210,14 +232,15 @@ In any statistical model, the expected value (or mean) of the response variable 
 
 The Beta distribution offers a compelling solution [@paolino2001]. The Beta distribution is continuous, restricted to values between 0 and 1 (exclusive), and highly flexible. Its two shape parameters—commonly called shape1 ($\alpha$) and shape2 ($\beta$)—govern the distribution’s location, skewness, and spread. By adjusting its two shape parameters it can take on many functional forms (e.g., it can be symmetric, skewed, U-shaped, or even approximately uniform; see @fig-curves).
 
-To see this intuitively, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as \$\\alpha\$, and the number of points missed (2) as \$\\beta\$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance (yellow line in @fig-curves; "Beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (blue line in @fig-curves; "Beta(2, 5)"). These parameterizations offer a natural way to visualize performance data as probability densities.
+To illustrate, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as $\alpha$, and the number of points missed (2) as $\beta$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance (yellow line in @fig-curves; "Beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (green line in @fig-curves; "Beta(2, 5)"). These parameterizations offer a natural way to visualize performance data as probability densities.
 
 ```{r}
 #| label: fig-curves
-#| fig-cap: "Beta distributions with different shape1 and shape2 parameters"
+#| fig-cap: "Beta distributions with different shape1 and shape2 parameters."
+#| fig-asp: 0.52
 
 # Function to generate Beta distribution data
-make_beta_df <- function(shape1, shape2, n = 1000) {
+make_beta_df <- function(shape1, shape2, n = 9000) {
   x <- seq(0.001, 0.999, length.out = n)
   data.frame(
     x = x,
@@ -235,24 +258,25 @@ beta_df <- bind_rows(
 ) %>%
   mutate(label = factor(label))
 
-# Plot with Okabe-Ito colors
-p <- ggplot(
+ggplot(
   beta_df,
   aes(x = x, y = y, label = label, group = label, color = label)
 ) +
-  geom_line(linewidth = 1) +
-  ggokabeito::scale_color_okabe_ito(
+  geom_line(linewidth = 0.9) +
+  scale_color_okabe_ito(
     name = "Distribution"
   ) +
-  labs(
-    x = "Proportion",
-    y = "Density"
+  scale_x_continuous(
+    "Proportion",
+    expand = expansion(0.01)
+  ) +
+  scale_y_continuous(
+    "Density",
+    limits = c(0, 5),
+    expand = expansion(0.01)
   ) +
   theme_publication() +
   theme(legend.position = "right")
-p
-
-
 ```
 
 ## Beta Regression
@@ -333,31 +357,23 @@ head(fluency_data) |>
 
 ```{r}
 #| label: fig-flu1
-#| fig-cap: "Fluency accuracy: Raw data (points), half-boxplot, and Mean marker (dot)"
-#| echo: false
-#|
+#| fig-cap: "Raw accuracy observations and means with 95% CIs."
+
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
-  geom_half_point(
+  geom_point(
     aes(color = Fluency),
-    transformation = ggbeeswarm::position_quasirandom(width = 0.1),
-    side = "l",
-    size = 1,
-    alpha = 0.5
-  ) +
-  geom_half_boxplot(
-    side = "r"
+    position = position_quasirandom(width = 0.1),
+    size = 1
   ) +
   stat_summary(
-    fun = mean,
-    geom = "point",
-    shape = 21, # triangle
-    size = 4,
-    color = "black",
-    fill = "black",
-    position = position_nudge(x = .2)  # Center the mean dot
+    fun.data = mean_cl_normal,
+    geom = "pointrange",
+    shape = 21,
+    size = 1,
+    linewidth = 1
   ) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  ggokabeito::scale_fill_okabe_ito() +
+  scale_y_continuous(labels = label_percent()) +
+  scale_fill_okabe_ito(aesthetics = c("fill", "color")) +
   theme_publication() +
   theme(legend.position = "none")
 ```
@@ -370,7 +386,9 @@ Before we fit the regression model, we will read in the data.
 #| eval: false
 
 # get data here from github
-fluency_data <- read.csv("https://raw.githubusercontent.com/jgeller112/beta_regression_tutorial/refs/heads/main/manuscript/data/fluency_data.csv?token=GHSAT0AAAAAADGFWDDEGP3PKLA26WYDLYG62DFKN3Q")
+fluency_data <- read.csv(
+  "https://raw.githubusercontent.com/jgeller112/beta_regression_tutorial/refs/heads/main/manuscript/data/fluency_data.csv?token=GHSAT0AAAAAADGFWDDEGP3PKLA26WYDLYG62DFKN3Q"
+)
 ```
 
 The first few rows of the data are displayed in @tbl-dataset. The dataset contains three columns:
@@ -387,8 +405,7 @@ The first few rows of the data are displayed in @tbl-dataset. The dataset contai
 #| tbl-align: "center"
 #| apa-note: "Reported as: Mean \\[95% CrI\\] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit."
 
-
-knitr::include_graphics(here::here(
+include_graphics(here(
   "manuscript",
   "Figures",
   "combined_table.png"
@@ -409,7 +426,7 @@ We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages
 ```{r}
 #| echo: true
 #| eval: false
-# load brms and cmdstanr 
+# load brms and cmdstanr
 library(brms)
 library(cmdstanr)
 ```
@@ -419,10 +436,12 @@ library(cmdstanr)
 cmdstanr::install_cmdstan()
 ```
 
-We fit the model using the `brm()` function, as shown in the code below. To speed up processing we set `cores` = 4, and use the `cmdstand` backend. The output provides estimates for each effect: the coefficient (`b_,`) representing the mean of the posterior distribution), its estimation error (the standard deviation of the posterior distribution), and the 95% credible interval (Cr.I), which indicate the most credible values within the distribution. We inferred evidence for an effect when the 95% Cr.I did not include zero.
+We fit the model using the `brm()` function, as shown in @lst-gauss. To speed up processing we set `cores` = 4, and use the `cmdstand` backend. The output provides estimates for each effect: the coefficient (`b_,`) representing the mean of the posterior distribution), its estimation error (the standard deviation of the posterior distribution), and the 95% credible interval (Cr.I), which indicate the most credible values within the distribution. We inferred evidence for an effect when the 95% Cr.I did not include zero.
 
 ```{r}
-#| label: Bayesian_regression_model
+#| label: fit-gauss
+#| lst-label: lst-gauss
+#| lst-cap: Fitting a gaussian model with brm().
 #| echo: true
 #| warning: false
 #| message: false
@@ -434,7 +453,7 @@ bayes_ols_model <- brm(
   Accuracy ~ Fluency,
   data = fluency_data,
   cores = 4,
-  chains=4, 
+  chains = 4,
   backend = "cmdstanr",
   file = "model_ols_bayes"
 )
@@ -465,7 +484,7 @@ There are some notable differences between our Bayesian analysis and the frequen
 #| fig-cap: "Two assumption checks for our OLS model: Normality (left) and Homogeneity (right)"
 #| echo: true
 
-performance::check_model(bayes_ols_model, check = c("homogeneity", "normality"))
+check_model(bayes_ols_model, check = c("homogeneity", "normality"))
 ```
 
 We can also examine how well the data fits the model by performing a posterior predictive check. In @fig-ppcheck-normal, multiple draws or repetitions from the posterior distribution are plotted (light blue lines) against the observed data. (dark green). Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). In our example, the model-predicted density is slightly too peaked and narrow compared to the data. In addition, some of the draws extend into negative accuracy values.
@@ -475,7 +494,7 @@ We can also examine how well the data fits the model by performing a posterior p
 #| fig-cap: "Posterior predictive check"
 #| echo: false
 
-check_model(bayes_ols_model, check = "pp_check") 
+check_model(bayes_ols_model, check = "pp_check")
 
 ```
 
@@ -511,21 +530,7 @@ beta_brms <- brm(
 )
 ```
 
-```{r}
-#| label: tbl-01s
-#| tbl-cap: Number of zeros and ones in our dataset
-#| echo: false
-#| after-caption-space: 0pt
-
-fluency_data |>
-  filter(Accuracy == 0 | Accuracy == 1) |> # get onlys 0s and 1s
-  count(Accuracy) |> # count them
-  rename("Count" = "n") |>
-  tt() |>
-  format_tt(escape = TRUE)
-```
-
-@tbl-01s shows we have 9 rows with accuracy of 0, and 1 row with an accuracy of exactly 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the interval of \[0-1\]. The model `beta_brms` uses data where 0s and 1s are changed to .01 and .99, respectively.
+However, the dataset has nine zeros and one 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the [0, 1] interval. The model `beta_brms` uses data where 0s and 1s are changed to .01 and .99, respectively.
 
 ```{r}
 
@@ -545,8 +550,8 @@ We can rerun our model replacing `fluency_data` with `data_beta` in the below fu
 beta_brms <- brm(
   model_beta_bayes,
   data = data_beta,
-  chains=4, 
-  cores=4, 
+  chains = 4,
+  cores = 4,
   family = Beta(),
   backend = "cmdstanr",
   file = "model_beta_bayes_reg_1" # Save this so it doesn't have to always rerun
@@ -686,7 +691,7 @@ pred_draws_beta <- avg_predictions(beta_brms, variables = "Fluency") |>
 # Plot both models
 ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
   stat_halfeye(.width = c(.5, .8, .95), alpha = 0.7) +
-  ggokabeito::scale_fill_okabe_ito() +
+  scale_fill_okabe_ito() +
   scale_x_continuous(labels = label_percent()) +
   labs(
     x = "Accuracy",
@@ -921,7 +926,7 @@ pred_combined <- bind_rows(pred_no, pred_yes)
 
 ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
   stat_halfeye(.width = c(.8, .95), alpha = 0.7) +
-  ggokabeito::scale_fill_okabe_ito() +
+  scale_fill_okabe_ito() +
   # guides(fill = guide_legend(title = "Model")) +  # Remove or comment out
   labs(
     x = "Fluency",
@@ -931,8 +936,6 @@ ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
   theme_publication() +
   theme(legend.position = "none")
-
-
 ```
 
 ### Posterior Predictive Check
@@ -989,7 +992,8 @@ fit_zi <- brm(
   data = data_beta_0,
   chain = 4,
   cores = 4,
-  backend = "cmdstanr")
+  backend = "cmdstanr"
+)
 ```
 
 ```{r}
@@ -1220,10 +1224,7 @@ p <- ggplot() +
   ) +
   theme_publication() +
   scale_x_continuous(labels = label_percent())
-
-
 p
-
 ```
 
 To fit a ZOIB model we use the `bf()` function. We model each parameter as a function of Fluency.
@@ -1249,7 +1250,7 @@ We then pass the `zoib_model` to our `brm()` function. The summary of the output
 #| echo: true
 #| results: hide
 #| message: false
-
+#|
 # run the zoib mode using brm
 
 fit_zoib <- brm(
@@ -1257,7 +1258,8 @@ fit_zoib <- brm(
   data = fluency_data,
   chains = 4,
   cores = 4,
-  backend = "cmdstanr")
+  backend = "cmdstanr"
+)
 ```
 
 ```{r}
@@ -1266,7 +1268,7 @@ fit_zoib <- brm(
 #| after-caption-space: 0pt
 #| eval: false
 
-zoib_model <- parameters::model_parameters(fit_zoib, "mean")
+zoib_model <- model_parameters(fit_zoib, "mean")
 
 zoib_model |>
   mutate(
@@ -1336,7 +1338,8 @@ ord_fit_brms <- ordbetareg(
   data = fluency_data,
   chains = 4,
   cores = 4,
-  backend = "cmdstanr")
+  backend = "cmdstanr"
+)
 ```
 
 However, if we want dispersion to vary as a function of fluency we can easily do that. Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because we are modeling $\phi$ as a function of fluency, we set the the argument to `both.`
@@ -1387,10 +1390,10 @@ ord_beta_avg |>
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-select(Term, Contrast, Mean, `95% Cr.I`) |>
-tt() |>
-format_tt(digits = 3) |>
-format_tt(escape = TRUE)
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
+  tt() |>
+  format_tt(digits = 3) |>
+  format_tt(escape = TRUE)
 
 ```
 
@@ -1466,7 +1469,7 @@ In the `ordbetareg` function there is a `true_bound` argument. In the case where
 ```{r}
 #| eval: false
 
-# this code runs all models from above and creates table. This does not run each time and it set not to run. 
+# this code runs all models from above and creates table. This does not run each time and it set not to run.
 
 # BAYESIAN REGRESSION
 brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
@@ -1547,7 +1550,10 @@ combined_table_clean <- combined_table %>%
 combined_table_clean |>
   tt(digits = 2) |>
   format_tt(escape = TRUE) |>
-  save_tt(here::here("manuscript", "Figures", "combined_table.png"), overwrite=TRUE)
+  save_tt(
+    here("manuscript", "Figures", "combined_table.png"),
+    overwrite = TRUE
+  )
 ```
 
 # Discussion
