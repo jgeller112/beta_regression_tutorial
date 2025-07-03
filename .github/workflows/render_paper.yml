@@ -55,7 +55,23 @@ jobs:
     - name: Generate default.nix
       if: env.changed == 'true'
       run: nix-shell -p R rPackages.rix --run 'R -e "source(\"create_env_dev.R\")"'
-      
+
+    - name: Install MS fonts
+      if: env.changed == 'true'
+      run: |
+        echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
+        sudo apt-get install -y --no-install-recommends fontconfig ttf-mscorefonts-installer
+        fc-cache -fv
+
+    - name: Build development environment
+      if: env.changed == 'true'
+      run: nix-build
+
+    - name: Quarto render manuscript
+      if: env.changed == 'true'
+      run: |
+        nix-shell --run "quarto render manuscript/ms.qmd"
+        
     - name: Checkout rendered branch
       if: env.changed == 'true'
       uses: actions/checkout@v3
