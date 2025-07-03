@@ -33,9 +33,7 @@ author:
     affiliations:
       - name: School
     roles:
-      - writing
       - editing
-      - formal analysis
   - name: Matti Vuorre
     orcid: 0000-0001-5052-066X
     affiliations:
