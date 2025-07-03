@@ -26,7 +26,6 @@ author:
     affiliations:
       - name: University of South Carolina
     roles:
-      - writing
       - editing
       - formal analysis
   - name: Chelsea M. Parlett Pelleriti
