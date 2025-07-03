@@ -144,10 +144,7 @@ options(
   brms.short_summary = TRUE,
   rms.backend = Sys.getenv("BRMS_BACKEND", "cmdstanr"),
   brms.threads = as.numeric(Sys.getenv("BRMS_THREADS", 2)),
-  mc.cores = as.numeric(Sys.getenv("MAX_CORES", 4)),
-  tinytable_tt_digits = 2,
-  tinytable_format_num_fmt = "decimal",
-  tinytable_format_num_zero = TRUE
+  mc.cores = as.numeric(Sys.getenv("MAX_CORES", 4))
 )
 
 
