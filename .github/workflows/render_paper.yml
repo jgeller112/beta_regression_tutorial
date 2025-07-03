@@ -61,7 +61,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
 
-    - name: Copy and commit manuscript to rendered branch
+    - name: Overwrite rendered branch with new manuscript
       if: env.changed == 'true'
       working-directory: rendered-branch
       env:
@@ -71,7 +71,7 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
         git fetch origin main
-        git merge origin/main --no-edit || git rebase origin/main
+        git reset --hard origin/main
 
         rm -rf manuscript
         cp -r ../manuscript manuscript
