@@ -230,8 +230,6 @@ We begin the tutorial with a non-technical overview of the Beta distribution and
 
 [^1]: In this article, we try to limit code where possible; however, the online version has all the code needed to reproduce all analyses herein. Furthermore, to promote transparency and reproduciblity, the tutorial was written in R version 4.4.3 (@R) using Quarto (v.1.5.54), an open-source publishing system that allows for dynamic and static documents. This allows figures, tables, and text to be programmatically included directly in the manuscript, ensuring that all results are seamlessly integrated into the document. In addition, we use the `rix` [@rix] R package which harnesses the power of the `nix` [@nix] ecosystem to to help with computational reproducibility. Not only does this give us a snapshot of the packages used to create the current manuscript, but it also takes a snapshot of system dependencies used at run-time. This way reproducers can easily re-use the exact same environment by installing the `nix` package manager and using the included default.nix file to set up the right environment. The README file in the GitHub repository contains detailed information on how to set this up to reproduce the contents of the current manuscript, including a video.
 
-<!-- TODO: Link to a timestamped archive instead of GitHub: Publish GitHub releases as Zenodo snapshots. -->
-
 ## Beta Distribution
 
 Proportional data pose some challenges for standard modeling approaches: The data are bounded between 0 and 1 and often exhibit non-constant variance (heteroscedasticity) [@ferrari2004; @paolino2001]. Common distributions used within the GLM or GLiM frameworks often fail to capture these properties adequately, which can necessitate alternative modeling strategies.
@@ -483,16 +481,15 @@ pp_check1 <- pp_check(bayes_reg_model, ndraws = 100) +
 
 ```
 
-Given the outcome variable is proportional, one solution would be to run a beta regression model. Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we model two parameters--$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms` (@lst-beta). `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
+Given the outcome variable is proportional, one solution would be to run a beta regression model. Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we model two parameters--$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms` (@lst-beta01). `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
 
-If we try to run `beta_brms`, however, we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the Beta distribution only supports observations in the 0 to 1 interval *excluding exact zeros and ones*. We need make sure there are no zeros and ones in our dataset.
+If we try to run a model with our data `data_fleuncy` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the Beta distribution only supports observations in the 0 to 1 interval *excluding exact zeros and ones*. We need make sure there are no zeros and ones in our dataset.
 
+If we look at the dataset we will see that it contains nine zeros and one 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the \[0, 1\] interval. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are changed to .01 and .99, respectively. When we run it we should not get no error. 
 ```{r}
-#| label: brms-beta-model
-#| lst-label: lst-beta
-#| lst-cap: Setting up and fitting a beta model with brm().
-#| results: hide
-#| eval: true
+#| label: beta_brms_01s
+#| lst-label: lst-beta01
+#| lst-cap: Fitting a beta model without 0s and 1s in brm().
 #| echo: true
 
 # set up model formual
@@ -501,22 +498,6 @@ model_beta_bayes <- bf(
   phi ~ 1 # fit phi model
 )
 
-# fit beta model
-beta_brms <- brm(
-  model_beta_bayes,
-  data = fluency_data,
-  family = Beta(),
-  file = "model_beta_bayes_reg" # Save this so it doesn't have to always rerun
-)
-```
-
-However, the dataset has nine zeros and one 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the \[0, 1\] interval. The model from @lst-beta01 uses data (`data_beta`) where 0s and 1s are changed to .01 and .99, respectively.
-
-```{r}
-#| label: beta_brms_01s
-#| lst-label: lst-beta01
-#| lst-cap: Fitting a beta model without 0s and 1s in brm().
-#| echo: true
 
 # transform 0 to 0.1 and 1 to .99
 data_beta <- fluency_data |>
@@ -532,11 +513,106 @@ beta_brms <- brm(
 )
 ```
 
-No errors this time! We will perform the Beta regression using the nudged Accuracy values 01 and .99 values and report our results.
-
 ### Model Parameters
 
-@tbl-all displays the summary from all out Bayesian implementation. The $\mu$ parameter estimates, which are labeled with an underscore `b_`while $\phi$ parameter coefficients are tagged with b`_phi` in the `Parameter` column.
+In @tbl-all under the Beta Regression column, the first set of coefficients represent how factors influence the $\mu$ parameter estimates (which is the mean of the Beta distribution), which are labeled with an underscore `b_`.  These coefficients are interpreted on the scale of the logit, meaning they represent linear changes on a nonlinear space. The intercept term `(b_Intercept)` represents the log odds of the mean on accuracy for the fluent instructor. Log odds that are negative indicate that it is more likely a "success" (like getting the correct answer) will NOT happen than that it will happen. Similarly, regression coefficients in log odds forms that are negative indicate that an increase in that predictor leads to a decrease in the predicted probability of a "success". 
+
+The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `b_phi` in @tbl-all. The dispersion ($\phi$) parameter tells us how precise our estimate is. Specifically, $\phi$ in Beta regression tells us about the variability of the response variable around its mean. Specifically, a higher dispersion parameter indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.
+
+Understanding the dispersion parameter helps us gauge the precision of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all). The intercept under the precision heading is not that interesting. It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the phi model in `bf()`. We model the precision of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
+
+```{r}
+#| label: brms-model-dis
+#| lst-label: lst-betadis
+#  lst-cap: Fitting Beta model with dispersion in `brm()`.
+#| results: hide
+#| echo: true
+
+model_beta_bayes_disp <- bf(
+  Accuracy ~ Fluency, # Model of the mean
+  phi ~ Fluency # Model of the precision
+)
+
+beta_brms_dis <- brm(
+  model_beta_bayes_disp,
+  data = data_beta,
+  family = Beta(),
+  file = "model_beta_bayes_dis_run"
+)
+
+```
+
+@tbl-all displays the model summary with the precision parameter added to our model as a function of fluency. It is important to note that the estimates are logged and not on the original scale (this is only the case when additional parameters are modeled). To interpret them on the original scale, we can exponentiate the log-transformed value--this transformation gets us back to our original scale. In the below model call, we set `exponentiate` = TRUE.
+
+```{r}
+#| label: phi-beta
+#| echo: true
+#| after-caption-space: 0pt
+
+beta_model_dis_exp <- beta_brms_dis |>
+  model_parameters(exponentiate = TRUE, centrality = "mean")
+```
+
+```{r}
+#| label: tbl-phi-beta-exp
+#| echo: false
+#| tbl-cap: Beta regression model summary for fluency factor with $\phi$ parameter exponentiated
+#| after-caption-space: 0pt
+
+beta_model_dis_exp |>
+  filter(startsWith(Parameter, "b_phi")) |>
+  mutate(
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% CI` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% CI`, pd) |>
+  tt(digits = 3) |>
+  format_tt(escape = TRUE)
+
+```
+
+The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `Fluency1` represents the change in that precision for performance between the fluent vs. disfluent conditions. The CI does not include 0: Zero is not among the 95% most credible parameter values.
+
+It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
+
+A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model increased the uncertainty of the $\mu$ coefficient (see @fig-plt-diff)--our CI is now very close to zero. This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like Beta regression over a traditional approach as Beta regression can explicitly model dispersion and address issues of heteroscedasticity.
+
+<!-- TODO: It is only reasonable to mention somewhere (early when ideas first introduced) that a normal model can also model dispersion. -->
+
+We won't always need to include dispersion parameters for each of our variables. One approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.
+
+```{r}
+#| label: fig-plt-diff
+#| fig-cap: "Comparison of posterior distributions for the risk difference in fluency: Simple model  (no dispersion for Fluency) vs. complex model with  dispersion"
+#| echo: false
+
+# Add a model identifier to each dataset
+pred_no <- avg_comparisons(beta_brms, variables = "Fluency") |>
+  posterior_draws() |>
+  mutate(model = "No Dispersion")
+
+pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") |>
+  posterior_draws() |>
+  mutate(model = "Dispersion")
+
+# Combine both datasets
+pred_combined <- bind_rows(pred_no, pred_yes)
+
+ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
+  stat_halfeye(.width = c(.8, .95), alpha = 0.7) +
+  scale_fill_okabe_ito() +
+  # guides(fill = guide_legend(title = "Model")) +  # Remove or comment out
+  labs(
+    x = "Fluency",
+    y = "Difference in Final Recall Performance",
+    caption = "80% and 95% credible intervals shown in black"
+  ) +
+  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
+  theme_publication() +
+  theme(legend.position = "none")
+```
+
+
 
 ```{r}
 #| label: beta-brms
@@ -573,8 +649,6 @@ model_parameters(beta_brms, "mean") |>
   format_tt(escape = TRUE)
 
 ```
-
-In @tbl-all under the Beta Regression column, the first set of coefficients represent how factors influence the $\mu$ parameter, which is the mean of the beta distribution. These coefficients are interpreted on the scale of the logit, meaning they represent linear changes on a nonlinear space. The intercept term `(b_Intercept)` represents the log odds of the mean on accuracy for the fluent instructor. Log odds that are negative indicate that it is more likely a "success" (like getting the correct answer) will NOT happen than that it will happen. Similarly, regression coefficients in log odds forms that are negative indicate that an increase in that predictor leads to a decrease in the predicted probability of a "success".
 
 ### Predicted Probabilities
 
@@ -675,7 +749,7 @@ Marginal effects provide a way to understand how changes in a predictor influenc
 
 There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular `emmeans` package [@emmeans]computes marginal effects by holding all predictors at their means. In this tutorial, we will use the `marginaleffects` package [@margeffects2024], which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.
 
-One practical application of AMEs is calculating the average difference between two groups or conditions (called the risk difference). Using the `avg_comparisons()` function in the `marginaleffects` package (@lst-avgcomp), we can compute this metric directly. By default, the function calculates the discrete difference between groups. The fucntion can also compute other effect size metrics, such as odds ratios and risk ratios, depending on the research question (see @tbl-or for an example). This flexibility makes it a powerful tool for interpreting regression results in a meaningful way.
+One practical application of AMEs is calculating the average difference between two groups or conditions (called the risk difference). Using the `avg_comparisons()` function in the `marginaleffects` package (@lst-avgcomp), we can compute this metric directly. By default, the function calculates the discrete difference between groups. The fucntion can also compute other effect size metrics, such as odds ratios and risk ratios, depending on the research question. This flexibility makes it a powerful tool for interpreting regression results in a meaningful way.
 
 ```{r}
 #| label: ame1
@@ -708,19 +782,6 @@ beta_avg_comp |>
 ```
 
 @tbl-ame1 displays the difference for the fluency factor (`Mean` column). The difference between the fluent and disfluent conditions is .09. That is, participants who watched a fluent instructor scored 9% higher on the final recall test than participants who watched the disfluent instructor. Our credible interval \[-.0174, -0.011\] shows that zero is not among the 95% most credible values.
-
-We can also get the odds ratio with `avg_comparisons()` (see @lst-ord and @tbl-or).
-
-```{r}
-#| label: tbl or
-#| lst-label: lst-ord
-#| lst-cap: Getting odds ratio for Fluency.
-#| echo: true
-
-# get odds ratios as an example
-or <- avg_comparisons(beta_brms, comparison = "lnoravg", transform = "exp")
-
-```
 
 ```{r}
 #| label: tbl-or
@@ -769,132 +830,12 @@ $$
 h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)
 $$
 
-### Precision
-
-The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `b_phi` in @tbl-all. The dispersion ($\phi$) parameter tells us how precise our estimate is. Specifically, $\phi$ in Beta regression tells us about the variability of the response variable around its mean. Specifically, a higher dispersion parameter indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.
-
-Understanding the dispersion parameter helps us gauge the precision of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all).
-
-```{r}
-#| label: tbl phi dis
-#| tbl-cap: Dispersion parameter
-#| eval: false
-#| after-caption-space: 0pt
-
-model_parameters(beta_brms, "mean") |>
-  filter(startsWith(Parameter, "b_phi")) |>
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% CI` = str_glue("[{CI_low}, {CI_high}]")
-  ) |>
-  select(Parameter, Mean, `95% CI`, pd) |>
-  tt() |>
-  format_tt(digits = 3) |>
-  format_tt(escape = TRUE)
-```
-
-The intercept under the precision heading is not that interesting. It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the phi model in `bf()`. We model the precision of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
-
-```{r}
-#| label: brms-model-dis
-#| lst-label: lst-betadis
-#  lst-cap: Fitting Beta model with dispersion in `brm()`.
-#| results: hide
-#| echo: true
-
-model_beta_bayes_disp <- bf(
-  Accuracy ~ Fluency, # Model of the mean
-  phi ~ Fluency # Model of the precision
-)
-
-beta_brms_dis <- brm(
-  model_beta_bayes_disp,
-  data = data_beta,
-  family = Beta(),
-  file = "model_beta_bayes_dis_run"
-)
-
-```
-
-@tbl-all displays the model summary with the precision parameter added to our model as a function of fluency. It is important to note that the estimates are logged and not on the original scale (this is only the case when additional parameters are modeled). To interpret them on the original scale, we can exponentiate the log-transformed value--this transformation gets us back to our original scale. In the below model call, we set `exponentiate` = TRUE.
-
-```{r}
-#| label: phi-beta
-#| echo: true
-#| after-caption-space: 0pt
-
-beta_model_dis_exp <- beta_brms_dis |>
-  model_parameters(exponentiate = TRUE, centrality = "mean")
-```
-
-```{r}
-#| label: tbl-phi-beta-exp
-#| echo: false
-#| tbl-cap: Beta regression model summary for fluency factor with $\phi$ parameter exponentiated
-#| after-caption-space: 0pt
-
-beta_model_dis_exp |>
-  filter(startsWith(Parameter, "b_phi")) |>
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% CI` = str_glue("[{CI_low}, {CI_high}]")
-  ) |>
-  select(Parameter, Mean, `95% CI`, pd) |>
-  tt(digits = 3) |>
-  format_tt(escape = TRUE)
-
-```
-
-The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `Fluency1` represents the change in that precision for performance between the fluent vs. disfluent conditions. The CI does not include 0: Zero is not among the 95% most credible parameter values.
-
-It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion will change the shape of the distribution but not necessarily the average value of the response. This makes dispersion most interesting for research questions that focus on other features of the distribution besides the mean, such as the level of polarization in an outcome.
-
-<!-- TODO: What do you mean by "the level of polarization in an outcome"? -->
-
-A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model increased the uncertainty of the $\mu$ coefficient (see @fig-plt-diff)--our CI is now very close to zero. This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like Beta regression over a traditional approach as Beta regression can explicitly model dispersion and address issues of heteroscedasticity.
-
-<!-- TODO: It is only reasonable to mention somewhere (early when ideas first introduced) that a normal model can also model dispersion. -->
-
-We won't always need to include dispersion parameters for each of our variables. One approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.
-
-```{r}
-#| label: fig-plt-diff
-#| fig-cap: "Comparison of posterior distributions for the risk difference in fluency: Simple model  (no dispersion for Fluency) vs. complex model with  dispersion"
-#| echo: false
-
-# Add a model identifier to each dataset
-pred_no <- avg_comparisons(beta_brms, variables = "Fluency") |>
-  posterior_draws() |>
-  mutate(model = "No_Disp")
-
-pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") |>
-  posterior_draws() |>
-  mutate(model = "Disp")
-
-# Combine both datasets
-pred_combined <- bind_rows(pred_no, pred_yes)
-
-ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
-  stat_halfeye(.width = c(.8, .95), alpha = 0.7) +
-  scale_fill_okabe_ito() +
-  # guides(fill = guide_legend(title = "Model")) +  # Remove or comment out
-  labs(
-    x = "Fluency",
-    y = "Difference in Final Recall Performance",
-    caption = "80% and 95% credible intervals shown in black"
-  ) +
-  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
-  theme_publication() +
-  theme(legend.position = "none")
-```
-
 ### Posterior Predictive Check
 
-@fig-ppcheckall (B) shows the predictive check for our beta model. The model does a pretty good job at capturing the data, but it could be better.
+@fig-ppcheckall (B) shows the predictive check for our beta model. The model does a pretty good job at capturing the data (The draws are now between 0-1) and the the model predicted values follow the observed data. However, it could be better.
 
 ```{r}
 #| label: fig post pred
-
 pp_check2 <- pp_check(beta_brms_dis, ndraws = 100) +
   theme_publication()
 ```
@@ -1230,24 +1171,24 @@ The ordered beta regression model has shown to be more efficient and less biased
 
 ### Fitting an Ordered Beta Regression
 
-To fit an ordered Beta regression in a Bayesian context we use the `ordbetareg` [@ordbetareg] package. `ordbetareg` is a front-end to the `brms` package that we described earlier; in addition to the functions available in the package, most `brms` functions and plots, including the diverse array of regression modeling options, will work with `ordbetareg` models.
-
-We first load the `ordbetareg` package.
+To fit an ordered Beta regression in a Bayesian context we use the `ordbetareg` [@ordbetareg] package. `ordbetareg` is a front-end to the `brms` package that we described earlier; in addition to the functions available in the package, most `brms` functions and plots, including the diverse array of regression modeling options, will work with `ordbetareg` models. We first load the `ordbetareg` package (see @lst-ordbeta). 
 
 ```{r}
 #| echo: true
+#| lst-label: lst-ordbeta
+#| lst-cap: Load `ordbetareg`
 #| label: load ordbetareg
 #| eval: false
 
 library(ordbetareg)
 ```
 
-The `ordbetareg` package uses `brms` on the front-end so all the arguments we used previously apply here. Instead of the `brm()` function we use `ordbetareg()`.
-
-To fit a model where dispersion does not vary as a function of fluency we can use the below code.
+The `ordbetareg` package uses `brms` on the front-end so all the arguments we used previously apply here. Instead of the `brm()` function we use `ordbetareg()`. To fit a model where dispersion does not vary as a function of fluency we can use the below code (see @lst-fitordbeta). 
 
 ```{r}
 #| label: brms-ordered-beta-model
+#| lst-label: lst-fitordbeta
+#| lst-cap: Fitting ordered beta model with `ordbetareg()`
 #| results: hide
 #| echo: true
 
@@ -1258,10 +1199,12 @@ ord_fit_brms <- ordbetareg(
 )
 ```
 
-However, if we want dispersion to vary as a function of fluency we can easily do that. Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because we are modeling $\phi$ as a function of fluency, we set the the argument to `both.`
+However, if we want dispersion to vary as a function of fluency we can easily do that (see @lst-ordbetadisp). Note the addition of the `phi_reg` argument in `m.phi`. This argument allows us to include a model that explicitly models the dispersion parameter. Because we are modeling $\phi$ as a function of fluency, we set the the argument to `both.`
 
 ```{r}
 #| label: brms ordered beta model phi
+#| lst-label: lst-ordbetadisp
+#| lst-cap: Fitting ordered beta model with dispersion using `ordbetareg()`
 #| results: hide
 #| echo: true
 
@@ -1370,8 +1313,6 @@ plot_heiss(
   recode_group_labels = c("Fluency", "Disfluency")
 )
 ```
-
-<!-- TODO: Consider if this figure adds to the manuscript or will simply give additional burden of interpretation to readers. -->
 
 ### Ordered Beta Scale
 
