@@ -33,6 +33,7 @@ author:
     affiliations:
       - name: School
     roles:
+      - formal analysis
       - editing
   - name: Matti Vuorre
     orcid: 0000-0001-5052-066X
@@ -432,8 +433,8 @@ library(cmdstanr)
 bayes_reg_model <- brm(
   Accuracy ~ Fluency,
   data = fluency_data,
-  family = Gaussian(),
-  file = "model_reg_bayes"
+  family = gaussian(),
+  #file = "model_reg_bayes"
 )
 
 summary(bayes_reg_model)
