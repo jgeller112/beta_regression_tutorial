@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-*.rds
+manuscript/*rds
 manuscript/model_*
 manuscript/ms_cache/
 manuscript/ms_files/
@@ -10,4 +10,4 @@ manuscript/Figures/
 manuscript/*.pdf
 manuscript/*.html
 manuscript/*.docx
-.DS_Store
+*.DS_Store

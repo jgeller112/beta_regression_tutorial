@@ -45,7 +45,6 @@ jobs:
         log-directives: nix_installer=trace
         backtrace: full
 
-
     - name: Use rstats-on-nix cache
       if: env.changed == 'true'
       uses: cachix/cachix-action@v15
@@ -67,11 +66,23 @@ jobs:
       if: env.changed == 'true'
       run: nix-build
 
-    - name: Quarto render manuscript
+    - name: Quarto render manuscript (PDF, DOCX, HTML, MD)
       if: env.changed == 'true'
       run: |
-        nix-shell --run "quarto render manuscript/ms.qmd"
-        
+        nix-shell --run "quarto render manuscript/ms.qmd --to pdf"
+        nix-shell --run "quarto render manuscript/ms.qmd --to docx"
+        nix-shell --run "quarto render manuscript/ms.qmd --to html"
+        nix-shell --run "quarto render manuscript/ms.qmd --to markdown"
+
+    - name: Copy outputs to temporary folder
+      if: env.changed == 'true'
+      run: |
+        mkdir -p out
+        cp manuscript/ms.qmd out/
+        cp manuscript/ms.pdf out/
+        cp manuscript/ms.docx out/
+        cp manuscript/ms.html out/
+
     - name: Checkout rendered branch
       if: env.changed == 'true'
       uses: actions/checkout@v3
@@ -81,7 +92,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
 
-    - name: Overwrite rendered branch with new manuscript
+    - name: Overwrite rendered branch with outputs
       if: env.changed == 'true'
       working-directory: rendered-branch
       env:
@@ -90,12 +101,14 @@ jobs:
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-        git fetch origin main
-        git reset --hard origin/main
-
         rm -rf manuscript
-        cp -r ../manuscript manuscript
+        mkdir -p manuscript
+        cp ../out/ms.qmd manuscript/
+        cp ../out/ms.pdf manuscript/
+        cp ../out/ms.docx manuscript/
+        cp ../out/ms.html manuscript/
+        cp ../out/ms.md manuscript/
 
         git add manuscript/
-        git commit -m "Rendered manuscript output [ci skip]" || echo "No changes to commit"
+        git commit -m "Rendered manuscript outputs [ci skip]" || echo "No changes to commit"
         git push --force origin rendered
