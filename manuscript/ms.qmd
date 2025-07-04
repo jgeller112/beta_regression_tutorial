@@ -375,7 +375,7 @@ In their original analysis of Experiment 1A, @wilford2020 compared memory perfor
 
 ```{r}
 #| label: fig-flu1
-#| fig-cap: "Raincloud plot depciting accuracy for Fluent and Disfluent conditions"
+#| fig-cap: "Raincloud plot depicting accuracy distributions for the Fluent and Disfluent conditions. Each condition shows individual data points, a density plot, and summary statistics to illustrate variability and central tendency."
 
 ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
   geom_rain(
@@ -615,7 +615,7 @@ beta_model_dis_exp |>
 
 ```
 
-The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `Fluency1` represents the change in that precision for performance between the fluent vs. disfluent conditions. The CI does not include 0: Zero is not among the 95% most credible parameter values.
+The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `FluencyFluent` represents the change in that precision for performance between the fluent vs. disfluent conditions. The Cr.I does not include 0: Zero is not among the 95% most credible parameter values.
 
 It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
 
