@@ -69,7 +69,7 @@ jobs:
     - name: Quarto render manuscript (PDF, DOCX, HTML)
       if: env.changed == 'true'
       run: |
-        nix-shell --run "quarto render manuscript/ms.qmd
+        nix-shell --run "quarto render manuscript/ms.qmd"
 
     - name: Copy full manuscript folder to temporary directory
       if: env.changed == 'true'
