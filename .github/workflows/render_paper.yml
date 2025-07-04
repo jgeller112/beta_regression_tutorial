@@ -106,7 +106,6 @@ jobs:
         cp ../out/ms.pdf manuscript/
         cp ../out/ms.docx manuscript/
         cp ../out/ms.html manuscript/
-        cp ../out/ms.md manuscript/
 
         git add manuscript/
         git commit -m "Rendered manuscript outputs [ci skip]" || echo "No changes to commit"
