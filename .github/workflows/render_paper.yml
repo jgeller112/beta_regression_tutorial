@@ -72,7 +72,6 @@ jobs:
         nix-shell --run "quarto render manuscript/ms.qmd --to pdf"
         nix-shell --run "quarto render manuscript/ms.qmd --to docx"
         nix-shell --run "quarto render manuscript/ms.qmd --to html"
-        nix-shell --run "quarto render manuscript/ms.qmd --to markdown"
 
     - name: Copy outputs to temporary folder
       if: env.changed == 'true'
