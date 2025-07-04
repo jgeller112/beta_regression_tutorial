@@ -66,21 +66,16 @@ jobs:
       if: env.changed == 'true'
       run: nix-build
 
-    - name: Quarto render manuscript (PDF, DOCX, HTML, MD)
+    - name: Quarto render manuscript (PDF, DOCX, HTML)
       if: env.changed == 'true'
       run: |
-        nix-shell --run "quarto render manuscript/ms.qmd --to pdf"
-        nix-shell --run "quarto render manuscript/ms.qmd --to docx"
-        nix-shell --run "quarto render manuscript/ms.qmd --to html"
+        nix-shell --run "quarto render manuscript/ms.qmd
 
-    - name: Copy outputs to temporary folder
+    - name: Copy full manuscript folder to temporary directory
       if: env.changed == 'true'
       run: |
         mkdir -p out
-        cp manuscript/ms.qmd out/
-        cp manuscript/ms.pdf out/
-        cp manuscript/ms.docx out/
-        cp manuscript/ms.html out/
+        cp -r manuscript out/
 
     - name: Checkout rendered branch
       if: env.changed == 'true'
@@ -91,7 +86,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
 
-    - name: Overwrite rendered branch with outputs
+    - name: Overwrite rendered branch with full manuscript folder
       if: env.changed == 'true'
       working-directory: rendered-branch
       env:
@@ -101,12 +96,8 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
         rm -rf manuscript
-        mkdir -p manuscript
-        cp ../out/ms.qmd manuscript/
-        cp ../out/ms.pdf manuscript/
-        cp ../out/ms.docx manuscript/
-        cp ../out/ms.html manuscript/
+        cp -r ../out/manuscript ./
 
         git add manuscript/
-        git commit -m "Rendered manuscript outputs [ci skip]" || echo "No changes to commit"
+        git commit -m "Rendered manuscript folder [ci skip]" || echo "No changes to commit"
         git push --force origin rendered

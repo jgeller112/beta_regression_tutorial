@@ -19,8 +19,12 @@ author:
       - writing
       - editing
       - data curation
+      - project administration
       - editing
       - formal analysis
+      - software
+      - visualization
+      
   - name: Robert Kubinec
     orcid: 0000-0001-6655-4119
     affiliations:
@@ -28,6 +32,7 @@ author:
     roles:
       - editing
       - formal analysis
+      - visualization
   - name: Chelsea M. Parlett Pelleriti
     orcid: 0000-0001-9301-1398
     affiliations:
@@ -35,12 +40,14 @@ author:
     roles:
       - formal analysis
       - editing
+      - validation
   - name: Matti Vuorre
     orcid: 0000-0001-5052-066X
     affiliations:
       - name: Tilburg University
     roles:
       - editing
+      - validation
       - formal analysis
 
 author-note:
@@ -190,14 +197,13 @@ theme_publication <- function(
 ```
 
 ```{r}
-# fit models beforehand so tables and figures are in correct place. 
-
+# fit models beforehand so tables and figures are in correct place.
 
 model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
-model2 <- read_rds(here("manuscript", "models","model_beta_bayes_dis_run.rds"))
-model3 <- read_rds(here("manuscript", "models","bayes_zib_model.rds"))
+model2 <- read_rds(here("manuscript", "models", "model_beta_bayes_dis_run.rds"))
+model3 <- read_rds(here("manuscript", "models", "bayes_zib_model.rds"))
 model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
-model5 <- read_rds(here("manuscript", "models","bayes_ordbeta_phi_model.rds"))
+model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
 ```
 
 ```{r}
@@ -323,7 +329,9 @@ By accounting for the observations' natural limits and non-constant variance acr
 
 Beta regression models can be estimated with both frequentist and Bayesian methods. We adopt a Bayesian framework because it makes estimating and interpreting more complex models easier [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules]. We use the R package `brms` [@brms], a high-level interface to the probabilistic programming language Stan [@stan2023], because it uses standard R regression formula syntax but extends its scope while remaining accessible for non-expert users.
 
-There are some notable differences between our Bayesian analysis and the frequenist analyses readers might be more used to seeing, such as the absence of *t*- and *p*-values. To estimate models, `brms` uses Stan's computational algorithms to draw random samples from the model's posterior distribution, which is analogous to the frequentist sampling distribution and expresses uncertainty about the model's parameters. Typically, we use the default values to get 4,000 random draws from the posterior distribution, which can then be used to calculate the posterior's mean (analogous to a frequentist point estimate) and credible interval (Cr.I, analogous to confidence intervals). Other summary quantities of interest include the probability of direction (pd) which indicates the probability that a parameter is in a given direction (above/below zero). A pd of 95%, 97.5%, 99.5% and 99.95% correspond approximately to two-sided p-value of respectively .1, .05, .01 and .001. For directional hypotheses/tests, the pd is analogous to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
+There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the `brms` package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution.
+
+By default, the Bayesian models run 4,000 posterior draws, which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval. In addition, we report the *probability of direction* (pd), which reflects the probability that a parameter is strictly positive or negative. A pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided *p*-values of 0.10, 0.05, 0.01, and 0.001, respectively. For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
 
 For reasons of space, we refer readers unfamiliar to Bayesian data analysis to several existing books on the topic [@gelman2013bayesian; @mcelreath2020statistical; @kruschke2015doing]. In addition, we assume readers are familiar with R, but those in need of a refresher should find @wickhamDataScienceImport2023 useful.
 
@@ -416,7 +424,7 @@ include_graphics(here(
 
 ### Regression Model
 
-We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages. We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the defaults used to run models.[^2]
+We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages (@lst-loadbrms). We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the default used to run models (i.e., `rstan`).[^2]
 
 [^2]: In order to use the `cmdstanr` backend you will need to first install the package and also run `cmdstanr::install_cmdstan()` if you have not done so already.
 
@@ -455,20 +463,16 @@ brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 
 ```
 
-We fit the model using the `brm()` function from the `brms` package (@lst-loadbrms). The output from `brm` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval (CI), which indicate the 95% of the most credible parameter values. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is reccomended.
+We fit the model using the `brm()` function from the `brms` package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When you run the model in @lst-gauss, the output below will appear in your console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% Cr.I, which indicate the 95% of the most credible parameter values. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms].
 
-When you run the model in @lst-gauss, the following output will appear in your console. This output summarizes the results of the Bayesian regression model. Going forward, we will present model summaries in a table (@tbl-all).[^3] The `Intercept` refers to the mean accuracy in the *disfluent* condition, as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% credible interval for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% CI" columns of the output. These results closely mirror the findings reported by @wilford2020: *t*(94) = 2.00, *p* = .048, 95% CI \[0.06, 16.56\].
+Looking at the output, the `Intercept` refers to the mean accuracy in the *disfluent* condition, as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% Cr.I for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% Cr.I" columns of the output. These results closely mirror the findings reported by @wilford2020: *t*(94) = 2.00, *p* = .048, 95% CI \[0.06, 16.56\].
 
-[^3]: We used the **`easystats`** ecosystem—specifically the `modelsummary` and `parameters` packages—to generate clean, publication-ready summaries of our Bayesian models. This approach improves upon the default output from `brms` by presenting estimates in a more readable format and by including useful Bayesian diagnostics
+The output also includes the ESS and Rhat values, both of which are within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on the posterior mean estimates and their 95% credible intervals. In addition, we also include pd measure in the main summary table (@tbl-all) which are provided by the `easystats` `bayestestr` package [@makowski2019a' @makowski2019] and provides a parallel to *p*-values most readers are probably familiar with.
 
 ```{r}
 #| label: show reg model
-
 summary(bayes_reg_model)
-
 ```
-
-The table also includes the ESS and Rhat values, both of which are within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on the posterior mean estimates and their 95% credible intervals. In addition, we also include pd in the tables, which are provided by the `easystats` `bayestestr` package [@makowski2019a' @makowski2019] and provided a parraelle to *p*-values most readers are probably familiar with.
 
 ## Beta Regression
 
@@ -505,14 +509,16 @@ pp_check3 <- pp_check(model3, ndraws = 100) +
 
 
 # Use `plot_spacer()` for the empty 4th spot
-combined_plot <- (pp_check1 + pp_check2 + pp_check3) + 
+combined_plot <- (pp_check1 + pp_check2 + pp_check3) +
   plot_annotation(
     tag_levels = 'A',
     tag_prefix = "(",
     tag_suffix = ")"
-  ) + 
-labs(caption = "Light blue lines are model-predicted data
-                 dark blue line is observed data")
+  ) +
+  labs(
+    caption = "Light blue lines are model-predicted data
+                 dark blue line is observed data"
+  )
 
 
 combined_plot
@@ -788,7 +794,7 @@ One practical application of AMEs is calculating the average difference between 
 ```{r}
 #| label: ame1
 #| lst-label: lst-avgcomp
-#| lst-cap: "Calculating the difference between probabities with `avg_comparisons()`"
+#| lst-cap: "Calculating the difference between probablities with `avg_comparisons()`"
 #| echo: true
 #|
 # get risk difference by default
@@ -815,7 +821,7 @@ beta_avg_comp |>
   format_tt(escape = TRUE)
 ```
 
-@tbl-ame1 displays the difference for the fluency factor (`Mean` column). The difference between the fluent and disfluent conditions is .09. That is, participants who watched a fluent instructor scored 9% higher on the final recall test than participants who watched the disfluent instructor. Our credible interval \[-.0174, -0.011\] shows that zero is not among the 95% most credible values.
+@tbl-ame1 displays the difference for the fluency factor (`Mean` column). The difference between the fluent and disfluent conditions is .09. That is, participants who watched a fluent instructor scored 9% higher on the final recall test than participants who watched the disfluent instructor. Our Cr.I \[-.0174, -0.011\] shows that zero is not among the 95% most credible values.
 
 ```{r}
 #| label: tbl-or
@@ -858,7 +864,7 @@ h_upper <- 2 * (asin(sqrt(p1_upper)) - asin(sqrt(p2_lower)))
 
 ```
 
-In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% CI \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
+In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% Cr.I \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
 
 $$
 h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)
@@ -1029,9 +1035,9 @@ marg_zi_brms |>
 
 ## Zero-One-Inflated Beta (ZOIB)
 
-The ZIB model works well if you have 0s in your data, but not 1s.[^4] In our previous example, we nudged our 1s to .99. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
+The ZIB model works well if you have 0s in your data, but not 1s.[^3] In our previous example, we nudged our 1s to .99. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
-[^4]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
+[^3]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
 
 Similar to our beta and zero-inflated models above, we can fit a ZOIB model in brms quite easily using the `zero_one_inflated_beta` family. In this model, we simultaneously estimate the mean ($\mu$) and precision ($\phi$) of the Beta distribution, a zero-one inflation parameter ($\alpha$) that represents the probability that an observation is either exactly 0 or 1 (i.e., 0 or 1 vs. not 0 or 1) and a conditional one-inflation parameter ($\gamma$) that represents the probability that, given an observation is at one of the endpoints, it is 1 (i.e, 1 vs. not 1). This specification captures the entire range of possible values while remaining constrained between 0 and 1. To get a better sense of how $\alpha$ and $\gamma$ control the distribution of values, @fig-zoib presents simulated data across combinations of these parameters. As $\alpha$ increases, we see a greater proportion of responses at the endpoints. As $\gamma$ increases, the proportion of endpoint responses at 1 grows relative to 0, making the spikes at 1 more prominent as $\gamma$ approaches 1. This visualization illustrates how the ZOIB model flexibly accounts for both the continuous portion of the distribution and the occurrence of exact 0s and 1s.
 
@@ -1362,7 +1368,7 @@ brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
   filter(Parameter != "sigma") %>%
   mutate(
     across(where(is.numeric), ~ round(.x, 3)),
-    `95% CI` = str_glue("[{CI_low}, {CI_high}]"),
+    `95% Cr.I` = str_glue("[{Cr.I_low}, {CI_high}]"),
     Model = "Bayesian LM"
   ) %>%
   select(Model, Parameter, Mean, `95% CI`, pd)
