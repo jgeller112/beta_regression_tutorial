@@ -30,7 +30,16 @@ library(rix)
 rix(
   date = "2025-04-07",
   r_pkgs = required_packages,
-  system_pkgs = c("quarto", "git", "pandoc", "typst", "stanc", "tbb"),
+  system_pkgs = c(
+    "quarto",
+    "git",
+    "pandoc",
+    "typst",
+    "stanc",
+    "tbb",
+    "gettext",
+    "libintl"
+  ),
   git_pkgs = list(
     list(
       package_name = "cmdstanr",
@@ -71,7 +80,7 @@ rix(
     "anyfontsize"
   ),
   shell_hook = "Rscript install_cmdstan.R",
-  ide = "positron",
+  ide = "none",
   project_path = ".",
   overwrite = TRUE
 )
