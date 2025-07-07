@@ -619,7 +619,7 @@ The $\phi$ intercept represents the precision of the fluent condition. The $\phi
 
 It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
 
-A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model increased the uncertainty of the $\mu$ coefficient (see @fig-plt-diff)--our CI is now very close to zero. This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like Beta regression over a traditional approach as Beta regression can explicitly model dispersion and address issues of heteroscedasticity.
+A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model increased the uncertainty of the $\mu$ coefficient (see @fig-plt-diff)--the Cr.I now includes zero. This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like Beta regression over a traditional approach as Beta regression can explicitly model dispersion and address issues of heteroscedasticity.
 
 We won't always need to include dispersion parameters for each of our variables. One approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.
 
@@ -999,10 +999,11 @@ marg_phi_brms |>
 
 ### Zero-Inflation
 
-In @tbl-marg-zib-brms, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% CI for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction. We can harness the power of `marginaleffects` again and plot the posterior probablity of each level (see @fig-zi-plot).
+We can harness the power of `marginaleffects` again and plot the posterior difference between the fluent and disfluent conditions (see @fig-zi-plot).In @fig-zi-plot, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% CI for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction. We can harness the power of `marginaleffects` again and plot the posterior probablity of each level (see @fig-zi-plot).
 
 ```{r}
 #| label: tbl-marg-zib-brms
+#| tbl-cap: ""
 
 marg_zi_brms <- fit_zi |>
   avg_comparisons(
@@ -1154,7 +1155,6 @@ zoib_model <- bf(
 fit_zoib <- brm(
   formula = zoib_model,
   data = fluency_data,
-  backend = "cmdstanr",
   file = "bayes_zoib_model"
 )
 ```
