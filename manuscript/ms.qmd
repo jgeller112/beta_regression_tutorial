@@ -1002,8 +1002,7 @@ marg_phi_brms |>
 We can harness the power of `marginaleffects` again and plot the posterior difference between the fluent and disfluent conditions (see @fig-zi-plot).In @fig-zi-plot, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% CI for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction. We can harness the power of `marginaleffects` again and plot the posterior probablity of each level (see @fig-zi-plot).
 
 ```{r}
-#| label: tbl-marg-zib-brms
-#| tbl-cap: ""
+#| label: marg-zib-brms
 
 marg_zi_brms <- fit_zi |>
   avg_comparisons(
