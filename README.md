@@ -23,8 +23,8 @@ beta_regression_tutorial/
   |-- Figures
   |-- data
     |-- miko_data.csv (data file for example in paper)
+    |-- fluency_data.csv (cleaned data to run models)
   |-- ms.qmd (paper)
-  |-- ms.pdf (pdf version of paper)
   |-- bibliography.bib (paper references)
   |-- _extenstions (apaquarto files)
 |-- default.nix 
