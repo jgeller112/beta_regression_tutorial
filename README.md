@@ -12,25 +12,32 @@ This repository contains  materials and code for our manuscript "A Beta Way: A T
 
 ```
 beta_regression_tutorial/
-|-- README.md (project directory information)
-|-- .vscode (contains air formatter settings for Positron)
-|-- data
-|   |-- miko_data.csv (data file for example in paper)
-|-- .Rprofile
-|-- nix-beta_reg_ms.Rproj (project file)
-|-- LICENSE
-|-- manuscript
-  |-- Figures
-  |-- data
-    |-- miko_data.csv (data file for example in paper)
-    |-- fluency_data.csv (cleaned data to run models)
-  |-- ms.qmd (paper)
-  |-- bibliography.bib (paper references)
-  |-- _extenstions (apaquarto files)
-|-- default.nix 
-|-- create_env_dev.R
-|-- install_cmdstan.R (install cmdstan to latest version in shell)
-
+├── .github/
+│   └── workflows/
+│       └── <workflow-files>.yml     # GitHub Actions workflows
+├── .vscode/
+│   └── settings.json                # Editor config (air formatter)
+├── manuscript/
+│   ├── data/
+│   │   ├── fluency_data.csv
+│   │   └── miko_data.csv
+│   ├── Figures/
+│   │   └── <rendered_figures>.png
+│   ├── _extensions/
+│   │   └── apaquarto/
+│   ├── ms.qmd                       # Main manuscript file
+│   └── bibliography.bib            # Paper references
+├── .Rprofile                      
+├── .gitignore                      # Ignore .DS_Store, etc.
+├── LICENSE                         # Project license
+├── README.md                       # Project overview
+├── air.toml                        # Air formatter config
+├── create_env_dev.R               # Script for dev environment with rix
+├── default.nix                    # Nix definition for full reproducibility
+├── grateful-refs.bib              # Generated bib for installed packages
+├── grateful-report.html           # Report of installed packages
+├── install_cmdstan.R              # Install latest CmdStan in shell
+├── nix-beta_reg_ms.Rproj          # RStudio project file
 ```
 
 ## Overview
