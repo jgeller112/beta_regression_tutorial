@@ -18,7 +18,6 @@ required_packages = c(
   "ggokabeito",
   "patchwork",
   "cowplot",
-  "viridis",
   "collapse",
   "transformr",
   "ggrain",
@@ -80,7 +79,7 @@ rix(
     "anyfontsize"
   ),
   shell_hook = "Rscript install_cmdstan.R",
-  ide = "positron",
+  ide = "none",
   project_path = ".",
   overwrite = TRUE
 )
