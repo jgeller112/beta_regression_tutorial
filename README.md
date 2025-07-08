@@ -238,14 +238,15 @@ cmdstanr::install_cmdstan()
 ```
 
 1. Download the repository from Github
+![Screenshot 2025-07-07 at 9 44 10 PM](https://github.com/user-attachments/assets/86d2ad9b-28de-41e6-83a9-21dd32d211fa)
 
-<img width="2083" alt="Screenshot 2025-03-18 at 1 57 14 PM" src="https://github.com/user-attachments/assets/003c7cfa-393b-408d-8aa6-99bb25f0adfe" />
 
 
-2.  Open `beta_regression_tutorial.Rproj` to open a new RStudio project.
+2.  Open `beta_regression_tutorial.Rproj` to open a new RStudio project
+  - Or open in Positron/Vs Code
 
-3.  Open `/manuscript/ms.qmd`
+4.  Open `/manuscript/ms.qmd`
 
-4.  Run each chunk in the manuscript
+5.  Run each chunk in the manuscript
 
 *Note that some computations can take a long time, depending on computer performance etc*
