@@ -157,13 +157,13 @@ Finally, it’s also possible to forget {rix} and instead run everything using R
 Windows: Download and install Rtools from CRAN
 
 Linux: Run this terminal command (depending on your distribution; this assumes Ubuntu/Debian):
+
 ```
 sudo apt install g++ make
 (macOS only): Download and install XQuartz
 ```
 
-# Packages Used
-
+## Packages Used
 | Package        | Version     | Citation                                                                                      |
 |----------------|-------------|-----------------------------------------------------------------------------------------------|
 | base           | 4.5.1       | R Core Team (2025)                                                                            |
@@ -174,10 +174,10 @@ sudo apt install g++ make
 | easystats      | 0.7.4       | Lüdecke et al. (2022)                                                                         |
 | extraDistr     | 1.10.0      | Wolodzko (2023)                                                                               |
 | geomtextpath   | 0.1.5       | Cameron and van den Brand (2025)                                                              |
-| ggbeeswarm     | 0.7.2       | Clarke, Sherrill-Mix, and Dawson (2023)                                                       |
 | ggdist         | 3.3.3       | Kay (2024); Kay (2025)                                                                        |
-| gghalves       | 0.1.4       | Tiedemann (2022)                                                                              |
 | ggokabeito     | 0.1.0       | Barrett (2021)                                                                                |
+| glmmTMB        | 1.1.8       | Brooks et al. (2017); Magnusson et al. (2022)                                                 |
+| ggrain         | 0.1.0       | Author (Unpublished package or GitHub repository)                                             |
 | here           | 1.0.1       | Müller (2020)                                                                                 |
 | knitr          | 1.50        | Xie (2014); Xie (2015); Xie (2025)                                                            |
 | marginaleffects| 0.27.0      | Arel-Bundock, Greifer, and Heiss (2024)                                                       |
@@ -185,12 +185,41 @@ sudo apt install g++ make
 | patchwork      | 1.3.1       | Pedersen (2025)                                                                               |
 | performance    | 0.14.0      | Lüdecke et al. (2021)                                                                         |
 | posterior      | 1.6.1       | Vehtari et al. (2021); Lambert and Vehtari (2022); Margossian et al. (2024); Vehtari et al. (2024); Bürkner et al. (2025) |
+| quarto         | 1.4.553     | Allaire et al. (2024)                                                                         |
 | rix            | 0.16.0      | Rodrigues and Baumann (2025)                                                                  |
 | rmarkdown      | 2.29        | Xie, Allaire, and Grolemund (2018); Xie, Dervieux, and Riederer (2020); Allaire et al. (2024) |
 | scales         | 1.4.0       | Wickham, Pedersen, and Seidel (2025)                                                          |
+| tidybayes      | 3.0.5       | Kay (2024); Kay (2025)                                                                        |
 | tidyverse      | 2.0.0       | Wickham et al. (2019)                                                                         |
 | tinytable      | 0.9.0       | Arel-Bundock (2025)                                                                           |
-                                                |
+| transformr     | 0.1.4       | Pedersen (2022)                                                                               |
+| webshot2       | 0.1.0       | Cheng, Xie (2022)                                                                             |
+
+
+```
+required_packages = c(
+  "tidyverse",
+  "brms",
+  "geomtextpath",
+  "quarto",
+  "tinytable",
+  "marginaleffects",
+  "extraDistr",
+  "easystats",
+  "scales",
+  "tidybayes",
+  "webshot2",
+  "here",
+  "posterior",
+  "ggokabeito",
+  "patchwork",
+  "cowplot",
+  "collapse",
+  "transformr",
+  "ggrain",
+  "glmmTMB"
+)
+```
 
 ```
 install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", "https://packagemanager.posit.co/cran/latest"))
