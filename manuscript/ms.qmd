@@ -93,6 +93,7 @@ format:
     documentmode: doc
   apaquarto-docx: default
   apaquarto-html: default
+  
 
 execute:
   echo: false
@@ -123,7 +124,6 @@ knitr:
 #| warning: false
 
 library(easystats)
-library(geomtextpath)
 library(scales)
 library(tinytable)
 library(marginaleffects)
@@ -251,7 +251,7 @@ We begin the tutorial with a non-technical overview of the Beta distribution and
 
 Proportional data pose some challenges for standard modeling approaches: The data are bounded between 0 and 1 and often exhibit non-constant variance (heteroscedasticity) [@ferrari2004; @paolino2001]. Common distributions used within the GLM or GLiM frameworks often fail to capture these properties adequately, which can necessitate alternative modeling strategies.
 
-Typically, the expected value (or mean) of the response variable, or changes therein, is the central estimand. The model specifies how this expected value depends on explanatory variables through two main components: a linear predictor, which combines the explanatory variables in a linear form, and a link function, which connects the expected value of the response variable to the linear predictor. In addition, a random component specifies the distribution of the response variable around its expected value (such as Poisson or binomial distributions, which belong to the exponential family) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
+Typically, the expected value (or mean) of the response variable, or changes therein, is the central estimand. The model specifies how this expectfed value depends on explanatory variables through two main components: a linear predictor, which combines the explanatory variables in a linear form, and a link function, which connects the expected value of the response variable to the linear predictor. In addition, a random component specifies the distribution of the response variable around its expected value (such as Poisson or binomial distributions, which belong to the exponential family) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
 
 The Beta distribution is continuous and restricted to values between 0 and 1 (exclusive). Its two parameters--commonly called shape1 ($\alpha$) and shape2 ($\beta$)--govern the distribution’s location, skewness, and spread. By adjusting these parameters, the distribution can take many functional forms (e.g., it can be symmetric, skewed, U-shaped, or even approximately uniform; see @fig-curves).
 
@@ -410,7 +410,7 @@ We first replicate this analysis in a regression framework using brms. We model 
 
 ```{r}
 #| label: tbl-all
-#| tbl-cap: "Bayesian Regression summaries for each model"
+#| tbl-cap: "Bayesian regression summaries for each model"
 #| tbl-align: "center"
 #| apa-note: "Reported as: Mean \\[95% CrI\\] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit."
 
@@ -1002,7 +1002,8 @@ marg_phi_brms |>
 We can harness the power of `marginaleffects` again and plot the posterior difference between the fluent and disfluent conditions (see @fig-zi-plot).In @fig-zi-plot, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% CI for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction. We can harness the power of `marginaleffects` again and plot the posterior probablity of each level (see @fig-zi-plot).
 
 ```{r}
-#| label: marg-zib-brms
+#| label: tbl-marg-zib-brms
+#| tbl-cap: ""
 
 marg_zi_brms <- fit_zi |>
   avg_comparisons(
