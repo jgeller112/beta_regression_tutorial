@@ -200,8 +200,12 @@ theme_publication <- function(
 # fit models beforehand so tables and figures are in correct place.
 
 model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
-model2 <- read_rds(here("manuscript", "models", "model_beta_bayes_dis_run.rds"))
-model3 <- read_rds(here("manuscript", "models", "bayes_zib_model.rds"))
+model2 <- read_rds(here(
+  "manuscript",
+  "models",
+  "model_beta_bayes_dis_run01.rds"
+))
+model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
 model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
 model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
 ```
@@ -502,10 +506,12 @@ pp_check1 <- pp_check(model1, ndraws = 100) +
   theme_publication()
 
 pp_check2 <- pp_check(model2, ndraws = 100) +
-  theme_publication()
+  theme_publication() +
+  xlim(0, 1)
 
 pp_check3 <- pp_check(model3, ndraws = 100) +
-  theme_publication()
+  theme_publication() +
+  xlim(0, 1)
 
 
 # Use `plot_spacer()` for the empty 4th spot
@@ -524,11 +530,15 @@ combined_plot <- (pp_check1 + pp_check2 + pp_check3) +
 combined_plot
 ```
 
-Given the outcome variable is proportional, one solution would be to run a beta regression model. Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we model two parameters--$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms` (@lst-beta01). `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
+```{r}
 
-If we try to run a model with our data `data_fleuncy` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the Beta distribution only supports observations in the 0 to 1 interval *excluding exact zeros and ones*. We need make sure there are no zeros and ones in our dataset.
+```
 
-If we look at the dataset we will see that it contains nine zeros and one 1. To run a Beta regression, a common hack is to nudge our 0s towards .01 and our 1s to .99 so they fall within the \[0, 1\] interval. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are changed to .01 and .99, respectively. When we run it we should not get no error.
+Given the outcome variable is proportional, one solution would be to run a Beta regression model. Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we model two parameters--$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms` (@lst-beta01). `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
+
+To run our Beta regression model, we need to exlcude 0s and 1s in our data set. If we try to run a model with our data `data_fleuncy` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the Beta distribution only supports observations in the 0 to 1 interval *excluding exact zeros and ones*. We need make sure there are no zeros and ones in our dataset.
+
+If we look at the dataset we will see that it contains nine zeros and one 1. It is quite common to to nudge our 0s towards .01 and our 1s to 99, or apply a special "lemon squeezer" [@smithson2006]formuala so they fall within the \[0, 1\] interval, or apply a special formula. However, @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. Becasue of this we will not do this nor condone our readers to do this. To run this Beta model we will remove the 0s and 1s. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are removeed. When we run it we should not get no error.
 
 ```{r}
 #| label: beta_brms_01s
@@ -542,18 +552,18 @@ model_beta_bayes <- bf(
   phi ~ 1 # fit phi model
 )
 
-
 # transform 0 to 0.1 and 1 to .99
 data_beta <- fluency_data |>
-  mutate(
-    Accuracy = ifelse(Accuracy == 0, .01, ifelse(Accuracy == 1, .99, Accuracy))
+  filter(
+    Accuracy != 0,
+    Accuracy != 1
   )
 
 beta_brms <- brm(
   model_beta_bayes,
   data = data_beta,
   family = Beta(),
-  file = "model_beta_bayes_reg_1"
+  file = "model_beta_bayes_reg_01"
 )
 ```
 
@@ -581,7 +591,7 @@ beta_brms_dis <- brm(
   model_beta_bayes_disp,
   data = data_beta,
   family = Beta(),
-  file = "model_beta_bayes_dis_run"
+  file = "model_beta_bayes_dis_run01"
 )
 
 ```
@@ -619,7 +629,7 @@ The $\phi$ intercept represents the precision of the fluent condition. The $\phi
 
 It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
 
-A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model increased the uncertainty of the $\mu$ coefficient (see @fig-plt-diff)--the Cr.I now includes zero. This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like Beta regression over a traditional approach as Beta regression can explicitly model dispersion and address issues of heteroscedasticity.
+A critical assumption of the GLM is homoscedasticity, which means constant variance of the errors. Here we see one of the benefits of a beta regression model: we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the significance of our coefficients. The inclusion of dispersion in the our model increased the uncertainty of the $\mu$ coefficient (see @fig-plt-diff). This suggests that failing to account for the dispersion of the variables might lead to biased estimates. This highlights the potential utility of an approach like Beta regression over a traditional approach as Beta regression can explicitly model dispersion and address issues of heteroscedasticity.
 
 We won't always need to include dispersion parameters for each of our variables. One approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.
 
@@ -694,7 +704,7 @@ model_parameters(beta_brms, "mean") |>
 
 Parameter estimates are usually difficult to intercept on their own. We argue that researchers should not spend too much time interpreting single model estimates. We report them in this tutorial for completeness. Instead researchers should discuss the effects of the predictor on the actual outcome of interest (in this case the 0-1 scale). The logit link allows us to transform back and forth between the scale of a linear model and the nonlinear scale of the outcome, which is bounded by 0 and 1. By using the inverse of the logit, we can easily transform our linear coefficients to obtain average effects on the scale of the proportions or percentages, which is usually what is interesting to applied researchers. In a simple case, we can do this manually, but when there are many factors in your model this can be quite complex.
 
-In our example, we can use the `plogis()` function in base R to convert estimates from the log-odds (logit) scale to the probability scale. The intercept of our model is -0.918, which reflects the log-odds of the mean accuracy in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the log-odds scale, we first add this value to the intercept value (-0.918) to get the log-odds for the fluent condition: `-0.918 + 0.24 = -0.678`. We then use `plogis()` to convert both log-odds values to probabilities (Fluent = 36%, Disfluency = 26%).
+In our example, we can use the `plogis()` function in base R to convert estimates from the log-odds (logit) scale to the probability scale. The intercept of our model is -0.918, which reflects the log-odds of the mean accuracy in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the log-odds scale, we first add this value to the intercept value (-0.918) to get the log-odds for the fluent condition: `-0.83 + 0.20 = -0.63`. We then use `plogis()` to convert both log-odds values to probabilities (Fluent = 35%, Disfluency = 30%).
 
 This is pretty easy to do manually, but when your model has many predictors, it can be quite cumbersome. To help us extract predictions from our model and visualize them we will use a package called **`marginaleffects`** [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the mu parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob. These probablities match what we calculated above.
 
@@ -742,7 +752,7 @@ predictions(
   format_tt(escape = TRUE)
 ```
 
-For the `Fluency` factor, we can interpret `Mean` as proportions or percentages. That is, participants who watched the fluent instructor scored on average 36% on the final exam compared to 26% for those who watched the disfluent instructor. We can also visualize these from `marginaleffects` using the `plot_predictions()` function (see @lst-plotbeta).
+For the `Fluency` factor, we can interpret `Mean` as proportions or percentages. That is, participants who watched the fluent instructor scored on average 35% on the final exam compared to 30% for those who watched the disfluent instructor. We can also visualize these from `marginaleffects` using the `plot_predictions()` function (see @lst-plotbeta).
 
 ```{r}
 #| label: plot-beta
@@ -821,7 +831,7 @@ beta_avg_comp |>
   format_tt(escape = TRUE)
 ```
 
-@tbl-ame1 displays the difference for the fluency factor (`Mean` column). The difference between the fluent and disfluent conditions is .09. That is, participants who watched a fluent instructor scored 9% higher on the final recall test than participants who watched the disfluent instructor. Our Cr.I \[-.0174, -0.011\] shows that zero is not among the 95% most credible values.
+@tbl-ame1 displays the difference for the fluency factor (`Mean` column). The difference between the fluent and disfluent conditions is .06. That is, participants who watched a fluent instructor scored 6% higher on the final recall test than participants who watched the disfluent instructor. Our Cr.I \[-.0174, -0.011\] shows that zero the 95% most credible values, meaning the evidence for an effect of fluency is unlikely. 
 
 ```{r}
 #| label: tbl-or
@@ -844,8 +854,8 @@ avg_comparisons(beta_brms, comparison = "lnoravg", transform = "exp") |>
 
 ```{r}
 # Proportions
-p1 <- 0.37 # Fluent
-p2 <- 0.29 # Disfluent
+p1 <- 0.35 # Fluent
+p2 <- 0.30 # Disfluent
 
 # Cohen's h formula
 cohens_h <- 2 * (asin(sqrt(p1)) - asin(sqrt(p2)))
@@ -874,15 +884,9 @@ $$
 
 @fig-ppcheckall (B) shows the predictive check for our beta model. The model does a pretty good job at capturing the data (The draws are now between 0-1) and the the model predicted values follow the observed data. However, it could be better.
 
-```{r}
-#| label: fig post pred
-pp_check2 <- pp_check(beta_brms_dis, ndraws = 100) +
-  theme_publication()
-```
-
 ## Zero-Inflated Beta (ZIB) Regression
 
-A limitation of the Beta regression model is that it can only accommodate values strictly between 0 and 1—it cannot handle values exactly equal to 0 or 1. In our dataset, we observed 9 rows where Accuracy equals zero. To fit a Beta model, we nudged these values to 0.01, but this kind of data manipulation is generally discouraged, especially when the zeros are meaningful. In our case, these zeros may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. To properly account for them, we can use a zero-inflated Beta (ZIB) model. This model still estimates the mean ($\mu$) and precision ($\phi$) of the Beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural zeros.
+A limitation of the Beta regression model is that it can only accommodate values strictly between 0 and 1—it cannot handle values exactly equal to 0 or 1. In our dataset, we observed 9 rows where Accuracy equals zero. To fit a Beta model, remvoed these values, but this kind of data manipulation is generally discouraged, especially when the zeros are meaningful. In our case, these zeros may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. To properly account for them, we can use a zero-inflated Beta (ZIB) model. This model still estimates the mean ($\mu$) and precision ($\phi$) of the Beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural zeros.
 
 The zero-inflated Beta models a mixture of the data-generating process. The $\alpha$ parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset of with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.
 
@@ -894,9 +898,9 @@ We can fit a ZIB model using `brms` and use the `marginaleffects` package to mak
 #| lst-cap: Fitting zib model with `brm()`
 #| echo: true
 
-# keep 0 but transform 1 to .99
+# keep 0 but remove 1
 data_beta_0 <- fluency_data |>
-  mutate(Accuracy = ifelse(Accuracy == 1, .99, Accuracy))
+  filter(Accuracy != 1)
 
 # set up model formual for zero-inflated beta in brm
 zib_model <- bf(
@@ -910,7 +914,7 @@ zib_model <- bf(
 fit_zi <- brm(
   formula = zib_model,
   data = data_beta_0,
-  file = "bayes_zib_model"
+  file = "bayes_zib_model0not1"
 )
 ```
 
@@ -1036,7 +1040,7 @@ marg_zi_brms |>
 
 ## Zero-One-Inflated Beta (ZOIB)
 
-The ZIB model works well if you have 0s in your data, but not 1s.[^3] In our previous example, we nudged our 1s to .99. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
+The ZIB model works well if you have 0s in your data, but not 1s.[^3] In our previous examples we either got rid of both 0s and 1s (Beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both zeros and ones as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
 [^3]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model ones with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
 
@@ -1364,26 +1368,18 @@ In the `ordbetareg` function there is a `true_bound` argument. In the case where
 # this code runs all models from above and creates table. This does not run each time and it set not to run.
 
 # BAYESIAN REGRESSION
-brms_model_new <- model_parameters(bayes_ols_model, centrality = "mean") %>%
+brms_model_new <- model_parameters(model1, centrality = "mean") %>%
   filter(Parameter != "sigma") %>%
   mutate(
     across(where(is.numeric), ~ round(.x, 3)),
-    `95% Cr.I` = str_glue("[{Cr.I_low}, {CI_high}]"),
+    `95% CI` = str_glue("[{CI_low}, {CI_high}]"),
     Model = "Bayesian LM"
   ) %>%
   select(Model, Parameter, Mean, `95% CI`, pd)
 
-# BETA REGRESSION
-beta_model_new <- model_parameters(beta_brms, centrality = "mean") %>%
-  mutate(
-    across(where(is.numeric), ~ round(.x, 3)),
-    `95% CI` = str_glue("[{CI_low}, {CI_high}]"),
-    Model = "Beta Regression"
-  ) %>%
-  select(Model, Parameter, Mean, `95% CI`, pd)
 
 # BETA REGRESSION
-beta_model_dis <- model_parameters(beta_brms_dis, centrality = "mean") %>%
+beta_model_dis <- model_parameters(model2, centrality = "mean") %>%
   mutate(
     across(where(is.numeric), ~ round(.x, 3)),
     `95% CI` = str_glue("[{CI_low}, {CI_high}]"),
@@ -1392,7 +1388,7 @@ beta_model_dis <- model_parameters(beta_brms_dis, centrality = "mean") %>%
   select(Model, Parameter, Mean, `95% CI`, pd)
 
 # ZERO-INFLATED REGRESSION
-zi_model_new <- model_parameters(fit_zi, centrality = "mean") %>%
+zi_model_new <- model_parameters(model3, centrality = "mean") %>%
   mutate(
     across(where(is.numeric), ~ round(.x, 3)),
     `95% CI` = str_glue("[{CI_low}, {CI_high}]"),
@@ -1401,7 +1397,7 @@ zi_model_new <- model_parameters(fit_zi, centrality = "mean") %>%
   select(Model, Parameter, Mean, `95% CI`, pd)
 
 # ZERO-ONE INFLATED BETA REGRESSION
-zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
+zoib_model_new <- model_parameters(model4, centrality = "mean") %>%
   mutate(
     across(where(is.numeric), ~ round(.x, 3)),
     `95% CI` = str_glue("[{CI_low}, {CI_high}]"),
@@ -1411,7 +1407,7 @@ zoib_model_new <- model_parameters(fit_zoib, centrality = "mean") %>%
 
 
 # BETA REGRESSION
-ord_beta <- model_parameters(m.phi, centrality = "mean") %>%
+ord_beta <- model_parameters(model5, centrality = "mean") %>%
   mutate(
     across(where(is.numeric), ~ round(.x, 3)),
     `95% CI` = str_glue("[{CI_low}, {CI_high}]"),
