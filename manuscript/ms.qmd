@@ -67,7 +67,7 @@ abstract: "Rates, percentages, and proportions are common outcomes in psychology
 keywords: [beta regression, beta distribution, R, tutorial, psychology, learning and memory]
 floatsintext: true
 # Numbered lines (.pdf and .docx only)
-numbered-lines: false
+numbered-lines: true
 # File with references
 suppress-title-page: false
 # Link citations to references
@@ -231,7 +231,7 @@ fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
   relocate(Accuracy, .after = last_col())
 ```
 
-Many important outcomes in psychological research can be expressed as proportions or percentages: the proportion of correct responses on a test [e.g., @kornell2008], the proportion of looks on a particular stimulus in an eye-tracking task [e.g., @james2025], or the percentage of agreement with a given statement [e.g., @Costello2024]. As a practical example from educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question.
+Many important outcomes in psychological research can be expressed as proportions or percentages: the proportion of correct responses on a test [e.g., @kornell2008], the proportion of looks on a particular stimulus in an eye-tracking task [e.g., @james2025], or the percentage of agreement with a given statement [e.g., @Costello2024]. As a practical example from educational and cognitive researKornell, N., & Bjork, R. A. (2008). Learning concepts and categories: Is spacing the "enemy of induction?" *Psychological Science, 19*(6), 585–592. [https://doi.org/10.1111/j.1467-9280.2008.02127.x](https://psycnet.apa.org/doi/10.1111/j.1467-9280.2008.02127.x)ch, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question.
 
 A key question arises: **how should proportional data be analyzed?** In psychology, there is a strong reliance on linear models (e.g., *t*-tests, ANOVAs, and regressions). However, linear models assume: (1) a normally distributed (Gaussian) outcome, (2) an unbounded response scale (ranging from $-\infty$ to $-\infty$), and (3) constant variance (homoscedasticity). These assumptions are rarely met in psychological data [@sladekova2024unicorns]. They are especially problematic for proportional data, which are naturally bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance—particularly near the boundaries [@smithson2006; @ferrari2004; @paolino2001]. Violating these assumptions can lead to biased estimates and misleading inferences.
 
@@ -760,7 +760,7 @@ For the `Fluency` factor, we can interpret `Mean` as proportions or percentages.
 #| lst-cap: Plot predicted probablities using `plot_predictions()` from `marginaleffects`
 #| echo: true
 
-beta_plot <- plot_predictions(beta_brms, condition = "Fluency")
+beta_plot <- plot_predictions(beta_brms, by = "Fluency")
 ```
 
 The `plot_predictions()` fucntuon will only display the point estimate with the 95% Cr.Is. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function (see @lst-posdraws). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (e.g., 80% or 95%; see @fig-draws-fluency).
@@ -874,11 +874,11 @@ h_upper <- 2 * (asin(sqrt(p1_upper)) - asin(sqrt(p2_lower)))
 
 ```
 
-In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% Cr.I \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
+In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (\@eq-cohenh) to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% Cr.I \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
 
 $$
 h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)
-$$
+$$ {#eq-cohenh}
 
 ### Posterior Predictive Check
 
@@ -1345,7 +1345,7 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 
 #### Model Visualization
 
-`ordbetareg` provides a visualization function called `plot_hess`. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
+`ordbetareg` provides a neat visualization function called `plot_hess()`. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
 
 ```{r}
 #| label: fig-heiss
