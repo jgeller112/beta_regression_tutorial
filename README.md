@@ -71,7 +71,7 @@ This repository contains all the resources needed to reproduce the manuscript as
 
 Here is a video tutorial showing an example of how to reproduce a manuscript using Nix/Rix
 
-[![Reproduce Manuscript with Nix/Rix](https://img.youtube.com/vi/nb9NfGfwAwc/0.jpg)](https://www.youtube.com/watch?v=nb9NfGfwAwc)
+[![Reproduce Manuscript with Nix/Rix](https://img.youtube.com/vi/nb9NfGfwAwc/0.jpg)](https://www.youtube.com/watch?v=--ElvGgFOog)
 
 ## Prerequisites
 
