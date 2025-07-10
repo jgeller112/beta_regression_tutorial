@@ -78,7 +78,7 @@ rix(
     "anyfontsize"
   ),
   shell_hook = "Rscript install_cmdstan.R",
-  ide = "positron",
+  ide = "rstudio",
   project_path = ".",
   overwrite = TRUE
 )
