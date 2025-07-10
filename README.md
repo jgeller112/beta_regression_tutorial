@@ -106,7 +106,8 @@ cd nix_beta_regression_ms
 <img width="2083" alt="Screenshot 2025-03-18 at 1 57 14 PM" src="https://github.com/user-attachments/assets/003c7cfa-393b-408d-8aa6-99bb25f0adfe" />
  
 #### 2. Open the Project
-Open the R project file `nix-beta_regression_ms.Rproj` in RStudio or Positron.
+- Open the R project file `nix-beta_regression_ms.Rproj` in RStudio or Open folder in Positron.
+
 
 #### 3. Build the Environment
 Use Nix to set up the reproducible environment:
@@ -132,7 +133,8 @@ or
 
 - Positron
   - To use Positron from the shell you will need to make sure the correct path is set (see https://github.com/posit-dev/positron/discussions/4485#discussioncomment-10456159). Once this is done you can open Positron from the shell
-  - If you are using Positron within WSL/Windows you need to download WSL for positron and direnv in Positron.
+  - If you are using Positron within WSL/Windows you need to download WSL for Positron.
+  - You should also download `direnv` in Positron to access the nix-shell when running projects. 
 ```bash
 positron
 ```
