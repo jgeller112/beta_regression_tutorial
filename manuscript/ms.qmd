@@ -500,7 +500,7 @@ We can also examine how well the data fits the model by performing a posterior p
 #| fig-height: 8
 #| fig-width: 8
 
-#pp_cbeck
+#pp_check
 
 pp_check1 <- pp_check(model1, ndraws = 100) +
   theme_publication()
@@ -536,9 +536,9 @@ combined_plot
 
 Given the outcome variable is proportional, one solution would be to run a Beta regression model. Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we model two parameters--$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms` (@lst-beta01). `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
 
-To run our Beta regression model, we need to exlcude 0s and 1s in our data set. If we try to run a model with our data `data_fleuncy` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the Beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset.
+To run our Beta regression model, we need to exlcude 0s and 1s in our data set. If we try to run a model with our data `data_fluency` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the Beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset.
 
-If we look at the dataset we will see that it contains nine 0s and one 1. It is quite common to to nudge our 0s towards .01 and our 1s to 99, or apply a special "lemon squeezer" [@smithson2006]formuala so they fall within the \[0, 1\] interval, or apply a special formula. However, @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. Becasue of this we will not do this nor condone our readers to do this. To run this Beta model we will remove the 0s and 1s. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are removeed. When we run it we should not get no error.
+The dataset contains nine 0s and one 1. One approach is to nudge our 0s towards .01 and our 1s to .99, or apply a special formula [@smithson2006] so values fall within the \[0, 1\] interval. We implore readers not engage in this practice. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. Becasue of this we will not do this nor condone our readers to do this. To run this Beta model we will remove the 0s and 1s. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are removeed. When we run it we should not get no error.
 
 ```{r}
 #| label: beta_brms_01s
