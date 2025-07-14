@@ -97,6 +97,7 @@ format:
 
 execute:
   echo: false
+  cache: true
   warning: false
   message: false
   results: hide
@@ -890,7 +891,7 @@ $$ {#eq-cohenh}
 
 ## Zero-Inflated Beta (ZIB) Regression
 
-A limitation of the Beta regression model is that it can only accommodate values strictly between 0 and 1—it cannot handle values exactly equal to 0 or 1. In our dataset, we observed 9 rows where Accuracy equals zero. To fit a Beta model, remvoed these values, but this kind of data manipulation is generally discouraged, especially when the 0s are meaningful. In our case, these 0s may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. To properly account for them, we can use a zero-inflated Beta (ZIB) model. This model still estimates the mean ($\mu$) and precision ($\phi$) of the Beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural 0s.
+A limitation of the Beta regression model is that it can only accommodate values strictly between 0 and 1—it cannot handle values exactly equal to 0 or 1. In our dataset, we observed 9 rows where Accuracy equals zero. To fit a Beta regression model, we removed these values, but we have left out potentially valuable information from our model--especially if the end points of the scale are distinctive in some way. In our case, these 0s may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. We will discuss two approaches for jointly modeling these end points with the continuous data. First, we can use a zero-inflated Beta (ZIB) model.^[There is an additional version of this model, the zero-or-one-inflated Beta (ZOIB), which can accomodate discrete values at both the lower and upper limits of the scale with `brms`.] This model still estimates the mean ($\mu$) and precision ($\phi$) of the Beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural 0s.
 
 The zero-inflated Beta models a mixture of the data-generating process. The $\alpha$ parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset of with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.
 
