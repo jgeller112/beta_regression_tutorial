@@ -482,7 +482,7 @@ Listing&nbsp;1: Data needed to run examples
 <p>We first replicate this analysis in a regression framework using brms. We model final test accuracy–the proprtion of correctly recalled idea units across the two items–as the dependent variable. Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.</p>
 </div>
 <div class="cell FigureWithNote" data-tbl-align="center" data-apa-note="Reported as: Mean [95% CrI] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit." prefix="" data-tblnum="2" data-custom-style="FigureWithNote">
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-apa-note="Reported as: Mean [95% CrI] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit." data-tbl-align="center" data-tblnum="2" prefix="">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-align="center" data-apa-note="Reported as: Mean [95% CrI] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit." data-tblnum="2" prefix="">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -543,7 +543,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the <code>brms</code> package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(<a href="#ref-brms" role="doc-biblioref">Bürkner, 2017</a>)</span>. For the models we present in this paper, convergence is trivial with standard linear mixed models, though we note that these metrics are still important to pay attention to in case of model mis-fit.</p>
-<p>Looking at the output, the <code>Intercept</code> refers to the mean accuracy in the <em>disfluent</em> condition, as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% credible interval for this estimate spans from -0.003 to 0.171. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A).</p>
+<p>Looking at the output, the <code>Intercept</code> refers to the mean accuracy in the <em>disfluent</em> condition, as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.085. The 95% credible interval for this estimate spans from -0.002 to 0.17. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A).</p>
 <p>The output also includes the ESS and Rhat values, both of which are within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on the posterior mean estimates and their 95% credible intervals. In addition, we also include pd measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a>) which are provided by the <code>easystats</code> <code>bayestestr</code> package <span class="citation" data-cites="makowski2019a">Makowski, Ben-Shachar, &amp; Lüdecke (<a href="#ref-makowski2019" role="doc-biblioref">2019</a>)</span> and provides a parallel to <em>p</em>-values most readers are probably familiar with.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -554,12 +554,12 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     3645     2970
-FluencyFluent     0.08      0.04    -0.00     0.17 1.00     4035     2968
+Intercept         0.26      0.03     0.20     0.31 1.00     3658     2946
+FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3524     2675
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3802     3107</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     3113     2856</code></pre>
 </div>
 </div>
 </section>
@@ -785,15 +785,15 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
         <tbody>
                 <tr>
                   <td>b_phi_Intercept</td>
-                  <td>4.95</td>
-                  <td>[3.271, 7.231]</td>
+                  <td>4.97</td>
+                  <td>[3.301, 7.402]</td>
                   <td>1</td>
                 </tr>
                 <tr>
                   <td>b_phi_FluencyFluent</td>
-                  <td>1.53</td>
-                  <td>[0.867, 2.72]</td>
-                  <td>0.927</td>
+                  <td>1.51</td>
+                  <td>[0.856, 2.664]</td>
+                  <td>0.922</td>
                 </tr>
         </tbody>
       </table>
@@ -963,12 +963,12 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
                 <tr>
                   <td>Disfluent</td>
                   <td>0.297</td>
-                  <td>[0.248, 0.347]</td>
+                  <td>[0.249, 0.349]</td>
                 </tr>
                 <tr>
                   <td>Fluent</td>
-                  <td>0.354</td>
-                  <td>[0.302, 0.408]</td>
+                  <td>0.353</td>
+                  <td>[0.304, 0.406]</td>
                 </tr>
         </tbody>
       </table>
@@ -1150,8 +1150,8 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>0.057</td>
-                  <td>[-0.016, 0.129]</td>
+                  <td>0.056</td>
+                  <td>[-0.017, 0.128]</td>
                 </tr>
         </tbody>
       </table>
@@ -1266,8 +1266,8 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
                 <tr>
                   <td>Fluency</td>
                   <td>ln(odds(Fluent) / odds(Disfluent))</td>
-                  <td>1.299</td>
-                  <td>[0.928, 1.817]</td>
+                  <td>1.291</td>
+                  <td>[0.927, 1.796]</td>
                 </tr>
         </tbody>
       </table>
@@ -1435,8 +1435,8 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>0.043</td>
-                  <td>[-0.03, 0.116]</td>
+                  <td>0.044</td>
+                  <td>[-0.031, 0.115]</td>
                 </tr>
         </tbody>
       </table>
@@ -1553,7 +1553,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>2.73</td>
-                  <td>[-0.88, 6.696]</td>
+                  <td>[-0.829, 6.639]</td>
                 </tr>
         </tbody>
       </table>
@@ -1845,7 +1845,7 @@ Listing&nbsp;17: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>0.061</td>
-                  <td>[-0.015, 0.139]</td>
+                  <td>[-0.012, 0.134]</td>
                 </tr>
         </tbody>
       </table>
@@ -1961,13 +1961,13 @@ Listing&nbsp;17: Fitting ordered beta model with dispersion using <code>ordbetar
         <tbody>
                 <tr>
                   <td>cutzero</td>
-                  <td>-2.97</td>
-                  <td>[-3.58, -2.41]</td>
+                  <td>-2.98</td>
+                  <td>[-3.6, -2.41]</td>
                 </tr>
                 <tr>
                   <td>cutone</td>
                   <td>1.85</td>
-                  <td>[1.64, 2.07]</td>
+                  <td>[1.65, 2.08]</td>
                 </tr>
         </tbody>
       </table>
