@@ -878,7 +878,7 @@ h_upper <- 2 * (asin(sqrt(p1_upper)) - asin(sqrt(p2_lower)))
 
 ```
 
-In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (\@eq-cohenh) to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% credible interval \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
+In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (@eq-cohenh) to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% credible interval \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
 
 $$
 h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)
