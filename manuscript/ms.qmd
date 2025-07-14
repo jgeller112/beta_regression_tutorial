@@ -471,9 +471,9 @@ brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 
 ```
 
-We fit the model using the `brm()` function from the `brms` package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% Cr.I, which indicate the 95% of the most credible parameter values. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard linear mixed models, though we note that these metrics are still important to pay attention to in case of model mis-fit.
+We fit the model using the `brm()` function from the `brms` package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard linear mixed models, though we note that these metrics are still important to pay attention to in case of model mis-fit.
 
-Looking at the output, the `Intercept` refers to the mean accuracy in the *disfluent* condition, as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% Cr.I for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% Cr.I" columns of the output. These results closely mirror the findings reported by @wilford2020 (Experiment 1A).
+Looking at the output, the `Intercept` refers to the mean accuracy in the *disfluent* condition, as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% credible interval for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% Cr.I" columns of the output. These results closely mirror the findings reported by @wilford2020 (Experiment 1A).
 
 The output also includes the ESS and Rhat values, both of which are within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on the posterior mean estimates and their 95% credible intervals. In addition, we also include pd measure in the main summary table (@tbl-all) which are provided by the `easystats` `bayestestr` package [@makowski2019a' @makowski2019] and provides a parallel to *p*-values most readers are probably familiar with.
 
@@ -629,7 +629,7 @@ beta_model_dis_exp |>
 
 ```
 
-The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `FluencyFluent` represents the change in that precision for performance between the fluent vs. disfluent conditions. The Cr.I does not include 0, meaning that zero is not among the 95% most credible parameter values.
+The $\phi$ intercept represents the precision of the fluent condition. The $\phi$ coefficient for `FluencyFluent` represents the change in that precision for performance between the fluent vs. disfluent conditions. The credible interval does not include 0, meaning that zero is not among the 95% most credible parameter values.
 
 It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
 
@@ -767,7 +767,7 @@ For the `Fluency` factor, we can interpret `Mean` as proportions or percentages.
 beta_plot <- plot_predictions(beta_brms, by = "Fluency")
 ```
 
-The `plot_predictions()` fucntuon will only display the point estimate with the 95% Cr.Is. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function (see @lst-posdraws). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (e.g., 80% or 95%; see @fig-draws-fluency).
+The `plot_predictions()` fucntuon will only display the point estimate with the 95% credible intervals. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the `marginaleffects` package, we can obtain samples from the posterior distribution with the `posterior_draws()` function (see @lst-posdraws). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (e.g., 80% or 95%; see @fig-draws-fluency).
 
 ```{r}
 #| lst-label: lst-posdraws
@@ -799,9 +799,9 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
 
 ### Marginal Effects
 
-Marginal effects provide a way to understand how changes in a predictor influence an outcome, holding all other factors constant in a specific manner. Technically, marginal effects are calculated using partial derivatives for continuous variables or finite differences for categorical and continuous variables, depending on the nature of the data and the research question. Substantively, these effects translate regression coefficients into a form that can be interpreted directly on the outcome scale of interest.
+Marginal effects provide a way to understand how changes in a predictor influence an outcome, holding all other factors constant in a specific manner. Technically, marginal effects are calculated using partial derivatives for continuous variables or finite differences for categorical and continuous variables, depending on the nature of the data and the research question. Substantively, these procedures translate raw regression coefficients back into effects that represent changes in the bounded outcome, such as an $x$% change in the value of a proportion.
 
-There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular `emmeans` package [@emmeans]computes marginal effects by holding all predictors at their means. In this tutorial, we will use the `marginaleffects` package [@margeffects2024], which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.
+There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular `emmeans` package [@emmeans] computes marginal effects by holding all predictors at their means. In this tutorial, we will use the `marginaleffects` package [@margeffects2024], which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.
 
 One practical application of AMEs is calculating the average difference between two groups or conditions (called the risk difference). Using the `avg_comparisons()` function in the `marginaleffects` package (@lst-avgcomp), we can compute this metric directly. By default, the function calculates the discrete difference between groups. The function can also compute other effect size metrics, such as odds ratios and risk ratios, depending on the research question. This flexibility makes it a powerful tool for interpreting regression results in a meaningful way.
 
@@ -835,7 +835,7 @@ beta_avg_comp |>
   format_tt(escape = TRUE)
 ```
 
-@tbl-ame1 displays the difference for the fluency factor (`Mean` column). The difference between the fluent and disfluent conditions is .06. That is, participants who watched a fluent instructor scored 6% higher on the final recall test than participants who watched the disfluent instructor. Our Cr.I contains 0 as one of the 95% most credible values, meaning the evidence for an effect of fluency is unlikely.
+@tbl-ame1 displays the difference for the fluency factor (`Mean` column). The difference between the fluent and disfluent conditions is .06. That is, participants who watched a fluent instructor scored 6% higher on the final recall test than participants who watched the disfluent instructor. Our credible interval contains 0 as one of the 95% most credible values, meaning the evidence for an effect of fluency is unlikely.
 
 ```{r}
 #| label: tbl-or
@@ -878,7 +878,7 @@ h_upper <- 2 * (asin(sqrt(p1_upper)) - asin(sqrt(p2_lower)))
 
 ```
 
-In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (\@eq-cohenh) to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% Cr.I \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
+In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (\@eq-cohenh) to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% credible interval \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
 
 $$
 h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)
