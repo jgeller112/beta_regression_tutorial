@@ -335,7 +335,7 @@ By accounting for the observations' natural limits and non-constant variance acr
 
 ## Bayesian Approach to Beta Regression
 
-Beta regression models can be estimated with both frequentist and Bayesian methods. We adopt a Bayesian framework because it makes estimating and interpreting more complex models easier [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules]. Generally speaking, most Bayesian analyses can also be implemented with frequentist methods like maximum likelihood, but more complex techniques may require adjustments like bootstrapping. The main limitation of Bayesian modeling is that it is slower than frequentist approaches, but we note that modern Bayesian computation enginges are reasonably fast and that explanatory modeling necessarily emphasizes correctness over computational simplicity. We use the R package `brms` [@brms], a high-level interface to the probabilistic programming language Stan [@stan2023], because it uses standard R regression formula syntax but extends its scope while remaining accessible for non-expert users. The package also implements parallel processing that can dramatically shorten computational times for larger datasets.
+Beta regression models can be estimated with both frequentist and Bayesian methods. We adopt a Bayesian framework because it makes estimating and interpreting more complex models easier [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules]. Generally speaking, most Bayesian analyses can also be implemented with frequentist methods like maximum likelihood, but more complex techniques may require adjustments like bootstrapping. The main limitation of Bayesian modeling is that it is slower than frequentist approaches, but we note that modern Bayesian computation engines are reasonably fast and that explanatory modeling necessarily emphasizes deriving appropriate estimands over computational convenience. We use the R package `brms` [@brms], a high-level interface to the probabilistic programming language Stan [@stan2023], because it uses standard R regression formula syntax but extends its scope while remaining accessible for non-expert users. The package also implements parallel processing that can dramatically shorten computational times for larger datasets.
 
 There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the `brms` package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution.
 
@@ -432,9 +432,9 @@ include_graphics(here(
 
 ### Regression Model
 
-We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages (@lst-loadbrms). We use the `cmdstanr` backend for Stan [@stan2023] because it's faster and more modern than the default used to run models (i.e., `rstan`).[^2]
+We first start by loading the `brms` [@brms] and `cmdstanr` [@cmdstanr] packages (@lst-loadbrms). We use the `cmdstanr` backend for Stan [@stan2023] because it's faster than the default used to run models (i.e., `rstan`),[^2] though all of these models can also be fit with `brms` defaults.
 
-[^2]: In order to use the `cmdstanr` backend you will need to first install the package and also run `cmdstanr::install_cmdstan()` if you have not done so already.
+[^2]: In order to use the `cmdstanr` backend you will need to first install the package (see `https://mc-stan.org/cmdstanr/`) and also run `cmdstanr::install_cmdstan()` if you have not done so already.
 
 ```{r}
 #| lst-label: lst-loadbrms
