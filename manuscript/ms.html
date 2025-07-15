@@ -236,16 +236,15 @@ window.Quarto = {
 <p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a Beta regression model in R with the Bayesian package <code>brms</code> and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://github.com/jgeller112/beta_regression_tutorial.</p>
 </div>
 <p><em>Keywords</em>: beta regression, beta distribution, R, tutorial, psychology, learning and memory</p>
-<p><em>Word Count</em>: 10124</p>
+<p><em>Word Count</em>: 10142</p>
 <br>
 </section>
 <section id="firstheader" class="level1 title unnumbered unlisted">
 <h1 class="title unnumbered unlisted">A Beta Way: A Tutorial For Using Beta Regression in Psychological Research</h1>
-<p>Many important outcomes in psychological research can be expressed as proportions or percentages: the proportion of correct responses on a test <span class="citation" data-cites="kornell2008">(e.g., <a href="#ref-kornell2008" role="doc-biblioref">Kornell &amp; Bjork, 2008</a>)</span>, the proportion of looks on a particular stimulus in an eye-tracking task <span class="citation" data-cites="james2025">(e.g., <a href="#ref-james2025" role="doc-biblioref">James et al., 2025</a>)</span>, or the percentage of agreement with a given statement <span class="citation" data-cites="Costello2024">(e.g., <a href="#ref-Costello2024" role="doc-biblioref">Costello et al., 2024</a>)</span>. As a practical example from educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question. While it is usually possible to model the components of the outcome separately, such as with the Poisson distribution for the raw sum, modeling the outcome as a proportion permits comparability across scales and may be the only option if the underlying components of the scale are not available, such as with secondary data.</p>
-<p>While in this paper we will focus on proportions—responses that lie between 0 and 1–it is important to note that our analysis applies to any bounded continuous scale. Any bounded scale can be mapped to lie within 0 and 1 without resulting in a loss of information as the transformation is linear.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Consequently, a scale that has natural end points of -1,234 and +8,451–or any other end points on the real number line short of infinity—can be modeled using the approaches we describe in this paper.</p>
-<p>A key question arises: <strong>how should proportional data be analyzed?</strong> In psychology, there is a strong reliance on linear models (e.g., <em>t</em>-tests, ANOVAs, and regressions). However, linear models assume: (1) However, linear models assume: (1) the residuals of the outcome are normally distributed (i.e., Gaussian), (2) an unbounded response scale (ranging from <span class="math inline">-\infty</span> to <span class="math inline">-\infty</span>), and (3) constant variance (homoscedasticity). These assumptions are rarely met in psychological data <span class="citation" data-cites="sladekova2024unicorns">(<a href="#ref-sladekova2024unicorns" role="doc-biblioref">Sladekova &amp; Field, 2024</a>)</span>. They are especially problematic for proportional data, which are naturally bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance—particularly near the boundaries <span class="citation" data-cites="smithson2006 ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>; <a href="#ref-smithson2006" role="doc-biblioref">Smithson &amp; Verkuilen, 2006</a>)</span>. Violating these assumptions can lead to biased estimates and misleading inferences, with the bias increasing in the amount of data clustered near boundaries.</p>
+<p>Many important outcomes in psychological research can be expressed as proportions or percentages: the proportion of correct responses on a test <span class="citation" data-cites="kornell2008">(e.g., <a href="#ref-kornell2008" role="doc-biblioref">Kornell &amp; Bjork, 2008</a>)</span>, the proportion of looks on a particular stimulus in an eye-tracking task <span class="citation" data-cites="james2025">(e.g., <a href="#ref-james2025" role="doc-biblioref">James et al., 2025</a>)</span>, or the percentage of agreement with a given statement <span class="citation" data-cites="Costello2024">(e.g., <a href="#ref-Costello2024" role="doc-biblioref">Costello et al., 2024</a>)</span>. As a practical example from educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question. While it is usually possible to model the components of the outcome separately — for example, using a binomial distribution when both the number of successes and trials are known or a Poisson distributon on the raw sum — modeling the outcome as a proportion permits comparability across scales and may be the only option if the underlying components of the scale are not available, such as with secondary data.</p>
+<p>From this, a key question arises: <strong>how should proportional data be analyzed?</strong> In psychology, there is a strong reliance on linear models (e.g., <em>t</em>-tests, ANOVAs, and regressions). However, linear models assume: (1) However, linear models assume: (1) the residuals of the outcome are normally distributed (i.e., Gaussian), (2) an unbounded response scale (ranging from <span class="math inline">-\infty</span> to <span class="math inline">-\infty</span>), and (3) constant variance (homoscedasticity). These assumptions are rarely met in psychological data <span class="citation" data-cites="sladekova2024unicorns">(<a href="#ref-sladekova2024unicorns" role="doc-biblioref">Sladekova &amp; Field, 2024</a>)</span>. They are especially problematic for proportional data, which are naturally bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance—particularly near the boundaries <span class="citation" data-cites="smithson2006 ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>; <a href="#ref-smithson2006" role="doc-biblioref">Smithson &amp; Verkuilen, 2006</a>)</span>. Violating these assumptions can lead to biased estimates and misleading inferences, with the bias increasing in the amount of data clustered near boundaries.</p>
 <p>Another option extends the linear model framework to accommodate non-normal outcome distributions. For example, binomial or Bernoulli models (commonly referred to as logistic regression when a logit link function is used) are well-suited for binary outcomes or counts of successes out of a fixed number of trials. However, these models require discretized responses and may fall short when data exhibit over-dispersion by clustering near the boundaries of the scale.</p>
-<p>The challenges of analyzing proportional data are not new <span class="citation" data-cites="bartlett1936">(see <a href="#ref-bartlett1936" role="doc-biblioref">Bartlett, 1936</a>)</span>. Fortunately, several existing approaches address the limitations of commonly used models. One such approach is Beta regression, an extension of the generalized linear model (GLM) that employs the Beta distribution <span class="citation" data-cites="ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>)</span>. Beta regression offers a flexible and robust solution for modeling proportional data by accounting for boundary effects and over-dispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets.</p>
+<p>The challenges of analyzing proportional data are not new <span class="citation" data-cites="bartlett1936">(see <a href="#ref-bartlett1936" role="doc-biblioref">Bartlett, 1936</a>)</span>. Fortunately, several existing approaches address the limitations of commonly used models. One such approach is Beta regression, an extension of the generalized linear model (GLM) that employs the Beta distribution <span class="citation" data-cites="ferrari2004 paolino2001">(<a href="#ref-ferrari2004" role="doc-biblioref">Ferrari &amp; Cribari-Neto, 2004</a>; <a href="#ref-paolino2001" role="doc-biblioref">Paolino, 2001</a>)</span>. Beta regression offers a flexible and robust solution for modeling proportional data by accounting for boundary effects and over-dispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets. While in this paper we will focus on proportional-responses that lie between 0 and 1–it is important to note that our analysis applies to any bounded continuous scale. Any bounded scale can be mapped to lie within 0 and 1 without resulting in a loss of information as the transformation is linear.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Consequently, a scale that has natural end points of -1,234 and +8,451–or any other end points on the real number line short of infinity—can be modeled using the approaches we describe in this paper.</p>
 <section id="a-beta-way-is-possible" class="level2">
 <h2 data-anchor-id="a-beta-way-is-possible">A Beta Way Is Possible</h2>
 <p>With the combination of open-source programming languages like R <span class="citation" data-cites="R">(<a href="#ref-R" role="doc-biblioref">R Core Team, 2024</a>)</span> and their user-developed extensions, analyses such as Beta regression have become increasingly accessible. Yet, adoption of these methods–particularly in psychology–remains limited. One reason may be the lack of informative examples that directly apply to psychological research. Although recent years have seen a surge of interest in Beta regression <span class="citation" data-cites="smithson2006 heiss2021 vuorre2019 bendixen2023 coretta2025bayesian">(<a href="#ref-bendixen2023" role="doc-biblioref">Bendixen &amp; Purzycki, 2023</a>; <a href="#ref-coretta2025bayesian" role="doc-biblioref">Coretta &amp; Bürkner, 2025</a>; <a href="#ref-heiss2021" role="doc-biblioref">Heiss, 2021</a>; <a href="#ref-smithson2006" role="doc-biblioref">Smithson &amp; Verkuilen, 2006</a>; <a href="#ref-vuorre2019" role="doc-biblioref">Vuorre, 2019</a>)</span>, its adoption in psychology remains limited.</p>
@@ -330,7 +329,7 @@ Listing&nbsp;1: Data needed to run examples
 </div>
 <p>Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in <a href="#tbl-dataset" class="quarto-xref" aria-expanded="false">Table&nbsp;1</a>. The dataset can be downloaded from Github (<a href="#lst-data" class="quarto-xref">Listing&nbsp;1</a>). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that treat outcomes as normally distributed. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce Wilford et al.’s analysis and then re-analyze the data using Beta regression and highlight how it can improve our inferences.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="1" data-custom-style="FigureWithoutNote">
-<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="1" data-after-caption-space="0pt" prefix="">
+<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="1" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dataset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -481,8 +480,8 @@ Listing&nbsp;1: Data needed to run examples
 <div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
 <p>We first replicate this analysis in a regression framework using brms. We model final test accuracy–the proprtion of correctly recalled idea units across the two items–as the dependent variable. Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.</p>
 </div>
-<div class="cell FigureWithNote" data-tbl-align="center" data-apa-note="Reported as: Mean [95% CrI] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit." prefix="" data-tblnum="2" data-custom-style="FigureWithNote">
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-align="center" data-tblnum="2" prefix="" data-apa-note="Reported as: Mean [95% CrI] (pd). Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit.">
+<div class="cell FigureWithNote" data-tbl-align="center" data-apa-note="Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit." prefix="" data-tblnum="2" data-custom-style="FigureWithNote">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="2" data-apa-note="Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit." data-tbl-align="center">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -494,18 +493,379 @@ Listing&nbsp;1: Data needed to run examples
 </figcaption>
 <div aria-describedby="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Figures/combined_table.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
+<!-- preamble start -->
+
+    <script>
+
+      function styleCell_vl6zj24ltgc6o77oii04(i, j, css_id) {
+          var table = document.getElementById("tinytable_vl6zj24ltgc6o77oii04");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_vl6zj24ltgc6o77oii04');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_vl6zj24ltgc6o77oii04(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_vl6zj24ltgc6o77oii04");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 30, j: 3 }, { i: 30, j: 0 }, { i: 30, j: 4 }, { i: 30, j: 2 }, { i: 30, j: 1 }, { i: 30, j: 5 }, { i: 30, j: 6 },  ], css_id: 'tinytable_css_481wwtqouisypus0t6ra',}, 
+          { positions: [ { i: 21, j: 0 }, { i: 24, j: 0 }, { i: 6, j: 0 }, { i: 15, j: 0 }, { i: 3, j: 1 }, { i: 18, j: 0 }, { i: 8, j: 2 }, { i: 27, j: 1 }, { i: 3, j: 0 }, { i: 2, j: 1 }, { i: 9, j: 0 }, { i: 18, j: 1 }, { i: 6, j: 1 }, { i: 12, j: 0 }, { i: 21, j: 1 }, { i: 9, j: 1 }, { i: 27, j: 0 }, { i: 24, j: 1 }, { i: 12, j: 1 }, { i: 21, j: 2 }, { i: 9, j: 2 }, { i: 15, j: 1 }, { i: 24, j: 2 }, { i: 8, j: 3 }, { i: 17, j: 4 }, { i: 27, j: 2 }, { i: 2, j: 2 }, { i: 3, j: 2 }, { i: 8, j: 4 }, { i: 18, j: 2 }, { i: 6, j: 2 }, { i: 2, j: 0 }, { i: 3, j: 3 }, { i: 17, j: 3 }, { i: 5, j: 3 }, { i: 6, j: 3 }, { i: 12, j: 2 }, { i: 21, j: 3 }, { i: 9, j: 3 }, { i: 15, j: 2 }, { i: 11, j: 3 }, { i: 12, j: 3 }, { i: 8, j: 1 }, { i: 5, j: 2 }, { i: 2, j: 3 }, { i: 11, j: 1 }, { i: 8, j: 5 }, { i: 18, j: 3 }, { i: 5, j: 0 }, { i: 11, j: 2 }, { i: 3, j: 4 }, { i: 8, j: 0 }, { i: 5, j: 1 }, { i: 24, j: 3 }, { i: 11, j: 0 }, { i: 17, j: 5 }, { i: 27, j: 3 }, { i: 15, j: 3 }, { i: 11, j: 4 }, { i: 12, j: 4 }, { i: 17, j: 0 }, { i: 14, j: 4 }, { i: 2, j: 4 }, { i: 20, j: 0 }, { i: 26, j: 5 }, { i: 5, j: 4 }, { i: 6, j: 4 }, { i: 20, j: 4 }, { i: 21, j: 4 }, { i: 9, j: 4 }, { i: 14, j: 3 }, { i: 24, j: 4 }, { i: 29, j: 0 }, { i: 26, j: 4 }, { i: 27, j: 4 }, { i: 15, j: 4 }, { i: 20, j: 3 }, { i: 8, j: 6 }, { i: 18, j: 4 }, { i: 14, j: 2 }, { i: 2, j: 5 }, { i: 3, j: 5 }, { i: 17, j: 2 }, { i: 5, j: 5 }, { i: 6, j: 5 }, { i: 20, j: 2 }, { i: 17, j: 6 }, { i: 9, j: 5 }, { i: 14, j: 1 }, { i: 11, j: 5 }, { i: 12, j: 5 }, { i: 17, j: 1 }, { i: 14, j: 5 }, { i: 15, j: 5 }, { i: 20, j: 1 }, { i: 26, j: 6 }, { i: 18, j: 5 }, { i: 14, j: 0 }, { i: 20, j: 5 }, { i: 21, j: 5 }, { i: 26, j: 1 }, { i: 23, j: 5 }, { i: 24, j: 5 }, { i: 29, j: 1 }, { i: 21, j: 6 }, { i: 27, j: 5 }, { i: 23, j: 0 }, { i: 29, j: 5 }, { i: 12, j: 6 }, { i: 26, j: 0 }, { i: 23, j: 4 }, { i: 2, j: 6 }, { i: 3, j: 6 }, { i: 29, j: 2 }, { i: 5, j: 6 }, { i: 6, j: 6 }, { i: 29, j: 4 }, { i: 29, j: 3 }, { i: 9, j: 6 }, { i: 23, j: 3 }, { i: 11, j: 6 }, { i: 20, j: 6 }, { i: 26, j: 3 }, { i: 14, j: 6 }, { i: 15, j: 6 }, { i: 24, j: 6 }, { i: 29, j: 6 }, { i: 18, j: 6 }, { i: 23, j: 2 }, { i: 23, j: 1 }, { i: 26, j: 2 }, { i: 23, j: 6 }, { i: 27, j: 6 },  ], css_id: 'tinytable_css_65siqxuil3dvvsvr5m6h',}, 
+          { positions: [ { i: 16, j: 0 }, { i: 7, j: 0 }, { i: 4, j: 4 }, { i: 7, j: 5 }, { i: 7, j: 4 }, { i: 25, j: 0 }, { i: 1, j: 0 }, { i: 19, j: 0 }, { i: 28, j: 0 }, { i: 7, j: 2 }, { i: 4, j: 3 }, { i: 10, j: 0 }, { i: 1, j: 1 }, { i: 7, j: 3 }, { i: 16, j: 1 }, { i: 1, j: 3 }, { i: 1, j: 2 }, { i: 19, j: 1 }, { i: 7, j: 1 }, { i: 1, j: 4 }, { i: 1, j: 6 }, { i: 10, j: 1 }, { i: 16, j: 6 }, { i: 4, j: 6 }, { i: 4, j: 0 }, { i: 10, j: 5 }, { i: 7, j: 6 }, { i: 16, j: 4 }, { i: 13, j: 5 }, { i: 1, j: 5 }, { i: 10, j: 3 }, { i: 16, j: 5 }, { i: 4, j: 5 }, { i: 13, j: 0 }, { i: 10, j: 4 }, { i: 19, j: 2 }, { i: 25, j: 1 }, { i: 13, j: 4 }, { i: 13, j: 1 }, { i: 28, j: 1 }, { i: 19, j: 3 }, { i: 25, j: 2 }, { i: 22, j: 0 }, { i: 10, j: 6 }, { i: 28, j: 2 }, { i: 16, j: 2 }, { i: 4, j: 2 }, { i: 22, j: 1 }, { i: 19, j: 5 }, { i: 16, j: 3 }, { i: 25, j: 4 }, { i: 22, j: 5 }, { i: 10, j: 2 }, { i: 19, j: 4 }, { i: 25, j: 5 }, { i: 4, j: 1 }, { i: 13, j: 2 }, { i: 22, j: 4 }, { i: 25, j: 6 }, { i: 13, j: 6 }, { i: 13, j: 3 }, { i: 19, j: 6 }, { i: 28, j: 3 }, { i: 28, j: 4 }, { i: 22, j: 6 }, { i: 22, j: 3 }, { i: 28, j: 5 }, { i: 25, j: 3 }, { i: 22, j: 2 }, { i: 28, j: 6 },  ], css_id: 'tinytable_css_saw90wi5hnuy1zsfeolo',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 5 }, { i: 0, j: 4 }, { i: 0, j: 2 }, { i: 0, j: 6 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_opttvuwyjysmg8ds6pau',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_vl6zj24ltgc6o77oii04(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_481wwtqouisypus0t6ra, .table th.tinytable_css_481wwtqouisypus0t6ra { font-size: 0.9em; text-align: center; font-style: italic; font-size: 0.6em; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_65siqxuil3dvvsvr5m6h, .table th.tinytable_css_65siqxuil3dvvsvr5m6h { font-size: 0.9em; text-align: center; font-style: italic; font-size: 0.6em; }
+      .table td.tinytable_css_saw90wi5hnuy1zsfeolo, .table th.tinytable_css_saw90wi5hnuy1zsfeolo { font-size: 0.9em; text-align: center; }
+      .table td.tinytable_css_opttvuwyjysmg8ds6pau, .table th.tinytable_css_opttvuwyjysmg8ds6pau { font-size: 0.9em; text-align: center; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    </style>
+    <div class="container">
+      <table class="table table-borderless" id="tinytable_vl6zj24ltgc6o77oii04" style="table-layout: fixed; width: 95% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+        <thead>
+        
+              <tr>
+                <th scope="col">Parameter</th>
+                <th scope="col">Stat</th>
+                <th scope="col">Bayesian LM</th>
+                <th scope="col">Beta Regression</th>
+                <th scope="col">ZIB</th>
+                <th scope="col">ZOIB</th>
+                <th scope="col">Ordered Beta</th>
+              </tr>
+        </thead>
+        
+        <tbody>
+                <tr>
+                  <td>b_Intercept</td>
+                  <td>Mean</td>
+                  <td>0.257</td>
+                  <td>-0.830</td>
+                  <td>-0.832</td>
+                  <td>-0.831</td>
+                  <td>-0.865</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>[0.199, 0.315]</td>
+                  <td>[-1.087, -0.55]</td>
+                  <td>[-1.094, -0.552]</td>
+                  <td>[-1.098, -0.559]</td>
+                  <td>[-1.119, -0.596]</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>1.000</td>
+                  <td>1.000</td>
+                  <td>1.000</td>
+                  <td>1.000</td>
+                  <td>1.000</td>
+                </tr>
+                <tr>
+                  <td>b_FluencyFluent</td>
+                  <td>Mean</td>
+                  <td>0.085</td>
+                  <td>0.204</td>
+                  <td>0.204</td>
+                  <td>0.203</td>
+                  <td>0.262</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>[0.002, 0.166]</td>
+                  <td>[-0.155, 0.539]</td>
+                  <td>[-0.139, 0.545]</td>
+                  <td>[-0.147, 0.541]</td>
+                  <td>[-0.07, 0.598]</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>0.977</td>
+                  <td>0.875</td>
+                  <td>0.872</td>
+                  <td>0.880</td>
+                  <td>0.936</td>
+                </tr>
+                <tr>
+                  <td>b_phi_Intercept</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>1.609</td>
+                  <td>1.601</td>
+                  <td>1.604</td>
+                  <td>1.609</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>-</td>
+                  <td>[1.193, 2]</td>
+                  <td>[1.187, 1.988]</td>
+                  <td>[1.183, 1.989]</td>
+                  <td>[1.179, 1.993]</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>1.000</td>
+                  <td>1.000</td>
+                  <td>1.000</td>
+                  <td>1.000</td>
+                </tr>
+                <tr>
+                  <td>b_phi_FluencyFluent</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>0.420</td>
+                  <td>0.425</td>
+                  <td>0.426</td>
+                  <td>0.408</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>-</td>
+                  <td>[-0.143, 0.993]</td>
+                  <td>[-0.158, 0.994]</td>
+                  <td>[-0.126, 0.994]</td>
+                  <td>[-0.156, 0.983]</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>0.931</td>
+                  <td>0.926</td>
+                  <td>0.930</td>
+                  <td>0.918</td>
+                </tr>
+                <tr>
+                  <td>b_zi_Intercept</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-1.673</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>[-2.46, -0.978]</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>1.000</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>b_zi_FluencyFluent</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-2.137</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>[-4.618, -0.34]</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0.992</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>b_zoi_Intercept</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-1.549</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>[-2.339, -0.859]</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>1.000</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>b_zoi_FluencyFluent</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-2.201</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>[-4.449, -0.465]</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0.996</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>b_coi_Intercept</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-2.022</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>[-4.408, -0.287]</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0.991</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>b_coi_FluencyFluent</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0.245</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>CI</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>[-6.946, 5.716]</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0.571</td>
+                  <td>-</td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+<!-- hack to avoid NA insertion in last line -->
 </div>
 </div>
 </figure>
 </div>
 <div>
 <div class="FigureNote NoIndent" data-custom-style="FigureNote">
-<em>Note</em>. Reported as: Mean [95% CrI] (pd). Link functions: b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit.
+<em>Note</em>. Link functions: b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit.
 </div>
 </div>
 </div>
@@ -543,7 +903,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the <code>brms</code> package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In <code>brms</code>, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(<a href="#ref-brms" role="doc-biblioref">Bürkner, 2017</a>)</span>. For the models we present in this paper, convergence is trivial with standard linear mixed models, though we note that these metrics are still important to pay attention to in case of model mis-fit.</p>
-<p>Looking at the output, the <code>Intercept</code> refers to the mean accuracy in the <em>disfluent</em> condition, as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.085. The 95% credible interval for this estimate spans from 0.001 to 0.171. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A).</p>
+<p>Looking at the output, the <code>Intercept</code> refers to the mean accuracy in the <em>disfluent</em> condition, as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% credible interval for this estimate spans from -0.003 to 0.166. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A).</p>
 <p>The output also includes the ESS and Rhat values, both of which are within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on the posterior mean estimates and their 95% credible intervals. In addition, we also include pd measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a>) which are provided by the <code>easystats</code> <code>bayestestr</code> package <span class="citation" data-cites="makowski2019a">Makowski, Ben-Shachar, &amp; Lüdecke (<a href="#ref-makowski2019" role="doc-biblioref">2019</a>)</span> and provides a parallel to <em>p</em>-values most readers are probably familiar with.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -554,19 +914,19 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     3734     3011
-FluencyFluent     0.08      0.04     0.00     0.17 1.00     3882     2652
+Intercept         0.26      0.03     0.20     0.31 1.00     3277     2985
+FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3387     2847
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3297     2585</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     3517     2612</code></pre>
 </div>
 </div>
 </section>
 </section>
 <section id="beta-regression" class="level2">
 <h2 data-anchor-id="beta-regression">Beta Regression</h2>
-<p><span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> observed that instructor fluency impacts actual learning, using a t-test. But recall this approach assumes normality of residuals and homoscedacity. These assumptions are unrealistic when the response values approach the scale boundaries <span class="citation" data-cites="sladekova2024unicorns">(<a href="#ref-sladekova2024unicorns" role="doc-biblioref">Sladekova &amp; Field, 2024</a>)</span>. Does the data we have meet those assumptions? We can use the function <code>check_model</code> from <code>easystats</code> <span class="citation" data-cites="easystats">(<a href="#ref-easystats" role="doc-biblioref">Lüdecke et al., 2022</a>)</span> to check our assumptions easily. The code in <a href="#lst-check1" class="quarto-xref">Listing&nbsp;4</a> automatically produces <a href="#fig-reg-assump" class="quarto-xref" aria-expanded="false">Figure&nbsp;3</a>. We can see some issues with our data. Specifically, there appears to be violations of constant variance across the values of the scale (homoskedasticity). In plain terms, this type of model mis-specfication means that a standard OLS model can predict non-sensical values outside the bounds of the scale.</p>
+<p><span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> observed that instructor fluency impacts actual learning, using a t-test. But recall this approach assumes normality of residuals and homoscedacity. These assumptions are unrealistic when the response values approach the scale boundaries <span class="citation" data-cites="sladekova2024unicorns">(<a href="#ref-sladekova2024unicorns" role="doc-biblioref">Sladekova &amp; Field, 2024</a>)</span>. Does the data we have meet those assumptions? We can use the function <code>check_model()</code> from <code>easystats</code> <span class="citation" data-cites="easystats">(<a href="#ref-easystats" role="doc-biblioref">Lüdecke et al., 2022</a>)</span> to check our assumptions easily. The code in <a href="#lst-check1" class="quarto-xref">Listing&nbsp;4</a> automatically produces <a href="#fig-reg-assump" class="quarto-xref" aria-expanded="false">Figure&nbsp;3</a>. We can see some issues with our data. Specifically, there appears to be violations of constant variance across the values of the scale (homoskedasticity). In plain terms, this type of model mis-specfication means that a standard OLS model can predict non-sensical values outside the bounds of the scale.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div id="lst-check1" class="r cell-code listing quarto-float quarto-figure quarto-figure-left">
 <figure class="quarto-float quarto-float-lst figure">
@@ -586,7 +946,7 @@ Listing&nbsp;4: Checking assumptions with the <code>check_model()</code> from <c
 <p>Figure&nbsp;3</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p>Two assumption checks for our OLS model: Normality (left) and Homogeneity (right)</p>
+<p>Two assumption checks for our OLS model: Normality (left) and Homoskedasticity (right)</p>
 </div>
 </figcaption>
 <div aria-describedby="fig-reg-assump-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -686,7 +1046,7 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model_parameters</span>(<span class="at">exponentiate =</span> <span class="cn">TRUE</span>, <span class="at">centrality =</span> <span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="3" data-custom-style="FigureWithoutNote">
-<div id="tbl-phi-beta-exp" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="3" data-after-caption-space="0pt" prefix="">
+<div id="tbl-phi-beta-exp" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="3" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-phi-beta-exp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -702,8 +1062,8 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
 
     <script>
 
-      function styleCell_6yyp7ngnfewztz188k8q(i, j, css_id) {
-          var table = document.getElementById("tinytable_6yyp7ngnfewztz188k8q");
+      function styleCell_xsuqbm3uelgpklfsutwt(i, j, css_id) {
+          var table = document.getElementById("tinytable_xsuqbm3uelgpklfsutwt");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -713,7 +1073,7 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_6yyp7ngnfewztz188k8q');
+        var table = document.getElementById('tinytable_xsuqbm3uelgpklfsutwt');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -721,8 +1081,8 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_6yyp7ngnfewztz188k8q(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_6yyp7ngnfewztz188k8q");
+      function spanCell_xsuqbm3uelgpklfsutwt(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_xsuqbm3uelgpklfsutwt");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -752,14 +1112,14 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 }, { i: 2, j: 3 },  ], css_id: 'tinytable_css_ymqhes0nz9secb3u297j',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_lkl0rhgvxirpkh3i93m9',}, 
+          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 }, { i: 2, j: 3 },  ], css_id: 'tinytable_css_25or0hxcuc33ts05mk0j',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_25iuelvdq2s4y8wfmddu',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_6yyp7ngnfewztz188k8q(cell.i, cell.j, group.css_id);
+                  styleCell_xsuqbm3uelgpklfsutwt(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -767,11 +1127,11 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_ymqhes0nz9secb3u297j, .table th.tinytable_css_ymqhes0nz9secb3u297j { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_lkl0rhgvxirpkh3i93m9, .table th.tinytable_css_lkl0rhgvxirpkh3i93m9 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_25or0hxcuc33ts05mk0j, .table th.tinytable_css_25or0hxcuc33ts05mk0j { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_25iuelvdq2s4y8wfmddu, .table th.tinytable_css_25iuelvdq2s4y8wfmddu { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_6yyp7ngnfewztz188k8q" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_xsuqbm3uelgpklfsutwt" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -785,15 +1145,15 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
         <tbody>
                 <tr>
                   <td>b_phi_Intercept</td>
-                  <td>4.97</td>
-                  <td>[3.28, 7.19]</td>
+                  <td>4.92</td>
+                  <td>[3.266, 7.145]</td>
                   <td>1</td>
                 </tr>
                 <tr>
                   <td>b_phi_FluencyFluent</td>
-                  <td>1.53</td>
-                  <td>[0.836, 2.698]</td>
-                  <td>0.924</td>
+                  <td>1.55</td>
+                  <td>[0.866, 2.7]</td>
+                  <td>0.93</td>
                 </tr>
         </tbody>
       </table>
@@ -864,7 +1224,7 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="4" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-cap-location="top" data-tblnum="4" data-after-caption-space="0pt" prefix="">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tbl-cap-location="top" data-tblnum="4" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -880,8 +1240,8 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
 
     <script>
 
-      function styleCell_0s7qymd1qccwiznfq53k(i, j, css_id) {
-          var table = document.getElementById("tinytable_0s7qymd1qccwiznfq53k");
+      function styleCell_hfjj2qq7p4tcefplw4hh(i, j, css_id) {
+          var table = document.getElementById("tinytable_hfjj2qq7p4tcefplw4hh");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -891,7 +1251,7 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_0s7qymd1qccwiznfq53k');
+        var table = document.getElementById('tinytable_hfjj2qq7p4tcefplw4hh');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -899,8 +1259,8 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_0s7qymd1qccwiznfq53k(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_0s7qymd1qccwiznfq53k");
+      function spanCell_hfjj2qq7p4tcefplw4hh(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_hfjj2qq7p4tcefplw4hh");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -930,14 +1290,14 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 },  ], css_id: 'tinytable_css_xt4ebboy1xsuqbm3uelg',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_d6995djsn2g1avew64h7',}, 
+          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 },  ], css_id: 'tinytable_css_hjydqz43jq69zzgcf9s8',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_ka54c44ne6keeh8u6533',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_0s7qymd1qccwiznfq53k(cell.i, cell.j, group.css_id);
+                  styleCell_hfjj2qq7p4tcefplw4hh(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -945,11 +1305,11 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_xt4ebboy1xsuqbm3uelg, .table th.tinytable_css_xt4ebboy1xsuqbm3uelg { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_d6995djsn2g1avew64h7, .table th.tinytable_css_d6995djsn2g1avew64h7 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_hjydqz43jq69zzgcf9s8, .table th.tinytable_css_hjydqz43jq69zzgcf9s8 { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_ka54c44ne6keeh8u6533, .table th.tinytable_css_ka54c44ne6keeh8u6533 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_0s7qymd1qccwiznfq53k" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_hfjj2qq7p4tcefplw4hh" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -962,13 +1322,13 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
         <tbody>
                 <tr>
                   <td>Disfluent</td>
-                  <td>0.298</td>
-                  <td>[0.25, 0.349]</td>
+                  <td>0.297</td>
+                  <td>[0.247, 0.35]</td>
                 </tr>
                 <tr>
                   <td>Fluent</td>
                   <td>0.353</td>
-                  <td>[0.302, 0.408]</td>
+                  <td>[0.3, 0.408]</td>
                 </tr>
         </tbody>
       </table>
@@ -1050,7 +1410,7 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="5" data-custom-style="FigureWithoutNote">
-<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="5" data-after-caption-space="0pt" prefix="">
+<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="5" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ame1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1066,8 +1426,8 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
 
     <script>
 
-      function styleCell_5mk0j68nz8apojr8lzc5(i, j, css_id) {
-          var table = document.getElementById("tinytable_5mk0j68nz8apojr8lzc5");
+      function styleCell_r7pal13lh1vgv4x1m0e0(i, j, css_id) {
+          var table = document.getElementById("tinytable_r7pal13lh1vgv4x1m0e0");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -1077,7 +1437,7 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_5mk0j68nz8apojr8lzc5');
+        var table = document.getElementById('tinytable_r7pal13lh1vgv4x1m0e0');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -1085,8 +1445,8 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_5mk0j68nz8apojr8lzc5(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_5mk0j68nz8apojr8lzc5");
+      function spanCell_r7pal13lh1vgv4x1m0e0(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_r7pal13lh1vgv4x1m0e0");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -1116,14 +1476,14 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 },  ], css_id: 'tinytable_css_560rwaxn3hfjj2qq7p4t',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_kn55by288benxvrogrwf',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 },  ], css_id: 'tinytable_css_005nefdlxgrfe9ucg1v8',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_6smlxet3ys9m9t9gnhrm',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_5mk0j68nz8apojr8lzc5(cell.i, cell.j, group.css_id);
+                  styleCell_r7pal13lh1vgv4x1m0e0(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -1131,11 +1491,11 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_560rwaxn3hfjj2qq7p4t, .table th.tinytable_css_560rwaxn3hfjj2qq7p4t { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_kn55by288benxvrogrwf, .table th.tinytable_css_kn55by288benxvrogrwf { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_005nefdlxgrfe9ucg1v8, .table th.tinytable_css_005nefdlxgrfe9ucg1v8 { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_6smlxet3ys9m9t9gnhrm, .table th.tinytable_css_6smlxet3ys9m9t9gnhrm { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_5mk0j68nz8apojr8lzc5" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_r7pal13lh1vgv4x1m0e0" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -1151,7 +1511,7 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>0.056</td>
-                  <td>[-0.015, 0.128]</td>
+                  <td>[-0.018, 0.13]</td>
                 </tr>
         </tbody>
       </table>
@@ -1166,7 +1526,7 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
 <p><a href="#tbl-ame1" class="quarto-xref" aria-expanded="false">Table&nbsp;5</a> displays the difference for the fluency factor (<code>Mean</code> column). The difference between the fluent and disfluent conditions is .06. That is, participants who watched a fluent instructor scored 6% higher on the final recall test than participants who watched the disfluent instructor. Our Cr.I contains 0 as one of the 95% most credible values, meaning we can’t rule out a null (0) or weakly negative effect. However, the probability of a positive effect (pd = 88%).</p>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="6" data-custom-style="FigureWithoutNote">
-<div id="tbl-or" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="6" data-after-caption-space="0pt" prefix="">
+<div id="tbl-or" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="6" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-or-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1182,8 +1542,8 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
 
     <script>
 
-      function styleCell_9zzgcf9s8y82kpslif81(i, j, css_id) {
-          var table = document.getElementById("tinytable_9zzgcf9s8y82kpslif81");
+      function styleCell_h5kzmwcf33h3m831xd7v(i, j, css_id) {
+          var table = document.getElementById("tinytable_h5kzmwcf33h3m831xd7v");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -1193,7 +1553,7 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_9zzgcf9s8y82kpslif81');
+        var table = document.getElementById('tinytable_h5kzmwcf33h3m831xd7v');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -1201,8 +1561,8 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_9zzgcf9s8y82kpslif81(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_9zzgcf9s8y82kpslif81");
+      function spanCell_h5kzmwcf33h3m831xd7v(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_h5kzmwcf33h3m831xd7v");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -1232,14 +1592,14 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 },  ], css_id: 'tinytable_css_sbf8a6gn0axr7pal13lh',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_atwju97jov6n8bahtuwb',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 },  ], css_id: 'tinytable_css_1zam3ssn6kq2l9rsjz3k',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_tq68d2qzib4z1oaguvel',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_9zzgcf9s8y82kpslif81(cell.i, cell.j, group.css_id);
+                  styleCell_h5kzmwcf33h3m831xd7v(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -1247,11 +1607,11 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_sbf8a6gn0axr7pal13lh, .table th.tinytable_css_sbf8a6gn0axr7pal13lh { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_atwju97jov6n8bahtuwb, .table th.tinytable_css_atwju97jov6n8bahtuwb { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_1zam3ssn6kq2l9rsjz3k, .table th.tinytable_css_1zam3ssn6kq2l9rsjz3k { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_tq68d2qzib4z1oaguvel, .table th.tinytable_css_tq68d2qzib4z1oaguvel { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_9zzgcf9s8y82kpslif81" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_h5kzmwcf33h3m831xd7v" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -1266,8 +1626,8 @@ Listing&nbsp;11: Calculating the difference between probablities with <code>avg_
                 <tr>
                   <td>Fluency</td>
                   <td>ln(odds(Fluent) / odds(Disfluent))</td>
-                  <td>1.29</td>
-                  <td>[0.933, 1.793]</td>
+                  <td>1.295</td>
+                  <td>[0.92, 1.818]</td>
                 </tr>
         </tbody>
       </table>
@@ -1335,7 +1695,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 <h4 data-anchor-id="mean">Mean.</h4>
 <p>As shown in <a href="#tbl-marg-mu-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;7</a>, there is little evidence for an effect of Fluency – the 95% CI includes zero, suggesting substantial uncertainty about the direction and magnitude of the effect.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0p" prefix="" data-tblnum="7" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="7" data-after-caption-space="0p" prefix="">
+<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="7" data-after-caption-space="0p">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-mu-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1351,8 +1711,8 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 
     <script>
 
-      function styleCell_mwcf33h3m831xd7vtq68(i, j, css_id) {
-          var table = document.getElementById("tinytable_mwcf33h3m831xd7vtq68");
+      function styleCell_14off6oi4rzj434qpz07(i, j, css_id) {
+          var table = document.getElementById("tinytable_14off6oi4rzj434qpz07");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -1362,7 +1722,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_mwcf33h3m831xd7vtq68');
+        var table = document.getElementById('tinytable_14off6oi4rzj434qpz07');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -1370,8 +1730,8 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_mwcf33h3m831xd7vtq68(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_mwcf33h3m831xd7vtq68");
+      function spanCell_14off6oi4rzj434qpz07(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_14off6oi4rzj434qpz07");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -1401,14 +1761,14 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 },  ], css_id: 'tinytable_css_3ssn6kq2l9rsjz3kss9v',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_d2qzib4z1oaguvel1zam',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 },  ], css_id: 'tinytable_css_ds5cx9jgiewmh1fs33d3',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_rxoc65xhklme1bsonjmn',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_mwcf33h3m831xd7vtq68(cell.i, cell.j, group.css_id);
+                  styleCell_14off6oi4rzj434qpz07(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -1416,11 +1776,11 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_3ssn6kq2l9rsjz3kss9v, .table th.tinytable_css_3ssn6kq2l9rsjz3kss9v { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_d2qzib4z1oaguvel1zam, .table th.tinytable_css_d2qzib4z1oaguvel1zam { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_ds5cx9jgiewmh1fs33d3, .table th.tinytable_css_ds5cx9jgiewmh1fs33d3 { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_rxoc65xhklme1bsonjmn, .table th.tinytable_css_rxoc65xhklme1bsonjmn { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_mwcf33h3m831xd7vtq68" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_14off6oi4rzj434qpz07" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -1436,7 +1796,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>0.044</td>
-                  <td>[-0.032, 0.117]</td>
+                  <td>[-0.03, 0.119]</td>
                 </tr>
         </tbody>
       </table>
@@ -1452,7 +1812,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 <h4 data-anchor-id="dispersion">Dispersion.</h4>
 <p>As shown in <a href="#tbl-marg-phi-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a>, the posterior estimates suggest a credible effect of Fluency on dispersion (<span class="math inline">\phi</span>), with disfluent responses showing greater variability. The 95% CI for the fluency contrast does not include zero, indicating meaningful differences in precision.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="8" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="8" data-after-caption-space="0pt" prefix="">
+<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="8" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-phi-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1468,8 +1828,8 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 
     <script>
 
-      function styleCell_ijx7hcgh8lk416l0svrt(i, j, css_id) {
-          var table = document.getElementById("tinytable_ijx7hcgh8lk416l0svrt");
+      function styleCell_k1jajp9nkzopmz2007yy(i, j, css_id) {
+          var table = document.getElementById("tinytable_k1jajp9nkzopmz2007yy");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -1479,7 +1839,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_ijx7hcgh8lk416l0svrt');
+        var table = document.getElementById('tinytable_k1jajp9nkzopmz2007yy');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -1487,8 +1847,8 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_ijx7hcgh8lk416l0svrt(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_ijx7hcgh8lk416l0svrt");
+      function spanCell_k1jajp9nkzopmz2007yy(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_k1jajp9nkzopmz2007yy");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -1518,14 +1878,14 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 },  ], css_id: 'tinytable_css_kt9nw6c14off6oi4rzj4',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_xq364xtpup7ts840oyus',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 },  ], css_id: 'tinytable_css_veji2770wu6euj5clu16',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_bn7idfnw7lc9p1q1zop8',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_ijx7hcgh8lk416l0svrt(cell.i, cell.j, group.css_id);
+                  styleCell_k1jajp9nkzopmz2007yy(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -1533,11 +1893,11 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_kt9nw6c14off6oi4rzj4, .table th.tinytable_css_kt9nw6c14off6oi4rzj4 { border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_xq364xtpup7ts840oyus, .table th.tinytable_css_xq364xtpup7ts840oyus { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_veji2770wu6euj5clu16, .table th.tinytable_css_veji2770wu6euj5clu16 { border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_bn7idfnw7lc9p1q1zop8, .table th.tinytable_css_bn7idfnw7lc9p1q1zop8 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_ijx7hcgh8lk416l0svrt" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_k1jajp9nkzopmz2007yy" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -1552,8 +1912,8 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>2.67</td>
-                  <td>[-0.928, 6.4]</td>
+                  <td>2.65</td>
+                  <td>[-0.962, 6.528]</td>
                 </tr>
         </tbody>
       </table>
@@ -1845,7 +2205,7 @@ Listing&nbsp;17: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>0.061</td>
-                  <td>[-0.016, 0.135]</td>
+                  <td>[-0.018, 0.137]</td>
                 </tr>
         </tbody>
       </table>
@@ -1863,7 +2223,7 @@ Listing&nbsp;17: Fitting ordered beta model with dispersion using <code>ordbetar
 <h3 data-anchor-id="cutpoints">Cutpoints</h3>
 <p>The model cutpoints are not reported by default in the summary output, but we can access them with the R package <code>posterior</code> <span class="citation" data-cites="posterior2025a">(<a href="#ref-posterior2025a" role="doc-biblioref">Bürkner et al., 2025</a>)</span> and the functions <code>as_draws</code> and <code>summary_draws</code>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="11" data-custom-style="FigureWithoutNote">
-<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="11" data-after-caption-space="0pt" prefix="">
+<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="11" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cutpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1962,12 +2322,12 @@ Listing&nbsp;17: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td>cutzero</td>
                   <td>-2.97</td>
-                  <td>[-3.55, -2.41]</td>
+                  <td>[-3.58, -2.41]</td>
                 </tr>
                 <tr>
                   <td>cutone</td>
                   <td>1.85</td>
-                  <td>[1.64, 2.07]</td>
+                  <td>[1.64, 2.08]</td>
                 </tr>
         </tbody>
       </table>
