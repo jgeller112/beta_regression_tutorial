@@ -232,11 +232,15 @@ fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
   relocate(Accuracy, .after = last_col())
 ```
 
-Many important outcomes in psychological research can be expressed as proportions or percentages: the proportion of correct responses on a test [e.g., @kornell2008], the proportion of looks on a particular stimulus in an eye-tracking task [e.g., @james2025], or the percentage of agreement with a given statement [e.g., @Costello2024]. As a practical example from educational and cognitive research, one popular way to assess learning is by looking at the proportion of correct responses on a test. To illustrate, consider a memory experiment where participants read a short passage on a specific topic. After a brief distractor task, they complete a final memory test consisting of 10 short-answer questions, each assigned a different point value (e.g., question 1 might be worth 4 points, while question 2 might be worth 1 point). The primary outcome measure could be the proportion of points earned on each question relative to the total possible points for each question. While it is usually possible to model the components of the outcome separately — for example, using a binomial distribution when both the number of successes and trials are known or a Poisson distributon on the raw sum — modeling the outcome as a proportion permits comparability across scales and may be the only option if the underlying components of the scale are not available, such as with secondary data.
+Many important outcomes in psychological research can be expressed as proportions or percentages—for example, the proportion of correct responses on a test [e.g., @kornell2008], the proportion of looks directed at a particular stimulus in an eye-tracking task [e.g., @james2025], or the percentage of agreement with a given statement or belief \[e.g., @Costello2024\]. In educational and cognitive research, one common way to assess learning is by measuring the proportion of correct responses on a test.
 
-From this, a key question arises: **how should proportional data be analyzed?** In psychology, there is a strong reliance on linear models (e.g., *t*-tests, ANOVAs, and regressions). However, linear models assume: (1) However, linear models assume: (1) the residuals of the outcome are normally distributed (i.e., Gaussian), (2) an unbounded response scale (ranging from $-\infty$ to $-\infty$), and (3) constant variance (homoscedasticity). These assumptions are rarely met in psychological data [@sladekova2024unicorns]. They are especially problematic for proportional data, which are naturally bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance—particularly near the boundaries [@smithson2006; @ferrari2004; @paolino2001]. Violating these assumptions can lead to biased estimates and misleading inferences, with the bias increasing in the amount of data clustered near boundaries.
+Consider a memory experiment in which participants read a short passage, engage in a brief distractor task, and then complete a final memory test with 10 short-answer questions. Each question may have a different point value (e.g., question 1 is worth 4 points, question 2 is worth 1 point). A meaningful outcome measure could be the proportion of points earned on each question relative to its total possible value.
 
-Another option extends the linear model framework to accommodate non-normal outcome distributions. For example, binomial or Bernoulli models (commonly referred to as logistic regression when a logit link function is used) are well-suited for binary outcomes or counts of successes out of a fixed number of trials. However, these models require discretized responses and may fall short when data exhibit over-dispersion by clustering near the boundaries of the scale.
+A key question arises from this example : **how should proportional outcomes be analyzed?** While it is sometimes possible to model the components of a proportion separately—for example, using a binomial model when both the number of successes and total trials are known, or a Poisson model when working with raw counts—modeling the proportion itself offers comparability across tasks and scales. This can be particularly useful when only the proportion is available, as is often the case with secondary data that lack item-level structure or point values.
+
+Despite this, many researchers default to linear models, including t-tests, ANOVAs, and linear regression. However, these models make strong assumptions: (1) residuals are normally distributed, (2) the outcome is unbounded (from $-\infty$ to $\infty$), and (3) variance is constant across the range of the data. These assumptions are rarely satisfied in practice [@sladekova2024unicorns], and they are especially ill-suited for proportional outcomes, which are bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance, particularly near the boundaries [@smithson2006; @ferrari2004; @paolino2001]. Violating these assumptions can lead to biased estimates and spurious inferences, especially when many observations cluster near 0 or 1.
+
+Another option is to use generalized linear models (GLMs) that relax the assumption of normality. For instance, binomial and Bernoulli models—often referred to as logistic regression when paired with a logit link—are well-suited for binary outcomes or success counts out of a fixed number of trials. However, these models require discretized data and may perform poorly when the data are continuous proportions or exhibit excess variability (i.e., overdispersion), especially near the scale’s boundaries.
 
 The challenges of analyzing proportional data are not new [see @bartlett1936]. Fortunately, several existing approaches address the limitations of commonly used models. One such approach is Beta regression, an extension of the generalized linear model (GLM) that employs the Beta distribution [@ferrari2004; @paolino2001]. Beta regression offers a flexible and robust solution for modeling proportional data by accounting for boundary effects and over-dispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets. While in this paper we will focus on proportional-responses that lie between 0 and 1--it is important to note that our analysis applies to any bounded continuous scale. Any bounded scale can be mapped to lie within 0 and 1 without resulting in a loss of information as the transformation is linear.[^1] Consequently, a scale that has natural end points of -1,234 and +8,451--or any other end points on the real number line short of infinity—can be modeled using the approaches we describe in this paper.
 
@@ -419,13 +423,13 @@ ggplot(fluency_data, aes(x = Fluency, y = Accuracy, fill = Fluency)) +
 
 ```
 
-We first replicate this analysis in a regression framework using brms. We model final test accuracy--the proprtion of correctly recalled idea units across the two items--as the dependent variable. Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.
+We first replicate this analysis in a regression framework using brms. We model final test accuracy--the proprtion of correctly recalled idea units across the videos--as the dependent variable. Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.
 
 ```{r}
 #| label: tbl-all
 #| tbl-cap: "Bayesian regression summaries for each model"
 #| tbl-align: "center"
-#| apa-note: "Link functions:  b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit."
+#| apa-note: "Link functions: b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`."
 
 # Define your models
 model_list <- list(
@@ -438,38 +442,73 @@ model_list <- list(
 
 # Process each model
 cleaned_tables <- imap(model_list, function(mod, name) {
-  model_parameters(mod, centrality = "mean") %>%
-    filter(Parameter != "sigma") %>%
+  model_parameters(mod, centrality = "mean") |>
+    filter(Parameter != "sigma") |>
     mutate(
       Mean = sprintf("%.3f", Mean),
-      CI = str_glue("[{round(CI_low, 3)}, {round(CI_high, 3)}]"),
-      pd = sprintf("%.3f", pd)
-    ) %>%
-    pivot_longer(cols = c(Mean, CI, pd), names_to = "Stat", values_to = "value") %>%
-    mutate(Model = name) %>%
+      Cr.I = str_glue("[{round(CI_low, 3)}, {round(CI_high, 3)}]"),
+      pd_star = case_when(
+        pd >= 0.995 ~ str_glue("{sprintf('%.3f', pd)}***"),
+        pd >= 0.985 ~ str_glue("{sprintf('%.3f', pd)}**"),
+        pd >= 0.975 ~ str_glue("{sprintf('%.3f', pd)}*"),
+        TRUE ~ sprintf("%.3f", pd)
+      )
+    ) |>
+    pivot_longer(
+      cols = c(Mean, Cr.I, pd_star),
+      names_to = "Stat",
+      values_to = "value"
+    ) |>
+    mutate(
+      Stat = recode(Stat, pd_star = "pd"),
+      Model = name
+    ) |>
     select(Parameter, Stat, Model, value)
 })
 
-# Combine and pivot wider
-pretty_table <- bind_rows(cleaned_tables) %>%
-  pivot_wider(names_from = Model, values_from = value) %>%
-  mutate(across(where(is.character), ~ replace_na(.x, "-"))) %>%
+# Combine all tables
+pretty_table <- bind_rows(cleaned_tables) |>
+  pivot_wider(names_from = Model, values_from = value) |>
+  mutate(across(where(is.character), ~ replace_na(.x, "-"))) |>
+
+  # Simplify parameter names
+  mutate(Parameter = str_replace_all(Parameter, "FluencyFluent", "Fluency")) |>
+
+  # Set factor levels
   mutate(
-    Stat = factor(Stat, levels = c("Mean", "CI", "pd")), 
-     Parameter = factor(Parameter, levels = c("b_Intercept", "b_FluencyFluent", "b_phi_Intercept", "b_phi_FluencyFluent", "b_zi_Intercept", "b_zi_FluencyFluent",  "b_zoi_Intercept", "b_zoi_FluencyFluent", "b_coi_Intercept", "b_coi_FluencyFluent")
-  )
-  ) %>%
-  arrange(Parameter, Stat) %>%
-  group_by(Parameter) %>%
-  mutate(Parameter = if_else(row_number() == 1, as.character(Parameter), "")) %>%
+    Stat = factor(Stat, levels = c("Mean", "Cr.I", "pd")),
+    Parameter = factor(
+      Parameter,
+      levels = c(
+        "b_Intercept",
+        "b_Fluency",
+        "b_phi_Intercept",
+        "b_phi_Fluency",
+        "b_zi_Intercept",
+        "b_zi_Fluency",
+        "b_zoi_Intercept",
+        "b_zoi_Fluency",
+        "b_coi_Intercept",
+        "b_coi_Fluency"
+      )
+    )
+  ) |>
+
+  arrange(Parameter, Stat) |>
+  group_by(Parameter) |>
+  mutate(Parameter = if_else(row_number() == 1, as.character(Parameter), "")) |>
   ungroup()
 
 # Display as styled table
 pretty_table |>
   tt(width = 0.95) |>
   format_tt(escape = TRUE) |>
-  style_tt(fontsize=.9, align="c") |> 
-  style_tt(i = c(2:3,5:6, 8:9, 11:12, 14:15, 17:18, 20:21, 23:24, 26:27, 29:30), italic=TRUE, fontsize=.6)  
+  style_tt(fontsize = .9, align = "c") |>
+  style_tt(
+    i = c(2:3, 5:6, 8:9, 11:12, 14:15, 17:18, 20:21, 23:24, 26:27, 29:30),
+    italic = TRUE,
+    fontsize = .6
+  )
 ```
 
 ### Regression Model
@@ -918,7 +957,7 @@ h_upper <- 2 * (asin(sqrt(p1_upper)) - asin(sqrt(p2_lower)))
 
 ```
 
-In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (@eq-cohenh) to calculate Cohen's *h* along with the 95% CIs around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% credible interval \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
+In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (@eq-cohenh) to calculate Cohen's *h* along with the 95% Cr.I around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% credible interval \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
 
 $$
 h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)
@@ -936,7 +975,7 @@ A limitation of the Beta regression model is that it can only accommodate values
 
 The zero-inflated Beta models a mixture of the data-generating process. The $\alpha$ parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset of with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.
 
-We can fit a ZIB model using `brms` and use the `marginaleffects` package to make inferences about our parameters of interest. Before we run a zero-inflated beta model, we will need to transform our data again and nudge \[YIKES - LET'S BE CONSISTENT HERE--WE SHOULD USE THE ZOIB IF RATHER THAN NUDGE\] our 1s to .99--we can keep our 0s. Similar to our Beta regression model we fit in `brms`, we will use the `bf()` function to fit several models. We fit our $\mu$ and $\phi$ parameters as well as our zero-inflated parameter ($\alpha$; here labeled as `zi`). In `brms` we can use the zero_inflated_beta family (see @lst-zib).
+We can fit a ZIB model using `brms` and use the `marginaleffects` package to make inferences about our parameters of interest. Before we run a zero-inflated beta model, we will need to transform our data again and remove the one 1 value in our data--we can keep our 0s. Similar to our Beta regression model we fit in `brms`, we will use the `bf()` function to fit several models. We fit our $\mu$ and $\phi$ parameters as well as our zero-inflated parameter ($\alpha$; here labeled as `zi`). In `brms` we can use the zero_inflated_beta family (see @lst-zib).
 
 ```{r}
 #| label: zib brms model
@@ -981,7 +1020,7 @@ pp_check3 <- pp_check(fit_zi, ndraws = 100) + # ndraws is nu
 
 #### Mean
 
-As shown in @tbl-marg-mu-brms, there is little evidence for an effect of Fluency -- the 95% CI includes zero, suggesting substantial uncertainty about the direction and magnitude of the effect.
+As shown in @tbl-marg-mu-brms, there is little evidence for an effect of Fluency -- the 95% Cr.I includes zero, suggesting substantial uncertainty about the direction and magnitude of the effect.
 
 ```{r}
 
@@ -1003,10 +1042,10 @@ marg_zi_brms |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% CI` = str_glue("[{conf.low}, {conf.high}]")
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean, `95% CI`) |>
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
@@ -1015,7 +1054,7 @@ marg_zi_brms |>
 
 #### Dispersion
 
-As shown in @tbl-marg-phi-brms, the posterior estimates suggest a credible effect of Fluency on dispersion ($\phi$), with disfluent responses showing greater variability. The 95% CI for the fluency contrast does not include zero, indicating meaningful differences in precision.
+As shown in @tbl-marg-phi-brms, the posterior estimates suggest a credible effect of Fluency on dispersion ($\phi$), with disfluent responses showing greater variability. The 95% Cr.I for the fluency contrast does not include zero, indicating meaningful differences in precision.
 
 ```{r}
 
@@ -1037,10 +1076,10 @@ marg_phi_brms |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% CI` = str_glue("[{conf.low}, {conf.high}]")
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean, `95% CI`) |>
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
@@ -1049,7 +1088,7 @@ marg_phi_brms |>
 
 ### Zero-Inflation
 
-We can harness the power of `marginaleffects` again and plot the posterior difference between the fluent and disfluent conditions (see @fig-zi-plot). In @fig-zi-plot, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% CI for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction. We can harness the power of `marginaleffects` again and plot the posterior probablity of each level (see @fig-zi-plot).
+We can harness the power of `marginaleffects` again and plot the posterior difference between the fluent and disfluent conditions (see @fig-zi-plot). In @fig-zi-plot, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% Cr.I for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction. We can harness the power of `marginaleffects` again and plot the posterior probablity of each level (see @fig-zi-plot).
 
 ```{r}
 #| label: tbl-marg-zib-brms
@@ -1220,9 +1259,9 @@ zoib_model <- model_parameters(fit_zoib, "mean")
 zoib_model |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% CI` = str_glue("[{CI_low}, {CI_high}]")
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
   ) |>
-  select(Parameter, Mean, `95% CI`, pd) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
   tt(digits = 3) |>
   format_tt(escape = TRUE)
 ```
@@ -1334,10 +1373,10 @@ ord_beta_avg |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% CI` = str_glue("[{conf.low}, {conf.high}]")
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean, `95% CI`) |>
+  select(Term, Contrast, Mean, `95% Cr.I`) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
