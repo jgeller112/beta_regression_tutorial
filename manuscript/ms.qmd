@@ -429,7 +429,7 @@ We first replicate this analysis in a regression framework using brms. We model 
 #| label: tbl-all
 #| tbl-cap: "Bayesian regression summaries for each model"
 #| tbl-align: "center"
-#| apa-note: "Link functions: b_mean = logit; b_phi = logit; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`."
+#| apa-note: "Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`."
 
 # Define your models
 model_list <- list(
