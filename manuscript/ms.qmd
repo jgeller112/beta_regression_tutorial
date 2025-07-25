@@ -15,16 +15,13 @@ author:
         country: USA
         postal-code: 02467
     roles:
-      - conceptualization
-      - writing
-      - editing
-      - data curation
-      - project administration
-      - editing
-      - formal analysis
-      - software
-      - visualization
-      
+      - Conceptualization
+      - Data curation
+      - Formal analysis
+      - Project administration
+      - Resources
+      - Visualization
+      - Writing - original draft
   - name: Robert Kubinec
     orcid: 0000-0001-6655-4119
     affiliations:
