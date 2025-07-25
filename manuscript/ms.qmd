@@ -27,25 +27,26 @@ author:
     affiliations:
       - name: University of South Carolina
     roles:
-      - editing
-      - formal analysis
-      - visualization
+     - Formal analysis
+     - Validation
+     - Writing - review & editing
   - name: Chelsea M. Parlett Pelleriti
     orcid: 0000-0001-9301-1398
     affiliations:
       - name: School
     roles:
-      - formal analysis
-      - editing
-      - validation
+     - Formal analysis
+     - Writing - review & editing
   - name: Matti Vuorre
     orcid: 0000-0001-5052-066X
     affiliations:
       - name: Tilburg University
     roles:
-      - editing
-      - validation
-      - formal analysis
+     - Formal analysis
+     - Resources
+     - Supervision
+     - Validation
+     - Writing - review & editing
 
 author-note:
   status-changes:
