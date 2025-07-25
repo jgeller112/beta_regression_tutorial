@@ -50,6 +50,9 @@ beta_regression_tutorial/
 - **`create_env_dev.R`**: Script to set up the nix environment
 - **`default.nix`**: Configuration file for the Nix package manager.
 - **`.project`**: Project configuration file.
+- ** install_cmdstan.R**: R script to install cmdstanr via rix/nix hook.
+- **grateful**: references for packages used in project
+- **air.toml**: formatter setting positron
 
 ## Directories
 
