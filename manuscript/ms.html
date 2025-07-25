@@ -226,7 +226,7 @@ window.Quarto = {
 <p>Chelsea M. Parlett Pelleriti <img src="_extensions/wjschne/apaquarto/ORCID-iD_icon-vector.svg" id="orchid" class="img-fluid" style="width:4.23mm" alt="Orcid ID Logo: A green circle with white letters ID"> <a href="https://orcid.org/0000-0001-9301-1398">https://orcid.org/0000-0001-9301-1398</a></p>
 <p>Matti Vuorre <img src="_extensions/wjschne/apaquarto/ORCID-iD_icon-vector.svg" id="orchid" class="img-fluid" style="width:4.23mm" alt="Orcid ID Logo: A green circle with white letters ID"> <a href="https://orcid.org/0000-0001-5052-066X">https://orcid.org/0000-0001-5052-066X</a></p>
 <p>No preregistration. Data, code, and materials for this manusscript can be found at. The authors have no conflicts of interest to disclose.</p>
-<p>Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows: <em>Jason Geller</em><strong>: </strong>conceptualization, writing – original draft, writing – review &amp; editing, data curation, project administration, writing – review &amp; editing, formal analysis, software, and visualization. <em>Robert Kubinec</em><strong>: </strong>writing – review &amp; editing, formal analysis, and visualization. <em>Chelsea M. Parlett Pelleriti</em><strong>: </strong>formal analysis, writing – review &amp; editing, and validation. <em>Matti Vuorre</em><strong>: </strong>writing – review &amp; editing, validation, and formal analysis</p>
+<p>Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows: <em>Jason Geller</em><strong>: </strong>conceptualization, data curation, formal analysis, project administration, resources, visualization, and writing – original draft. <em>Robert Kubinec</em><strong>: </strong>writing – review &amp; editing, formal analysis, and visualization. <em>Chelsea M. Parlett Pelleriti</em><strong>: </strong>formal analysis, writing – review &amp; editing, and validation. <em>Matti Vuorre</em><strong>: </strong>writing – review &amp; editing, validation, and formal analysis</p>
 <p>Correspondence concerning this article should be addressed to Jason Geller, Department of Psychology and Neuroscience, Boston College, McGuinn 300, Chestnut Hill, MA 2467, USA, Email: <a href="mailto:drjasongeller@gmail.com">drjasongeller@gmail.com</a></p>
 <br>
 </section>
@@ -331,7 +331,7 @@ Listing&nbsp;1: Data needed to run examples
 </div>
 <p>Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in <a href="#tbl-dataset" class="quarto-xref" aria-expanded="false">Table&nbsp;1</a>. The dataset can be downloaded from Github (<a href="#lst-data" class="quarto-xref">Listing&nbsp;1</a>). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that treat outcomes as normally distributed. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce Wilford et al.’s analysis and then re-analyze the data using Beta regression and highlight how it can improve our inferences.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="1" data-custom-style="FigureWithoutNote">
-<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="1">
+<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="1">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dataset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -483,7 +483,7 @@ Listing&nbsp;1: Data needed to run examples
 <p>We first replicate this analysis in a regression framework using brms. We model final test accuracy–the proprtion of correctly recalled idea units across the videos–as the dependent variable. Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.</p>
 </div>
 <div class="cell FigureWithNote" data-tbl-align="center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." prefix="" data-tblnum="2" data-custom-style="FigureWithNote">
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-tblnum="2" data-tbl-align="center" prefix="">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-align="center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." prefix="" data-tblnum="2">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -905,7 +905,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the <code>brms</code> package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In <code>brms</code>, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(<a href="#ref-brms" role="doc-biblioref">Bürkner, 2017</a>)</span>. For the models we present in this paper, convergence is trivial with standard linear mixed models, though we note that these metrics are still important to pay attention to in case of model mis-fit.</p>
-<p>Our main question of interest is: Does instructor fluency have an effect on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>. the <code>Intercept</code> refers to the posterior mean accuracy in the <em>disfluent</em> condition, M = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.083. The 95% credible interval for this estimate spans from 0.001 to 0.169. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A).</p>
+<p>Our main question of interest is: Does instructor fluency have an effect on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>. the <code>Intercept</code> refers to the posterior mean accuracy in the <em>disfluent</em> condition, M = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% credible interval for this estimate spans from -0.001 to 0.166. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (<a href="#ref-wilford2020" role="doc-biblioref">2020</a>)</span> (Experiment 1A).</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -915,12 +915,12 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     3654     2968
-FluencyFluent     0.08      0.04     0.00     0.17 1.00     4030     2873
+Intercept         0.26      0.03     0.20     0.31 1.00     4163     2953
+FluencyFluent     0.08      0.04    -0.00     0.17 1.00     4469     3003
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3548     2877</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     3644     2850</code></pre>
 </div>
 </div>
 <p>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on posterior mean estimates and their 95% credible intervals. In addition, we include the <em>pd</em> measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a>), which is provided by the <code>bayestestR</code> package <span class="citation" data-cites="makowski2019a makowski2019">(<a href="#ref-makowski2019a" role="doc-biblioref">Makowski, Ben-Shachar, Chen, et al., 2019</a>; <a href="#ref-makowski2019" role="doc-biblioref">Makowski, Ben-Shachar, &amp; Lüdecke, 2019</a>)</span>. This measure offers an intuitive parallel to p-values that many readers may be familiar with.</p>
@@ -1033,9 +1033,9 @@ Table&nbsp;3
         <tbody>
                 <tr>
                   <td>(FluencyFluent) &gt; 0</td>
-                  <td>0.083</td>
-                  <td>[0.012, 0.153]</td>
-                  <td>40.237</td>
+                  <td>0.084</td>
+                  <td>[0.014, 0.154]</td>
+                  <td>37.835</td>
                 </tr>
         </tbody>
       </table>
@@ -1047,7 +1047,7 @@ Table&nbsp;3
 </div>
 </div>
 <div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
-<p>For example, the fluency effect has a <em>pd</em> of .977, which indicates a high probability that the effect is positive rather than negative (akin to p &lt; .05). However, <em>pd</em> does not tell us the probability that the effect is <em>non-zero</em>. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The <code>hypothesis()</code> function in <code>brms</code> (see <a href="#lst-hypo" class="quarto-xref">Listing&nbsp;4</a>) allows us to perform this comparison. Running the code returns a column called <code>ER</code> (<code>Evid.Ratio</code>), which contains a numerical value that represents the Bayes factor for a directional hypothesis (<a href="#tbl-hypothesis" class="quarto-xref" aria-expanded="false">Table&nbsp;3</a>) The evidence ratio (ER) for the fluency effect is 40.2371134, providing very strong evidence that the effect is both non-zero and positive <span class="citation" data-cites="jeffries1961 kass1995">(<a href="#ref-jeffries1961" role="doc-biblioref">Jeffries, 1961</a>; <a href="#ref-kass1995" role="doc-biblioref">Kass &amp; Raftery, 1995</a>)</span>.</p>
+<p>For example, the fluency effect has a <em>pd</em> of .977, which indicates a high probability that the effect is positive rather than negative (akin to p &lt; .05). However, <em>pd</em> does not tell us the probability that the effect is <em>non-zero</em>. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The <code>hypothesis()</code> function in <code>brms</code> (see <a href="#lst-hypo" class="quarto-xref">Listing&nbsp;4</a>) allows us to perform this comparison. Running the code returns a column called <code>ER</code> (<code>Evid.Ratio</code>), which contains a numerical value that represents the Bayes factor for a directional hypothesis (<a href="#tbl-hypothesis" class="quarto-xref" aria-expanded="false">Table&nbsp;3</a>) The evidence ratio (ER) for the fluency effect is 37.8349515, providing very strong evidence that the effect is both non-zero and positive <span class="citation" data-cites="jeffries1961 kass1995">(<a href="#ref-jeffries1961" role="doc-biblioref">Jeffries, 1961</a>; <a href="#ref-kass1995" role="doc-biblioref">Kass &amp; Raftery, 1995</a>)</span>.</p>
 </div>
 </section>
 </section>
@@ -1173,7 +1173,7 @@ Listing&nbsp;7: Fitting Beta model with dispersion in <code>brm()</code>.
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model_parameters</span>(<span class="at">exponentiate =</span> <span class="cn">TRUE</span>, <span class="at">centrality =</span> <span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="4" data-custom-style="FigureWithoutNote">
-<div id="tbl-phi-beta-exp" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="4">
+<div id="tbl-phi-beta-exp" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="4">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-phi-beta-exp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1273,13 +1273,13 @@ Listing&nbsp;7: Fitting Beta model with dispersion in <code>brm()</code>.
                 <tr>
                   <td>b_phi_Intercept</td>
                   <td>4.95</td>
-                  <td>[3.282, 7.314]</td>
+                  <td>[3.194, 7.374]</td>
                   <td>1</td>
                 </tr>
                 <tr>
                   <td>b_phi_FluencyFluent</td>
                   <td>1.53</td>
-                  <td>[0.874, 2.695]</td>
+                  <td>[0.86, 2.732]</td>
                   <td>0.933</td>
                 </tr>
         </tbody>
@@ -1351,7 +1351,7 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="5" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tbl-cap-location="top" data-after-caption-space="0pt" data-tblnum="5">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tbl-cap-location="top" prefix="" data-tblnum="5">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1450,12 +1450,12 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
                 <tr>
                   <td>Disfluent</td>
                   <td>0.297</td>
-                  <td>[0.248, 0.348]</td>
+                  <td>[0.249, 0.349]</td>
                 </tr>
                 <tr>
                   <td>Fluent</td>
-                  <td>0.354</td>
-                  <td>[0.303, 0.405]</td>
+                  <td>0.353</td>
+                  <td>[0.3, 0.409]</td>
                 </tr>
         </tbody>
       </table>
@@ -1537,7 +1537,7 @@ Listing&nbsp;12: Calculating the difference between probablities with <code>avg_
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="6" data-custom-style="FigureWithoutNote">
-<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="6">
+<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="6">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ame1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1637,8 +1637,8 @@ Listing&nbsp;12: Calculating the difference between probablities with <code>avg_
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>0.057</td>
-                  <td>[-0.015, 0.127]</td>
+                  <td>0.056</td>
+                  <td>[-0.016, 0.13]</td>
                 </tr>
         </tbody>
       </table>
@@ -1654,7 +1654,7 @@ Listing&nbsp;12: Calculating the difference between probablities with <code>avg_
 </div>
 <p>To formally assess evidence in favor of the null hypothesis (i.e., that the effect is exactly zero), we can use the <code>hypothesis()</code> function from the <code>brms</code> package to compute an evidence ratio (ER), which is a Bayes factor for directional or point hypotheses.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>However, it is important to note that this procedure requires weakly informative or informative priors; the default priors in <code>brms</code> are too vague and therefore cannot be used to accurately compute the ER in favor of a point null hypothesis.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="7" data-custom-style="FigureWithoutNote">
-<div id="tbl-or" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="7">
+<div id="tbl-or" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="7">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-or-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1754,8 +1754,8 @@ Listing&nbsp;12: Calculating the difference between probablities with <code>avg_
                 <tr>
                   <td>Fluency</td>
                   <td>ln(odds(Fluent) / odds(Disfluent))</td>
-                  <td>1.297</td>
-                  <td>[0.933, 1.793]</td>
+                  <td>1.293</td>
+                  <td>[0.932, 1.814]</td>
                 </tr>
         </tbody>
       </table>
@@ -1823,7 +1823,7 @@ Listing&nbsp;13: Fitting zib model with <code>brm()</code>
 <h4 data-anchor-id="mean">Mean.</h4>
 <p>As shown in <a href="#tbl-marg-mu-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a>, there is little evidence for an effect of Fluency – the 95% Cr.I includes zero, suggesting substantial uncertainty about the direction and magnitude of the effect.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0p" prefix="" data-tblnum="8" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0p" data-tblnum="8">
+<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0p" prefix="" data-tblnum="8">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-mu-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1923,8 +1923,8 @@ Listing&nbsp;13: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>0.044</td>
-                  <td>[-0.034, 0.121]</td>
+                  <td>0.043</td>
+                  <td>[-0.03, 0.116]</td>
                 </tr>
         </tbody>
       </table>
@@ -1940,7 +1940,7 @@ Listing&nbsp;13: Fitting zib model with <code>brm()</code>
 <h4 data-anchor-id="dispersion">Dispersion.</h4>
 <p>As shown in <a href="#tbl-marg-phi-brms" class="quarto-xref" aria-expanded="false">Table&nbsp;9</a>, the posterior estimates suggest a credible effect of Fluency on dispersion (<span class="math inline">\phi</span>), with disfluent responses showing greater variability. The 95% Cr.I for the fluency contrast does not include zero, indicating meaningful differences in precision.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="9" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="9">
+<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="9">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-phi-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2040,8 +2040,8 @@ Listing&nbsp;13: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>2.71</td>
-                  <td>[-0.906, 6.603]</td>
+                  <td>2.7</td>
+                  <td>[-0.736, 6.516]</td>
                 </tr>
         </tbody>
       </table>
@@ -2333,7 +2333,7 @@ Listing&nbsp;18: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>0.061</td>
-                  <td>[-0.013, 0.137]</td>
+                  <td>[-0.017, 0.136]</td>
                 </tr>
         </tbody>
       </table>
@@ -2351,7 +2351,7 @@ Listing&nbsp;18: Fitting ordered beta model with dispersion using <code>ordbetar
 <h3 data-anchor-id="cutpoints">Cutpoints</h3>
 <p>The model cutpoints are not reported by default in the summary output, but we can access them with the R package <code>posterior</code> <span class="citation" data-cites="posterior2025a">(<a href="#ref-posterior2025a" role="doc-biblioref">Bürkner et al., 2025</a>)</span> and the functions <code>as_draws</code> and <code>summary_draws</code>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="12" data-custom-style="FigureWithoutNote">
-<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="12">
+<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="12">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cutpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2449,13 +2449,13 @@ Listing&nbsp;18: Fitting ordered beta model with dispersion using <code>ordbetar
         <tbody>
                 <tr>
                   <td>cutzero</td>
-                  <td>-2.97</td>
-                  <td>[-3.56, -2.42]</td>
+                  <td>-2.98</td>
+                  <td>[-3.58, -2.42]</td>
                 </tr>
                 <tr>
                   <td>cutone</td>
-                  <td>1.85</td>
-                  <td>[1.63, 2.07]</td>
+                  <td>1.86</td>
+                  <td>[1.65, 2.08]</td>
                 </tr>
         </tbody>
       </table>
