@@ -1,8 +1,9 @@
 
+# Beta Regression Tutorial
+
 [![DOI](https://zenodo.org/badge/826370441.svg)](https://doi.org/10.5281/zenodo.15830595)
 
-
-This repository contains  materials and code for our manuscript "A Beta Way: A Tutorial For Using Beta Regression in Psychological Research to Analyze Proportional and Percentage Data" 
+This repository provides a fully reproducible workflow for our beta regression manuscript (A Beta Way: A Tutorial For Using Beta Regression in Psychological Research to Analyze Proportional and Percentage Data") using **R**, **Quarto**, and **Nix**. It includes scripts, data, references, and CI pipelines to automate rendering and ensure reproducibility.
 
 ## Authors/Contributors 
 - Jason Geller* (drjasongeller@gmail.com)
@@ -10,37 +11,37 @@ This repository contains  materials and code for our manuscript "A Beta Way: A T
 - Chelsea M. Parlett Pelleriti
 - Matti Vuorre
 
+## Project Structure
+
 ```
 beta_regression_tutorial/
 ├── .github/
 │   └── workflows/
-│       └── <workflow-files>.yml     # GitHub Actions workflows
+│       └── <workflow-files>.yml     # GitHub Actions workflows (e.g., manuscript rendering)
 ├── .vscode/
-│   └── settings.json                # Editor config (air formatter)
+│   └── settings.json                # VSCode editor configuration (Air formatter)
 ├── manuscript/
 │   ├── data/
-│   │   ├── fluency_data.csv
-│   │   └── miko_data.csv
+│   │   ├── fluency_data.csv         # Aggregate data used for example
+│   │   └── miko_data.csv            # Aaw data from Expt 1A from Wilford Paper
 │   ├── Figures/
-│   │   └── <rendered_figures>.png
+│   │   └── <rendered_figures>.png   # Generated manuscript figures
 │   ├── _extensions/
 │   │   └── apaquarto/
-│   ├── ms.qmd                       # Main manuscript file
-│   └── bibliography.bib            # Paper references
-├── .Rprofile                      
-├── .gitignore                      # Ignore .DS_Store, etc.
-├── LICENSE                         # Project license
-├── README.md                       # Project overview
-├── air.toml                        # Air formatter config
-├── create_env_dev.R               # Script for dev environment with rix
-├── default.nix                    # Nix definition for full reproducibility
-├── grateful-refs.bib              # Generated bib for installed packages
-├── grateful-report.html           # Report of installed packages
-├── install_cmdstan.R              # Install latest CmdStan in shell
-├── nix-beta_reg_ms.Rproj          # RStudio project file
-```
+│   ├── ms.qmd                       # Main manuscript file (Quarto)
+│   └── bibliography.bib             # Paper references
+├── .Rprofile                        # R session configuration
+├── .gitignore                       # Files/directories ignored by Git (e.g., .DS_Store)
+├── LICENSE                          # Project license
+├── README.md                        # Project overview (this file)
+├── air.toml                         # Air formatter configuration
+├── create_env_dev.R                 # Script to create dev environment (rix)
+├── default.nix                      # Nix definition for full reproducibility
+├── grateful-refs.bib                # Bibliography generated for installed packages
+├── grateful-report.html             # Report of installed packages
+├── install_cmdstan.R                # Install the latest CmdStan in the shell
+├── nix-beta_reg_ms.Rproj            # RStudio project file
 
-## Overview
 
 - **`.github`**: contains render_paper.yml that builds the manuscript using nix anew every time it detects a new change
 - **`.Rprofile`**: Configuration file for R sessions.
