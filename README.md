@@ -3,7 +3,7 @@
 
 [![DOI](https://zenodo.org/badge/826370441.svg)](https://doi.org/10.5281/zenodo.15830595)
 
-This repository provides a fully reproducible workflow for our beta regression manuscript (A Beta Way: A Tutorial For Using Beta Regression in Psychological Research to Analyze Proportional and Percentage Data") using **R**, **Quarto**, and **Nix**. It includes scripts, data, references, and CI pipelines to automate rendering and ensure reproducibility.
+This repository provides a fully reproducible workflow for our beta regression manuscript (A Beta Way: A Tutorial For Using Beta Regression in Psychological Research) using **R**, **Quarto**, and **Nix**. It includes scripts, data, references, and CI pipelines to automate rendering and ensure reproducibility.
 
 ## Authors/Contributors 
 - Jason Geller* (drjasongeller@gmail.com)
@@ -40,7 +40,9 @@ beta_regression_tutorial/
 ├── grateful-refs.bib                # Bibliography generated for installed packages
 ├── grateful-report.html             # Report of installed packages
 ├── install_cmdstan.R                # Install the latest CmdStan in the shell
-├── nix-beta_reg_ms.Rproj            # RStudio project file
+├── nix-beta_reg_ms.Rproj            # RStudio project file (opens this project in RStudio)
+
+```
 
 
 - **`.github`**: contains render_paper.yml that builds the manuscript using nix anew every time it detects a new change
@@ -80,12 +82,16 @@ Here is a video tutorial showing an example of how to reproduce a manuscript usi
 ## Prerequisites
 
 ### Required Software
+
 To reproduce the manuscript, you will need the following if not using rix/nix:
 
-1. **Git** - To get Github repos [https://git-scm.com/downloads]
-2. **RStudio** or **Positron**  or **VS Code**- To run the R scripts and render the Quarto document.
-3. **Quarto** - To compile the manuscript.
-4. **apaQuarto** - APA manuscript template [https://github.com/wjschne/apaquarto/tree/main] (you should not have to download this if you download the repo as the _extension file contains all the files needed)
+- **Git** - To get Github repos [https://git-scm.com/downloads]
+-  **RStudio** or **Positron**  or **VS Code**- To run the R scripts and render the Quarto document.
+-  **Quarto** - To compile the manuscript.
+
+### Template 
+
+- **apaQuarto** - APA manuscript template [https://github.com/wjschne/apaquarto/tree/main] (you should not have to download this if you download the repo as the _extension file contains all the files needed)
 
 ## Steps to Reproduce
 
@@ -122,7 +128,7 @@ nix-build
 ```
 nix-shell
 ```
-Once in the shell, You can: 
+Once in the shell (after calling nix-shell), You can: 
 
 1. Reproduce the manuscript
 
@@ -133,12 +139,13 @@ quarto render "~/manuscript/ms.qmd"
 
 or 
 
-2. Launch your IDE in the correct environment in run code and analyses:
+2. Launch your IDE in the correct environment in run code and analyses (the IDE needs to be set explicility):
 
 - Positron
   - To use Positron from the shell you will need to make sure the correct path is set (see https://github.com/posit-dev/positron/discussions/4485#discussioncomment-10456159). Once this is done you can open Positron from the shell
   - If you are using Positron within WSL/Windows you need to download WSL for Positron.
   - You should also download `direnv` in Positron to access the nix-shell when running projects. 
+
 ```bash
 positron
 ```
@@ -146,8 +153,6 @@ For RStudio (linux only), simply type:
 ```bash
 rstudio
 ```
-
-
 
 ###  Run locally with packages installed systemwide
 
@@ -157,7 +162,7 @@ Finally, it’s also possible to forget {rix} and instead run everything using R
 
   - R 4.4.1 (or later) and RStudio.
 
-  - Quarto 1.6.1 (or later)
+  - Quarto 1.6.1 (or later) (please not Typst will not work for APAquarto)
   
   - A C++ compiler and GNU Make. Complete instructions for macOS, Windows, and Linux are available at CmdStan’s documentation. In short, do this:
 
@@ -176,7 +181,10 @@ sudo apt install g++ make
 (macOS only): Download and install XQuartz
 ```
 
-## Packages Used
+## Packages used
+
+## Packages used
+
 | Package        | Version     | Citation                                                                                      |
 |----------------|-------------|-----------------------------------------------------------------------------------------------|
 | base           | 4.5.1       | R Core Team (2025)                                                                            |
@@ -205,6 +213,7 @@ sudo apt install g++ make
 | tidybayes      | 3.0.5       | Kay (2024); Kay (2025)                                                                        |
 | tidyverse      | 2.0.0       | Wickham et al. (2019)                                                                         |
 | tinytable      | 0.9.0       | Arel-Bundock (2025)                                                                           |
+| tinytext       | 0.22.0      | Funaki and Sato (2025)                                                                        |
 | transformr     | 0.1.4       | Pedersen (2022)                                                                               |
 | webshot2       | 0.1.0       | Cheng, Xie (2022)                                                                             |
 
@@ -212,6 +221,7 @@ sudo apt install g++ make
 ```
 required_packages = c(
   "tidyverse",
+  "tinytex", 
   "brms",
   "geomtextpath",
   "quarto",
@@ -241,6 +251,11 @@ install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", "https
 ```
 # install cmdstan 
 cmdstanr::install_cmdstan()
+```
+
+```
+#install tinytex to generate pdf 
+tinytex::install_tinytex()
 ```
 
 1. Download the repository from Github
