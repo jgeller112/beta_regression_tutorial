@@ -24,8 +24,6 @@ beta_regression_tutorial/
 │   ├── data/
 │   │   ├── fluency_data.csv         # Aggregate data used for example
 │   │   └── miko_data.csv            # Aaw data from Expt 1A from Wilford Paper
-│   ├── Figures/
-│   │   └── <rendered_figures>.png   # Generated manuscript figures
 │   ├── _extensions/
 │   │   └── apaquarto/
 │   ├── ms.qmd                       # Main manuscript file (Quarto)
