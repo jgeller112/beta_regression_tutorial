@@ -33,7 +33,7 @@ author:
   - name: Chelsea M. Parlett Pelleriti
     orcid: 0000-0001-9301-1398
     affiliations:
-      - name: School
+      - name: Cava
     roles:
      - Formal analysis
      - Writing - review & editing
@@ -344,7 +344,166 @@ Beta regression models can be estimated with both frequentist and Bayesian metho
 
 There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the `brms` package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution.
 
-By default, the Bayesian models run 2,000 posterior draws,[^4] which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval. In addition, we report the *probability of direction* (pd), which reflects the probability that a parameter is strictly positive or negative. A pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to a point estimate with two-sided *p*-values of 0.10, 0.05, 0.01, and 0.001, respectively (approximately $1 - \frac{p}{2}$). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
+By default, the Bayesian models run 2,000 posterior draws,[^4] which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval.In addition, we report the *probability of direction* (pd), which reflects the probability that a parameter is strictly positive or negative. When a uniform prior is used (all values equally likely in the prior), a pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to a point estimate with two-sided *p*-values of 0.10, 0.05, 0.01, and 0.001, respectively (approximately $1 - \frac{p}{2}$)(see @fig-p-value-pd-comp for  a visual description of how the *pd* and *p*-value are related). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].  
+
+```{r}
+#| label: fig-p-value-pd-comp
+#| fig-cap: "A Bayesian posterior distribution (assuming uniform prior) centered around the point estimate 1.645 and a Frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the $\\alpha$ probability of direction (pd), and the red area represents $1-\\alpha$ of the distribution. In the Frequentist sampling distribution, the red tail areas represent the rejection region at $\\alpha = 0.1$. Note that the mean estimate for the Bayesian posterior distribution falls exactly at the $1 - \\frac{\\alpha}{2}$ cutoff in the Frequentist sampling distribution. In this sense, the pd is equivalent to the one-sided $p$-value."
+
+#| fig-asp: 0.52
+
+# Function to find the non-centrality parameter
+find_ncp <- function(df, target_percentile = 0.025, target_value = 0) {
+  # Use optimization to find ncp
+  objective <- function(ncp) {
+    (qt(target_percentile, df, ncp) - target_value)^2
+  }
+
+  result <- optimize(objective, interval = c(-10, 10))
+  return(result$minimum)
+}
+
+dt_30_ncp <- find_ncp(30, target_percentile = 0.05)
+
+# Define critical values (e.g., for alpha = 0.05, two-tailed)
+alpha <- 0.10
+
+upper_critical <- qt(1 - alpha / 2, df = 30, ncp = 0)
+lower_critical <- qt(alpha / 2, df = 30, ncp = 0)
+
+# Create the plot
+p <- ggplot(data.frame(x = c(-2, 6)), aes(x = x)) +
+  # Plot the normal distribution curve
+  stat_function(
+    fun = dt,
+    args = list(df = 30, ncp = dt_30_ncp),
+    color = "black",
+    size = 1
+  ) +
+
+  # Shade the left tail (p-value region)
+  stat_function(
+    fun = dt,
+    args = list(df = 30, ncp = dt_30_ncp),
+    xlim = c(0, 6),
+    geom = "area",
+    fill = "blue",
+    alpha = 0.3
+  ) +
+
+  stat_function(
+    fun = dt,
+    args = list(df = 30, ncp = dt_30_ncp),
+    xlim = c(-4, 0),
+    geom = "area",
+    fill = "red",
+    alpha = 0.3
+  ) +
+
+  # Add vertical lines at critical values
+  geom_vline(
+    xintercept = dt_30_ncp,
+    color = "red",
+    linetype = "solid",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = 0,
+    color = "black",
+    linetype = "solid",
+    linewidth = 1
+  ) +
+  # Add labels and formatting
+  labs(
+    title = "Bayesian Posterior Distribution",
+    subtitle = paste("pd =", (1 - alpha / 2) * 100, "%"),
+    x = "",
+    y = ""
+  ) +
+
+  # Clean theme
+  theme_publication() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    panel.grid = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+
+  # Set axis limits
+  xlim(-4, 6) +
+  ylim(0, 0.45)
+
+# Create the plot
+pd <- ggplot(data.frame(x = c(-2, 6)), aes(x = x)) +
+  # Plot the normal distribution curve
+  stat_function(
+    fun = dt,
+    args = list(df = 30, ncp = 0),
+    color = "black",
+    size = 1
+  ) +
+
+  # Shade the left tail (p-value region)
+  stat_function(
+    fun = dt,
+    args = list(df = 30, ncp = 0),
+    xlim = c(-4, lower_critical),
+    geom = "area",
+    fill = "red",
+    alpha = 0.3
+  ) +
+
+  # Shade the right tail (p-value region)
+  stat_function(
+    fun = dt,
+    args = list(df = 30, ncp = 0),
+    xlim = c(upper_critical, 6),
+    geom = "area",
+    fill = "red",
+    alpha = 0.3
+  ) +
+
+  # Add vertical lines at critical values
+  geom_vline(
+    xintercept = upper_critical,
+    color = "red",
+    linetype = "solid",
+    linewidth = 1
+  ) +
+  geom_vline(
+    xintercept = 0,
+    color = "black",
+    linetype = "solid",
+    linewidth = 1
+  ) +
+
+  # Add labels and formatting
+  labs(
+    title = "Frequentist Sampling Distribution",
+    subtitle = paste("α =", alpha, ""),
+    # x = "t-statistic",
+    x = "",
+    y = ""
+  ) +
+
+  # Clean theme
+  theme_publication() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    panel.grid = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+
+  # Set axis limits
+  xlim(-4, 6) +
+  ylim(0, 0.45)
+# Display the plot
+print(p / pd)
+```
 
 [^4]: The Stan team recommends 2,000 draws as a default, so this is a conservative standard. We note that Stan can converge in as few as 500 draws for less complex models, which may be an easier standard when engaging in model-building.
 
