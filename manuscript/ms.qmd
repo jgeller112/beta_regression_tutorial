@@ -234,9 +234,9 @@ Many important outcomes in psychological research can be expressed as proportion
 
 Consider a memory experiment in which participants read a short passage, engage in a brief distractor task, and then complete a final memory test with 10 short-answer questions. Each question may have a different point value (e.g., question 1 is worth 4 points, question 2 is worth 1 point). A meaningful outcome measure could be the proportion of points earned on each question relative to its total possible value.
 
-A key question arises from this example: how should proportional outcomes be analyzed? Researchers frequently default to linear models that assume Gaussian (normal) distributions, such as t-tests, ANOVAs, and linear regression. However, these models make strong assumptions: (1) residuals are normally distributed, (2) the outcome is unbounded (from $-\infty$ to $\infty$), and (3) variance is constant across the range of the data. These assumptions are rarely satisfied in practice [@sladekova2024unicorns], and they are especially ill-suited for proportional outcomes, which are bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance, particularly near the boundaries [@smithson2006; @ferrari2004; @paolino2001]. Violating these assumptions can lead to biased estimates and spurious inferences, especially when many observations cluster near 0 or 1. 
+A key question arises from this example: how should proportional outcomes be analyzed? Researchers frequently default to linear models that assume Gaussian (normal) distributions, such as t-tests, ANOVAs, and linear regression. However, these models make strong assumptions: (1) residuals are normally distributed, (2) the outcome is unbounded (from $-\infty$ to $\infty$), and (3) variance is constant across the range of the data. These assumptions are rarely satisfied in practice [@sladekova2024unicorns], and they are especially ill-suited for proportional outcomes, which are bounded between 0 and 1 and often exhibit heteroscedasticity—non-constant variance, particularly near the boundaries [@smithson2006; @ferrari2004; @paolino2001]. Violating these assumptions can lead to biased estimates and spurious inferences, especially when many observations cluster near 0 or 1.
 
-In some cases, it is possible to use a generalized version of the linear model (GLM) that relaxes the assumption of normality. For instance, binomial and Bernoulli models—often referred to as logistic regression when paired with a logit link—are well-suited for binary outcomes (e.g., 0 or 1) or success counts out of a fixed number of trials. However, these models require discretized data and may perform poorly when the data are continuous proportions or exhibit excess variability (i.e., overdispersion), especially near the scale’s boundaries. 
+In some cases, it is possible to use a generalized version of the linear model (GLM) that relaxes the assumption of normality. For instance, models that use a binomial or Bernoulli likelihood—often referred to as logistic regression when paired with a logit link—are well-suited for binary outcomes (e.g., 0 or 1) or success counts out of a fixed number of trials. However, these models require discretized data and may perform poorly when the data are continuous proportions or exhibit excess variability (i.e., overdispersion), especially near the scale’s boundaries.
 
 The challenges of analyzing proportional data are not new [see @bartlett1936]. Fortunately, several existing approaches address the limitations of commonly used models. One such approach is Beta regression, an extension of the generalized linear model that employs the Beta distribution [@ferrari2004; @paolino2001]. Beta regression offers a flexible and robust solution for modeling proportional data directly by accounting for boundary effects and over-dispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets [@sladekova2024unicorns]. In addition, the direct modeling of proportions allows comparability across tasks and scales, and can be particularly valuable when only the proportion is available, as is often the case with secondary data that lack item-level structure or point values.
 
@@ -332,7 +332,7 @@ $$
 \end{aligned}
 $$ {#eq-beta}
 
-Thus, Beta regression allows modeling both the mean and precision of the outcome distribution. To ensure that $\mu$ stays between 0 and 1, we apply a link function, which allows linear modeling of the mean on an unbounded scale. A common link-function choice is the logit, but other functions such as the probit or complementary log-log are possible.
+Thus, Beta regression allows modeling both the mean and precision of the outcome distribution. To ensure that $\mu$ stays between 0 and 1 , we apply a link function, which allows linear modeling of the mean on an unbounded scale. A common link-function choice is the logit, but other functions such as the probit or complementary log-log are possible.
 
 The logit function, $\text{logit}(\mu) = \log \left( \frac{\mu}{1 - \mu} \right)$ links the mean to log-odds which are unbounded, making linear modeling possible. The inverse of the logit, called the logistic function, maps the linear predictor $\eta$ back to the original scale of the data $\left(\mu = \frac{1}{1 + e^{-\eta}}\right)$. Similarly, the strictly positive dispersion parameter is usually modeled through a log link function, ensuring it remains positive.
 
@@ -344,9 +344,130 @@ Beta regression models can be estimated with both frequentist and Bayesian metho
 
 There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the `brms` package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution.
 
-By default, the Bayesian models run 2,000 posterior draws,[^4] which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval. In addition, we report the *probability of direction* (pd), which reflects the probability that a parameter is strictly positive or negative. A pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to a point estimate with two-sided *p*-values of 0.10, 0.05, 0.01, and 0.001, respectively (approximately $1 - \frac{p}{2}$). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
+By default, the Bayesian models run 2,000 posterior draws,[^4] which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval. In addition, we report the *probability of direction* (pd), which reflects the probability that a parameter is strictly positive or negative. When a uniform prior is used (all values equally likely in the prior), a pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to a point estimate with two-sided *p*-values of 0.10, 0.05, 0.01, and 0.001, respectively (approximately $1 - \frac{p}{2}$). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
 
 [^4]: The Stan team recommends 2,000 draws as a default, so this is a conservative standard. We note that Stan can converge in as few as 500 draws for less complex models, which may be an easier standard when engaging in model-building.
+
+<!--# (CP) I added a note that this is ONLY true with improper uniform priors. I think this might be what you're referring to by saying it's "approximately" but people are persnickity. You can take or leave this figure, Claude helped me make the plot, but this is what helped it click in my head.-->
+
+```{r}
+#| label: fig-p-value-pd-comp
+#| fig-cap: "A Bayesian posterior distribution (assuming uniform prior) centered around the point estimate 1.645 and a Frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the $\alpha$ pd, and the red area represents $1-\alpha$ of the distribution. In the Frequentist Sampling distribution the red tail areas represent the rejection region at $\alpha = 0.1$. Note that the mean estimate for the Bayesian posterior distribution falls exactly at the $1- \frac{\alpha}{2}$ cutoff in the Frequentist sampling distribution. In this sense, the pd is equivalent to the one-sided p-value.  "
+#| fig-asp: 0.52
+
+# edited with Claude
+library(ggplot2)
+library(patchwork)
+
+# Function to find the non-centrality parameter
+find_ncp <- function(df, target_percentile = 0.025, target_value = 0) {
+  # Use optimization to find ncp
+  objective <- function(ncp) {
+    (qt(target_percentile, df, ncp) - target_value)^2
+  }
+  
+  result <- optimize(objective, interval = c(-10, 10))
+  return(result$minimum)
+}
+
+dt_30_ncp <- find_ncp(30, target_percentile = 0.05)
+
+# Define critical values (e.g., for alpha = 0.05, two-tailed)
+alpha <- 0.10
+
+upper_critical <- qt(1-alpha/2, df = 30, ncp = 0)
+lower_critical <- qt(alpha/2, df = 30, ncp = 0)
+
+# Create the plot
+p <- ggplot(data.frame(x = c(-2, 6)), aes(x = x)) +
+  # Plot the normal distribution curve
+  stat_function(fun = dt, args = list(df = 30, ncp = dt_30_ncp), 
+                color = "black", size = 1) +
+  
+  # Shade the left tail (p-value region)
+  stat_function(fun = dt, args = list(df = 30, ncp = dt_30_ncp),
+                xlim = c(0, 6),
+                geom = "area", fill = "blue", alpha = 0.3) +
+  
+    stat_function(fun = dt, args = list(df = 30, ncp = dt_30_ncp),
+                xlim = c(-4, 0),
+                geom = "area", fill = "red", alpha = 0.3) +
+  
+  
+  # Add vertical lines at critical values
+  geom_vline(xintercept =dt_30_ncp , color = "red", 
+             linetype = "solid", linewidth = 1) +
+      geom_vline(xintercept = 0, color = "black", 
+             linetype = "solid", linewidth = 1) +
+  # Add labels and formatting
+  labs(
+    title = "Bayesian Posterior Distribution",
+    subtitle = paste("pd =", (1-alpha/2)*100, "%"),
+    x = "",
+    y = ""
+  ) +
+
+  # Clean theme
+  theme_publication() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    panel.grid = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+  
+  # Set axis limits
+  xlim(-4, 6) +
+  ylim(0, 0.45)
+
+# Create the plot
+pd <- ggplot(data.frame(x = c(-2, 6)), aes(x = x)) +
+  # Plot the normal distribution curve
+  stat_function(fun = dt, args = list(df = 30, ncp = 0), 
+                color = "black", size = 1) +
+  
+  # Shade the left tail (p-value region)
+  stat_function(fun = dt, args = list(df = 30, ncp = 0),
+                xlim = c(-4, lower_critical),
+                geom = "area", fill = "red", alpha = 0.3) +
+  
+  # Shade the right tail (p-value region)
+  stat_function(fun = dt, args = list(df = 30, ncp = 0),
+                xlim = c(upper_critical, 6),
+                geom = "area", fill = "red", alpha = 0.3) +
+  
+  # Add vertical lines at critical values
+  geom_vline(xintercept = upper_critical, color = "red", 
+             linetype = "solid", linewidth = 1) +
+    geom_vline(xintercept = 0, color = "black", 
+             linetype = "solid", linewidth = 1) +
+  
+  # Add labels and formatting
+  labs(
+    title = "Frequentist Sampling Distribution",
+    subtitle = paste("α =", alpha, ""),
+    # x = "t-statistic",
+    x = "",
+    y = ""
+  ) +
+  
+  # Clean theme
+  theme_publication() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    panel.grid = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+  
+  # Set axis limits
+  xlim(-4, 6) +
+  ylim(0, 0.45)
+# Display the plot
+print(p / pd)
+```
 
 For reasons of space, we refer readers unfamiliar to Bayesian data analysis to several existing books on the topic [@gelman2013bayesian; @mcelreath2020statistical; @kruschke2015doing]. In addition, we assume readers are familiar with R, but those in need of a refresher should find @wickhamDataScienceImport2023 useful.
 
@@ -560,6 +681,7 @@ summary(bayes_reg_model)
 ```
 
 The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on posterior mean estimates and their 95% credible intervals. In addition, we include the *pd* measure in the main summary table (@tbl-all), which is provided by the `bayestestR` package [@makowski2019a; @makowski2019]. This measure offers an intuitive parallel to p-values that many readers may be familiar with.
+
 ```{r}
 #| lst-label: lst-hypo
 #| lst-cap: Getting BF using `hypothesis()` function from `brms`
@@ -588,7 +710,7 @@ fluency_effect$hypothesis |>
 
 ```
 
-For example, the fluency effect has a *pd* of .977, which indicates a high probability that the effect is positive rather than negative (akin to p \< .05). However, *pd* does not tell us the probability that the effect is *non-zero*. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The `hypothesis()` function in `brms` (see @lst-hypo) allows us to perform this comparison. Running the code returns a column called `ER` (`Evid.Ratio`), which contains a numerical value that represents the Bayes factor for a directional hypothesis (@tbl-hypothesis) The evidence ratio (ER) for the fluency effect is `r fluency_effect$hypothesis$Evid.Ratio`, providing very strong evidence that the effect is both non-zero and positive [@jeffries1961; @kass1995].
+For example, the fluency effect has a *pd* of .977, which indicates a high probability that the effect is positive rather than 0 or negative (akin to p \< .05). However, *pd* does not tell us the probability that the effect is *non-zero*. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The `hypothesis()` function in `brms` (see @lst-hypo) allows us to perform this comparison. Running the code returns a column called `ER` (`Evid.Ratio`), which contains a numerical value that represents the Bayes factor for a directional hypothesis (@tbl-hypothesis) The evidence ratio (ER) for the fluency effect is `r fluency_effect$hypothesis$Evid.Ratio`, providing very strong evidence that the effect is both non-zero and positive [@jeffries1961; @kass1995].
 
 ## Beta Regression
 
@@ -640,7 +762,7 @@ combined_plot
 
 Given the outcome variable is proportional, one solution would be to run a Beta regression model. Again, we can create the beta regression model in `brms`. In `brms`, we model each parameter independently. Recall from the introduction that in a Beta model we model two parameters--$\mu$ and $\phi$. We can easily do this by using the `bf()` function from `brms` (@lst-beta01). `bf()` facilitates the specification of several sub-models within the same formula call. We fit two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling Fluency as a function of Accuracy only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
 
-To run our Beta regression model, we need to exlcude 0s and 1s in our data set. If we try to run a model with our data `data_fluency` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the Beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset.
+To run our Beta regression model, we need to exclude 0s and 1s in our data set. If we try to run a model with our data `data_fluency` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the Beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset.
 
 The dataset contains nine 0s and one 1. One approach is to nudge our 0s towards .01 and our 1s to .99, or apply a special formula [@smithson2006] so values fall within the \[0, 1\] interval. We implore readers not engage in this practice. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the Beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers.To run this Beta model we will remove the 0s and 1s, and later in this article we will show how to jointly model these scale end points with the rest of the data. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are removed. When we run it we should not get no error.
 
