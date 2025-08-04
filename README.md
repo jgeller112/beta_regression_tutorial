@@ -3,7 +3,7 @@
 
 [![DOI](https://zenodo.org/badge/826370441.svg)](https://doi.org/10.5281/zenodo.15830595)
 
-This repository provides a fully reproducible workflow for our beta regression manuscript (A Beta Way: A Tutorial For Using Beta Regression in Psychological Research) using **R**, **Quarto**, and **Nix**. It includes scripts, data, references, and CI pipelines to automate rendering and ensure reproducibility.
+This repository provides a fully reproducible workflow for our beta regression manuscript (A Beta Way: A Tutorial For Using Beta Regression in Psychological Research) using **R**, **Quarto**, and **Nix**. It includes scripts, data, references, and CI pipelines to automate rendering and ensure reproducibility. 
 
 ## Authors/Contributors 
 - Jason Geller* (drjasongeller@gmail.com)
