@@ -202,11 +202,11 @@ model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
 model2 <- read_rds(here(
   "manuscript",
   "models",
-  "model_Beta_bayes_dis_run01.rds"
+  "model_beta_bayes_dis_run01.rds"
 ))
 model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
 model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
-model5 <- read_rds(here("manuscript", "models", "bayes_ordBeta_phi_model.rds"))
+model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
 ```
 
 ```{r}
@@ -264,9 +264,9 @@ While we do not have time to delve fully into its derivation, the Beta distribut
 
 Typically, the expected value (or mean) of the response variable is the central estimand scholars want to estimate. A model should specify how this expected value depends on explanatory variables through two main components: a linear predictor, which combines the explanatory variables in a linear form ($a+b_1x_1+b_2x_2$, etc.), and a link function, which connects the expected value of the response variable to the linear predictor (e.g, $E[Y] = g(a + b_1x_1 + b_2x_2)$). In addition, a random component specifies the distribution of the response variable around its expected value (such as Poisson or binomial distributions, which belong to the exponential family) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
 
-The Beta distribution is continuous and restricted to values between 0 and 1 (exclusive). Its two parameters--commonly called shape1 ($\alpha$) and shape2 ($\Beta$)--govern the distribution’s location, skewness, and spread. By adjusting these parameters, the distribution can take many functional forms (e.g., it can be symmetric, skewed, U-shaped, or even approximately uniform; see @fig-curves).
+The Beta distribution is continuous and restricted to values between 0 and 1 (exclusive). Its two parameters--commonly called shape1 ($\alpha$) and shape2 ($\beta$)--govern the distribution’s location, skewness, and spread. By adjusting these parameters, the distribution can take many functional forms (e.g., it can be symmetric, skewed, U-shaped, or even approximately uniform; see @fig-curves).
 
-To illustrate, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as $\alpha$, and the number of points missed (2) as $\Beta$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance (yellow line in @fig-curves; "Beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (green line in @fig-curves; "Beta(2, 5)").
+To illustrate, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as $\alpha$, and the number of points missed (2) as $\beta$. The resulting Beta distribution would be skewed toward higher values, reflecting a high performance (yellow line in @fig-curves; "Beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (green line in @fig-curves; "Beta(2, 5)").
 
 ```{r}
 #| label: fig-curves
@@ -278,7 +278,7 @@ make_Beta_df <- function(shape1, shape2, n = 9000) {
   x <- seq(0.001, 0.999, length.out = n)
   data.frame(
     x = x,
-    y = dBeta(x, shape1, shape2),
+    y = dbeta(x, shape1, shape2),
     label = paste0("Beta(", shape1, ", ", shape2, ")")
   )
 }
@@ -315,7 +315,7 @@ ggplot(
 
 ## I Can't Believe It's Not Beta
 
-While the standard parameterization of the Beta distribution uses $\alpha$ and $\Beta$, a reparameterization to a mean ($\mu$) and precision ($\phi$) is more useful for regression models. The mean represents the expected value of the distribution, while the dispersion, which is inversely related to variance, reflects how concentrated the distribution is around the mean, with higher values indicating a narrower distribution and lower values indicating a wider one. The connections between the Beta distribution's parameters are shown in @eq-Beta. Importantly, the variance depends on the average value of the response because uncertainty intervals need to adjust for how close the value of the response is to the boundary.
+While the standard parameterization of the Beta distribution uses $\alpha$ and $\beta$, a reparameterization to a mean ($\mu$) and precision ($\phi$) is more useful for regression models. The mean represents the expected value of the distribution, while the dispersion, which is inversely related to variance, reflects how concentrated the distribution is around the mean, with higher values indicating a narrower distribution and lower values indicating a wider one. The connections between the Beta distribution's parameters are shown in @eq-beta. Importantly, the variance depends on the average value of the response because uncertainty intervals need to adjust for how close the value of the response is to the boundary.
 
 $$
 \begin{aligned}[t]
@@ -328,7 +328,7 @@ $$
 \text{Precision:} && \phi &= a + b \\
 \text{Variance:} && var &= \frac{\mu \cdot (1 - \mu)}{1 + \phi}
 \end{aligned}
-$$ {#eq-Beta}
+$$ {#eq-beta}
 
 Thus, Beta regression allows modeling both the mean and precision of the outcome distribution. To ensure that $\mu$ stays between 0 and 1, we apply a link function, which allows linear modeling of the mean on an unbounded scale. A common link-function choice is the logit, but other functions such as the probit or complementary log-log are possible.
 
@@ -1180,7 +1180,7 @@ zib_model <- bf(
   Accuracy ~ Fluency, # The mean of the 0-1 values, or mu
   phi ~ Fluency, # The precision of the 0-1 values, or phi
   zi ~ Fluency, # The zero-or-one-inflated part, or alpha
-  family = zero_inflated_Beta()
+  family = zero_inflated_beta()
 )
 
 # fit zib model with brm
@@ -1333,7 +1333,7 @@ rzoib <- function(n = 1000, alpha = 0.1, gamma = 0.45, mu = 0.7, phi = 3) {
   y <- ifelse(
     rbinom(n, 1, alpha),
     rbinom(n, 1, gamma),
-    rBeta(n, a, b)
+    rbeta(n, a, b)
   )
   y
 }
@@ -1425,8 +1425,8 @@ zoib_model <- bf(
   Accuracy ~ Fluency, # The mean of the 0-1 values, or mu
   phi ~ Fluency, # The precision of the 0-1 values, or phi
   zoi ~ Fluency, # The zero-or-one-inflated part, or alpha
-  coi ~ Fluency, # The one-inflated part, conditional on the 0s, or gamma
-  family = zero_one_inflated_Beta()
+  coi ~ Fluency, # The one-inflated part, conditional on the 1s, or gamma
+  family = zero_one_inflated_beta()
 )
 
 fit_zoib <- brm(
@@ -1516,7 +1516,7 @@ The `ordbetareg` package uses `brms` on the front-end so all the arguments we us
 ord_fit_brms <- ordbetareg(
   Accuracy ~ Fluency,
   data = fluency_data,
-  file = "bayes_ordBeta_model"
+  file = "bayes_ordbeta_model"
 )
 ```
 
@@ -1529,13 +1529,13 @@ However, if we want dispersion to vary as a function of fluency we can easily do
 #| results: hide
 #| echo: true
 
-ord_Beta_phi <- bf(Accuracy ~ Fluency, phi ~ Fluency)
+ord_beta_phi <- bf(Accuracy ~ Fluency, phi ~ Fluency)
 
 m.phi <- ordbetareg(
-  ord_Beta_phi,
+  ord_beta_phi,
   data = fluency_data,
   phi_reg = 'both',
-  file = "bayes_ordBeta_phi_model"
+  file = "bayes_ordbeta_phi_model"
 )
 ```
 
@@ -1546,7 +1546,7 @@ m.phi <- ordbetareg(
 ```{r}
 #| label: fit ordBeta
 
-ord_Beta_avg <- m.phi |>
+ord_beta_avg <- m.phi |>
   avg_comparisons(
     variables = "Fluency",
     comparison = "difference"
@@ -1557,7 +1557,7 @@ ord_Beta_avg <- m.phi |>
 #| label: tbl-ordBeta
 #| tbl-cap: "Marginal effect for fluency factor in ordered Beta model"
 
-ord_Beta_avg |>
+ord_beta_avg |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
@@ -1607,7 +1607,7 @@ The best way to visualize model fit is to plot the full predictive distribution 
 #| fig-height: 8
 #| fig-cap: Posterior predictive check for ordered Beta regression model. A. Discrete posterior check. B. Continuous posterior check.
 
-plots <- pp_check_ordBeta(
+plots <- pp_check_ordbeta(
   m.phi,
   ndraws = 100,
   outcome_label = "Final Test Accuracy"
@@ -1657,7 +1657,7 @@ In the discussion section of @wilford2020, they were unable to offer a tenable e
 
 Not everyone will be eager to implement the techniques discussed herein. In such cases, the key question becomes: What is the least problematic approach to handling proportional data? One reasonable option is to fit multiple models tailored to the specific characteristics of your data. For example, if your data contain 0s, you might fit two models: a traditional OLS regression excluding the 0s, and a logistic model to account for the zero versus non-zero distinction. If your data contain both 0s and 1s, you could fit separate models for the 0s and 1s in addition to the OLS model. There are many defensible strategies to choose from depending on the context. However, we do not recommend transforming the values of your data (e.g., 0s to .01 and 1s to .99) or ignoring the properties of your data simply to fit traditional statistical models.
 
-In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For standard Beta regression, the `Betareg` package [@Betareg] is a solid option, while more complex models such as zero-inflated and ordered Beta regressions can be implemented using `glmmTMB` [@glmmTMB]. For fitting zero-one models, there is a new implementation in @Betareg, that allows you to model these types of data.
+In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For standard Beta regression, the `Betareg` package [@betareg] is a solid option, while more complex models such as zero-inflated and ordered Beta regressions can be implemented using `glmmTMB` [@glmmTMB]. For fitting zero-one models, there is a new implementation in @betareg, that allows you to model these types of data.
 
 ## Conclusion
 
