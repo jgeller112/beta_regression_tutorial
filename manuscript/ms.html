@@ -236,7 +236,7 @@ window.Quarto = {
 <p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as Beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of Beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting Beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the Beta distribution and Beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a Beta regression model in R with the Bayesian package <code>brms</code> and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered Beta models. Basic familarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://github.com/jgeller112/Beta_regression_tutorial.</p>
 </div>
 <p><em>Keywords</em>: Beta regression, Beta distribution, R, tutorial, psychology, learning and memory</p>
-<p><em>Word Count</em>: 10511</p>
+<p><em>Word Count</em>: 10513</p>
 <br>
 </section>
 <section id="firstheader" class="level1 title unnumbered unlisted">
@@ -303,7 +303,7 @@ window.Quarto = {
 <h2 data-anchor-id="bayesian-approach-to-beta-regression">Bayesian Approach to Beta Regression</h2>
 <p>Beta regression models can be estimated with both frequentist and Bayesian methods. We adopt a Bayesian framework because it makes estimating and interpreting more complex models easier <span class="citation" data-cites="gelman2013bayesian mcelreath2020statistical bayes_rules">(Gelman et al., 2013; Johnson et al., 2022; McElreath, 2020)</span>. Generally speaking, most Bayesian analyses can also be implemented with frequentist methods like maximum likelihood, but more complex techniques may require adjustments like bootstrapping. The main limitation of Bayesian modeling is that it is slower than frequentist approaches, but we note that modern Bayesian computation engines are reasonably fast and that explanatory modeling necessarily emphasizes deriving appropriate estimands over computational convenience. We use the R package <code>brms</code> <span class="citation" data-cites="brms">(Bürkner, 2017)</span>, a high-level interface to the probabilistic programming language Stan <span class="citation" data-cites="stan2023">(Team, 2023)</span>, because it uses standard R regression formula syntax but extends its scope while remaining accessible for non-expert users. The package also implements parallel processing that can dramatically shorten computational times for larger datasets.</p>
 <p>There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of <em>t</em>- and <em>p</em>-values. To estimate models, the <code>brms</code> package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution.</p>
-<p>By default, the Bayesian models run 2,000 posterior draws,<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval.In addition, we report the <em>probability of direction</em> (pd), which reflects the probability that a parameter is strictly positive or negative. When a uniform prior is used (all values equally likely in the prior), a pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to a point estimate with two-sided <em>p</em>-values of 0.10, 0.05, 0.01, and 0.001, respectively (approximately <span class="math inline">1 - \frac{p}{2}</span>)(see <a href="#fig-p-value-pd-comp" class="quarto-xref" aria-expanded="false">Figure&nbsp;2</a> for a visual description of how the <em>pd</em> and <em>p</em>-value are related). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the <em>p</em>-value <span class="citation" data-cites="marsmanThreeInsightsBayesian2016">(Marsman &amp; Wagenmakers, 2016)</span>.</p>
+<p>By default, the Bayesian models run 2,000 posterior draws,<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval.In addition, we report the <em>probability of direction</em> (pd), which reflects the probability that a parameter is strictly positive or negative. When a uniform prior is used (all values equally likely in the prior), a pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided p-values of .10, .05, .01, and .001 (i.e., pd ≈ 1 − p/2 for symmetric posteriors with weak/flat priors) (see <a href="#fig-p-value-pd-comp" class="quarto-xref" aria-expanded="false">Figure&nbsp;2</a> for an illustrative comparison). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the <em>p</em>-value <span class="citation" data-cites="marsmanThreeInsightsBayesian2016">(Marsman &amp; Wagenmakers, 2016)</span>.</p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
 <div id="fig-p-value-pd-comp" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="2">
@@ -313,7 +313,7 @@ window.Quarto = {
 <p>Figure&nbsp;2</p>
 </div>
 <div class="Caption" data-custom-style="Caption">
-<p>A Bayesian posterior distribution (assuming uniform prior) centered around the point estimate 1.645 and a Frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the <span class="math inline">\alpha</span> probability of direction (pd), and the red area represents <span class="math inline">1-\alpha</span> of the distribution. In the Frequentist sampling distribution, the red tail areas represent the rejection region at <span class="math inline">\alpha = 0.1</span>. Note that the mean estimate for the Bayesian posterior distribution falls exactly at the <span class="math inline">1 - \frac{\alpha}{2}</span> cutoff in the Frequentist sampling distribution. In this sense, the pd is equivalent to the one-sided <span class="math inline">p</span>-value.</p>
+<p>A Bayesian posterior distribution (assuming a uniform prior) centered at a point estimate chosen so that the probability of direction (pd) equals 0.95, and a Frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the pd, and the red area represents the remaining 1 − pd of the distribution. In the Frequentist sampling distribution, the red tail areas represent the rejection region at α = 0.10. In this example, the posterior mean lies exactly at the <span class="math inline">1 - \frac{\alpha}{2}</span> quantile of the null sampling distribution. For symmetric posteriors with flat priors, the pd is numerically equivalent to the one-sided <span class="math inline">p</span>-value.</p>
 </div>
 </figcaption>
 <div aria-describedby="fig-p-value-pd-comp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -506,7 +506,7 @@ Listing&nbsp;1: Data needed to run examples
 <p>We first replicate this analysis in a regression framework using brms. We model final test accuracy–the proprtion of correctly recalled idea units across the videos–as the dependent variable. Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.</p>
 </div>
 <div class="cell FigureWithNote" data-tbl-align="center" data-after-caption-space="0pt" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." prefix="" data-tblnum="2" data-custom-style="FigureWithNote">
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="2" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-after-caption-space="0pt" data-tbl-align="center" prefix="">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="2" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." prefix="" data-tbl-align="center" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -928,7 +928,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the <code>brms</code> package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In <code>brms</code>, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(Bürkner, 2017)</span>. For the models we present in this paper, convergence is trivial with standard linear mixed models, though we note that these metrics are still important to pay attention to in case of model mis-fit.</p>
-<p>Our main question of interest is: Does instructor fluency have an effect on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>. the <code>Intercept</code> refers to the posterior mean accuracy in the <em>disfluent</em> condition, M = 0.256 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.085. The 95% credible interval for this estimate spans from -0.001 to 0.17. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
+<p>Our main question of interest is: Does instructor fluency have an effect on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>. the <code>Intercept</code> refers to the posterior mean accuracy in the <em>disfluent</em> condition, M = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.083. The 95% credible interval for this estimate spans from -0.001 to 0.166. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -938,12 +938,12 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     3863     3125
-FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3687     3137
+Intercept         0.26      0.03     0.20     0.32 1.00     3772     2632
+FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3742     2831
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3418     2834</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     3684     2791</code></pre>
 </div>
 </div>
 <p>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on posterior mean estimates and their 95% credible intervals. In addition, we include the <em>pd</em> measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a>), which is provided by the <code>bayestestR</code> package <span class="citation" data-cites="makowski2019a makowski2019">(Makowski, Ben-Shachar, Chen, et al., 2019; Makowski, Ben-Shachar, &amp; Lüdecke, 2019)</span>. This measure offers an intuitive parallel to p-values that many readers may be familiar with.</p>
@@ -1061,9 +1061,9 @@ Listing&nbsp;4: Getting BF using <code>hypothesis()</code> function from <code>b
         <tbody>
                 <tr>
                   <td>(FluencyFluent) &gt; 0</td>
-                  <td>0.085</td>
-                  <td>[0.013, 0.157]</td>
-                  <td>37.095</td>
+                  <td>0.083</td>
+                  <td>[0.014, 0.153]</td>
+                  <td>36.383</td>
                 </tr>
         </tbody>
       </table>
@@ -1075,7 +1075,7 @@ Listing&nbsp;4: Getting BF using <code>hypothesis()</code> function from <code>b
 </div>
 </div>
 <div class="AfterWithoutNote" data-custom-style="AfterWithoutNote">
-<p>For example, the fluency effect has a <em>pd</em> of .977, which indicates a high probability that the effect is positive rather than negative (akin to p &lt; .05). However, <em>pd</em> does not tell us the probability that the effect is <em>non-zero</em>. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The <code>hypothesis()</code> function in <code>brms</code> (see <a href="#lst-hypo" class="quarto-xref">Listing&nbsp;4</a>) allows us to perform this comparison. Running the code returns a column called <code>ER</code> (<code>Evid.Ratio</code>), which contains a numerical value that represents the Bayes factor for a directional hypothesis (<a href="#tbl-hypo" class="quarto-xref" aria-expanded="false">Table&nbsp;3</a>). The evidence ratio (ER) for the fluency effect is 37.0952381, providing very strong evidence that the effect is both non-zero and positive <span class="citation" data-cites="jeffries1961 kass1995">(Jeffries, 1961; Kass &amp; Raftery, 1995)</span>.</p>
+<p>For example, the fluency effect has a <em>pd</em> of .977, which indicates a high probability that the effect is positive rather than negative (akin to p &lt; .05). However, <em>pd</em> does not tell us the probability that the effect is <em>non-zero</em>. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The <code>hypothesis()</code> function in <code>brms</code> (see <a href="#lst-hypo" class="quarto-xref">Listing&nbsp;4</a>) allows us to perform this comparison. Running the code returns a column called <code>ER</code> (<code>Evid.Ratio</code>), which contains a numerical value that represents the Bayes factor for a directional hypothesis (<a href="#tbl-hypo" class="quarto-xref" aria-expanded="false">Table&nbsp;3</a>). The evidence ratio (ER) for the fluency effect is 36.3831776, providing very strong evidence that the effect is both non-zero and positive <span class="citation" data-cites="jeffries1961 kass1995">(Jeffries, 1961; Kass &amp; Raftery, 1995)</span>.</p>
 </div>
 </section>
 </section>
@@ -1303,15 +1303,15 @@ Listing&nbsp;7: Fitting Beta model with dispersion in <code>brm()</code>.
         <tbody>
                 <tr>
                   <td>b_phi_Intercept</td>
-                  <td>4.95</td>
-                  <td>[3.292, 7.192]</td>
+                  <td>4.96</td>
+                  <td>[3.272, 7.175]</td>
                   <td>1</td>
                 </tr>
                 <tr>
                   <td>b_phi_FluencyFluent</td>
                   <td>1.53</td>
-                  <td>[0.875, 2.686]</td>
-                  <td>0.936</td>
+                  <td>[0.875, 2.72]</td>
+                  <td>0.928</td>
                 </tr>
         </tbody>
       </table>
@@ -1382,7 +1382,7 @@ Listing&nbsp;9: Predictions from the Beta model for each level of Fluency.
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="5" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tbl-cap-location="top" data-tblnum="5">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tbl-cap-location="top" data-after-caption-space="0pt" data-tblnum="5">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1480,13 +1480,13 @@ Listing&nbsp;9: Predictions from the Beta model for each level of Fluency.
         <tbody>
                 <tr>
                   <td>Disfluent</td>
-                  <td>0.297</td>
-                  <td>[0.248, 0.348]</td>
+                  <td>0.298</td>
+                  <td>[0.248, 0.351]</td>
                 </tr>
                 <tr>
                   <td>Fluent</td>
-                  <td>0.353</td>
-                  <td>[0.3, 0.407]</td>
+                  <td>0.354</td>
+                  <td>[0.302, 0.407]</td>
                 </tr>
         </tbody>
       </table>
@@ -1668,8 +1668,8 @@ Listing&nbsp;12: Calculating the difference between probablities with <code>avg_
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>0.057</td>
-                  <td>[-0.017, 0.129]</td>
+                  <td>0.056</td>
+                  <td>[-0.02, 0.128]</td>
                 </tr>
         </tbody>
       </table>
@@ -1839,8 +1839,8 @@ Listing&nbsp;13: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>0.045</td>
-                  <td>[-0.033, 0.119]</td>
+                  <td>0.043</td>
+                  <td>[-0.028, 0.114]</td>
                 </tr>
         </tbody>
       </table>
@@ -1956,8 +1956,8 @@ Listing&nbsp;13: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>2.69</td>
-                  <td>[-0.842, 6.449]</td>
+                  <td>2.68</td>
+                  <td>[-0.991, 6.532]</td>
                 </tr>
         </tbody>
       </table>
@@ -2237,7 +2237,7 @@ Listing&nbsp;18: Fitting ordered Beta model with dispersion using <code>ordbetar
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>0.062</td>
-                  <td>[-0.017, 0.139]</td>
+                  <td>[-0.014, 0.135]</td>
                 </tr>
         </tbody>
       </table>
@@ -2353,13 +2353,13 @@ Listing&nbsp;18: Fitting ordered Beta model with dispersion using <code>ordbetar
         <tbody>
                 <tr>
                   <td>cutzero</td>
-                  <td>-2.96</td>
-                  <td>[-3.56, -2.42]</td>
+                  <td>-2.98</td>
+                  <td>[-3.62, -2.41]</td>
                 </tr>
                 <tr>
                   <td>cutone</td>
                   <td>1.85</td>
-                  <td>[1.63, 2.08]</td>
+                  <td>[1.64, 2.08]</td>
                 </tr>
         </tbody>
       </table>
