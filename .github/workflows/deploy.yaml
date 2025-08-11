@@ -29,14 +29,18 @@ jobs:
           ref: rendered
           path: site
 
+      - name: Rename ms.html to index.html
+        run: mv /manuscript/ms.html /manuscript/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact (manuscript/)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site/manuscript   # <- your built HTML lives here
+          path: site/manuscript
 
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
+
