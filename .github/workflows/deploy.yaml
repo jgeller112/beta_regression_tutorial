@@ -1,11 +1,15 @@
-name: Deploy (rendered branch)
+# .github/workflows/deploy.yml
+name: Deploy Pages (after render)
 
 on:
-  push:
-    branches: [ rendered ]
+  workflow_run:
+    workflows: ["Render paper with Nix and Quarto"]
+    types: [completed]
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: "pages"
@@ -13,38 +17,26 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - name: Checkout rendered branch
         uses: actions/checkout@v4
         with:
           ref: rendered
+          path: site
 
-      - name: Prepare HTML for deployment
-        run: |
-          mkdir -p public
-          cp manuscript/ms.html public/index.html
-          cp manuscript/ms.pdf public/
-          cp manuscript/ms.docx public/
-          cp -r manuscript/ms_files public/
-          cp -r manuscript/_extensions/ public/
-          cp -r manuscript/Figures/ public/
-
-      - name: Configure GitHub Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Pages Artifact
+      - name: Upload artifact (manuscript/)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: site/manuscript   # <- your built HTML lives here
 
-      - name: Deploy
-        id: deployment
+      - name: Deploy to GitHub Pages
+        id: deploy
         uses: actions/deploy-pages@v4
