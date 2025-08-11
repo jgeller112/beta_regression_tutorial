@@ -69,7 +69,7 @@ numbered-lines: true
 # File with references
 suppress-title-page: false
 # Link citations to references
-link-citations: true
+link-citations: false
 # Masks references that appear in the masked-citations list
 mask: false
 word-count: true
@@ -87,8 +87,8 @@ language:
 bibliography: bibliography.bib
 
 format:
-  apaquarto-pdf:
-    documentmode: doc
+ # apaquarto-pdf:
+   # documentmode: man
   apaquarto-docx: default
   apaquarto-html: default
   
@@ -733,10 +733,9 @@ The output also includes the effective sample size (ESS) and R̂ (R-hat) values,
 fluency_effect <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
 ```
 
-For example, the fluency effect has a *pd* of .977, which indicates a high probability that the effect is positive rather than negative (akin to p \< .05). However, *pd* does not tell us the probability that the effect is *non-zero*. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The `hypothesis()` function in `brms` (see @lst-hypo) allows us to perform this comparison. Running the code returns a column called `ER` (`Evid.Ratio`), which contains a numerical value that represents the Bayes factor for a directional hypothesis @tbl-hypo The evidence ratio (ER) for the fluency effect is `r fluency_effect$hypothesis$Evid.Ratio`, providing very strong evidence that the effect is both non-zero and positive [@jeffries1961; @kass1995].
-
 ```{r}
 #| label: tbl-hypo
+#| tbl-cap: Evidence ratio for the difference between fluent and disfluent conditions
 #| echo: false
 
 # get hypothesis table
@@ -752,6 +751,8 @@ fluency_effect$hypothesis |>
   format_tt(escape = TRUE)
 
 ```
+
+For example, the fluency effect has a *pd* of .977, which indicates a high probability that the effect is positive rather than negative (akin to p \< .05). However, *pd* does not tell us the probability that the effect is *non-zero*. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The `hypothesis()` function in `brms` (see @lst-hypo) allows us to perform this comparison. Running the code returns a column called `ER` (`Evid.Ratio`), which contains a numerical value that represents the Bayes factor for a directional hypothesis (@tbl-hypo). The evidence ratio (ER) for the fluency effect is `r fluency_effect$hypothesis$Evid.Ratio`, providing very strong evidence that the effect is both non-zero and positive [@jeffries1961; @kass1995].
 
 ## Beta Regression
 
