@@ -105,6 +105,7 @@ execute:
   code-line-numbers: true
   keep-with-next: true
   code-overflow: wrap
+  code-fold: true
   fig-width: 6
   fig-asp: 0.618
   fig-pos: "h"
