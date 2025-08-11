@@ -110,8 +110,8 @@ git clone https://github.com/jgeller112/beta_regression_tutorial.git
 cd nix_beta_regression_ms
 ```
 - You can also clone the repository from Github using the SSH and opeining a project in RStudio/Positron. 
-  
-<img width="2083" alt="Screenshot 2025-03-18 at 1 57 14 PM" src="https://github.com/user-attachments/assets/003c7cfa-393b-408d-8aa6-99bb25f0adfe" />
+  <img width="984" height="440" alt="Screenshot 2025-08-11 at 1 56 59 PM" src="https://github.com/user-attachments/assets/946ce905-640b-43ed-913e-57815256a95d" />
+
  
 #### 2. Open the Project
 - Open the R project file `nix-beta_regression_ms.Rproj` in RStudio or Open folder in Positron.
