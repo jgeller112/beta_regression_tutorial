@@ -345,167 +345,104 @@ Beta regression models can be estimated with both frequentist and Bayesian metho
 
 There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the `brms` package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution.
 
-By default, the Bayesian models run 2,000 posterior draws,[^4] which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval.In addition, we report the *probability of direction* (pd), which reflects the probability that a parameter is strictly positive or negative. When a uniform prior is used (all values equally likely in the prior), a pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to a point estimate with two-sided *p*-values of 0.10, 0.05, 0.01, and 0.001, respectively (approximately $1 - \frac{p}{2}$)(see @fig-p-value-pd-comp for a visual description of how the *pd* and *p*-value are related). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
+By default, the Bayesian models run 2,000 posterior draws,[^4] which allow us to compute quantities such as the posterior mean (similar to a frequentist point estimate) and the 95% credible interval (Cr.I), which is often compared to a confidence interval.In addition, we report the *probability of direction* (pd), which reflects the probability that a parameter is strictly positive or negative. When a uniform prior is used (all values equally likely in the prior), a pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided p-values of .10, .05, .01, and .001 (i.e., pd ≈ 1 − p/2 for symmetric posteriors with weak/flat priors) (see @fig-p-value-pd-comp for an illustrative comparison). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
 
 [^4]: The Stan team recommends 2,000 draws as a default, so this is a conservative standard. We note that Stan can converge in as few as 500 draws for less complex models, which may be an easier standard when engaging in model-building.
 
 ```{r}
 #| label: fig-p-value-pd-comp
-#| fig-cap: "A Bayesian posterior distribution (assuming uniform prior) centered around the point estimate 1.645 and a Frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the $\\alpha$ probability of direction (pd), and the red area represents $1-\\alpha$ of the distribution. In the Frequentist sampling distribution, the red tail areas represent the rejection region at $\\alpha = 0.1$. Note that the mean estimate for the Bayesian posterior distribution falls exactly at the $1 - \\frac{\\alpha}{2}$ cutoff in the Frequentist sampling distribution. In this sense, the pd is equivalent to the one-sided $p$-value."
+#| fig-cap: "A Bayesian posterior distribution (assuming a uniform prior) centered at a point estimate chosen so that the probability of direction (pd) equals 0.95, and a Frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the pd, and the red area represents the remaining 1 − pd of the distribution. In the Frequentist sampling distribution, the red tail areas represent the rejection region at α = 0.10. In this example, the posterior mean lies exactly at the $1 - \\frac{\\alpha}{2}$ quantile of the null sampling distribution. For symmetric posteriors with flat priors, the pd is numerically equivalent to the one-sided $p$-value."
 
 #| fig-asp: 0.52
 
-# Function to find the non-centrality parameter
-find_ncp <- function(df, target_percentile = 0.025, target_value = 0) {
-  # Use optimization to find ncp
-  objective <- function(ncp) {
-    (qt(target_percentile, df, ncp) - target_value)^2
-  }
+# --- parameters ---
+pd <- 0.95
+alpha_two <- 2 * (1 - pd) # matching two-sided alpha
+mu <- qnorm(pd) # shift so P(X > 0) = pd for N(mu, 1)
+lim <- c(-4, 6)
 
-  result <- optimize(objective, interval = c(-10, 10))
-  return(result$minimum)
-}
-
-dt_30_ncp <- find_ncp(30, target_percentile = 0.05)
-
-# Define critical values (e.g., for alpha = 0.05, two-tailed)
-alpha <- 0.10
-
-upper_critical <- qt(1 - alpha / 2, df = 30, ncp = 0)
-lower_critical <- qt(alpha / 2, df = 30, ncp = 0)
-
-# Create the plot
-p <- ggplot(data.frame(x = c(-2, 6)), aes(x = x)) +
-  # Plot the normal distribution curve
+# --- Posterior-like panel ---
+post <- ggplot(data.frame(x = lim), aes(x)) +
+  # full curve
   stat_function(
-    fun = dt,
-    args = list(df = 30, ncp = dt_30_ncp),
+    fun = dnorm,
+    args = list(mean = mu, sd = 1),
     color = "black",
     size = 1
   ) +
-
-  # Shade the left tail (p-value region)
+  # pd region (blue)
   stat_function(
-    fun = dt,
-    args = list(df = 30, ncp = dt_30_ncp),
-    xlim = c(0, 6),
+    fun = dnorm,
+    args = list(mean = mu, sd = 1),
+    xlim = c(0, lim[2]),
     geom = "area",
     fill = "blue",
     alpha = 0.3
   ) +
-
+  # remaining region (red)
   stat_function(
-    fun = dt,
-    args = list(df = 30, ncp = dt_30_ncp),
-    xlim = c(-4, 0),
+    fun = dnorm,
+    args = list(mean = mu, sd = 1),
+    xlim = c(lim[1], 0),
     geom = "area",
     fill = "red",
     alpha = 0.3
   ) +
-
-  # Add vertical lines at critical values
-  geom_vline(
-    xintercept = dt_30_ncp,
-    color = "red",
-    linetype = "solid",
-    linewidth = 1
-  ) +
-  geom_vline(
-    xintercept = 0,
-    color = "black",
-    linetype = "solid",
-    linewidth = 1
-  ) +
-  # Add labels and formatting
+  geom_vline(xintercept = 0, color = "black", linewidth = 0.8) +
   labs(
-    title = "Bayesian Posterior Distribution",
-    subtitle = paste("pd =", (1 - alpha / 2) * 100, "%"),
+    title = "Posterior (illustrative Normal)",
+    subtitle = paste0("pd = ", round(pd * 100), "%"),
     x = "",
     y = ""
   ) +
+  coord_cartesian(xlim = lim, ylim = c(0, 0.45)) +
+  theme_publication()
 
-  # Clean theme
-  theme_publication() +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5),
-    panel.grid = element_blank(),
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
-  ) +
+# --- Frequentist panel ---
+z_lo <- qnorm(alpha_two / 2)
+z_hi <- qnorm(1 - alpha_two / 2)
 
-  # Set axis limits
-  xlim(-4, 6) +
-  ylim(0, 0.45)
-
-# Create the plot
-pd <- ggplot(data.frame(x = c(-2, 6)), aes(x = x)) +
-  # Plot the normal distribution curve
+freq <- ggplot(data.frame(x = lim), aes(x)) +
+  # full curve
   stat_function(
-    fun = dt,
-    args = list(df = 30, ncp = 0),
+    fun = dnorm,
+    args = list(mean = 0, sd = 1),
     color = "black",
     size = 1
   ) +
-
-  # Shade the left tail (p-value region)
+  # lower rejection tail (red)
   stat_function(
-    fun = dt,
-    args = list(df = 30, ncp = 0),
-    xlim = c(-4, lower_critical),
+    fun = dnorm,
+    args = list(mean = 0, sd = 1),
+    xlim = c(lim[1], z_lo),
     geom = "area",
     fill = "red",
     alpha = 0.3
   ) +
-
-  # Shade the right tail (p-value region)
+  # upper rejection tail (red)
   stat_function(
-    fun = dt,
-    args = list(df = 30, ncp = 0),
-    xlim = c(upper_critical, 6),
+    fun = dnorm,
+    args = list(mean = 0, sd = 1),
+    xlim = c(z_hi, lim[2]),
     geom = "area",
     fill = "red",
     alpha = 0.3
   ) +
-
-  # Add vertical lines at critical values
-  geom_vline(
-    xintercept = upper_critical,
-    color = "red",
-    linetype = "solid",
-    linewidth = 1
-  ) +
-  geom_vline(
-    xintercept = 0,
-    color = "black",
-    linetype = "solid",
-    linewidth = 1
-  ) +
-
-  # Add labels and formatting
+  geom_vline(xintercept = c(z_lo, z_hi), color = "red", linewidth = 0.8) +
+  geom_vline(xintercept = 0, color = "black", linewidth = 0.8) +
   labs(
-    title = "Frequentist Sampling Distribution",
-    subtitle = paste("α =", alpha, ""),
-    # x = "t-statistic",
+    title = "Frequentist sampling under H0 (N(0,1))",
+    subtitle = paste0("two-sided α = ", signif(alpha_two, 2)),
     x = "",
     y = ""
   ) +
+  coord_cartesian(xlim = lim, ylim = c(0, 0.45)) +
+  theme_publication()
 
-  # Clean theme
-  theme_publication() +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5),
-    panel.grid = element_blank(),
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
-  ) +
+# --- Stack the plots ---
+post / freq
 
-  # Set axis limits
-  xlim(-4, 6) +
-  ylim(0, 0.45)
-# Display the plot
-print(p / pd)
+
 ```
 
 For reasons of space, we refer readers unfamiliar to Bayesian data analysis to several existing books on the topic [@gelman2013bayesian; @mcelreath2020statistical; @kruschke2015doing]. In addition, we assume readers are familiar with R, but those in need of a refresher should find @wickhamDataScienceImport2023 useful.

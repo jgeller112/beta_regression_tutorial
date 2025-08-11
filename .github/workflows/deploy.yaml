@@ -14,7 +14,6 @@ concurrency:
 
 jobs:
   deploy:
-    # only deploy on successful renders
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
@@ -25,7 +24,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout the exact rendered commit
+      - name: Checkout exact rendered commit
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
@@ -34,14 +33,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p public
-          # HTML -> index.html
+          # adjust manuscript/ to _manuscript/ if that's where your outputs live
           cp manuscript/ms.html public/index.html
-          # Optional extras if present
           [ -f manuscript/ms.pdf ] && cp manuscript/ms.pdf public/
           [ -f manuscript/ms.docx ] && cp manuscript/ms.docx public/
           [ -d manuscript/ms_files ] && cp -r manuscript/ms_files public/
-          [ -d manuscript/_extensions ] && cp -r manuscript/_extensions public/
-          
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
