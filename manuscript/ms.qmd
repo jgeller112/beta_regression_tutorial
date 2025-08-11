@@ -87,8 +87,8 @@ language:
 bibliography: bibliography.bib
 
 format:
- # apaquarto-pdf:
-   # documentmode: man
+  apaquarto-pdf:
+    documentmode: man
   apaquarto-docx: default
   apaquarto-html: default
   
