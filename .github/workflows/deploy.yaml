@@ -1,5 +1,4 @@
-# .github/workflows/deploy.yml
-name: Deploy Pages (after render)
+name: Deploy
 
 on:
   workflow_run:
@@ -8,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
@@ -17,30 +14,42 @@ concurrency:
 
 jobs:
   deploy:
+    # only deploy on successful renders
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - name: Checkout rendered branch
+      - name: Checkout the exact rendered commit
         uses: actions/checkout@v4
         with:
-          ref: rendered
-          path: site
+          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Rename ms.html to index.html
-        run: mv site/manuscript/ms.html site/manuscript/index.html
-
-      - name: Setup Pages
+      - name: Prepare HTML for deployment
+        run: |
+          set -euo pipefail
+          mkdir -p public
+          # HTML -> index.html
+          cp manuscript/ms.html public/index.html
+          # Optional extras if present
+          [ -f manuscript/ms.pdf ] && cp manuscript/ms.pdf public/
+          [ -f manuscript/ms.docx ] && cp manuscript/ms.docx public/
+          [ -d manuscript/ms_files ] && cp -r manuscript/ms_files public/
+          [ -d manuscript/_extensions ] && cp -r manuscript/_extensions public/
+          
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact (manuscript/)
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site/manuscript
+          path: public
 
-      - name: Deploy to GitHub Pages
-        id: deploy
+      - name: Deploy
+        id: deployment
         uses: actions/deploy-pages@v4
-
