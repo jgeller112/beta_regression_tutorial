@@ -1,4 +1,5 @@
-name: Deploy
+# .github/workflows/deploy.yml
+name: Deploy Pages (after render)
 
 on:
   workflow_run:
@@ -7,6 +8,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: "pages"
@@ -16,37 +19,37 @@ jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-      - name: Checkout exact rendered commit
+      - name: Checkout rendered branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: rendered
+          path: site
 
-      - name: Prepare HTML for deployment
+      - name: Make index.html (rename ms.html)
         run: |
           set -euo pipefail
-          mkdir -p public
-          # adjust manuscript/ to _manuscript/ if that's where your outputs live
-          cp manuscript/ms.html public/index.html
-          [ -f manuscript/ms.pdf ] && cp manuscript/ms.pdf public/
-          [ -f manuscript/ms.docx ] && cp manuscript/ms.docx public/
-          [ -d manuscript/ms_files ] && cp -r manuscript/ms_files public/
+          if [ -f "site/manuscript/ms.html" ]; then
+            mv site/manuscript/ms.html site/manuscript/index.html
+          else
+            echo "Did not find site/manuscript/ms.html"
+            echo "Tree for debugging:"; ls -laR site || true
+            exit 1
+          fi
 
-      - name: Configure GitHub Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Pages Artifact
+      - name: Upload artifact (manuscript/)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: site/manuscript   # uploads index.html + pdf/docx + ms_files/
 
-      - name: Deploy
-        id: deployment
+      - name: Deploy to GitHub Pages
+        id: deploy
         uses: actions/deploy-pages@v4
+
