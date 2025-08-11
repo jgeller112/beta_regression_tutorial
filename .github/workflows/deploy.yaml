@@ -1,0 +1,50 @@
+name: Deploy (rendered branch)
+
+on:
+  push:
+    branches: [ rendered ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout rendered branch
+        uses: actions/checkout@v4
+        with:
+          ref: rendered
+
+      - name: Prepare HTML for deployment
+        run: |
+          mkdir -p public
+          cp _manuscript/ms.html public/index.html
+          cp _manuscript/ms.pdf public/
+          cp _manuscript/ms.docx public/
+          cp -r _manuscript/ms_files public/
+          cp -r _manuscript/_extensions/ public/
+          cp -r _manuscript/Figures/ public/
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
