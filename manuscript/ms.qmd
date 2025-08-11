@@ -88,9 +88,11 @@ bibliography: bibliography.bib
 
 format:
   apaquarto-pdf:
-    documentmode: man
+    documentmode: doc
   apaquarto-docx: default
-  apaquarto-html: default
+  apaquarto-html:
+    code-fold: true
+    code-summary: "Show code"
   
 
 execute:
@@ -589,6 +591,7 @@ We first replicate this analysis in a regression framework using brms. We model 
 #| label: tbl-all
 #| tbl-cap: "Bayesian regression summaries for each model"
 #| tbl-align: "center"
+#| after-caption-space: 0pt
 #| apa-note: "Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`."
 
 # Define your models
@@ -737,6 +740,7 @@ fluency_effect <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
 #| label: tbl-hypo
 #| tbl-cap: Evidence ratio for the difference between fluent and disfluent conditions
 #| echo: false
+#| after-caption-space: 0pt
 
 # get hypothesis table
 
@@ -1025,7 +1029,7 @@ predictions(
 For the `Fluency` factor, we can interpret `Mean` as proportions or percentages. That is, participants who watched the fluent instructor scored on average 35% on the final exam compared to 30% for those who watched the disfluent instructor. We can also visualize these from `marginaleffects` using the `plot_predictions()` function (see @lst-plotBeta).
 
 ```{r}
-#| label: plot-Beta
+#| label: plot Beta
 #| lst-label: lst-plotBeta
 #| lst-cap: Plot predicted probablities using `plot_predictions()` from `marginaleffects`
 #| echo: true
@@ -1085,7 +1089,7 @@ Beta_avg_comp <- avg_comparisons(Beta_brms, comparison = "difference")
 ```{r}
 #| label: tbl-ame1
 #| echo: false
-#| tbl-cap: Probability fluency difference
+#| tbl-cap: Fluency difference
 #| after-caption-space: 0pt
 
 Beta_avg_comp |>
@@ -1106,25 +1110,6 @@ Beta_avg_comp |>
 To formally assess evidence in favor of the null hypothesis (i.e., that the effect is exactly zero), we can use the `hypothesis()` function from the `brms` package to compute an evidence ratio (ER), which is a Bayes factor for directional or point hypotheses.[^7]However, it is important to note that this procedure requires weakly informative or informative priors; the default priors in `brms` are too diffuse and therefore cannot be used to accurately compute the ER in favor of a point null hypothesis.
 
 [^7]: `bayestestr` also has functions that will allow users to compute Bayes Factors.
-
-```{r}
-#| label: tbl-or
-#| echo: false
-#| tbl-cap: Odds ratio for fluency factor
-#| after-caption-space: 0pt
-
-# get odds ratios as an example
-avg_comparisons(Beta_brms, comparison = "lnoravg", transform = "exp") |>
-  select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted) |>
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
-  ) |>
-  rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean, `95% Cr.I`) |>
-  tt() |>
-  format_tt(escape = TRUE)
-```
 
 ```{r}
 # Proportions
@@ -1282,9 +1267,8 @@ marg_phi_brms |>
 We can harness the power of `marginaleffects` again and plot the posterior difference between the fluent and disfluent conditions (see @fig-zi-plot). In @fig-zi-plot, there is evidence that watching a lecture video with a fluent instructor reduces the probability of a zero response by approximately 13%. The 95% Cr.I for this effect does not include zero, suggesting a meaningful reduction in the likelihood of zero outcomes under fluent instruction. We can harness the power of `marginaleffects` again and plot the posterior probability of each level (see @fig-zi-plot).
 
 ```{r}
-#| label: tbl-marg-zib-brms
-#| tbl-cap: ""
-
+#| label: tbl marg-zib-brms
+#|
 marg_zi_brms <- fit_zi |>
   avg_comparisons(
     variables = "Fluency",
@@ -1558,7 +1542,8 @@ ord_beta_avg <- m.phi |>
 
 ```{r}
 #| label: tbl-ordBeta
-#| tbl-cap: "Marginal effect for fluency factor in ordered Beta model"
+#| tbl-cap: "Marginal effect for fluency in ordered Beta model"
+#| after-caption-space: 0pt
 
 ord_beta_avg |>
   select(term, contrast, estimate, conf.low, conf.high) |>
