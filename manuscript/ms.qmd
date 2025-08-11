@@ -92,7 +92,7 @@ format:
   apaquarto-docx: default
   apaquarto-html:
     code-fold: true
-    code-summary: "Show code"
+    code-summary: "Show R code"
   
 
 execute:
