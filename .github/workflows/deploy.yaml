@@ -30,7 +30,7 @@ jobs:
           path: site
 
       - name: Rename ms.html to index.html
-        run: mv /manuscript/ms.html /manuscript/index.html
+        run: mv site/manuscript/ms.html site/manuscript/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
