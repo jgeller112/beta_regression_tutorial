@@ -62,7 +62,7 @@ author-note:
     financial-support: ~
     authorship-agreements: ~
 abstract: "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as Beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of Beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting Beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the Beta distribution and Beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a Beta regression model in R with the Bayesian package `brms` and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered Beta models. Basic familarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://github.com/jgeller112/Beta_regression_tutorial."
-keywords: [Beta regression, Beta distribution, R, tutorial, psychology, learning and memory]
+keywords: [Beta regression, Beta distribution, R, Tutorial, Psychology, Learning and memory]
 floatsintext: true
 # Numbered lines (.pdf and .docx only)
 numbered-lines: true
