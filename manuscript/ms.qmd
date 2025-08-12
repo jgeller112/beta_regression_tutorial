@@ -91,6 +91,7 @@ format:
     documentmode: doc
   apaquarto-docx: default
   apaquarto-html:
+    toc: false
     code-fold: true
     code-summary: "Show R code"
   
