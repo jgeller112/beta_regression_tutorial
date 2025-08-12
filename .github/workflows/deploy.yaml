@@ -47,7 +47,7 @@ jobs:
       - name: Upload artifact (manuscript/)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site/manuscript   # uploads index.html + pdf/docx + ms_files/
+          path: site   # uploads index.html + pdf/docx + ms_files/
 
       - name: Deploy to GitHub Pages
         id: deploy
