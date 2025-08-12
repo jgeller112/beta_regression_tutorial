@@ -87,7 +87,6 @@ language:
 bibliography: bibliography.bib
 
 format:
-  apaquarto-typst: default
   apaquarto-pdf:
     documentmode: doc
   apaquarto-docx: default
