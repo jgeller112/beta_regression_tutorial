@@ -219,7 +219,7 @@ model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
 ```{r}
 #| label: data-import
 #| echo: false
-
+#| 
 fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
