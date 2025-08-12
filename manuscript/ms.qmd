@@ -93,6 +93,8 @@ format:
   apaquarto-html:
     toc: false
     code-fold: true
+    echo: true
+    code-tools: true
     code-summary: "Show R code"
   
 
@@ -108,7 +110,6 @@ execute:
   code-line-numbers: true
   keep-with-next: true
   code-overflow: wrap
-  code-fold: true
   fig-width: 6
   fig-asp: 0.618
   fig-pos: "h"
@@ -1583,7 +1584,7 @@ In the discussion section of @wilford2020, they were unable to offer a tenable e
 
 Not everyone will be eager to implement the techniques discussed herein. In such cases, the key question becomes: What is the least problematic approach to handling proportional data? One reasonable option is to fit multiple models tailored to the specific characteristics of your data. For example, if your data contain 0s, you might fit two models: a traditional OLS regression excluding the 0s, and a logistic model to account for the zero versus non-zero distinction. If your data contain both 0s and 1s, you could fit separate models for the 0s and 1s in addition to the OLS model. There are many defensible strategies to choose from depending on the context. However, we do not recommend transforming the values of your data (e.g., 0s to .01 and 1s to .99) or ignoring the properties of your data simply to fit traditional statistical models.
 
-In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For standard Beta regression, the `Betareg` package [@betareg] is a solid option, while more complex models such as zero-inflated and ordered Beta regressions can be implemented using `glmmTMB` [@glmmTMB]. For fitting zero-one models, there is a new implementation in @betareg, that allows you to model these types of data.
+In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For standard Beta regression, the `betareg` package [@betareg] is a solid option, while more complex models such as zero-inflated and ordered Beta regressions can be implemented using `glmmTMB` [@glmmTMB]. For fitting zero-one models, there is a new implementation in @betareg, that allows you to model these types of data.
 
 ## Conclusion
 
