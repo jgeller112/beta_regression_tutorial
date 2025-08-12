@@ -93,6 +93,7 @@ format:
   apaquarto-html:
     toc: true
     code-fold: true
+    site-url: https://jgeller112.github.io/beta_regression_tutorial/
     echo: true
     code-tools: true
     code-summary: "Show R code"
