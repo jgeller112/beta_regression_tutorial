@@ -11,6 +11,7 @@ format:
   apaquarto-docx: default
   apaquarto-html:
     toc: true
+    toc-depth: 3
     code-fold: true
     site-url: https://jgeller112.github.io/beta_regression_tutorial/
     echo: true
