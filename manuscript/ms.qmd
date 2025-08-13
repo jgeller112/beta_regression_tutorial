@@ -86,21 +86,6 @@ language:
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
 
-format:
-  apaquarto-pdf:
-    documentmode: doc
-  apaquarto-docx: default
-  apaquarto-html:
-    toc: true
-    code-fold: true
-    site-url: https://jgeller112.github.io/beta_regression_tutorial/
-    echo: true
-    code-tools: true
-    code-summary: "Show R code"
-    relative-links: true        # helps keep links local
-    include-in-header:
-      text: |
-        <base href="https://jgeller112.github.io/beta_regression_tutorial/">
 execute:
   echo: false
   cache: false
