@@ -1,0 +1,18 @@
+project:
+  title: "A Beta Way"
+  render:
+    - ms.qmd
+
+site-url: https://jgeller112.github.io/beta_regression_tutorial/
+
+format:
+  apaquarto-pdf:
+    documentmode: doc
+  apaquarto-docx: default
+  apaquarto-html:
+    toc: true
+    code-fold: true
+    site-url: https://jgeller112.github.io/beta_regression_tutorial/
+    echo: true
+    code-tools: true
+    code-summary: "Show R code"
