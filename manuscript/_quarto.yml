@@ -19,3 +19,5 @@ format:
     echo: true
     code-tools: true
     code-summary: "Show R code"
+    comments:
+      hypothesis: true
