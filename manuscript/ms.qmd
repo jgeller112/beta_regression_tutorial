@@ -111,7 +111,7 @@ knitr:
 
 ::: callout-warning
 ## Preprint
-This manuscript is a **preprint** and is currently **under review**.  
+This manuscript is currently **under review** and has not been peer-reviewed. 
 Content is **subject to change**. Please feel free to provide feedback!
 :::
 
