@@ -111,10 +111,9 @@ knitr:
 
 ::: callout-warning
 ## Preprint
-This manuscript is currently **under review** and has not been peer-reviewed. 
-Content is **subject to change**. Please feel free to provide feedback!
-:::
 
+This manuscript is currently **under review** and has not been peer-reviewed. Content is **subject to change**. Please feel free to provide feedback!
+:::
 
 ```{r}
 #| label: packages_1
@@ -657,39 +656,7 @@ Our main question of interest is: Does instructor fluency have an effect on fina
 summary(bayes_reg_model)
 ```
 
-The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on posterior mean estimates and their 95% credible intervals. In addition, we include the *pd* measure in the main summary table (@tbl-all), which is provided by the `bayestestR` package [@makowski2019a; @makowski2019]. This measure offers an intuitive parallel to p-values that many readers may be familiar with.
-
-```{r}
-#| lst-label: lst-hypo
-#| lst-cap: Getting BF using `hypothesis()` function from `brms`
-#| echo: true
-
-# test non-zero effect
-
-fluency_effect <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
-```
-
-```{r}
-#| label: tbl-hypo
-#| tbl-cap: Evidence ratio for the difference between fluent and disfluent conditions
-#| echo: false
-#| after-caption-space: 0pt
-
-# get hypothesis table
-
-fluency_effect$hypothesis |>
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% Cr.I` = str_glue("[{CI.Lower}, {CI.Upper}]")
-  ) |>
-  rename("Mean" = "Estimate", "SE" = "Est.Error", "ER" = "Evid.Ratio") |>
-  select(Hypothesis, Mean, `95% Cr.I`, ER) |>
-  tt() |>
-  format_tt(escape = TRUE)
-
-```
-
-For example, the fluency effect has a *pd* of .977, which indicates a high probability that the effect is positive rather than negative (akin to p \< .05). However, *pd* does not tell us the probability that the effect is *non-zero*. To assess this, we can compare a model where the effect is greater than 0 to an alternative model where the effect is less than 0. The `hypothesis()` function in `brms` (see @lst-hypo) allows us to perform this comparison. Running the code returns a column called `ER` (`Evid.Ratio`), which contains a numerical value that represents the Bayes factor for a directional hypothesis (@tbl-hypo). The evidence ratio (ER) for the fluency effect is `r fluency_effect$hypothesis$Evid.Ratio`, providing very strong evidence that the effect is both non-zero and positive [@jeffries1961; @kass1995].
+The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on posterior mean estimates and their 95% credible intervals. In addition, we include the *pd* measure in the main summary table (@tbl-all), which is provided by the `bayestestR` package [@makowski2019a; @makowski2019]. This measure offers an intuitive parallel to p-values that many readers may be familiar with. For example, the fluency effect has a *pd* of .977, which indicates a high probability that the effect is positive rather than negative (akin to p \< .05).
 
 ## Beta Regression
 
@@ -1040,10 +1007,6 @@ Beta_avg_comp |>
 
 @tbl-ame1 presents the estimated difference for the fluency factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval includes 0 among the most credible values, suggesting we cannot rule out the possibility of a null or weakly negative effect.
 
-To formally assess evidence in favor of the null hypothesis (i.e., that the effect is exactly zero), we can use the `hypothesis()` function from the `brms` package to compute an evidence ratio (ER), which is a Bayes factor for directional or point hypotheses.[^6]However, it is important to note that this procedure requires weakly informative or informative priors; the default priors in `brms` are too diffuse and therefore cannot be used to accurately compute the ER in favor of a point null hypothesis.
-
-[^6]: `bayestestr` also has functions that will allow users to compute Bayes Factors.
-
 ```{r}
 # Proportions
 p1 <- 0.35 # Fluent
@@ -1231,9 +1194,9 @@ marg_zi_brms |>
 
 ## Zero-One-Inflated Beta (ZOIB)
 
-The ZIB model works well if you have 0s in your data, but not 1s.[^7] In our previous examples we either got rid of both 0s and 1s (Beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
+The ZIB model works well if you have 0s in your data, but not 1s.[^6] In our previous examples we either got rid of both 0s and 1s (Beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered Beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
-[^7]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated Beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated Beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
+[^6]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated Beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated Beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
 
 Similar to our Beta and zero-inflated models above, we can fit a ZOIB model in brms quite easily using the `zero_one_inflated_Beta` family. In this model, we simultaneously estimate the mean ($\mu$) and precision ($\phi$) of the Beta distribution, a zero-one inflation parameter ($\alpha$) that represents the probability that an observation is either exactly 0 or 1 (i.e., 0 or 1 vs. not 0 or 1) and a conditional one-inflation parameter ($\gamma$) that represents the probability that, given an observation is at one of the endpoints, it is 1 (i.e, 1 vs. not 1). This specification captures the entire range of possible values while remaining constrained between 0 and 1. To get a better sense of how $\alpha$ and $\gamma$ control the distribution of values, @fig-zoib presents simulated data across combinations of these parameters. As $\alpha$ increases, we see a greater proportion of responses at the endpoints. As $\gamma$ increases, the proportion of endpoint responses at 1 grows relative to 0, making the spikes at 1 more prominent as $\gamma$ approaches 1. This visualization illustrates how the ZOIB model flexibly accounts for both the continuous portion of the distribution and the occurrence of exact 0s and 1s.
 
@@ -1396,9 +1359,9 @@ coi_me <- avg_comparisons(fit_zoib, variables = c("Fluency"), dpar = "coi")
 
 ## Ordered Beta Regression
 
-Looking at the output from the ZOIB model (@tbl-all), we can see how running a model like this can become fairly complex as it is fitting distinct sub-models for each component of the scale. The ability to consider 0s and 1s as distinct processes from continuous values comes at a price in terms of complexity and interpretability. A simplified version of the zero-one-inflated beta (ZOIB) model, known as ordered Beta regression [@kubinec2022; see also @Makowski2025CHOCO for a reparameterized version called the *Beta-Gate* model], has been recently proposed. The ordered Beta regression model exploits the fact that, for most analyses, the continuous values (between 0-1) and the discrete outcomes (e.g., 0 or 1) are *ordered*. For example, as a covariate $x$ increases or decreases, we should expect the bounded outcome $y$ to increase or decrease monotonically as well from 0 to $(0,1)$ to 1. The ZOIB model does not impose this restriction; a covariate could increase and the response $y$ could increase in its continuous values while *simultaneously* decreasing at *both* end points.[^8] This complexity is not immediately obvious when fitting the ZOIB, nor is it a potential relationship that many scholars want to consider when examining how covariates influence a bounded scale.
+Looking at the output from the ZOIB model (@tbl-all), we can see how running a model like this can become fairly complex as it is fitting distinct sub-models for each component of the scale. The ability to consider 0s and 1s as distinct processes from continuous values comes at a price in terms of complexity and interpretability. A simplified version of the zero-one-inflated beta (ZOIB) model, known as ordered Beta regression [@kubinec2022; see also @Makowski2025CHOCO for a reparameterized version called the *Beta-Gate* model], has been recently proposed. The ordered Beta regression model exploits the fact that, for most analyses, the continuous values (between 0-1) and the discrete outcomes (e.g., 0 or 1) are *ordered*. For example, as a covariate $x$ increases or decreases, we should expect the bounded outcome $y$ to increase or decrease monotonically as well from 0 to $(0,1)$ to 1. The ZOIB model does not impose this restriction; a covariate could increase and the response $y$ could increase in its continuous values while *simultaneously* decreasing at *both* end points.[^7] This complexity is not immediately obvious when fitting the ZOIB, nor is it a potential relationship that many scholars want to consider when examining how covariates influence a bounded scale.
 
-[^8]: For a more complete description of this issue, we refer the reader to @kubinec2022.
+[^7]: For a more complete description of this issue, we refer the reader to @kubinec2022.
 
 To make the response ordered, the ordered Beta regression model estimates a weighted combination of a standard Beta regression model for continuous responses and a logit model for the discrete values of the response. By doing so, the amount of distinctiveness between the continuous responses and the discrete end points is a function of the data (and any informative priors) rather than strictly defined as fully distinct processes as in the ZOIB. For some datasets, the continuous and discrete responses will be fairly distinct, and in others less so. To give a slightly absured example, if a value of 0 meant that the subject was a fish, and a value of 1 meant that the subject was now a trombone, then the ordered Beta model would no longer be appropriate.
 
