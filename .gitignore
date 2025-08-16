@@ -11,3 +11,5 @@ manuscript/*.pdf
 manuscript/*.html
 manuscript/*.docx
 **/.DS_Store
+
+/.luarc.json
