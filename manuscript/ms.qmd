@@ -86,11 +86,6 @@ language:
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
 
-apaquarto-html:
-    code-fold: true
-    echo: true
-    code-summary: "Show R code"
-
 execute:
   echo: false
   cache: false
@@ -395,7 +390,7 @@ post <- ggplot(data.frame(x = lim), aes(x)) +
     title = "Posterior (illustrative Normal)",
     subtitle = paste0("pd = ", round(pd * 100), "%"),
     x = "",
-    y = "Probability density"
+    y = "Density"
   ) +
   coord_cartesian(xlim = lim, ylim = c(0, 0.45)) +
   theme_publication()
