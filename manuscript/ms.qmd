@@ -86,6 +86,11 @@ language:
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
 bibliography: bibliography.bib
 
+apaquarto-html:
+    code-fold: true
+    echo: true
+    code-summary: "Show R code"
+
 execute:
   echo: false
   cache: false
@@ -97,7 +102,7 @@ execute:
   tbl-align: center
   code-line-numbers: true
   keep-with-next: true
-  code-overflow: wrap
+  code-overflow: wrap  
   fig-width: 6
   fig-asp: 0.618
   fig-pos: "h"
@@ -212,7 +217,7 @@ model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
 ```{r}
 #| label: data-import
 #| echo: false
-#| 
+#|
 fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
@@ -390,7 +395,7 @@ post <- ggplot(data.frame(x = lim), aes(x)) +
     title = "Posterior (illustrative Normal)",
     subtitle = paste0("pd = ", round(pd * 100), "%"),
     x = "",
-    y = ""
+    y = "Probability density"
   ) +
   coord_cartesian(xlim = lim, ylim = c(0, 0.45)) +
   theme_publication()
@@ -430,8 +435,8 @@ freq <- ggplot(data.frame(x = lim), aes(x)) +
   labs(
     title = "Frequentist sampling under H0 (N(0,1))",
     subtitle = paste0("two-sided α = ", signif(alpha_two, 2)),
-    x = "",
-    y = ""
+    x = "Parameter Values",
+    y = "Density"
   ) +
   coord_cartesian(xlim = lim, ylim = c(0, 0.45)) +
   theme_publication()
@@ -656,7 +661,49 @@ Our main question of interest is: Does instructor fluency have an effect on fina
 summary(bayes_reg_model)
 ```
 
-The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus on posterior mean estimates and their 95% credible intervals. In addition, we include the *pd* measure in the main summary table (@tbl-all), which is provided by the `bayestestR` package [@makowski2019a; @makowski2019]. This measure offers an intuitive parallel to p-values that many readers may be familiar with. For example, the fluency effect has a *pd* of .977, which indicates a high probability that the effect is positive rather than negative (akin to p \< .05).
+The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (@tbl-all), provided by the `bayestestR` package [@makowski2019a; @makowski2019]. This measure offers an intuitive parallel to *p*-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative (akin to p < .05).
+
+Importantly, *pd* does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, we encourage readers to consider the Region of Practical Equivalence (ROPE) with the Cr.Is  [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
+
+The `rope()` function in the `bayestestR` package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via `brms` the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In @list-rope, we show how to compute this using `bayestestR`. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope). Going forward we do not include a dicussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.
+
+```{r}
+#| label: lst-rope
+#| lst-caption: Getting ROPE from `bayes_reg_model` obect using `rope` function from `bayestestR`
+#| eval: false
+
+brms_rope <- rope(bayes_reg_model, ci = .95, ci_method = "ETI")
+```
+
+```{r}
+#| label: fig-rope
+#| fig-cap: "Posterior distribution for the fluency effect showing the ROPE(shaded area) with 95% credible interval (orange) and 100% credible interval (blue). The percentage indicates the proportion of the posterior within the ROPE."
+# echo: false
+
+p <- plot(brms_rope)
+
+# Extract the ROPE percentage
+rope_percentage <- round(brms_rope$ROPE_Percentage[2], 2) * 100
+
+# Add the percentage text to the plot
+p_annotated <- p +
+  annotate(
+    "text",
+    x = 0, # Since your ROPE is -0.02 to 0.02, center is 0
+    y = Inf,
+    label = paste0(rope_percentage, "%"),
+    vjust = 1.2,
+    hjust = 0.5,
+    size = 4,
+    color = "black",
+    fontface = "bold"
+  ) +
+  theme_publication() +
+  scale_color_okabe_ito() +
+  scale_fill_okabe_ito()
+
+p_annotated
+```
 
 ## Beta Regression
 
