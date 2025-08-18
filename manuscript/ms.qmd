@@ -153,18 +153,6 @@ options(
 )
 
 
-# Output options
-is_html <- knitr::is_html_output()
-opts_chunk$set(
-  eval = TRUE,
-  cache = TRUE,
-  warning = FALSE,
-  error = FALSE,
-  message = FALSE,
-  echo = is_html
-)
-
-
 set.seed(666)
 ```
 
