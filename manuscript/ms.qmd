@@ -152,8 +152,6 @@ options(
   mc.cores = as.numeric(Sys.getenv("MAX_CORES", 4))
 )
 
-knitr)
-
 
 # Output options
 is_html <- knitr::is_html_output()
@@ -206,8 +204,6 @@ theme_publication <- function(
     strip.background = element_rect(fill = "gray90", color = "black")
   )
 }
-
-
 
 ```
 
