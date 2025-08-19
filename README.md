@@ -21,6 +21,7 @@ beta_regression_tutorial/
 ├── .vscode/
 │   └── settings.json                # VSCode editor configuration (Air formatter)
 ├── manuscript/
+|   |   _quarto.yml                   # manuscript metadata amd rendering
 │   ├── data/
 │   │   ├── fluency_data.csv         # Aggregate data used for example
 │   │   └── miko_data.csv            # Aaw data from Expt 1A from Wilford Paper
