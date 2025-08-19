@@ -143,12 +143,12 @@ or
 - Positron
   - To use Positron from the shell you will need to make sure the correct path is set (see https://github.com/posit-dev/positron/discussions/4485#discussioncomment-10456159). Once this is done you can open Positron from the shell
   - If you are using Positron within WSL/Windows you need to download WSL for Positron.
-  - You should also download `direnv` in Positron to access the nix-shell when running projects. 
+    - You should also download `direnv` in Positron to access the nix-shell when running projects. 
 
 ```bash
 positron
 ```
-For RStudio (linux only), simply type:
+For RStudio, simply type:
 ```bash
 rstudio
 ```
