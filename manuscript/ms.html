@@ -221,7 +221,7 @@ window.Quarto = {
 <p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as Beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of Beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting Beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the Beta distribution and Beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a Beta regression model in R with the Bayesian package <code>brms</code> and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered Beta models. Basic familarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://github.com/jgeller112/Beta_regression_tutorial.</p>
 </div>
 <p><em>Keywords</em>: Beta regression, Beta distribution, R tutorial, Psychology, Learning and memory</p>
-<p><em>Word Count</em>: 26281</p>
+<p><em>Word Count</em>: 26350</p>
 <br>
 </section>
 <section id="firstheader" class="level1 title unnumbered unlisted">
@@ -320,7 +320,7 @@ Preprint
 <span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-curves" class="quarto-float quarto-figure quarto-figure-center" data-fignum="1" prefix="">
+<div id="fig-curves" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="1">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -453,7 +453,7 @@ Preprint
 <span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>post <span class="sc">/</span> freq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-p-value-pd-comp" class="quarto-float quarto-figure quarto-figure-center" data-fignum="2" prefix="">
+<div id="fig-p-value-pd-comp" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="2">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-p-value-pd-comp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -501,7 +501,7 @@ Listing&nbsp;1: Data needed to run examples
 </div>
 <p>Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in <a href="#tbl-dataset" class="quarto-xref" aria-expanded="false">Table&nbsp;1</a>. The dataset can be downloaded from Github (<a href="#lst-data" class="quarto-xref">Listing&nbsp;1</a>). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that treat outcomes as normally distributed. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span>’s analysis and then re-analyze the data using Beta regression and highlight how it can improve our inferences.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="1" data-custom-style="FigureWithoutNote">
-<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="1">
+<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="1" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dataset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -660,7 +660,7 @@ Listing&nbsp;1: Data needed to run examples
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-flu1" class="quarto-float quarto-figure quarto-figure-center" data-fignum="3" prefix="">
+<div id="fig-flu1" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="3">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-flu1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -762,7 +762,7 @@ Listing&nbsp;1: Data needed to run examples
 <span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize =</span> .<span class="dv">6</span></span>
 <span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-align="center" prefix="" data-after-caption-space="0pt" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-tblnum="2">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tbl-align="center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-tblnum="2" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1184,7 +1184,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the <code>brms</code> package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In <code>brms</code>, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(Bürkner, 2017)</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model mis-fit.</p>
-<p>Our main question of interest is: Does instructor fluency have an effect on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>. the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, M = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.085. The 95% credible interval for this estimate spans from 0.003 to 0.167. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
+<p>Our main question of interest is: Does instructor fluency have an effect on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>. the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, M = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% credible interval for this estimate spans from -0.004 to 0.169. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -1198,17 +1198,17 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     4016     2711
-FluencyFluent     0.09      0.04     0.00     0.17 1.00     3901     3107
+Intercept         0.26      0.03     0.20     0.31 1.00     3841     3043
+FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3840     2639
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3359     2970</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     3462     2603</code></pre>
 </div>
 </div>
 <p>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a>), provided by the <code>bayestestR</code> package <span class="citation" data-cites="makowski2019a makowski2019">(Makowski, Ben-Shachar, Chen, et al., 2019; Makowski, Ben-Shachar, &amp; Lüdecke, 2019)</span>. This measure offers an intuitive parallel to <em>p</em>-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative (akin to p &lt; .05).</p>
-<p>Importantly, <em>pd</em> does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, we encourage readers to consider the Region of Practical Equivalence (ROPE) with the Cr.Is <span class="citation" data-cites="kruschke2015doing">(Kruschke, 2015)</span>. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb <span class="citation" data-cites="kruschke2018">(see Kruschke, 2018)</span>, if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.</p>
-<p>The <code>rope()</code> function in the <code>bayestestR</code> package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via <code>brms</code> the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In <strong>?@lst-rope</strong>, we show how to compute this using <code>bayestestR</code>. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see <a href="#fig-rope" class="quarto-xref" aria-expanded="false">Figure&nbsp;4</a>). Going forward we do not include a dicussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.</p>
+<p><strong>Importantly, <em>pd</em> does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, we encourage readers to consider the Region of Practical Equivalence (ROPE) with the Cr.Is <span class="citation" data-cites="kruschke2015doing">(Kruschke, 2015)</span>. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb <span class="citation" data-cites="kruschke2018">(see Kruschke, 2018)</span>, if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.</strong></p>
+<p><strong>The <code>rope()</code> function in the <code>bayestestR</code> package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via <code>brms</code> the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In <strong>?@lst-rope</strong>, we show how to compute this using <code>bayestestR</code>. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see <a href="#fig-rope" class="quarto-xref" aria-expanded="false">Figure&nbsp;4</a>). Going forward we do not include a dicussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.</strong></p>
 <div class="cell" data-lst-caption="Getting ROPE from `bayes_reg_model` obect using `rope` function from `bayestestR`">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -1245,7 +1245,7 @@ sigma     0.21      0.02     0.18     0.24 1.00     3359     2970</code></pre>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>p_annotated</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-rope" class="quarto-float quarto-figure quarto-figure-center" data-fignum="4" prefix="">
+<div id="fig-rope" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="4">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-rope-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1279,7 +1279,7 @@ Listing&nbsp;4: Checking assumptions with the <code>check_model()</code> from <c
 </figure>
 </div>
 <div class="cell-output-display">
-<div id="fig-reg-assump" class="quarto-float quarto-figure quarto-figure-center" data-fignum="5" prefix="">
+<div id="fig-reg-assump" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="5">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-reg-assump-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1328,7 +1328,7 @@ Listing&nbsp;4: Checking assumptions with the <code>check_model()</code> from <c
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-ppcheckall" class="quarto-float quarto-figure quarto-figure-center" data-fignum="6" prefix="">
+<div id="fig-ppcheckall" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="6">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-ppcheckall-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1416,7 +1416,7 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="3" data-custom-style="FigureWithoutNote">
-<div id="tbl-phi-Beta-exp" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="3">
+<div id="tbl-phi-Beta-exp" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="3" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-phi-Beta-exp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1515,15 +1515,15 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
         <tbody>
                 <tr>
                   <td>b_phi_Intercept</td>
-                  <td>4.98</td>
-                  <td>[3.228, 7.409]</td>
+                  <td>4.95</td>
+                  <td>[3.201, 7.253]</td>
                   <td>1</td>
                 </tr>
                 <tr>
                   <td>b_phi_FluencyFluent</td>
-                  <td>1.52</td>
-                  <td>[0.856, 2.705]</td>
-                  <td>0.922</td>
+                  <td>1.53</td>
+                  <td>[0.864, 2.766]</td>
+                  <td>0.927</td>
                 </tr>
         </tbody>
       </table>
@@ -1542,7 +1542,7 @@ Listing&nbsp;6: Fitting Beta model with dispersion in <code>brm()</code>.
 <p>It is only necessary to model the dispersion with covariates when there is reason to believe that this variation is substantively relevant to the research question. In case there is uncertainty about the best model, a relatively agnostic approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-plt-diff" class="quarto-float quarto-figure quarto-figure-center" data-fignum="7" prefix="">
+<div id="fig-plt-diff" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="7">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-plt-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1594,7 +1594,7 @@ Listing&nbsp;8: Predictions from the Beta model for each level of Fluency.
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="4" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-cap-location="top" prefix="" data-after-caption-space="0pt" data-tblnum="4">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="4" data-tbl-cap-location="top" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1693,12 +1693,12 @@ Listing&nbsp;8: Predictions from the Beta model for each level of Fluency.
                 <tr>
                   <td>Disfluent</td>
                   <td>0.297</td>
-                  <td>[0.249, 0.35]</td>
+                  <td>[0.249, 0.349]</td>
                 </tr>
                 <tr>
                   <td>Fluent</td>
-                  <td>0.354</td>
-                  <td>[0.303, 0.411]</td>
+                  <td>0.353</td>
+                  <td>[0.302, 0.409]</td>
                 </tr>
         </tbody>
       </table>
@@ -1724,7 +1724,7 @@ Listing&nbsp;9: Plot predicted probabilities using <code>plot_predictions()</cod
 </figure>
 </div>
 </div>
-<p>The <code>plot_predictions()</code> function will only display the point estimate with the 95% credible intervals. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the <code>marginaleffects</code> package, we can obtain samples from the posterior distribution with the <code>posterior_draws()</code> function (see <a href="#lst-posdraws" class="quarto-xref">Listing&nbsp;10</a>). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (see <a href="#fig-draws-fluency" class="quarto-xref" aria-expanded="false">Figure&nbsp;8</a>).</p>
+<p>The <code>plot_predictions()</code> function will only display the point estimate with the 95% credible interval. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the <code>marginaleffects</code> package, we can obtain samples from the posterior distribution with the <code>posterior_draws()</code> function (see <a href="#lst-posdraws" class="quarto-xref">Listing&nbsp;10</a>). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (see <a href="#fig-draws-fluency" class="quarto-xref" aria-expanded="false">Figure&nbsp;8</a>).</p>
 <div class="cell">
 <div id="lst-posdraws" class="r cell-code listing quarto-float quarto-figure quarto-figure-left">
 <figure class="quarto-float quarto-float-lst figure">
@@ -1757,7 +1757,7 @@ Listing&nbsp;10: Extracting posterior draws from the Beta regression model.
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-draws-fluency" class="quarto-float quarto-figure quarto-figure-center" data-fignum="8" prefix="">
+<div id="fig-draws-fluency" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="8">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-draws-fluency-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1777,8 +1777,8 @@ Listing&nbsp;10: Extracting posterior draws from the Beta regression model.
 </section>
 <section id="marginal-effects" class="level3">
 <h3 data-anchor-id="marginal-effects">Marginal Effects</h3>
-<p>Marginal effects provide a way to understand how changes in a predictor influence an outcome, holding all other factors constant in a specific manner. Technically, marginal effects are calculated using partial derivatives for continuous variables or finite differences for categorical and continuous variables, depending on the nature of the data and the research question. Substantively, these procedures translate raw regression coefficients back into effects that represent changes in the bounded outcome, such as an <span class="math inline">x</span>% change in the value of a proportion.</p>
-<p>There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular <code>emmeans</code> package <span class="citation" data-cites="emmeans">(Lenth, 2025)</span> computes marginal effects by holding all predictors at their means. In this tutorial, we will use the <code>marginaleffects</code> package <span class="citation" data-cites="margeffects2024">(Arel-Bundock et al., 2024)</span>, which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.</p>
+<p>Marginal effects offer an interpretable way to quantify how changes in a predictor influence an outcome, while holding other factors constant in a specific manner. <strong>In recent years, there has been a thrust to move away from reporting regression coefficients alone, focusing instead on estimates that are easier to interpret and communicate—particularly in non-linear models [<span class="citation" data-cites="mccabe2021">McCabe et al. (2021)</span>; <span class="citation" data-cites="rohrer2025models">Rohrer and Arel-Bundock (2025)</span>;</strong>@kim2022<strong>]</strong>. Technically, marginal effects are computed as partial derivatives for continuous variables or as finite differences for categorical (and sometimes continuous) predictors, depending on the structure of the data and the research question. Substantively, these procedures translate raw regression coefficients into quantities that reflect changes in the bounded outcome—for example, an <span class="math inline">x</span>% change in the value of a proportion.</p>
+<p>There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular <code>emmeans</code> package <span class="citation" data-cites="emmeans">(Lenth, 2025)</span> computes marginal effects by holding all predictors at their means (MEM). In this tutorial, we will use the <code>marginaleffects</code> package <span class="citation" data-cites="margeffects2024">(Arel-Bundock et al., 2024)</span>, which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.</p>
 <p>One practical application of AMEs is calculating the average difference between two groups or conditions (called the risk difference). Using the <code>avg_comparisons()</code> function in the <code>marginaleffects</code> package (<a href="#lst-avgcomp" class="quarto-xref">Listing&nbsp;11</a>), we can compute this metric directly. By default, the function calculates the discrete difference between groups. The function can also compute other effect size metrics, such as odds ratios and risk ratios, depending on the research question. This flexibility makes it a powerful tool for interpreting regression results in a meaningful way.</p>
 <div class="cell">
 <div id="lst-avgcomp" class="r cell-code listing quarto-float quarto-figure quarto-figure-left">
@@ -1796,7 +1796,7 @@ Listing&nbsp;11: Calculating the difference between probabilities with <code>avg
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="5" data-custom-style="FigureWithoutNote">
-<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="5">
+<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="5" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ame1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1897,7 +1897,7 @@ Listing&nbsp;11: Calculating the difference between probabilities with <code>avg
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>0.057</td>
-                  <td>[-0.014, 0.127]</td>
+                  <td>[-0.017, 0.129]</td>
                 </tr>
         </tbody>
       </table>
@@ -2007,7 +2007,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="6" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="6">
+<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="6" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-mu-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2108,7 +2108,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
                   <td>0.044</td>
-                  <td>[-0.032, 0.115]</td>
+                  <td>[-0.034, 0.121]</td>
                 </tr>
         </tbody>
       </table>
@@ -2135,7 +2135,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="7" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="7">
+<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="7" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-phi-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2235,8 +2235,8 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>2.7</td>
-                  <td>[-0.945, 6.586]</td>
+                  <td>2.71</td>
+                  <td>[-0.869, 6.606]</td>
                 </tr>
         </tbody>
       </table>
@@ -2266,7 +2266,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-zi-plot" class="quarto-float quarto-figure quarto-figure-center" data-fignum="9" prefix="">
+<div id="fig-zi-plot" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="9">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-zi-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2376,7 +2376,7 @@ Listing&nbsp;12: Fitting zib model with <code>brm()</code>
 <span id="cb18-82"><a href="#cb18-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="fu">label_percent</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-zoib" class="quarto-float quarto-figure quarto-figure-center" data-fignum="10" prefix="">
+<div id="fig-zoib" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="10">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-zoib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2536,7 +2536,7 @@ Listing&nbsp;17: Fitting ordered Beta model with dispersion using <code>ordbetar
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_tt</span>(<span class="at">digits =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_tt</span>(<span class="at">escape =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-ordBeta" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="8">
+<div id="tbl-ordBeta" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="8" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ordBeta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2636,8 +2636,8 @@ Listing&nbsp;17: Fitting ordered Beta model with dispersion using <code>ordbetar
                 <tr>
                   <td>Fluency</td>
                   <td>Fluent - Disfluent</td>
-                  <td>0.061</td>
-                  <td>[-0.015, 0.137]</td>
+                  <td>0.06</td>
+                  <td>[-0.014, 0.134]</td>
                 </tr>
         </tbody>
       </table>
@@ -2655,7 +2655,7 @@ Listing&nbsp;17: Fitting ordered Beta model with dispersion using <code>ordbetar
 <h3 data-anchor-id="cutpoints">Cutpoints</h3>
 <p>The model cutpoints are not reported by default in the summary output, but we can access them with the R package <code>posterior</code> <span class="citation" data-cites="posterior2025a">(Bürkner et al., 2025)</span> and the functions <code>as_draws</code> and <code>summary_draws</code>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="9" data-custom-style="FigureWithoutNote">
-<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="9">
+<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="9" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cutpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2754,12 +2754,12 @@ Listing&nbsp;17: Fitting ordered Beta model with dispersion using <code>ordbetar
                 <tr>
                   <td>cutzero</td>
                   <td>-2.97</td>
-                  <td>[-3.59, -2.41]</td>
+                  <td>[-3.56, -2.41]</td>
                 </tr>
                 <tr>
                   <td>cutone</td>
                   <td>1.85</td>
-                  <td>[1.64, 2.07]</td>
+                  <td>[1.64, 2.08]</td>
                 </tr>
         </tbody>
       </table>
@@ -2789,7 +2789,7 @@ Listing&nbsp;17: Fitting ordered Beta model with dispersion using <code>ordbetar
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(plots<span class="sc">$</span>discrete, plots<span class="sc">$</span>continuous, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-ppcheckord" class="quarto-float quarto-figure quarto-figure-center" data-fignum="11" prefix="">
+<div id="fig-ppcheckord" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="11">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-ppcheckord-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2823,7 +2823,7 @@ Listing&nbsp;17: Fitting ordered Beta model with dispersion using <code>ordbetar
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-heiss" class="quarto-float quarto-figure quarto-figure-center" data-fignum="12" prefix="">
+<div id="fig-heiss" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="12">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-heiss-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2975,6 +2975,9 @@ Marsman, M., &amp; Wagenmakers, E.-J. (2016). Three <span>Insights</span> from a
 <div id="ref-martinVocalComplexitySocially2024" class="csl-entry" role="listitem">
 Martin, K., Cornero, F. M., Clayton, N. S., Adam, O., Obin, N., &amp; Dufour, V. (2024). Vocal complexity in a socially complex corvid: Gradation, diversity and lack of common call repertoire in male rooks. <em>Royal Society Open Science</em>, <em>11</em>(1), 231713. <a href="https://doi.org/10.1098/rsos.231713">https://doi.org/10.1098/rsos.231713</a>
 </div>
+<div id="ref-mccabe2021" class="csl-entry" role="listitem">
+McCabe, C. J., Halvorson, M. A., King, K. M., Cao, X., &amp; Kim, D. S. (2021). Interpreting Interaction Effects in Generalized Linear Models of Nonlinear Probabilities and Counts. <em>Multivariate Behavioral Research</em>, <em>57</em>(2-3), 243–263. <a href="https://doi.org/10.1080/00273171.2020.1868966">https://doi.org/10.1080/00273171.2020.1868966</a>
+</div>
 <div id="ref-mcelreath2020statistical" class="csl-entry" role="listitem">
 McElreath, R. (2020). <em>Statistical rethinking: A bayesian course with examples in r and STAN</em> (2nd ed.). Chapman; Hall/CRC. <a href="https://doi.org/10.1201/9780429029608">https://doi.org/10.1201/9780429029608</a>
 </div>
@@ -2992,6 +2995,9 @@ R Core Team. (2024). <em>R: A language and environment for statistical computing
 </div>
 <div id="ref-rix" class="csl-entry" role="listitem">
 Rodrigues, B., &amp; Baumann, P. (2025). <em>Rix: Reproducible data science environments with ’nix’</em>. <a href="https://docs.ropensci.org/rix/">https://docs.ropensci.org/rix/</a>
+</div>
+<div id="ref-rohrer2025models" class="csl-entry" role="listitem">
+Rohrer, J. M., &amp; Arel-Bundock, V. (2025). <em>Models as prediction machines: How to convert confusing coefficients into clear quantities</em>. <a href="https://doi.org/10.31234/osf.io/g4s2a_v1">https://doi.org/10.31234/osf.io/g4s2a_v1</a>
 </div>
 <div id="ref-shresthaBigFiveTraits2024" class="csl-entry" role="listitem">
 Shrestha, S., Sigdel, K., Pokharel, M., &amp; Columbus, S. (2024). Big five traits predict between- and within-person variation in loneliness. <em>European Journal of Personality</em>, 08902070241239834. <a href="https://doi.org/10.1177/08902070241239834">https://doi.org/10.1177/08902070241239834</a>
@@ -4178,9 +4184,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb23-695"><a href="#cb23-695" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-696"><a href="#cb23-696" aria-hidden="true" tabindex="-1"></a>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (@tbl-all), provided by the <span class="in">`bayestestR`</span> package <span class="co">[</span><span class="ot">@makowski2019a; @makowski2019</span><span class="co">]</span>. This measure offers an intuitive parallel to *p*-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative (akin to p <span class="sc">\&lt;</span> .05).</span>
 <span id="cb23-697"><a href="#cb23-697" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-698"><a href="#cb23-698" aria-hidden="true" tabindex="-1"></a>Importantly, *pd* does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, we encourage readers to consider the Region of Practical Equivalence (ROPE) with the Cr.Is <span class="co">[</span><span class="ot">@kruschke2015doing</span><span class="co">]</span>. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb <span class="co">[</span><span class="ot">see @kruschke2018</span><span class="co">]</span>, if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.</span>
+<span id="cb23-698"><a href="#cb23-698" aria-hidden="true" tabindex="-1"></a>**Importantly, *pd* does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, we encourage readers to consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.**</span>
 <span id="cb23-699"><a href="#cb23-699" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-700"><a href="#cb23-700" aria-hidden="true" tabindex="-1"></a>The <span class="in">`rope()`</span> function in the <span class="in">`bayestestR`</span> package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via <span class="in">`brms`</span> the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In @lst-rope, we show how to compute this using <span class="in">`bayestestR`</span>. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope). Going forward we do not include a dicussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.</span>
+<span id="cb23-700"><a href="#cb23-700" aria-hidden="true" tabindex="-1"></a>**The `rope()` function in the `bayestestR` package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via `brms` the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In @lst-rope, we show how to compute this using `bayestestR`. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope). Going forward we do not include a dicussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.**</span>
 <span id="cb23-701"><a href="#cb23-701" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-704"><a href="#cb23-704" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb23-705"><a href="#cb23-705" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-rope</span></span>
@@ -4498,7 +4504,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb23-1045"><a href="#cb23-1045" aria-hidden="true" tabindex="-1"></a>Beta_plot <span class="ot">&lt;-</span> <span class="fu">plot_predictions</span>(Beta_brms, <span class="at">by =</span> <span class="st">"Fluency"</span>)</span>
 <span id="cb23-1046"><a href="#cb23-1046" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb23-1047"><a href="#cb23-1047" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-1048"><a href="#cb23-1048" aria-hidden="true" tabindex="-1"></a>The <span class="in">`plot_predictions()`</span> function will only display the point estimate with the 95% credible intervals. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the <span class="in">`marginaleffects`</span> package, we can obtain samples from the posterior distribution with the <span class="in">`posterior_draws()`</span> function (see @lst-posdraws). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (see @fig-draws-fluency).</span>
+<span id="cb23-1048"><a href="#cb23-1048" aria-hidden="true" tabindex="-1"></a>The <span class="in">`plot_predictions()`</span> function will only display the point estimate with the 95% credible interval. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the <span class="in">`marginaleffects`</span> package, we can obtain samples from the posterior distribution with the <span class="in">`posterior_draws()`</span> function (see @lst-posdraws). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (see @fig-draws-fluency).</span>
 <span id="cb23-1049"><a href="#cb23-1049" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-1052"><a href="#cb23-1052" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb23-1053"><a href="#cb23-1053" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-posdraws</span></span>
@@ -4530,9 +4536,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb23-1081"><a href="#cb23-1081" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-1082"><a href="#cb23-1082" aria-hidden="true" tabindex="-1"></a><span class="fu">### Marginal Effects</span></span>
 <span id="cb23-1083"><a href="#cb23-1083" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-1084"><a href="#cb23-1084" aria-hidden="true" tabindex="-1"></a>Marginal effects provide a way to understand how changes in a predictor influence an outcome, holding all other factors constant in a specific manner. Technically, marginal effects are calculated using partial derivatives for continuous variables or finite differences for categorical and continuous variables, depending on the nature of the data and the research question. Substantively, these procedures translate raw regression coefficients back into effects that represent changes in the bounded outcome, such as an $x$% change in the value of a proportion.</span>
+<span id="cb23-1084"><a href="#cb23-1084" aria-hidden="true" tabindex="-1"></a>Marginal effects offer an interpretable way to quantify how changes in a predictor influence an outcome, while holding other factors constant in a specific manner. **In recent years, there has been a thrust to move away from reporting regression coefficients alone, focusing instead on estimates that are easier to interpret and communicate—particularly in non-linear models \[@mccabe2021; @rohrer2025models;**@kim2022**\]**. Technically, marginal effects are computed as partial derivatives for continuous variables or as finite differences for categorical (and sometimes continuous) predictors, depending on the structure of the data and the research question. Substantively, these procedures translate raw regression coefficients into quantities that reflect changes in the bounded outcome—for example, an $x$% change in the value of a proportion.</span>
 <span id="cb23-1085"><a href="#cb23-1085" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-1086"><a href="#cb23-1086" aria-hidden="true" tabindex="-1"></a>There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular <span class="in">`emmeans`</span> package <span class="co">[</span><span class="ot">@emmeans</span><span class="co">]</span> computes marginal effects by holding all predictors at their means. In this tutorial, we will use the <span class="in">`marginaleffects`</span> package <span class="co">[</span><span class="ot">@margeffects2024</span><span class="co">]</span>, which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.</span>
+<span id="cb23-1086"><a href="#cb23-1086" aria-hidden="true" tabindex="-1"></a>There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular <span class="in">`emmeans`</span> package <span class="co">[</span><span class="ot">@emmeans</span><span class="co">]</span> computes marginal effects by holding all predictors at their means (MEM). In this tutorial, we will use the <span class="in">`marginaleffects`</span> package <span class="co">[</span><span class="ot">@margeffects2024</span><span class="co">]</span>, which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.</span>
 <span id="cb23-1087"><a href="#cb23-1087" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-1088"><a href="#cb23-1088" aria-hidden="true" tabindex="-1"></a>One practical application of AMEs is calculating the average difference between two groups or conditions (called the risk difference). Using the <span class="in">`avg_comparisons()`</span> function in the <span class="in">`marginaleffects`</span> package (@lst-avgcomp), we can compute this metric directly. By default, the function calculates the discrete difference between groups. The function can also compute other effect size metrics, such as odds ratios and risk ratios, depending on the research question. This flexibility makes it a powerful tool for interpreting regression results in a meaningful way.</span>
 <span id="cb23-1089"><a href="#cb23-1089" aria-hidden="true" tabindex="-1"></a></span>
