@@ -1559,6 +1559,8 @@ Overall, it is clear from the posterior distribution plot that the ordered Beta 
 ```{r}
 #| label: fig-heiss
 #| fig-cap: "Heiss plot of predicted probabilities across the scale (0-100)"
+#| fig-height: 12
+#| fig-width: 8
 
 plot_heiss(
   ord_fit_brms,
