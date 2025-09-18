@@ -124,7 +124,7 @@ This manuscript is currently **under review** and has not been peer-reviewed. Co
 library(easystats)
 library(scales)
 library(tinytable)
-library({marginaleffects})
+library(marginaleffects)
 library(extraDistr)
 library(brms)
 library(posterior)
@@ -145,7 +145,7 @@ library(tidyverse)
 
 options(
   scipen = 999,
-  {marginaleffects}_posterior_center = mean,
+  marginaleffects_posterior_center = mean,
   brms.short_summary = TRUE,
   rms.backend = Sys.getenv("BRMS_BACKEND", "cmdstanr"),
   brms.threads = as.numeric(Sys.getenv("BRMS_THREADS", 2)),
