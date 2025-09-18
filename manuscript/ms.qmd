@@ -937,7 +937,7 @@ This is pretty easy to do manually, but when your model has many predictors, it 
 #| lst-label: lst-me
 #| lst-cap: Load the {marginaleffects} package.
 
-library({marginaleffects})
+library(marginaleffects)
 ```
 
 ```{r}
