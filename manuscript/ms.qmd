@@ -1436,7 +1436,7 @@ While we cannot measure Agreement directly, the ordinal response gives us some i
 
 The ordered beta regression model has shown to be more efficient and less biased than some of the methods discussed [@kubinec2022] herein and has seen increasing use across the biomedical and social sciences [@wilkesQuantifyingCoextinctionsEcosystem2024; @martinVocalComplexitySocially2024; @smithEcologicalMomentaryAssessment2024; @shresthaBigFiveTraits2024; @nouvianGlyphosateImpairsAversive2023] because it produces only a single set of coefficient estimates in a similar manner to a standard beta regression or OLS.[^8]
 
-[^8]: Please note that there are other models available that can model this continuous process like the ordered beta model (
+[^8]: Please note that there are other models available that can model this continuous process like the beta-gate model [@Makowski2025CHOCO] and the censored extended beta regression model [@kosmidis2025].
 
 ### Fitting an Ordered Beta Regression
 
