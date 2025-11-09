@@ -220,7 +220,7 @@ window.Quarto = {
 <p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package <code>brms</code> and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://github.com/jgeller112/beta_regression_tutorial.</p>
 </div>
 <p><em>Keywords</em>: beta regression, beta distribution, R tutorial, Psychology, Learning and memory</p>
-<p><em>Word Count</em>: 27269</p>
+<p><em>Word Count</em>: 27284</p>
 <br>
 </section>
 <section id="firstheader" class="level1 title unnumbered unlisted">
@@ -700,7 +700,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the <code>brms</code> package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In <code>brms</code>, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(Bürkner, 2017)</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.</p>
-<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% Cr.I for this estimate spans from -0.002 to 0.168. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
+<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.256 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.086. The 95% Cr.I for this estimate spans from 0.003 to 0.172. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -714,12 +714,12 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     4034     2806
-FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3857     3231
+Intercept         0.26      0.03     0.20     0.32 1.00     4064     3170
+FluencyFluent     0.09      0.04     0.00     0.17 1.00     3994     2989
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3933     2350</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     4469     3139</code></pre>
 </div>
 </div>
 <p>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;2</a>), provided by the {bayestestR} package <span class="citation" data-cites="makowski2019a makowski2019">(Makowski, Ben-Shachar, Chen, et al., 2019; Makowski, Ben-Shachar, &amp; Lüdecke, 2019)</span>. This measure offers an intuitive parallel to <em>p</em>-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative (akin to p &lt; .05).</p>
@@ -993,7 +993,7 @@ Listing&nbsp;5: Fitting a beta model without 0s and 1s in brm().
 <span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize =</span> .<span class="dv">6</span></span>
 <span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-align="center" data-after-caption-space="0pt" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-tblnum="2" prefix="">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="2" prefix="" data-tbl-align="center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1505,7 +1505,7 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="3" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tbl-cap-location="top" data-tblnum="3" data-after-caption-space="0pt">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-tblnum="3" data-tbl-cap-location="top" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1604,12 +1604,12 @@ Listing&nbsp;8: Predictions from the beta model for each level of Fluency.
                 <tr>
                   <td>Disfluent</td>
                   <td>0.297</td>
-                  <td>[0.249, 0.348]</td>
+                  <td>[0.249, 0.347]</td>
                 </tr>
                 <tr>
                   <td>Fluent</td>
                   <td>0.353</td>
-                  <td>[0.302, 0.408]</td>
+                  <td>[0.301, 0.406]</td>
                 </tr>
         </tbody>
       </table>
@@ -1805,7 +1805,7 @@ Listing&nbsp;11: Calculating the difference between probabilities with <code>avg
                 <tr>
                   <td>Fluent - Disfluent</td>
                   <td>0.056</td>
-                  <td>[-0.014, 0.128]</td>
+                  <td>[-0.016, 0.127]</td>
                 </tr>
         </tbody>
       </table>
@@ -2032,8 +2032,8 @@ Listing&nbsp;13: Fitting zib model with <code>brm()</code>
         <tbody>
                 <tr>
                   <td>Fluent - Disfluent</td>
-                  <td>0.043</td>
-                  <td>[-0.031, 0.116]</td>
+                  <td>0.044</td>
+                  <td>[-0.033, 0.116]</td>
                 </tr>
         </tbody>
       </table>
@@ -2158,8 +2158,8 @@ Listing&nbsp;13: Fitting zib model with <code>brm()</code>
         <tbody>
                 <tr>
                   <td>Fluent - Disfluent</td>
-                  <td>2.74</td>
-                  <td>[-0.704, 6.42]</td>
+                  <td>2.7</td>
+                  <td>[-0.928, 6.877]</td>
                 </tr>
         </tbody>
       </table>
@@ -2557,7 +2557,7 @@ Listing&nbsp;18: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td>Fluent - Disfluent</td>
                   <td>0.061</td>
-                  <td>[-0.017, 0.135]</td>
+                  <td>[-0.017, 0.136]</td>
                 </tr>
         </tbody>
       </table>
@@ -2675,12 +2675,12 @@ Listing&nbsp;18: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td>cutzero</td>
                   <td>-2.97</td>
-                  <td>[-3.58, -2.43]</td>
+                  <td>[-3.59, -2.42]</td>
                 </tr>
                 <tr>
                   <td>cutone</td>
                   <td>1.85</td>
-                  <td>[1.64, 2.08]</td>
+                  <td>[1.65, 2.08]</td>
                 </tr>
         </tbody>
       </table>
@@ -2860,6 +2860,9 @@ Kong, E. J., &amp; Edwards, J. (2016). Individual differences in categorical per
 <div id="ref-kornell2008" class="csl-entry" role="listitem">
 Kornell, N., &amp; Bjork, R. A. (2008). Learning Concepts and Categories. <em>Psychological Science</em>, <em>19</em>(6), 585–592. <a href="https://doi.org/10.1111/j.1467-9280.2008.02127.x">https://doi.org/10.1111/j.1467-9280.2008.02127.x</a>
 </div>
+<div id="ref-kosmidis2025" class="csl-entry" role="listitem">
+Kosmidis, I., &amp; Zeileis, A. (2025). Extended-support beta regression for [0, 1] responses. <em>Journal of the Royal Statistical Society Series C: Applied Statistics</em>. <a href="https://doi.org/10.1093/jrsssc/qlaf039">https://doi.org/10.1093/jrsssc/qlaf039</a>
+</div>
 <div id="ref-kruschke2015doing" class="csl-entry" role="listitem">
 Kruschke, J. K. (2015). <em>Doing bayesian data analysis: A tutorial with r, JAGS, and stan</em> (2nd ed.). Academic Press.
 </div>
@@ -2975,7 +2978,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <li id="fn5"><p>The model fit statistic LOO-CV can be compared for any set of fitted <code>brms</code> models with the function <code>loo()</code>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn6"><p>In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in <code>brms</code> by setting the <code>coi</code> parameter to <code>1</code>. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, <code>coi = 1</code> assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1[^6]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated beta (ZOIB) model <span class="citation" data-cites="liu2015">(Liu &amp; Kong, 2015)</span> if we believe that both 0s and 1s are distinct outcomes.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn7"><p>For a more complete description of this issue, we refer the reader to <span class="citation" data-cites="kubinec2022">Kubinec (2022)</span>.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn8"><p>Please note that there are other models available that can model this continuous process like the ordered beta model (<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>Please note that there are other models available that can model this continuous process like the beta-gate model <span class="citation" data-cites="Makowski2025CHOCO">(Makowski et al., 2025)</span> and the censored extended beta regression model <span class="citation" data-cites="kosmidis2025">(Kosmidis &amp; Zeileis, 2025)</span>.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main>
 <!-- /main column -->
@@ -4876,7 +4879,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb22-1524"><a href="#cb22-1524" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-1525"><a href="#cb22-1525" aria-hidden="true" tabindex="-1"></a>The ordered beta regression model has shown to be more efficient and less biased than some of the methods discussed <span class="co">[</span><span class="ot">@kubinec2022</span><span class="co">]</span> herein and has seen increasing use across the biomedical and social sciences <span class="co">[</span><span class="ot">@wilkesQuantifyingCoextinctionsEcosystem2024; @martinVocalComplexitySocially2024; @smithEcologicalMomentaryAssessment2024; @shresthaBigFiveTraits2024; @nouvianGlyphosateImpairsAversive2023</span><span class="co">]</span> because it produces only a single set of coefficient estimates in a similar manner to a standard beta regression or OLS.<span class="ot">[^8]</span></span>
 <span id="cb22-1526"><a href="#cb22-1526" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-1527"><a href="#cb22-1527" aria-hidden="true" tabindex="-1"></a><span class="ot">[^8]: </span>Please note that there are other models available that can model this continuous process like the ordered beta model (</span>
+<span id="cb22-1527"><a href="#cb22-1527" aria-hidden="true" tabindex="-1"></a><span class="ot">[^8]: </span>Please note that there are other models available that can model this continuous process like the beta-gate model <span class="co">[</span><span class="ot">@Makowski2025CHOCO</span><span class="co">]</span> and the censored extended beta regression model <span class="co">[</span><span class="ot">@kosmidis2025</span><span class="co">]</span>.</span>
 <span id="cb22-1528"><a href="#cb22-1528" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-1529"><a href="#cb22-1529" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fitting an Ordered Beta Regression</span></span>
 <span id="cb22-1530"><a href="#cb22-1530" aria-hidden="true" tabindex="-1"></a></span>
