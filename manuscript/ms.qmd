@@ -511,7 +511,8 @@ fluency_data |>
   stat_dotsinterval(.width = 0.5, slab_linewidth = 0) +
   scale_x_continuous(labels = label_percent()) +
   scale_y_discrete(NULL, expand = expansion(mult = 0.1)) +
-  scale_fill_okabe_ito(breaks = NULL)
+  scale_fill_okabe_ito(breaks = NULL) + 
+theme_publication()
 
 ```
 
@@ -557,7 +558,7 @@ brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 
 ```
 
-We fit the model using the `brm()` function from the `brms` package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In `brms`, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model mis-fit.
+We fit the model using the `brm()` function from the `brms` package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In `brms`, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.
 
 Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by @lst-gauss (also see @tbl-all under Bayesian LM). the `Intercept` refers to the posterior mean accuracy in the disfluent condition, *M* = `r round(brms_model_new$Mean[1], 3)` , as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% Cr.I for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% Cr.I" columns of the output. These results closely mirror the findings reported by @wilford2020 (Experiment 1A).
 
@@ -875,6 +876,7 @@ ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
     y = "Model",
     caption = "80% and 95% credible intervals shown in black"
   ) +
+ scale_y_discrete(expand = expansion(mult = 0.1)) + 
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
   theme_publication() +
   theme(legend.position = "none")
@@ -1006,6 +1008,7 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
     caption = "50%, 80% and 95% credible intervals shown in black"
   ) +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
+scale_y_discrete(expand = expansion(mult = 0.1)) + 
   theme_publication() +
   theme(legend.position = "none")
 ```
@@ -1498,7 +1501,7 @@ ord_beta_avg <- m.phi |>
 
 ```{r}
 #| label: tbl-ordbeta
-#| tbl-cap: "Marginal effect for fluency in ordered beta model"
+#| tbl-cap: "Marginal effect of fluency ordered beta model"
 #| after-caption-space: 0pt
 
 ord_beta_avg |>
@@ -1508,7 +1511,7 @@ ord_beta_avg |>
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Term, Contrast, Mean, `95% Cr.I`) |>
+  select(Contrast, Mean, `95% Cr.I`) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
