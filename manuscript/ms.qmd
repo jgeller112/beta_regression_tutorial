@@ -511,8 +511,8 @@ fluency_data |>
   stat_dotsinterval(.width = 0.5, slab_linewidth = 0) +
   scale_x_continuous(labels = label_percent()) +
   scale_y_discrete(NULL, expand = expansion(mult = 0.1)) +
-  scale_fill_okabe_ito(breaks = NULL) + 
-theme_publication()
+  scale_fill_okabe_ito(breaks = NULL) +
+  theme_publication()
 
 ```
 
@@ -571,11 +571,11 @@ The output also includes the effective sample size (ESS) and R̂ (R-hat) values,
 
 Importantly, pd does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, we encourage readers to consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
 
-The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via `brms` the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In @lst-rope, we show how to compute this using `bayestestR`. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope). Going forward we do not include a discussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.
+The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via `brms` the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In @lst-rope-brms, we show how to compute this using `bayestestR`. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope). Going forward we do not include a discussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.
 
 ```{r}
-#| label: lst-rope
-#| lst-caption: Getting ROPE from `bayes_reg_model` obect using `rope` function from {bayestestR}
+#| label: lst-rope-brms
+#| #| lst-caption: Getting ROPE from `bayes_reg_model` obect using `rope` function from {bayestestR}
 
 brms_rope <- rope(bayes_reg_model, ci = .95, ci_method = "ETI")
 ```
@@ -610,13 +610,13 @@ p_annotated <- p +
 p_annotated
 ```
 
-@wilford2020 observed that instructor fluency impacts actual learning, using a standard *t*-test on the mean accuracy. But recall this approach assumes normality of residuals and homoscedacity. These assumptions are unrealistic when the response values approach the scale boundaries [@sladekova2024unicorns]. Does the data we have meet those assumptions? We can use the function `check_model()` from `easystats` [@easystats] to check our assumptions easily. The code in @lst-check1 automatically produces @fig-reg-assump. We can see some issues with our data. Specifically, there appears to be violations of constant variance across the values of the scale (homoskedasticity). In plain terms, this type of model mis-specfication means that a standard OLS model can predict non-sensical values outside the bounds of the scale.
+@wilford2020 observed that instructor fluency impacts actual learning, using a standard *t*-test on the mean accuracy. But recall this approach assumes normality of residuals and homoscedacity. These assumptions are unrealistic when the response values approach the scale boundaries [@sladekova2024unicorns]. Does the data we have meet those assumptions? We can use the function `check_model()` from {easystats} [@easystats] to check our assumptions easily. The code in @lst-check1 automatically produces @fig-reg-assump. We can see some issues with our data. Specifically, there appears to be violations of constant variance across the values of the scale (homoskedasticity). In plain terms, this type of model mis-specfication means that a standard OLS model can predict non-sensical values outside the bounds of the scale.
 
 ```{r}
 #| label: fig-reg-assump
 #| lst-label: lst-check1
 #| lst-cap: Checking assumptions with the `check_model()` from `easystats` package .
-#| fig-cap: "Two assumption checks for our OLS model: Normality (left) and Homoskedasticity (right)"
+#| fig-cap: "Two assumption checks for our OLS model: Normality (right) and Homoskedasticity (left)"
 #| echo: true
 
 check_model(bayes_reg_model, check = c("homogeneity", "qq"))
@@ -788,7 +788,19 @@ pretty_table |>
   format_tt(escape = TRUE) |>
   style_tt(fontsize = .9, align = "c") |>
   style_tt(
-    i = c(2:3, 5:6, 8:9, 11:12, 14:15, 17:18, 20:21, 23:24, 26:27, 29:30, 32:33),
+    i = c(
+      2:3,
+      5:6,
+      8:9,
+      11:12,
+      14:15,
+      17:18,
+      20:21,
+      23:24,
+      26:27,
+      29:30,
+      32:33
+    ),
     italic = TRUE,
     fontsize = .6
   )
@@ -876,7 +888,7 @@ ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
     y = "Model",
     caption = "80% and 95% credible intervals shown in black"
   ) +
- scale_y_discrete(expand = expansion(mult = 0.1)) + 
+  scale_y_discrete(expand = expansion(mult = 0.1)) +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
   theme_publication() +
   theme(legend.position = "none")
@@ -1008,7 +1020,7 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
     caption = "50%, 80% and 95% credible intervals shown in black"
   ) +
   geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
-scale_y_discrete(expand = expansion(mult = 0.1)) + 
+  scale_y_discrete(expand = expansion(mult = 0.1)) +
   theme_publication() +
   theme(legend.position = "none")
 ```
@@ -1440,19 +1452,19 @@ The ordered beta regression model has shown to be more efficient and less biased
 
 ### Fitting an Ordered Beta Regression
 
-To fit an ordered beta regression in a Bayesian context we use the `ordbetareg` [@ordbetareg] package. `ordbetareg` is a front-end to the `brms` package that we described earlier; in addition to the functions available in the package, most `brms` functions and plots, including the diverse array of regression modeling options, will work with `ordbetareg` models. (We note that the `ordbeta` model is also available as a maximum-likelihood variant in the R package `glmmTMB`.) We first load the `ordbetareg` package (see @lst-ordbeta).
+To fit an ordered beta regression in a Bayesian context we use the {ordbetareg} [@ordbetareg] package. {ordbetareg} is a front-end to the `brms` package that we described earlier; in addition to the functions available in the package, most `brms` functions and plots, including the diverse array of regression modeling options, will work with {ordbetareg} models. (We note that the `ordbeta` model is also available as a maximum-likelihood variant in the R package {glmmTMB}.) We first load the {ordbetareg} package (see @lst-ordbeta).
 
 ```{r}
 #| echo: true
 #| lst-label: lst-ordbeta
-#| lst-cap: Load `ordbetareg`
+#| lst-cap: Load {ordbetareg}
 #| label: load ordbetareg
 #| eval: false
 
 library(ordbetareg)
 ```
 
-The `ordbetareg` package uses `brms` on the front-end so all the arguments we used previously apply here. Instead of the `brm()` function we use `ordbetareg()`. To fit a model where dispersion does not vary as a function of fluency we can use the below code (see @lst-fitordbeta).
+The {ordbetareg} package uses `brms` on the front-end so all the arguments we used previously apply here. Instead of the `brm()` function we use `ordbetareg()`. To fit a model where dispersion does not vary as a function of fluency we can use the below code (see @lst-fitordbeta).
 
 ```{r}
 #| label: brms-ordered-beta-model
@@ -1548,7 +1560,7 @@ In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and
 
 ### Model Fit
 
-The best way to visualize model fit is to plot the full predictive distribution relative to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, a separate plotting function, `pp_check_ordbetareg`, is included in the `ordbetareg` package that accurately handles the unique features of this distribution. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is. The `ordbetareg` function returns a list with two plots, `discrete` and `continuous`, which can either be printed and plotted or further modified as `ggplot2` objects (see @fig-ppcheckord).
+The best way to visualize model fit is to plot the full predictive distribution relative to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, a separate plotting function, `pp_check_ordbetareg`, is included in the {ordbetareg} package that accurately handles the unique features of this distribution. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is. The {ordbetareg} function returns a list with two plots, `discrete` and `continuous`, which can either be printed and plotted or further modified as `ggplot2` objects (see @fig-ppcheckord).
 
 ```{r}
 #| label: fig-ppcheckord
@@ -1573,7 +1585,7 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 
 ### Model Visualization
 
-`ordbetareg` provides a neat visualization function called `plot_heiss()` [@yeEnforcingBoundariesChinas2023] that can represent dispersion in the entire outcome as a function of discrete covariates. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
+{ordbetareg} provides a neat visualization function called `plot_heiss()` [@yeEnforcingBoundariesChinas2023] that can represent dispersion in the entire outcome as a function of discrete covariates. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
 
 ```{r}
 #| label: fig-heiss
@@ -1588,7 +1600,7 @@ plot_heiss(
 
 ### Ordered Beta Scale
 
-In the `ordbetareg` function there is a `true_bound` argument. In cases where your data is not bounded between 0-1, you can use this argument to specify the bounds of the argument to fit the ordered beta regression. For example, you data might be bounded between 1 and 7. If so, you can model it as such and `ordbetareg` will convert the model predictions back to the true bounds after estimation.
+In the {ordbetareg} function there is a `true_bound` argument. In cases where your data is not bounded between 0-1, you can use this argument to specify the bounds of the argument to fit the ordered beta regression. For example, you data might be bounded between 1 and 7. If so, you can model it as such and {ordbetareg} will convert the model predictions back to the true bounds after estimation.
 
 # Discussion
 
