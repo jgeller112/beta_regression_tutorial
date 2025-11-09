@@ -3,6 +3,7 @@
 
 required_packages = c(
   "tidyverse",
+  "dotwhisker",
   "brms",
   "quarto",
   "tinytable",
