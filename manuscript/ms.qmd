@@ -354,11 +354,11 @@ By accounting for the observations' natural limits and non-constant variance acr
 
 Beta regression models can be estimated using either frequentist or Bayesian methods. In this paper, we adopt a Bayesian framework because it facilitates the estimation and interpretation of more complex models [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules]. Additonaly, the use of Bayesin statistics in psychology has been steadily growing [@Pfadt2025]. In principle, most Bayesian models can also be estimated with frequentist approaches (e.g., maximum likelihood). However, as model complexity increases, frequentist estimation often requires additional adjustments such as bootstrapping or custom optimization, whereas Bayesian modeling handles these extensions more naturally through hierarchical structure and prior specification.
 
-A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package [@brms], which provides a high-level interface to Stan [@stan2023] and uses familiar R formula syntax, making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.
+A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package [@brms], which provides a high-level interface to Stan [@stan2023] and uses familiar R formula syntax (similar to `lm()`), making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.
 
 There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the {brms} package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution. By default, Bayesian models run 4 chains with 2,000 iterations each. The first 1,000 iterations per chain are warmup and are discarded. The remaining 1,000 iterations per chain are retained as posterior draws, yielding 4,000 total post-warmup draws across all chains. From these draws, we can compute the posterior mean (analogous to a frequentist point estimate) and the 95% credible interval (Cr.I.), which is often compared to a confidence interval.
 
-In addition, an important part of Bayesian analyses is prior specification. Priors encode our assumptions about plausible parameter values before observing the data and allow the model to regularize estimates, especially when data are sparse or parameters are weakly identified. To help bridge the conceptual gap for users more familiar with frequentist models, we begin with the default (weakly informative) priors provided by {brms}. These priors are intentionally modest, and in many applications produce results that closely align with frequentist estimates, while still offering the flexibility and interpretive advantages of a Bayesian framework. We strongly urge readers to consider prior specification strongly in all their work.
+In addition, an important part of Bayesian analyses is prior specification. Priors encode our assumptions about plausible parameter values before observing the data and allow the model to regularize estimates, especially when data are sparse or parameters are weakly identified. To help bridge the conceptual gap for users more familiar with frequentist models, we begin with the default priors (flat/non-informative) provided by {brms}. These priors are intentionally non-informative, and in many applications produce results that closely align with frequentist estimates, while still offering the flexibility and interpretive advantages of a Bayesian framework. We strongly urge readers to consider prior specification strongly in all their work.
 
 To ease readers into Bayesian data analysis we provide a metric known as the *probability of direction* (pd), which reflects the probability that a parameter is strictly positive or negative. When a uniform prior is used (all values equally likely in the prior), a pd of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided p-values of .10, .05, .01, and .001 (i.e., pd ≈ 1 − p/2 for symmetric posteriors with weak/flat priors) (see @fig-p-value-pd-comp for an illustrative comparison). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
 
@@ -504,11 +504,15 @@ In their original analysis of Experiment 1A, @wilford2020 compared memory perfor
 
 ```{r}
 #| label: fig-flu1
-#| fig-cap: "Dot plot depicting accuracy distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and summary statistics to illustrate variability and central tendency."
+#| fig-cap: "Dot plot depicting accuracy distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and summary statistics (mean and 95% percentile interval) to illustrate variability and central tendency."
 #|
 fluency_data |>
   ggplot(aes(x = Accuracy, y = Fluency, fill = Fluency)) +
-  stat_dotsinterval(.width = 0.5, slab_linewidth = 0) +
+  stat_dotsinterval(
+    point_interval = "mean_qi",
+    .width = 0.95,
+    slab_linewidth = 0
+  ) +
   scale_x_continuous(labels = label_percent()) +
   scale_y_discrete(NULL, expand = expansion(mult = 0.1)) +
   scale_fill_okabe_ito(breaks = NULL) +
