@@ -1053,6 +1053,11 @@ beta_avg_comp <- avg_comparisons(beta_brms, comparison = "difference")
 #| tbl-cap: Fluency difference
 #| after-caption-space: 0pt
 
+p_d <- beta_avg_comp |>
+  p_direction() |>
+  as.data.frame() |>
+  select(pd)
+
 beta_avg_comp |>
   # remove unwanted variables
   select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted) |>
@@ -1061,7 +1066,8 @@ beta_avg_comp |>
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate") |>
-  select(Contrast, Mean, `95% Cr.I`) |>
+  bind_cols(p_d) |>
+  select(Contrast, Mean, `95% Cr.I`, pd) |>
   tt(digits = 2) |>
   format_tt(escape = TRUE)
 ```
@@ -1155,13 +1161,6 @@ fit_zi <- brm(
 
 The ZIB model does a bit better at capturing the structure of the data then the beta regression model (see @fig-ppcheckall). Specifically, the ZIB model more accurately captures the increased density of values near the lower end of the scale (i.e., near zero), which the standard beta model underestimates. The ZIB model’s predictive distributions also align more closely with the observed data across the entire range, particularly in the peak and tail regions. This improved fit likely reflects the ZIB model’s ability to explicitly model excess 0s (or near-zero values) via its inflation component, allowing it to better account for features in the data that a standard beta distribution cannot accommodate.
 
-```{r}
-#| label: fig ppcheckzib
-#| fig-cap: Posterior predictive check for the zib model
-pp_check3 <- pp_check(fit_zi, ndraws = 100) + # ndraws is nu
-  theme_publication()
-```
-
 ### Predicted Probabilities and Marginal Effects
 
 @tbl-all, under the zero-inflated beta regression column, provides a summary of the posterior distribution for each parameter. As stated before, it is preferable to back-transform our estimates to get probabilities. To get the predicted probabilities we can again use the `avg_predictions()` and `avg_comparisons()` functions from {marginaleffects} package [@marginaleffects] to get predicted probabilities and the probability difference between the levels of each factor. We can model the parameters separately using the `dpar` argument setting to: $\mu$, $\phi$, $\alpha$. Here we look at the risk difference for Fluency under each parameter. If one were interested in the average effect for the entire model, the `dpar` argument could be removed.
@@ -1186,6 +1185,11 @@ marg_zi_brms <- fit_zi |>
 #| echo: false
 #| after-caption-space: 0pt
 
+p_d <- marg_zi_brms |>
+  p_direction() |>
+  as.data.frame() |>
+  select(pd)
+
 marg_zi_brms |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
@@ -1193,7 +1197,8 @@ marg_zi_brms |>
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Contrast, Mean, `95% Cr.I`) |>
+  bind_cols(p_d) |>
+  select(Contrast, Mean, `95% Cr.I`, pd) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
@@ -1220,6 +1225,12 @@ marg_phi_brms <- fit_zi |>
 #| echo: false
 #| after-caption-space: 0pt
 
+p_d <- marg_phi_brms |>
+  p_direction() |>
+  as.data.frame() |>
+  select(pd)
+
+
 marg_phi_brms |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
@@ -1227,7 +1238,8 @@ marg_phi_brms |>
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Contrast, Mean, `95% Cr.I`) |>
+  bind_cols(p_d) |>
+  select(Contrast, Mean, `95% Cr.I`, pd) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
@@ -1522,6 +1534,11 @@ ord_beta_avg <- m.phi |>
 #| tbl-cap: "Marginal effect of fluency ordered beta model"
 #| after-caption-space: 0pt
 
+p_d <- ord_beta_avg |>
+  p_direction() |>
+  as.data.frame() |>
+  select(pd)
+
 ord_beta_avg |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
@@ -1529,7 +1546,8 @@ ord_beta_avg |>
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
   ) |>
   rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
-  select(Contrast, Mean, `95% Cr.I`) |>
+  bind_cols(p_d) |>
+  select(Contrast, Mean, `95% Cr.I`, pd) |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
