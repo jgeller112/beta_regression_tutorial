@@ -56,12 +56,12 @@ author-note:
     # Example: This study was registered at X (Identifier Y).
     study-registration: "The analyses herein were not preregistered."
     # Acknowledge and cite data/materials to be shared.
-    data-sharing: Data, code, and materials for this manuscript can be found at https://github.com/jgeller112/beta_regression_tutorial 
+    data-sharing: Data, code, and materials for this manuscript can be found at https://zenodo.org/records/16895241.
     related-report: ~
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
     authorship-agreements: ~
-abstract: "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package `brms` and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://github.com/jgeller112/beta_regression_tutorial."
+abstract: "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package `brms` and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://zenodo.org/records/16895241. "
 keywords: [beta regression, beta distribution, R tutorial, Psychology, Learning and memory]
 floatsintext: true
 # Numbered lines (.pdf and .docx only)
@@ -122,16 +122,18 @@ This manuscript is currently **under review** and has not been peer-reviewed. Co
 #| warning: false
 
 library(easystats)
+library(tidyverse)
 library(scales)
 library(tinytable)
+library(collapse)
 library(marginaleffects)
-library(dotwhisker)
 library(extraDistr)
 library(brms)
 library(posterior)
 library(bayesplot)
 library(ggdist)
 library(patchwork)
+library(glmmTMB)
 library(ggrain)
 library(cowplot)
 library(ggokabeito)
@@ -205,19 +207,6 @@ theme_publication <- function(
 
 ```
 
-```{r}
-# fit models beforehand so tables and figures are in correct place.
-
-model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
-model2 <- read_rds(here(
-  "manuscript",
-  "models",
-  "model_beta_bayes_dis_run01.rds"
-))
-model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
-model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
-model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
-```
 
 ```{r}
 #| label: data-import
@@ -239,6 +228,7 @@ fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
   mutate(Participant = dense_rank(Participant)) %>%
   relocate(Accuracy, .after = last_col())
 ```
+
 
 # Introduction
 
@@ -262,7 +252,7 @@ The present tutorial aims to help bridge this gap by providing a comprehensive, 
 
 Beyond model specification, we place strong emphasis on interpreting results on the response scale--that is, in terms of probabilities and proportions--rather than relying on often difficult to interpret parameters. This focus makes the models more accessible and meaningful for psychological applications, where effects are often easier to communicate when framed on the original scale of the outcome (e.g., changes in recall accuracy or task performance). Throughout, we provide reproducible code and annotated examples to help readers implement and interpret these models in their own work.
 
-We begin the tutorial with a non-technical overview of the beta distribution and its core parameters. We then walk through the process of estimating beta regression models using the R package `brms` [@brms], illustrating each step with applied examples. To guide interpretation, we emphasize coefficients, predicted probabilities, and marginal effects calculated using the {marginaleffects} package [@margeffects2024]. We also introduce several useful extensions--zero-inflated (ZIB), zero-one-inflated (ZOIB), and ordered beta regression--that enable researchers to model outcomes that include boundary values. Finally, all code and materials used in this tutorial are fully reproducible and available via our GitHub repository: [https://github.com/jgeller112/beta_regression_tutorial](https://github.com/jgeller112/Beta_regression_tutorial){.uri}[^2].
+We begin the tutorial with a non-technical overview of the beta distribution and its core parameters. We then walk through the process of estimating beta regression models using the R package `brms` [@brms], illustrating each step with applied examples. To guide interpretation, we emphasize coefficients, predicted probabilities, and marginal effects calculated using the {marginaleffects} package [@margeffects2024]. We also introduce several useful extensions--zero-inflated (ZIB), zero-one-inflated (ZOIB), and ordered beta regression--that enable researchers to model outcomes that include boundary values. Finally, all code and materials used in this tutorial are fully reproducible and available via our GitHub repository: [https://github.com/jgeller112/beta_regression_tutorial](https://github.com/jgeller112/Beta_regression_tutorial){.uri} and on Zeneodo <https://zenodo.org/records/16895241> [^2].
 
 [^2]: In this article, we try to limit code where possible; however, the online version has all the code needed to reproduce all analyses herein. Furthermore, to promote transparency and reproducibility, the tutorial was written in R version 4.5.1 (@R) using Quarto (v.1.5.54), an open-source publishing system that allows for dynamic and static documents. This allows figures, tables, and text to be programmatically included directly in the manuscript, ensuring that all results are seamlessly integrated into the document. In addition, we use the `rix` [@rix] R package which harnesses the power of the `nix` [@nix] ecosystem to to help with computational reproducibility. Not only does this give us a snapshot of the packages used to create the current manuscript, but it also takes a snapshot of system dependencies used at run-time. This way reproducers can easily re-use the exact same environment by installing the `nix` package manager and using the included default.nix file to set up the right environment. The README file in the GitHub repository contains detailed information on how to set this up to reproduce the contents of the current manuscript, including a video.
 
@@ -474,13 +464,9 @@ In Experiment 1A, participants (*N* = 96) watched two short instructional videos
 #| eval: false
 #| echo: true
 
-# get data here from github
-url <- str_glue(
-  "https://raw.githubusercontent.com/jgeller112/",
-  "beta_regression_tutorial/refs/heads/main/",
-  "manuscript/data/fluency_data.csv"
-)
-fluency_data <- read.csv(url)
+# get data here from project folder
+file <- read_csv(here::here("data", "fluency_data"))
+fluency_data <- read.csv(file)
 
 ```
 
@@ -549,7 +535,7 @@ bayes_reg_model <- brm(
   Accuracy ~ Fluency,
   data = fluency_data,
   family = gaussian(),
-  file = "model_reg_bayes"
+  file = here::here("manuscript", "models", "model_reg_bayes")
 )
 
 ```
@@ -626,52 +612,6 @@ p_annotated
 check_model(bayes_reg_model, check = c("homogeneity", "qq"))
 ```
 
-```{r}
-#| label: fig-ppcheckall
-#| fig-cap: The plots show 100 posterior predicted distributions with the label yrep (light blue), the distribution of accuracy as function of fluency in dark blue for regular regression (A) , beta regression (B), and ZIB (C) models
-#| fig-height: 20
-#| fig-width: 8
-
-pp_check1 <- pp_check(
-  model1,
-  type = "dens_overlay_grouped",
-  group = "Fluency",
-  ndraws = 100
-) +
-  theme_publication()
-
-pp_check2 <- pp_check(
-  model2,
-  type = "dens_overlay_grouped",
-  group = "Fluency",
-  ndraws = 100
-) +
-  theme_publication() +
-  xlim(0, 1) +
-  coord_cartesian(ylim = c(0, 6)) # example limit – adjust as needed
-
-pp_check3 <- pp_check(
-  model3,
-  type = "dens_overlay_grouped",
-  group = "Fluency",
-  ndraws = 100
-) +
-  theme_publication() +
-  xlim(0, 1) +
-  coord_cartesian(ylim = c(0, 6))
-
-
-# Use `plot_spacer()` for the empty 4th spot
-combined_plot <- (pp_check1 / pp_check2 / pp_check3) +
-  plot_annotation(
-    tag_levels = 'A',
-    tag_prefix = "(",
-    tag_suffix = ")"
-  )
-
-combined_plot
-```
-
 We can also examine how well the data fits the model by performing a posterior predictive check using the `pp_check()` function from {brms}. A posterior predictive check involves looking at multiple draws or repetitions from the posterior distribution and plotting it against the observed data. Ideally, the predictive draws (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). In our example (see @fig-ppcheckall (A)) the model-predicted density is slightly too peaked and narrow compared to the data. In addition, some of the draws extend into negative accuracy values.
 
 ## Distributional Regression - Beta Regression
@@ -707,108 +647,10 @@ beta_brms <- brm(
   model_beta_bayes,
   data = data_beta,
   family = Beta(),
-  file = "model_beta_bayes_reg_01"
+  file = here::here("manuscript", "models","model_beta_bayes_reg_01")
 )
 ```
 
-```{r}
-#| label: tbl-all
-#| tbl-cap: "Bayesian regression summaries for each model"
-#| tbl-align: "center"
-#| after-caption-space: 0pt
-#| apa-note: "Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`."
-
-# Define your models
-model_list <- list(
-  "Bayesian LM" = model1,
-  "Beta Regression" = model2,
-  "ZIB" = model3,
-  "ZOIB" = model4,
-  "Ordered Beta" = model5
-)
-
-# Process each model
-cleaned_tables <- imap(model_list, function(mod, name) {
-  model_parameters(mod, centrality = "mean") |>
-    mutate(
-      Mean = sprintf("%.3f", Mean),
-      Cr.I = str_glue("[{round(CI_low, 3)}, {round(CI_high, 3)}]"),
-      pd_star = case_when(
-        pd >= 0.995 ~ str_glue("{sprintf('%.3f', pd)}***"),
-        pd >= 0.985 ~ str_glue("{sprintf('%.3f', pd)}**"),
-        pd >= 0.975 ~ str_glue("{sprintf('%.3f', pd)}*"),
-        TRUE ~ sprintf("%.3f", pd)
-      )
-    ) |>
-    pivot_longer(
-      cols = c(Mean, Cr.I, pd_star),
-      names_to = "Stat",
-      values_to = "value"
-    ) |>
-    mutate(
-      Stat = recode(Stat, pd_star = "pd"),
-      Model = name
-    ) |>
-    select(Parameter, Stat, Model, value)
-})
-
-# Combine all tables
-pretty_table <- bind_rows(cleaned_tables) |>
-  pivot_wider(names_from = Model, values_from = value) |>
-  mutate(across(where(is.character), ~ replace_na(.x, "-"))) |>
-
-  # Simplify parameter names
-  mutate(Parameter = str_replace_all(Parameter, "FluencyFluent", "Fluency")) |>
-
-  # Set factor levels
-  mutate(
-    Stat = factor(Stat, levels = c("Mean", "Cr.I", "pd")),
-    Parameter = factor(
-      Parameter,
-      levels = c(
-        "b_Intercept",
-        "b_Fluency",
-        "sigma",
-        "b_phi_Intercept",
-        "b_phi_Fluency",
-        "b_zi_Intercept",
-        "b_zi_Fluency",
-        "b_zoi_Intercept",
-        "b_zoi_Fluency",
-        "b_coi_Intercept",
-        "b_coi_Fluency"
-      )
-    )
-  ) |>
-
-  arrange(Parameter, Stat) |>
-  group_by(Parameter) |>
-  mutate(Parameter = if_else(row_number() == 1, as.character(Parameter), "")) |>
-  ungroup()
-
-# Display as styled table
-pretty_table |>
-  tt(width = 0.95) |>
-  format_tt(escape = TRUE) |>
-  style_tt(fontsize = .9, align = "c") |>
-  style_tt(
-    i = c(
-      2:3,
-      5:6,
-      8:9,
-      11:12,
-      14:15,
-      17:18,
-      20:21,
-      23:24,
-      26:27,
-      29:30,
-      32:33
-    ),
-    italic = TRUE,
-    fontsize = .6
-  )
-```
 
 ##### Model Parameters
 
@@ -834,7 +676,7 @@ beta_brms_dis <- brm(
   model_beta_bayes_disp,
   data = data_beta,
   family = Beta(),
-  file = "model_beta_bayes_dis_run01"
+  file = here::here("manuscript", "models", "model_beta_bayes_dis_run01")
 )
 
 ```
@@ -1050,6 +892,7 @@ beta_avg_comp <- avg_comparisons(beta_brms, comparison = "difference")
 ```{r}
 #| label: tbl-ame1
 #| echo: false
+#| eval: false 
 #| tbl-cap: Fluency difference
 #| after-caption-space: 0pt
 
@@ -1153,7 +996,7 @@ zib_model <- bf(
 fit_zi <- brm(
   formula = zib_model,
   data = data_beta_0,
-  file = "bayes_zib_model0not1"
+  file = here::here("manuscript", "models", "bayes_zib_model0not1.rds")
 )
 ```
 
@@ -1406,7 +1249,7 @@ zoib_model <- bf(
 fit_zoib <- brm(
   formula = zoib_model,
   data = fluency_data,
-  file = "bayes_zoib_model"
+  file = here::here("manuscript", "models", "bayes_zoib_model")
 )
 ```
 
@@ -1492,7 +1335,7 @@ The {ordbetareg} package uses `brms` on the front-end so all the arguments we us
 ord_fit_brms <- ordbetareg(
   Accuracy ~ Fluency,
   data = fluency_data,
-  file = "bayes_ordbeta_model"
+  file = here::here("manuscript", "models", "bayes_ordbeta_model")
 )
 ```
 
@@ -1511,7 +1354,7 @@ m.phi <- ordbetareg(
   ord_beta_phi,
   data = fluency_data,
   phi_reg = 'both',
-  file = "bayes_ordbeta_phi_model"
+  file = here::here("manuscript", "models", "bayes_ordbeta_phi_model")
 )
 ```
 
@@ -1582,7 +1425,7 @@ In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and
 
 ### Model Fit
 
-The best way to visualize model fit is to plot the full predictive distribution relative to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, a separate plotting function, `pp_check_ordbetareg`, is included in the {ordbetareg} package that accurately handles the unique features of this distribution. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is. The {ordbetareg} function returns a list with two plots, `discrete` and `continuous`, which can either be printed and plotted or further modified as `ggplot2` objects (see @fig-ppcheckord).
+The best way to visualize model fit is to plot the full predictive distribution relative to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, a separate plotting function, `pp_check_ordbetareg`, is included in the {ordbetareg} package that accurately handles the unique features of this distribution. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is. The {ordbetareg} function returns a list with two plots, `discrete` and `continuous`, which can either be printed and plotted or further modified as {ggplot2} objects (see @fig-ppcheckord).
 
 ```{r}
 #| label: fig-ppcheckord
@@ -1623,6 +1466,162 @@ plot_heiss(
 ### Ordered Beta Scale
 
 In the {ordbetareg} function there is a `true_bound` argument. In cases where your data is not bounded between 0-1, you can use this argument to specify the bounds of the argument to fit the ordered beta regression. For example, you data might be bounded between 1 and 7. If so, you can model it as such and {ordbetareg} will convert the model predictions back to the true bounds after estimation.
+
+```{r}
+#| label: model_fits
+
+# fit models from ran models so tables and figures are in correct place.
+model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
+model2 <- read_rds(here("manuscript","models","model_beta_bayes_dis_run01.rds"))
+model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
+model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
+model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
+```
+
+```{r}
+#| label: tbl-all
+#| tbl-cap: "Bayesian regression summaries for each model"
+#| tbl-align: "center"
+#| after-caption-space: 0pt
+#| apa-note: "Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`."
+
+# Define your models
+model_list <- list(
+  "Bayesian LM" = model1,
+  "Beta Regression" = model2,
+  "ZIB" = model3,
+  "ZOIB" = model4,
+  "Ordered Beta" = model5
+)
+
+# Process each model
+cleaned_tables <- imap(model_list, function(mod, name) {
+  model_parameters(mod, centrality = "mean") |>
+    mutate(
+      Mean = sprintf("%.3f", Mean),
+      Cr.I = str_glue("[{round(CI_low, 3)}, {round(CI_high, 3)}]"),
+      pd_star = case_when(
+        pd >= 0.995 ~ str_glue("{sprintf('%.3f', pd)}***"),
+        pd >= 0.985 ~ str_glue("{sprintf('%.3f', pd)}**"),
+        pd >= 0.975 ~ str_glue("{sprintf('%.3f', pd)}*"),
+        TRUE ~ sprintf("%.3f", pd)
+      )
+    ) |>
+    pivot_longer(
+      cols = c(Mean, Cr.I, pd_star),
+      names_to = "Stat",
+      values_to = "value"
+    ) |>
+    mutate(
+      Stat = recode(Stat, pd_star = "pd"),
+      Model = name
+    ) |>
+    select(Parameter, Stat, Model, value)
+})
+
+# Combine all tables
+pretty_table <- bind_rows(cleaned_tables) |>
+  pivot_wider(names_from = Model, values_from = value) |>
+  mutate(across(where(is.character), ~ replace_na(.x, "-"))) |>
+
+  # Simplify parameter names
+  mutate(Parameter = str_replace_all(Parameter, "FluencyFluent", "Fluency")) |>
+
+  # Set factor levels
+  mutate(
+    Stat = factor(Stat, levels = c("Mean", "Cr.I", "pd")),
+    Parameter = factor(
+      Parameter,
+      levels = c(
+        "b_Intercept",
+        "b_Fluency",
+        "sigma",
+        "b_phi_Intercept",
+        "b_phi_Fluency",
+        "b_zi_Intercept",
+        "b_zi_Fluency",
+        "b_zoi_Intercept",
+        "b_zoi_Fluency",
+        "b_coi_Intercept",
+        "b_coi_Fluency"
+      )
+    )
+  ) |>
+
+  arrange(Parameter, Stat) |>
+  group_by(Parameter) |>
+  mutate(Parameter = if_else(row_number() == 1, as.character(Parameter), "")) |>
+  ungroup()
+
+# Display as styled table
+pretty_table |>
+  tt(width = 0.95) |>
+  format_tt(escape = TRUE) |>
+  style_tt(fontsize = .9, align = "c") |>
+  style_tt(
+    i = c(
+      2:3,
+      5:6,
+      8:9,
+      11:12,
+      14:15,
+      17:18,
+      20:21,
+      23:24,
+      26:27,
+      29:30,
+      32:33
+    ),
+    italic = TRUE,
+    fontsize = .6
+  )
+```
+
+```{r}
+#| label: fig-ppcheckall
+#| fig-cap: The plots show 100 posterior predicted distributions with the label yrep (light blue), the distribution of accuracy as function of fluency in dark blue for regular regression (A) , beta regression (B), and ZIB (C) models
+#| fig-height: 20
+#| fig-width: 8
+
+pp_check1 <- pp_check(
+  model1,
+  type = "dens_overlay_grouped",
+  group = "Fluency",
+  ndraws = 100
+) +
+  theme_publication()
+
+pp_check2 <- pp_check(
+  model2,
+  type = "dens_overlay_grouped",
+  group = "Fluency",
+  ndraws = 100
+) +
+  theme_publication() +
+  xlim(0, 1) +
+  coord_cartesian(ylim = c(0, 6)) # example limit – adjust as needed
+
+pp_check3 <- pp_check(
+  model3,
+  type = "dens_overlay_grouped",
+  group = "Fluency",
+  ndraws = 100
+) +
+  theme_publication() +
+  xlim(0, 1) +
+  coord_cartesian(ylim = c(0, 6))
+
+
+# Use `plot_spacer()` for the empty 4th spot
+combined_plot <- (pp_check1 / pp_check2 / pp_check3) +
+  plot_annotation(
+    tag_levels = 'A',
+    tag_prefix = "(",
+    tag_suffix = ")"
+  )
+
+combined_plot
+```
 
 # Discussion
 
