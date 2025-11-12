@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 manuscript/*rds
-manuscript/models/
+manuscript/models/*rds
 manuscript/model_*
 manuscript/ms_cache/
 manuscript/ms_files/
