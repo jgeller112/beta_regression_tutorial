@@ -472,8 +472,8 @@ In Experiment 1A, participants (*N* = 96) watched two short instructional videos
 #| echo: true
 
 # get data here from project folder
-file <- read_csv(here::here("data", "fluency_data"))
-fluency_data <- read.csv(file)
+fluency_data -> read_csv(here::here("data", "fluency_data.csv"))
+
 
 ```
 
