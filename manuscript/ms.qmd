@@ -211,7 +211,9 @@ theme_publication <- function(
 path <- here::here("manuscript", "models")
 
 # Create the directory if it doesn't exist
-if (!dir.exists(path)) dir.create(path, recursive = TRUE)
+if (!dir.exists(path)) {
+  dir.create(path, recursive = TRUE)
+}
 
 ```
 
@@ -245,7 +247,7 @@ Researchers frequently default to linear models that assume Gaussian (normal) di
 
 In some cases, a generalized linear model (GLM) can relax the assumption of normality. For example, binomial and Bernoulli models—often referred to as logistic regression when used with a logit link—are appropriate when the outcome is binary (0/1) or represents the number of successes out of a fixed number of trials. These models, however, rely on data that arise from discrete trial structures. They tend to perform poorly when the observed proportions are truly continuous or when the data show extra variability (overdispersion), particularly when many values occur near the boundaries of the scale (0 and 1).
 
-The challenges of analyzing proportional data are not new [see @bartlett1936]. Fortunately, several existing approaches address the limitations of commonly used models. One such approach is beta regression, an extension of the generalized linear model that employs the beta distribution [@ferrari2004; @paolino2001]. beta regression offers a flexible and robust solution for modeling proportional data directly by accounting for boundary effects and over-dispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets [@sladekova2024unicorns]. In addition, the direct modeling of proportions allows comparability across tasks and scales, and can be particularly valuable when only the proportional data is available, as is often the case with secondary data that lack item-level structure or point values.
+The challenges of analyzing proportional data are not new [see @bartlett1936]. Fortunately, several existing approaches address the limitations of commonly used models. One such approach is beta regression, an extension of the generalized linear model that employs the beta distribution [@ferrari2004; @paolino2001]. beta regression offers a flexible and robust solution for modeling proportional data directly by accounting for boundary effects and over-dispersion, making it a valuable alternative to traditional binomial models. This approach is particularly well-suited for psychological research because it can handle both the bounded nature of proportional data and the non-constant variance often encountered in these datasets [@sladekova2024unicorns]. In addition, the direct modeling of proportions allows comparability across tasks and scales, and can be particularly valuable when only the proportional data is available, as is often the case with secondary data that lack item-level structure or point values. While usage of these models has faced obstacles due to theoretical and computational limitations, as we argue in this paper, beta regression and its extensions now provide an accessible and more robust method to traditional linear modeling.
 
 While in this paper we will focus on proportional-responses that lie between 0 and 1--it is important to note that our analysis applies to any bounded continuous scale. Any bounded scale can be mapped to lie within 0 and 1 without resulting in a loss of information as the transformation is linear.[^1] Consequently, a scale that has natural end points of -1,234 and +8,451--or any other end points on the real number line short of infinity—can be modeled using the approaches we describe in this paper.
 
@@ -267,9 +269,9 @@ We begin the tutorial with a non-technical overview of the beta distribution and
 
 Proportional data pose some challenges for standard modeling approaches: The data are bounded between 0 and 1 and often exhibit non-constant variance (heteroscedasticity) [@ferrari2004; @paolino2001]. Common distributions used within the generalized linear model frameworks often fail to capture these properties adequately, which can necessitate alternative modeling strategies.
 
-While we do not have time to delve fully into its derivation, the beta distribution is a preferred distribution for this type of response because of certain unique properties. The beta distribution is defined as a distribution of the uncertainty of probabilities, which must lie within 0 and 1. As a consequence, the beta distribution is the maximum entropy distribution for any bounded continuous random variable, which means that the beta distribution can represent the full range of possibilities of such a scale.[^3] As a consequence, if we have a continuous scale with upper and lower bounds--and no other special conditions--the beta distribution will in principle provide a very good approximation of the uncertainty of the scale.
+While we do not have time to delve fully into its derivation, the beta distribution is useful for modeling bounded continuous scales because it is the distribution for the probability of an event. Given that a probability can take on any value from near 0 (the event will not occur with certainty) to 1 (the event will occur with certainty), the beta distribution can likewise take on virtually any value in that bounded interval. As a consequence, the beta distribution is the maximum entropy distribution for *any* bounded continuous random variable, which means that the beta distribution can represent the full range of possibilities of such a scale.[^3] As a consequence, if we have a continuous scale with upper and lower bounds--and no other special conditions--the beta distribution will in principle provide a very good approximation of the uncertainty of the scale.
 
-[^3]: Technically, this maximum entropy condition is satisfied because the beta(1,1) distribution is uniform over its support.
+[^3]: Technically, this maximum entropy condition is satisfied because the beta(1,1) distribution is uniform over its support. In addition, we assume that the scale has been re-scaled to the $[0,1]$ interval as we describe above.
 
 Typically, the expected value (or mean) of the response variable is the central estimand scholars want to estimate. A model should specify how this expected value depends on explanatory variables through two main components: a linear predictor, which combines the explanatory variables in a linear form ($a+b_1x_1+b_2x_2$, etc.), and a link function, which connects the expected value of the response variable to the linear predictor (e.g, $E[Y] = g(a + b_1x_1 + b_2x_2)$). In addition, a random component specifies the distribution of the response variable around its expected value (such as Poisson or binomial distributions, which belong to the exponential family) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
 
@@ -349,11 +351,9 @@ By accounting for the observations' natural limits and non-constant variance acr
 
 ## Bayesian Approach to Beta Regression
 
-Beta regression models can be estimated using either frequentist or Bayesian methods. In this paper, we adopt a Bayesian framework because it facilitates the estimation and interpretation of more complex models [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules]. Additonaly, the use of Bayesin statistics in psychology has been steadily growing [@Pfadt2025]. In principle, most Bayesian models can also be estimated with frequentist approaches (e.g., maximum likelihood). However, as model complexity increases, frequentist estimation often requires additional adjustments such as bootstrapping or custom optimization, whereas Bayesian modeling handles these extensions more naturally through hierarchical structure and prior specification.
+Beta regression models can be estimated using either frequentist or Bayesian methods. In this paper, we adopt a Bayesian framework because it facilitates the estimation and interpretation of more complex models [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules]. Additionally, the use of Bayesin statistics in psychology has been steadily growing [@Pfadt2025]. In principle, frequentist methods like maximum likelihood can be framed as Bayesian models with uninformative priors, and as a result, the modeling perspective we put forward in this paper can apply to either approach. Nonetheless, we note that in highly non-linear and hierarchical models, frequentist estimation may require additional adjustments such as bootstrapping to obtain proper uncertainty intervals, whereas Bayesian modeling handles these extensions more naturally via exploration of the full joint posterior distribution.^[A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package [@brms], which provides a high-level interface to Stan [@stan2023] and uses familiar R formula syntax (similar to `lm()`), making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.]
 
-A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package [@brms], which provides a high-level interface to Stan [@stan2023] and uses familiar R formula syntax (similar to `lm()`), making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.
-
-There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the {brms} package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution. By default, Bayesian models run 4 chains with 2,000 iterations each. The first 1,000 iterations per chain are warmup and are discarded. The remaining 1,000 iterations per chain are retained as posterior draws, yielding 4,000 total post-warmup draws across all chains. From these draws, we can compute the posterior mean (analogous to a frequentist point estimate) and the 95% credible interval (Cr.I.), which is often compared to a confidence interval.
+There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the {brms} package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution. By default, Bayesian models run 4 chains with 2,000 iterations each.^[The Hamiltonian Monte Carlo sampler employed by Stan, which we also use in this paper, can converge with significantly fewer iterations, though rapid convergence depends on model complexity, which is why we use a more conservative standard in this paper.] The first 1,000 iterations per chain are warmup and are discarded. The remaining 1,000 iterations per chain are retained as posterior draws, yielding 4,000 total post-warmup draws across all chains. From these draws, we can compute the posterior mean (analogous to a frequentist point estimate) and the 95% credible interval (Cr.I.), which is often compared to a confidence interval.
 
 In addition, an important part of Bayesian analyses is prior specification. Priors encode our assumptions about plausible parameter values before observing the data and allow the model to regularize estimates, especially when data are sparse or parameters are weakly identified. To help bridge the conceptual gap for users more familiar with frequentist models, we begin with the default priors (flat/non-informative) provided by {brms}. These priors are intentionally non-informative, and in many applications produce results that closely align with frequentist estimates, while still offering the flexibility and interpretive advantages of a Bayesian framework. We strongly urge readers to consider prior specification strongly in all their work.
 
@@ -568,13 +568,15 @@ The output also includes the effective sample size (ESS) and R̂ (R-hat) values,
 
 Importantly, pd does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, we encourage readers to consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
 
-The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via `brms` the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In @lst-rope-brms, we show how to compute this using `bayestestR`. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope). Going forward we do not include a discussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.
+The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via `brms` the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should ultimately be guided by theoretical considerations, prior research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using `bayestestR`. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope). Going forward we do not include a discussion of ROPE values, but we encourage readers to adopt it in their own research when appropriate.
 
 ```{r}
-#| label: lst-rope-brms
-#| #| lst-caption: Getting ROPE from `bayes_reg_model` obect using `rope` function from {bayestestR}
+#| label: rope-brms
+#| lst-label: lst-ropebrms
+#| lst-caption: Getting ROPE from `bayes_reg_model` obect using `rope` function from {bayestestR}
+#| echo: true
 
-brms_rope <- rope(bayes_reg_model, ci = .95, ci_method = "ETI")
+brms_rope <- bayestestR::rope(bayes_reg_model, ci = .95, ci_method = "ETI")
 ```
 
 ```{r}
@@ -654,7 +656,7 @@ beta_brms <- brm(
   model_beta_bayes,
   data = data_beta,
   family = Beta(),
-  file = here::here("manuscript", "models","model_beta_bayes_reg_01")
+  file = here::here("manuscript", "models", "model_beta_bayes_reg_01")
 )
 ```
 
@@ -789,7 +791,7 @@ Parameter estimates are usually difficult to interpret on their own and can requ
 
 In our example, we can use the `plogis()` function in base R to convert estimates from the logit scale to the probability scale. The intercept of our model is -0.918, which reflects the logit of the mean accuracy in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the logit scale, we first add this value to the intercept value (-0.918) to get the logit for the fluent condition: `-0.83 + 0.20 = -0.63`. We then use `plogis()` to convert both logit values to probabilities (Fluent = 35%, Disfluent = 30%).
 
-This is pretty easy to do manually, but when your model has many predictors, it can be quite cumbersome. To help us extract predictions from our model and visualize them we will use a package called {marginaleffects} [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the $\mu$ parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob. These probabilities match what we calculated above.
+With single coefficients this calculation is trivial, but in more complex models with interactions, it can be quite cumbersome. To help us extract predictions from our model and visualize them we will use a package called {marginaleffects} [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the $\mu$ parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob. These probabilities match what we calculated above.
 
 ```{r}
 #| echo: true
@@ -880,7 +882,7 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
 
 ### Marginal Effects
 
-Marginal effects offer an interpretable way to quantify how changes in a predictor influence an outcome, while holding other factors constant in a specific manner. **In recent years, there has been a thrust to move away from reporting regression coefficients alone, focusing instead on estimates that are easier to interpret and communicate—particularly in non-linear models [@mccabe2021; @rohrer2025models]**. Technically, marginal effects are computed as partial derivatives for continuous variables or as finite differences for categorical (and sometimes continuous) predictors, depending on the structure of the data and the research question. Substantively, these procedures translate raw regression coefficients into quantities that reflect changes in the bounded outcome—for example, an $x$% change in the value of a proportion.
+Marginal effects offer an interpretable way to quantify how changes in a predictor influence an outcome, while holding other factors constant in a specific manner. In recent years, there has been a thrust to move away from reporting regression coefficients alone, focusing instead on estimates that are easier to interpret and communicate—particularly in non-linear models [@mccabe2021; @rohrer2025models]. Technically, marginal effects are computed as partial derivatives for continuous variables or as finite differences for categorical (and sometimes continuous) predictors, depending on the structure of the data and the research question. Substantively, these procedures translate raw regression coefficients into quantities that reflect changes in the bounded outcome—for example, an $x$% change in the value of a proportion.
 
 There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular {emmeans} package [@emmeans] computes marginal effects by holding all predictors at their means (MEM). In this tutorial, we will use the {marginaleffects} package [@margeffects2024], which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.
 
@@ -899,7 +901,7 @@ beta_avg_comp <- avg_comparisons(beta_brms, comparison = "difference")
 ```{r}
 #| label: tbl-ame1
 #| echo: false
-#| eval: false 
+#| eval: false
 #| tbl-cap: Fluency difference
 #| after-caption-space: 0pt
 
@@ -971,11 +973,11 @@ $$ {#eq-cohenh}
 
 ### Posterior Predictive Check
 
-@fig-ppcheckall (B) shows the predictive check for our beta model. The model does a pretty good job at capturing the data (The draws are now between 0-1) and the predicted values from the model follow the observed data. However, it could be better.
+@fig-ppcheckall (B) shows the predictive check for our beta model. The model's predictions generally conform to the data as the predictions are now between constrained to the 0-1 interval. However, we can further improve the model's predictive performance if we take into account the bounds of the scale more explicitly.
 
 ## Zero-Inflated beta (ZIB) Regression
 
-A limitation of the beta regression model is that it can only accommodate values strictly between 0 and 1—it cannot handle values exactly equal to 0 or 1. In our dataset, we observed 9 rows where Accuracy equals zero. To fit a beta regression model, we removed these values, but we have left out potentially valuable information from our model--especially if the end points of the scale are distinctive in some way. In our case, these 0s may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. We will discuss two approaches for jointly modeling these end points with the continuous data. First, we can use a zero-inflated beta (ZIB) model. This model still estimates the mean ($\mu$) and precision ($\phi$) of the beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural 0s.
+A limitation of the beta regression model is that it can only accommodate values strictly between 0 and 1—a probability cannot take on values of 0 (the event will not occur with certainty) or 1 (the event will occur with certainty). In our dataset, we observed 9 rows where Accuracy equals zero. To fit a beta regression model, we removed these values, but we have left out potentially valuable information from our model--especially if the end points of the scale are distinctive in some way. In our case, these 0s may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. We will discuss two approaches for jointly modeling these end points with the continuous data. First, we can use a zero-inflated beta (ZIB) model. This model still estimates the mean ($\mu$) and precision ($\phi$) of the beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural 0s.
 
 The zero-inflated beta models a mixture of the data-generating process. The $\alpha$ parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.
 
@@ -1135,7 +1137,7 @@ marg_zi_brms |>
 
 ## Zero-One-Inflated beta (ZOIB)
 
-The ZIB model works well if you have 0s in your data, but not 1s.[^6] In our previous examples we either got rid of both 0s and 1s (beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
+The ZIB model works well if there are 0s in your data, but not 1s.[^6] In our previous examples we either got rid of both 0s and 1s (beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
 [^6]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
 
@@ -1428,7 +1430,7 @@ as_draws(m.phi, c("cutzero", "cutone")) |>
 
 ```
 
-In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and continuous values) and `cutone` is the second cutpoint (the difference between the continuous values and 1). These cutpoints are on the logit scale and as such the numbers do not have a simple substantive meaning. In general, as the cutpoints increase in absolute value (away from zero), then the discrete/boundary observations are more distinct from the continuous values. This will happen if there is a clear gap or bunching in the outcome around the bounds. This type of empirical feature of the distribution may be useful to scholars if they want to study differences in how people perceive the ends of the scale versus the middle. It is possible, though beyond the scope of this article, to model the location of the cutpoints with hierarchical (non-linear) covariates in `brms`. In the most recent version of `ordbeta`, you can test the influence of different factors on these boundaries.
+In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and continuous values) and `cutone` is the second cutpoint (the difference between the continuous values and 1). These cutpoints are on the logit scale and as such the numbers do not have a simple substantive meaning. In general, as the cutpoints increase in absolute value (away from zero), then the discrete/boundary observations are more distinct from the continuous values. This will happen if there is a clear gap or bunching in the outcome around the bounds. This type of empirical feature of the distribution may be useful to scholars if they want to study differences in how people perceive the ends of the scale versus the middle. It is possible, though beyond the scope of this article, to model the location of the cutpoints with hierarchical (non-linear) covariates in `brms`. In the most recent version of `ordbeta`, it is possible to test the influence of different factors on these boundaries.
 
 ### Model Fit
 
@@ -1457,7 +1459,7 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 
 ### Model Visualization
 
-{ordbetareg} provides a neat visualization function called `plot_heiss()` [@yeEnforcingBoundariesChinas2023] that can represent dispersion in the entire outcome as a function of discrete covariates. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
+{ordbetareg} provides a useful visualization function called `plot_heiss()` [@yeEnforcingBoundariesChinas2023] that can represent dispersion in the entire outcome as a function of discrete covariates. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
 
 ```{r}
 #| label: fig-heiss
@@ -1472,14 +1474,18 @@ plot_heiss(
 
 ### Ordered Beta Scale
 
-In the {ordbetareg} function there is a `true_bound` argument. In cases where your data is not bounded between 0-1, you can use this argument to specify the bounds of the argument to fit the ordered beta regression. For example, you data might be bounded between 1 and 7. If so, you can model it as such and {ordbetareg} will convert the model predictions back to the true bounds after estimation.
+In the {ordbetareg} function there is a `true_bound` argument. In cases where your data is not bounded between 0-1, this argument can be used to specify the bounds of the argument to fit the ordered beta regression. For example, the response data might be bounded between 1 and 7. If so, {ordbetareg} can model it within the [0,1] interval and {ordbetareg} will convert the model predictions back to the true bounds after estimation.
 
 ```{r}
 #| label: model_fits
 
 # fit models from ran models so tables and figures are in correct place.
 model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
-model2 <- read_rds(here("manuscript","models","model_beta_bayes_dis_run01.rds"))
+model2 <- read_rds(here(
+  "manuscript",
+  "models",
+  "model_beta_bayes_dis_run01.rds"
+))
 model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
 model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
 model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
@@ -1632,7 +1638,7 @@ combined_plot
 
 # Discussion
 
-The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to turn the tides. beta regression models are an attractive alternative to models that impose unrealistic assumptions like normality, linearity, homoscedasticity, and unbounded data. Beyond these models, there are a diverse array of different models that can be used depending on your outcome of interest.
+The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to turn the tides. Beta regression models are an attractive alternative to models that impose unrealistic assumptions like normality, linearity, homoscedasticity, and unbounded data. Beyond these models, there are a diverse array of different models that can be used depending on your outcome of interest.
 
 Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results.
 
