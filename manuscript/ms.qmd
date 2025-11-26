@@ -42,10 +42,8 @@ author:
     affiliations:
       - name: Tilburg University
       - department: Department of Psychology
-
     roles:
      - Formal analysis
-     - Supervision
      - Validation
      - Writing - review & editing
 
