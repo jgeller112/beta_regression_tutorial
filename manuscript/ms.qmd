@@ -44,6 +44,7 @@ author:
       - department: Department of Psychology
     roles:
      - Formal analysis
+     - Validation
      - Writing - review & editing
 
 author-note:
@@ -470,7 +471,7 @@ In Experiment 1A, participants (*N* = 96) watched two short instructional videos
 #| echo: true
 
 # get data here from project folder
-fluency_data -> read_csv(here::here("data", "fluency_data.csv"))
+fluency_data <- read_csv(here::here("manuscript", "data", "fluency_data.csv"))
 
 
 ```
