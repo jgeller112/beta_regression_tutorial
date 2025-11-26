@@ -41,11 +41,9 @@ author:
     orcid: 0000-0001-5052-066X
     affiliations:
       - name: Tilburg University
-      - department: Department of Psychology
     roles:
      - Formal analysis
      - Writing - review & editing
-
 author-note:
   status-changes:
     affiliation-change: ~
@@ -560,7 +558,7 @@ The output also includes the effective sample size (ESS) and R̂ (R-hat) values,
 
 Importantly, pd does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, readers can consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
 
-The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via `brms` the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).
+The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).
 
 ```{r}
 #| label: rope-brms
@@ -688,13 +686,13 @@ To obtain precision on the original scale, we exponentiate the linear predictor:
 
 $$
 \phi_{\text{disfluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}}\big), \qquad
-\phi_{\text{fluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}} + \beta^{(\phi)}_{\text{FluencyFluent}}\big).
+\phi_{\text{fluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}} + \beta^{(\phi)}_{\text{Fluency}}\big).
 $$
 
-The coefficient $\beta^{(\phi)}_{\text{FluencyFluent}}$ therefore describes a *multiplicative* change in precision. Specifically,
+The coefficient $\beta^{(\phi)}_{\text{Fluency}}$ therefore describes a *multiplicative* change in precision. Specifically,
 
 $$
-\frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{FluencyFluent}}\big).
+\frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).
 $$
 
 Because the 95% credible interval for $\beta^{(\phi)}_{\text{FluencyFluent}}$ does not include zero, we infer that there is a difference in precision between the fluent and disfluent conditions is credible.
@@ -705,7 +703,7 @@ A critical assumption of the linear model is homoscedasticity, which means const
 
 While it is advisable to model precision, if there is uncertainty about the best model, a relatively agnostic approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.[^5]
 
-[^5]: The model fit statistic LOO-CV can be compared for any set of fitted `brms` models with the function `loo()`.
+[^5]: The model fit statistic LOO-CV can be compared for any set of fitted brms models with the function `loo()`.
 
 ```{r}
 #| label: fig-plt-diff
@@ -1123,7 +1121,7 @@ marg_zi_brms |>
 
 The ZIB model works well if there are 0s in your data, but not 1s.[^6] In our previous examples we either got rid of both 0s and 1s (beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
-[^6]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in `brms` by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
+[^6]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in {brms} by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
 
 Similar to the beta and zero-inflated models discussed above, we can fit a zero-and-one‐inflated beta (ZOIB) model in {brms} using the `zero_one_inflated_beta` family. This formulation simultaneously estimates the mean $\mu$ and precision $\phi$ of the Beta component, as well as two inflation parameters: $\alpha$ , the probability that an observation is at either boundary (0 or 1), and $\gamma$ , the conditional probability that, given an observation falls on a boundary, it takes the value 1 rather than 0. In other words, $\alpha$ determines how often responses occur exactly at the endpoints, and $\gamma$ determines the balance between zeros and ones among those endpoint values. This specification allows the model to capture both the continuous variation in the interior of the (0, 1) interval and the presence of exact boundary values.
 
