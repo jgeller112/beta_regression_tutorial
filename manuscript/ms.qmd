@@ -41,6 +41,8 @@ author:
     orcid: 0000-0001-5052-066X
     affiliations:
       - name: Tilburg University
+      - department: Department of Psychology
+
     roles:
      - Formal analysis
      - Resources
