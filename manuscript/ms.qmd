@@ -45,7 +45,6 @@ author:
 
     roles:
      - Formal analysis
-     - Resources
      - Supervision
      - Validation
      - Writing - review & editing
