@@ -221,7 +221,7 @@ window.Quarto = {
 <p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://zenodo.org/records/16895241.</p>
 </div>
 <p><em>Keywords</em>: beta regression, beta distribution, R tutorial, psychology, learning and memory</p>
-<p><em>Word Count</em>: 27520</p>
+<p><em>Word Count</em>: 27530</p>
 <br>
 </section>
 <section id="firstheader" class="level1 title unnumbered unlisted">
@@ -487,7 +487,7 @@ Listing&nbsp;1: Data needed to run examples
 </figcaption>
 <div aria-describedby="lst-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="sourceCode cell-code" id="lst-data"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-data-1"><a href="#lst-data-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get data here from project folder</span></span>
-<span id="lst-data-2"><a href="#lst-data-2" aria-hidden="true" tabindex="-1"></a>fluency_data <span class="ot">-&gt;</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"fluency_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="lst-data-2"><a href="#lst-data-2" aria-hidden="true" tabindex="-1"></a>fluency_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"manuscript"</span>, <span class="st">"data"</span>, <span class="st">"fluency_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </figure>
 </div>
@@ -662,7 +662,7 @@ Listing&nbsp;1: Data needed to run examples
 </div>
 <section id="regression-model" class="level3">
 <h3 data-anchor-id="regression-model">Regression Model</h3>
-<p>We first start by loading the <code>brms</code> <span class="citation" data-cites="brms">(Bürkner, 2017)</span> and <code>cmdstanr</code> <span class="citation" data-cites="cmdstanr">(Gabry et al., 2024)</span> packages (<a href="#lst-loadbrms" class="quarto-xref">Listing&nbsp;2</a>). We use the <code>cmdstanr</code> backend for Stan <span class="citation" data-cites="stan2023">(Team, 2023)</span> because it’s faster than the default <code>rstan</code> backend,<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> though all of these models can also be fit with <code>brms</code> defaults.</p>
+<p>We first start by loading the {brms} <span class="citation" data-cites="brms">(Bürkner, 2017)</span> and {cmdstanr} <span class="citation" data-cites="cmdstanr">(Gabry et al., 2024)</span> packages (<a href="#lst-loadbrms" class="quarto-xref">Listing&nbsp;2</a>). We use the cmdstanr backend for Stan <span class="citation" data-cites="stan2023">(Team, 2023)</span> because it’s faster than the default used to run models (i.e., <code>rstan</code>),<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> though all of these models can also be fit with <code>brms</code> defaults.</p>
 <div class="cell">
 <div id="lst-loadbrms" class="r cell-code listing quarto-float quarto-figure quarto-figure-left">
 <figure class="quarto-float quarto-float-lst figure">
@@ -693,8 +693,8 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </figure>
 </div>
 </div>
-<p>We fit the model using the <code>brm()</code> function from the <code>brms</code> package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In <code>brms</code>, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(Bürkner, 2017)</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.</p>
-<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.085. The 95% Cr.I for this estimate spans from 0.002 to 0.171. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
+<p>We fit the model using the <code>brm()</code> function from the {brms} package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(Bürkner, 2017)</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.</p>
+<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% Cr.I for this estimate spans from 0.001 to 0.169. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -708,17 +708,17 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     4000     2863
-FluencyFluent     0.08      0.04     0.00     0.17 1.00     4252     2183
+Intercept         0.26      0.03     0.20     0.31 1.00     4016     3189
+FluencyFluent     0.08      0.04     0.00     0.17 1.00     3850     3185
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3566     2810</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     3518     3137</code></pre>
 </div>
 </div>
 <p>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a>), provided by the {bayestestR} package <span class="citation" data-cites="makowski2019a makowski2019">(Makowski, Ben-Shachar, Chen, et al., 2019; Makowski, Ben-Shachar, &amp; Lüdecke, 2019)</span>. This measure offers an intuitive parallel to <em>p</em>-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative.</p>
 <p>Importantly, pd does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, readers can consider the Region of Practical Equivalence (ROPE) with the Cr.Is <span class="citation" data-cites="kruschke2015doing">(Kruschke, 2015)</span>. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb <span class="citation" data-cites="kruschke2018">(see Kruschke, 2018)</span>, if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.</p>
-<p>The <code>rope()</code> function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via <code>brms</code> the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In <a href="#lst-ropebrms" class="quarto-xref">Listing&nbsp;4</a>, we show how to compute this using <code>bayestestR</code>. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see <a href="#fig-rope" class="quarto-xref" aria-expanded="false">Figure&nbsp;4</a>).</p>
+<p>The <code>rope()</code> function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via <code>brms</code> the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In <a href="#lst-ropebrms" class="quarto-xref">Listing&nbsp;4</a>, we show how to compute this using {bayestestR}. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see <a href="#fig-rope" class="quarto-xref" aria-expanded="false">Figure&nbsp;4</a>).</p>
 <div class="cell">
 <div id="lst-ropebrms" class="r cell-code listing quarto-float quarto-figure quarto-figure-left">
 <figure class="quarto-float quarto-float-lst figure">
@@ -818,7 +818,7 @@ Listing&nbsp;5: Checking assumptions with the <code>check_model()</code> from <c
 <section id="distributional-regression---beta-regression" class="level2">
 <h2 data-anchor-id="distributional-regression---beta-regression">Distributional Regression - Beta Regression</h2>
 <p>It is important to note that there are several justifiable approaches for addressing the distributional issues observed in the data. For instance, one could analyze median accuracy instead of the mean, use some type of robust estimator for heterogeneity, or apply non-parametric methods to relax some of the model assumptions. Alternatively, we can address these issues directly by fitting distributional models <span class="citation" data-cites="kruschke2013 kneib2023">(Kneib et al., 2023; Kruschke, 2013)</span>. A key advantage of distributional models is that they are not limited to modeling only the mean or median of the outcome, but can also model parameters such as the variance (or other shape parameters) as functions of predictors. This allows examining how instructor fluency may influence not only average performance, but also the variability in performance across students. If we wanted to keep our mean accuracy variable and continue to use a Guassian model, we could use a distributional approach and model the effect of fluency on <span class="math inline">\sigma</span>.</p>
-<p>Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in <code>brms</code>. In <code>brms</code>, we model each parameter independently. Recall from the introduction that in a beta model we model two parameters–<span class="math inline">\mu</span> and <span class="math inline">\phi</span>. Again we do this by using the <code>bf()</code> function from <code>brms</code> (<a href="#lst-beta01" class="quarto-xref">Listing&nbsp;6</a>). We specify two formulas, one for <span class="math inline">\mu</span> and one for <span class="math inline">\phi</span> and store it in the <code>model_beta_bayes</code> object below. In the below <code>bf()</code> call, we are modeling accuracy as a function of fluency only for the <span class="math inline">\mu</span> parameter. For the <span class="math inline">\phi</span> parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.</p>
+<p>Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in {brms}. In {brms}, we model each parameter independently. Recall from the introduction that in a beta model we model two parameters–<span class="math inline">\mu</span> and <span class="math inline">\phi</span>. Again we do this by using the <code>bf()</code> function from {brms} (<a href="#lst-beta01" class="quarto-xref">Listing&nbsp;6</a>). We specify two formulas, one for <span class="math inline">\mu</span> and one for <span class="math inline">\phi</span> and store it in the <code>model_beta_bayes</code> object below. In the below <code>bf()</code> call, we are modeling accuracy as a function of fluency only for the <span class="math inline">\mu</span> parameter. For the <span class="math inline">\phi</span> parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.</p>
 <p>To run our beta regression model, we need to exclude 0s and 1s in our data set. If we try to run a model with our data <code>data_fluency</code> we get an error: <code>Error: Family 'beta' requires response greater than 0</code>. This is because the beta distribution only supports observations in the 0 to 1 interval <em>excluding exact 0s and 1s</em>. We need make sure there are no 0s and 1s in our dataset.</p>
 <p>The dataset contains nine 0s and one 1. One approach is to nudge our 0s towards .01 and our 1s to .99, or apply a special formula <span class="citation" data-cites="smithson2006">(Smithson &amp; Verkuilen, 2006)</span> so values fall within the [0, 1] interval. We implore readers not to engage in this practice. <span class="citation" data-cites="kubinec2022">Kubinec (2022)</span> showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. To run this beta model we will remove the 0s and 1s, and later in this article we will show how to jointly model these scale end points with the rest of the data. The model from <a href="#lst-beta01" class="quarto-xref">Listing&nbsp;6</a> uses a transformed <code>data_fluency</code> object (called <code>data_beta</code>) where 0s and 1s are removed. When we run this code we should not get an error.</p>
 <div class="cell">
@@ -1047,11 +1047,11 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
                 <tr>
                   <td>Disfluent</td>
                   <td>0.297</td>
-                  <td>[0.247, 0.351]</td>
+                  <td>[0.248, 0.349]</td>
                 </tr>
                 <tr>
                   <td>Fluent</td>
-                  <td>0.354</td>
+                  <td>0.353</td>
                   <td>[0.302, 0.408]</td>
                 </tr>
         </tbody>
@@ -1375,8 +1375,8 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluent - Disfluent</td>
                   <td>0.044</td>
-                  <td>[-0.035, 0.118]</td>
-                  <td>0.881</td>
+                  <td>[-0.032, 0.117]</td>
+                  <td>0.876</td>
                 </tr>
         </tbody>
       </table>
@@ -1502,9 +1502,9 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
         <tbody>
                 <tr>
                   <td>Fluent - Disfluent</td>
-                  <td>2.71</td>
-                  <td>[-1.007, 6.722]</td>
-                  <td>0.921</td>
+                  <td>2.69</td>
+                  <td>[-1.025, 6.726]</td>
+                  <td>0.922</td>
                 </tr>
         </tbody>
       </table>
@@ -1908,8 +1908,8 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td>Fluent - Disfluent</td>
                   <td>0.061</td>
-                  <td>[-0.017, 0.134]</td>
-                  <td>0.94</td>
+                  <td>[-0.016, 0.137]</td>
+                  <td>0.941</td>
                 </tr>
         </tbody>
       </table>
@@ -2026,13 +2026,13 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
         <tbody>
                 <tr>
                   <td>cutzero</td>
-                  <td>-2.97</td>
-                  <td>[-3.57, -2.42]</td>
+                  <td>-2.98</td>
+                  <td>[-3.6, -2.43]</td>
                 </tr>
                 <tr>
                   <td>cutone</td>
                   <td>1.85</td>
-                  <td>[1.63, 2.07]</td>
+                  <td>[1.64, 2.08]</td>
                 </tr>
         </tbody>
       </table>
@@ -2230,7 +2230,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize =</span> .<span class="dv">6</span></span>
 <span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-after-caption-space="0pt" data-tblnum="8" prefix="" data-tbl-align="center">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tbl-align="center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." prefix="" data-tblnum="8">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2338,19 +2338,19 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>b_Intercept</td>
                   <td>Mean</td>
                   <td>0.257</td>
-                  <td>-0.827</td>
-                  <td>-0.825</td>
+                  <td>-0.829</td>
                   <td>-0.831</td>
-                  <td>-0.867</td>
+                  <td>-0.832</td>
+                  <td>-0.866</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
-                  <td>[0.199, 0.312]</td>
-                  <td>[-1.09, -0.558]</td>
+                  <td>[0.201, 0.315]</td>
                   <td>[-1.087, -0.56]</td>
-                  <td>[-1.086, -0.565]</td>
-                  <td>[-1.123, -0.603]</td>
+                  <td>[-1.088, -0.547]</td>
+                  <td>[-1.091, -0.565]</td>
+                  <td>[-1.121, -0.617]</td>
                 </tr>
                 <tr>
                   <td></td>
@@ -2364,34 +2364,34 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td>b_Fluency</td>
                   <td>Mean</td>
-                  <td>0.085</td>
+                  <td>0.084</td>
                   <td>0.201</td>
-                  <td>0.200</td>
-                  <td>0.203</td>
-                  <td>0.262</td>
+                  <td>0.202</td>
+                  <td>0.204</td>
+                  <td>0.260</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
-                  <td>[0.002, 0.171]</td>
-                  <td>[-0.153, 0.544]</td>
-                  <td>[-0.155, 0.546]</td>
-                  <td>[-0.135, 0.541]</td>
-                  <td>[-0.069, 0.583]</td>
+                  <td>[0.001, 0.169]</td>
+                  <td>[-0.147, 0.53]</td>
+                  <td>[-0.144, 0.539]</td>
+                  <td>[-0.142, 0.54]</td>
+                  <td>[-0.068, 0.594]</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>pd</td>
-                  <td>0.978*</td>
-                  <td>0.867</td>
-                  <td>0.881</td>
-                  <td>0.877</td>
-                  <td>0.940</td>
+                  <td>0.977*</td>
+                  <td>0.872</td>
+                  <td>0.876</td>
+                  <td>0.886</td>
+                  <td>0.941</td>
                 </tr>
                 <tr>
                   <td>sigma</td>
                   <td>Mean</td>
-                  <td>0.209</td>
+                  <td>0.208</td>
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
@@ -2400,7 +2400,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
-                  <td>[0.18, 0.241]</td>
+                  <td>[0.18, 0.242]</td>
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
@@ -2419,19 +2419,19 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>b_phi_Intercept</td>
                   <td>Mean</td>
                   <td>-</td>
-                  <td>1.600</td>
-                  <td>1.597</td>
+                  <td>1.599</td>
+                  <td>1.598</td>
                   <td>1.603</td>
-                  <td>1.611</td>
+                  <td>1.615</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
                   <td>-</td>
-                  <td>[1.195, 1.965]</td>
-                  <td>[1.177, 1.975]</td>
-                  <td>[1.19, 1.996]</td>
-                  <td>[1.204, 1.979]</td>
+                  <td>[1.176, 1.995]</td>
+                  <td>[1.162, 1.99]</td>
+                  <td>[1.183, 1.978]</td>
+                  <td>[1.202, 1.99]</td>
                 </tr>
                 <tr>
                   <td></td>
@@ -2446,35 +2446,35 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>b_phi_Fluency</td>
                   <td>Mean</td>
                   <td>-</td>
-                  <td>0.421</td>
-                  <td>0.428</td>
+                  <td>0.427</td>
+                  <td>0.429</td>
                   <td>0.426</td>
-                  <td>0.403</td>
+                  <td>0.401</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
                   <td>-</td>
-                  <td>[-0.158, 0.996]</td>
-                  <td>[-0.168, 1.006]</td>
-                  <td>[-0.158, 1.01]</td>
-                  <td>[-0.159, 0.962]</td>
+                  <td>[-0.157, 1.018]</td>
+                  <td>[-0.165, 1.031]</td>
+                  <td>[-0.132, 0.972]</td>
+                  <td>[-0.145, 0.976]</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>pd</td>
                   <td>-</td>
-                  <td>0.929</td>
-                  <td>0.921</td>
-                  <td>0.920</td>
-                  <td>0.917</td>
+                  <td>0.923</td>
+                  <td>0.922</td>
+                  <td>0.933</td>
+                  <td>0.924</td>
                 </tr>
                 <tr>
                   <td>b_zi_Intercept</td>
                   <td>Mean</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-1.667</td>
+                  <td>-1.658</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2483,7 +2483,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Cr.I</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-2.463, -0.975]</td>
+                  <td>[-2.469, -0.957]</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2501,7 +2501,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Mean</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-2.146</td>
+                  <td>-2.167</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2510,7 +2510,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Cr.I</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-4.659, -0.326]</td>
+                  <td>[-4.677, -0.282]</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2519,7 +2519,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>pd</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>0.990**</td>
+                  <td>0.991**</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2529,7 +2529,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-1.542</td>
+                  <td>-1.547</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2538,7 +2538,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-2.317, -0.871]</td>
+                  <td>[-2.294, -0.876]</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2556,7 +2556,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-2.279</td>
+                  <td>-2.275</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2565,7 +2565,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-4.754, -0.494]</td>
+                  <td>[-4.819, -0.45]</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2574,7 +2574,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>0.996***</td>
+                  <td>0.995***</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2583,7 +2583,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-2.036</td>
+                  <td>-2.073</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2592,7 +2592,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-4.396, -0.301]</td>
+                  <td>[-4.574, -0.264]</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2601,7 +2601,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>0.992**</td>
+                  <td>0.991**</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2610,7 +2610,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>0.194</td>
+                  <td>0.129</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2619,7 +2619,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-6.821, 5.714]</td>
+                  <td>[-7.388, 5.816]</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2628,7 +2628,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>0.573</td>
+                  <td>0.554</td>
                   <td>-</td>
                 </tr>
         </tbody>
@@ -2920,7 +2920,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <li id="fn3"><p>Technically, this maximum entropy condition is satisfied because the beta(1,1) distribution is uniform over its support. In addition, we assume that the scale has been re-scaled to the <span class="math inline">[0,1]</span> interval as we describe above.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package <span class="citation" data-cites="brms">(Bürkner, 2017)</span>, which provides a high-level interface to Stan <span class="citation" data-cites="stan2023">(Team, 2023)</span> and uses familiar R formula syntax (similar to <code>lm()</code>), making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn5"><p>The Hamiltonian Monte Carlo sampler employed by Stan, which we also use in this paper, can converge with significantly fewer iterations, though rapid convergence depends on model complexity, which is why we use a more conservative standard in this paper.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6"><p>In order to use the <code>cmdstanr</code> backend you will need to first install the package (see <code>https://mc-stan.org/cmdstanr/</code>) and also run <code>cmdstanr::install_cmdstan()</code> if you have not done so already.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>In order to use the cmdstanr backend you will need to first install the package (see <code>https://mc-stan.org/cmdstanr/</code>) and also run <code>cmdstanr::install_cmdstan()</code> if you have not done so already.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn7"><p>The model fit statistic LOO-CV can be compared for any set of fitted <code>brms</code> models with the function <code>loo()</code>.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn8"><p>In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in <code>brms</code> by setting the <code>coi</code> parameter to <code>1</code>. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, <code>coi = 1</code> assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1[^6]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated beta (ZOIB) model <span class="citation" data-cites="liu2015">(Liu &amp; Kong, 2015)</span> if we believe that both 0s and 1s are distinct outcomes.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn9"><p>For a more complete description of this issue, we refer the reader to <span class="citation" data-cites="kubinec2022">Kubinec (2022)</span>.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
@@ -3859,7 +3859,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb21-482"><a href="#cb21-482" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb21-483"><a href="#cb21-483" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-484"><a href="#cb21-484" aria-hidden="true" tabindex="-1"></a><span class="co"># get data here from project folder</span></span>
-<span id="cb21-485"><a href="#cb21-485" aria-hidden="true" tabindex="-1"></a>fluency_data <span class="ot">-&gt;</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"fluency_data.csv"</span>))</span>
+<span id="cb21-485"><a href="#cb21-485" aria-hidden="true" tabindex="-1"></a>fluency_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"manuscript"</span>, <span class="st">"data"</span>, <span class="st">"fluency_data.csv"</span>))</span>
 <span id="cb21-486"><a href="#cb21-486" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb21-487"><a href="#cb21-487" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-488"><a href="#cb21-488" aria-hidden="true" tabindex="-1"></a>Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in @tbl-dataset. The dataset can be downloaded from GitHub (@lst-data). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce @wilford2020's analysis and then re-analyze the data using beta regression and highlight how it can improve our inferences.</span>
@@ -3902,9 +3902,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb21-529"><a href="#cb21-529" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-530"><a href="#cb21-530" aria-hidden="true" tabindex="-1"></a><span class="fu">### Regression Model</span></span>
 <span id="cb21-531"><a href="#cb21-531" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-532"><a href="#cb21-532" aria-hidden="true" tabindex="-1"></a>We first start by loading the <span class="in">`brms`</span> <span class="co">[</span><span class="ot">@brms</span><span class="co">]</span> and <span class="in">`cmdstanr`</span> <span class="co">[</span><span class="ot">@cmdstanr</span><span class="co">]</span> packages (@lst-loadbrms). We use the <span class="in">`cmdstanr`</span> backend for Stan <span class="co">[</span><span class="ot">@stan2023</span><span class="co">]</span> because it's faster than the default <span class="in">`rstan`</span> backend,<span class="ot">[^4]</span> though all of these models can also be fit with <span class="in">`brms`</span> defaults.</span>
+<span id="cb21-532"><a href="#cb21-532" aria-hidden="true" tabindex="-1"></a>We first start by loading the {brms} <span class="co">[</span><span class="ot">@brms</span><span class="co">]</span> and {cmdstanr} <span class="co">[</span><span class="ot">@cmdstanr</span><span class="co">]</span> packages (@lst-loadbrms). We use the cmdstanr backend for Stan <span class="co">[</span><span class="ot">@stan2023</span><span class="co">]</span> because it's faster than the default used to run models (i.e., <span class="in">`rstan`</span>),<span class="ot">[^4]</span> though all of these models can also be fit with <span class="in">`brms`</span> defaults.</span>
 <span id="cb21-533"><a href="#cb21-533" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-534"><a href="#cb21-534" aria-hidden="true" tabindex="-1"></a><span class="ot">[^4]: </span>In order to use the <span class="in">`cmdstanr`</span> backend you will need to first install the package (see <span class="in">`https://mc-stan.org/cmdstanr/`</span>) and also run <span class="in">`cmdstanr::install_cmdstan()`</span> if you have not done so already.</span>
+<span id="cb21-534"><a href="#cb21-534" aria-hidden="true" tabindex="-1"></a><span class="ot">[^4]: </span>In order to use the cmdstanr backend you will need to first install the package (see <span class="in">`https://mc-stan.org/cmdstanr/`</span>) and also run <span class="in">`cmdstanr::install_cmdstan()`</span> if you have not done so already.</span>
 <span id="cb21-535"><a href="#cb21-535" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-538"><a href="#cb21-538" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb21-539"><a href="#cb21-539" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-loadbrms</span></span>
@@ -3938,7 +3938,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb21-571"><a href="#cb21-571" aria-hidden="true" tabindex="-1"></a>brms_model_new <span class="ot">&lt;-</span> <span class="fu">model_parameters</span>(bayes_reg_model, <span class="at">centrality =</span> <span class="st">"mean"</span>)</span>
 <span id="cb21-572"><a href="#cb21-572" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb21-573"><a href="#cb21-573" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-574"><a href="#cb21-574" aria-hidden="true" tabindex="-1"></a>We fit the model using the <span class="in">`brm()`</span> function from the <span class="in">`brms`</span> package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from <span class="in">`bayes_reg_model`</span> shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In <span class="in">`brms`</span>, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS <span class="sc">\&gt;</span>= 1000 is recommended <span class="co">[</span><span class="ot">@brms</span><span class="co">]</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.</span>
+<span id="cb21-574"><a href="#cb21-574" aria-hidden="true" tabindex="-1"></a>We fit the model using the <span class="in">`brm()`</span> function from the {brms} package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from <span class="in">`bayes_reg_model`</span> shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS <span class="sc">\&gt;</span>= 1000 is recommended <span class="co">[</span><span class="ot">@brms</span><span class="co">]</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.</span>
 <span id="cb21-575"><a href="#cb21-575" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-576"><a href="#cb21-576" aria-hidden="true" tabindex="-1"></a>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by @lst-gauss (also see @tbl-all under Bayesian LM). the <span class="in">`Intercept`</span> refers to the posterior mean accuracy in the disfluent condition, *M* = `r round(brms_model_new$Mean[1], 3)` , as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: *b* = <span class="in">`r round(brms_model_new$Mean[2], 3)`</span>. The 95% Cr.I for this estimate spans from <span class="in">`r round(brms_model_new$CI_low[2], 3)`</span> to <span class="in">`r round(brms_model_new$CI_high[2], 3)`</span>. These values are shown in the "95% Cr.I" columns of the output. These results closely mirror the findings reported by @wilford2020 (Experiment 1A).</span>
 <span id="cb21-577"><a href="#cb21-577" aria-hidden="true" tabindex="-1"></a></span>
@@ -3951,7 +3951,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb21-586"><a href="#cb21-586" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-587"><a href="#cb21-587" aria-hidden="true" tabindex="-1"></a>Importantly, pd does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, readers can consider the Region of Practical Equivalence (ROPE) with the Cr.Is <span class="co">[</span><span class="ot">@kruschke2015doing</span><span class="co">]</span>. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb <span class="co">[</span><span class="ot">see @kruschke2018</span><span class="co">]</span>, if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.</span>
 <span id="cb21-588"><a href="#cb21-588" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-589"><a href="#cb21-589" aria-hidden="true" tabindex="-1"></a>The <span class="in">`rope()`</span> function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via <span class="in">`brms`</span> the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using <span class="in">`bayestestR`</span>. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).</span>
+<span id="cb21-589"><a href="#cb21-589" aria-hidden="true" tabindex="-1"></a>The <span class="in">`rope()`</span> function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via <span class="in">`brms`</span> the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).</span>
 <span id="cb21-590"><a href="#cb21-590" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-593"><a href="#cb21-593" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb21-594"><a href="#cb21-594" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: rope-brms</span></span>
@@ -4010,7 +4010,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb21-651"><a href="#cb21-651" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-652"><a href="#cb21-652" aria-hidden="true" tabindex="-1"></a>It is important to note that there are several justifiable approaches for addressing the distributional issues observed in the data. For instance, one could analyze median accuracy instead of the mean, use some type of robust estimator for heterogeneity, or apply non-parametric methods to relax some of the model assumptions. Alternatively, we can address these issues directly by fitting distributional models <span class="co">[</span><span class="ot">@kruschke2013; @kneib2023</span><span class="co">]</span>. A key advantage of distributional models is that they are not limited to modeling only the mean or median of the outcome, but can also model parameters such as the variance (or other shape parameters) as functions of predictors. This allows examining how instructor fluency may influence not only average performance, but also the variability in performance across students. If we wanted to keep our mean accuracy variable and continue to use a Guassian model, we could use a distributional approach and model the effect of fluency on $\sigma$.</span>
 <span id="cb21-653"><a href="#cb21-653" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-654"><a href="#cb21-654" aria-hidden="true" tabindex="-1"></a>Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in <span class="in">`brms`</span>. In <span class="in">`brms`</span>, we model each parameter independently. Recall from the introduction that in a beta model we model two parameters--$\mu$ and $\phi$. Again we do this by using the <span class="in">`bf()`</span> function from <span class="in">`brms`</span> (@lst-beta01). We specify two formulas, one for $\mu$ and one for $\phi$ and store it in the <span class="in">`model_beta_bayes`</span> object below. In the below <span class="in">`bf()`</span> call, we are modeling accuracy as a function of fluency only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.</span>
+<span id="cb21-654"><a href="#cb21-654" aria-hidden="true" tabindex="-1"></a>Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in {brms}. In {brms}, we model each parameter independently. Recall from the introduction that in a beta model we model two parameters--$\mu$ and $\phi$. Again we do this by using the <span class="in">`bf()`</span> function from {brms} (@lst-beta01). We specify two formulas, one for $\mu$ and one for $\phi$ and store it in the <span class="in">`model_beta_bayes`</span> object below. In the below <span class="in">`bf()`</span> call, we are modeling accuracy as a function of fluency only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.</span>
 <span id="cb21-655"><a href="#cb21-655" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-656"><a href="#cb21-656" aria-hidden="true" tabindex="-1"></a>To run our beta regression model, we need to exclude 0s and 1s in our data set. If we try to run a model with our data <span class="in">`data_fluency`</span> we get an error: <span class="in">`Error: Family 'beta' requires response greater than 0`</span>. This is because the beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset.</span>
 <span id="cb21-657"><a href="#cb21-657" aria-hidden="true" tabindex="-1"></a></span>
