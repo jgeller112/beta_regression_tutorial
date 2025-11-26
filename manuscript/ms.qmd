@@ -44,7 +44,6 @@ author:
       - department: Department of Psychology
     roles:
      - Formal analysis
-     - Validation
      - Writing - review & editing
 
 author-note:
