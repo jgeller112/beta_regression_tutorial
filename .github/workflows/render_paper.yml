@@ -14,9 +14,8 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-linux-64:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout main branch
       uses: actions/checkout@v3
