@@ -3,22 +3,24 @@ project:
   render:
     - ms.qmd
 
-site-url: "https://jgeller112.github.io/beta_regression_tutorial/"
+site-url: https://jgeller112.github.io/beta_regression_tutorial/
 
 format:
   apaquarto-pdf:
-    documentmode: doc
+    documentmode: man
   apaquarto-docx: default
   apaquarto-html:
     toc: true
     toc-depth: 2
-    toc-title: "Manuscript Outline"
+    toc-title: Manuscript Outline
     toc-location: right
+    echo: true
     code-tools: true
     code-fold: true
     code-summary: "Show R code"
-    execute:
-      echo: true
 
-comments:
-  hypothesis: true
+    site-url: https://jgeller112.github.io/beta_regression_tutorial/
+    comments:
+      hypothesis: true
+execute: 
+  echo: true

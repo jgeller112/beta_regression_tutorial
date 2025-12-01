@@ -52,7 +52,7 @@ author-note:
     # Example: This study was registered at X (Identifier Y).
     study-registration: "The analyses herein were not preregistered."
     # Acknowledge and cite data/materials to be shared.
-    data-sharing: Data, code, and materials for this manuscript can be found at https://zenodo.org/records/16895241.
+    data-sharing: Data, code, and materials for this manuscript can be found at https://doi.org/10.5281/zenodo.1583059.
     related-report: ~
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
@@ -204,7 +204,7 @@ theme_publication <- function(
 ```
 
 ```{r}
-path <- here::here("manuscript", "models")
+path <- here::here("models")
 
 # Create the directory if it doesn't exist
 if (!dir.exists(path)) {
@@ -216,7 +216,7 @@ if (!dir.exists(path)) {
 #| label: data-import
 #| echo: false
 
-fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
+fluency_data <- read.csv(here::here("data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
     Fluency = "Condition",
@@ -470,7 +470,7 @@ In Experiment 1A, ninety-six participants watched two short instructional videos
 #| echo: true
 
 # get data here from project folder
-fluency_data <- read_csv(here::here("manuscript", "data", "fluency_data.csv"))
+fluency_data <- read_csv(here::here("data", "fluency_data.csv"))
 ```
 
 Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in @tbl-dataset. The dataset can be downloaded from GitHub (@lst-data). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce @wilford2020's analysis and then re-analyze the data using beta regression and highlight how it can improve our inferences.
@@ -519,7 +519,7 @@ We first start by loading the {brms} [@brms] and {cmdstanr} [@cmdstanr] packages
 
 ```{r}
 #| lst-label: lst-loadbrms
-#| lst-cap: Load the `brms` and `cmdstanr` packages
+#| lst-cap: Load the {brms} and {cmdstanr} packages
 #| echo: true
 #| eval: false
 
@@ -538,7 +538,7 @@ bayes_reg_model <- brm(
   Accuracy ~ Fluency,
   data = fluency_data,
   family = gaussian(),
-  file = here::here("manuscript", "models", "model_reg_bayes")
+  file = here::here("models", "model_reg_bayes")
 )
 ```
 
@@ -562,7 +562,7 @@ The output also includes the effective sample size (ESS) and R̂ (R-hat) values,
 
 Importantly, pd does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, readers can consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
 
-The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with default settings suggests that less than 5% of the posterior distribution lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).
+The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}, the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with default settings suggests that 6% lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).
 
 ```{r}
 #| label: rope-brms
@@ -617,7 +617,7 @@ check_model(bayes_reg_model, check = c("homogeneity", "qq"))
 
 We can also examine how well the data fits the model by performing a posterior predictive check using the `pp_check()` function from {brms}. A posterior predictive check involves looking at multiple model-predicted values and plotting them against the observed data. Ideally, the predicted values (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). In our example (see @fig-ppcheckall (A)) the model-predicted density is slightly too peaked and narrow compared to the data. In addition, some of the predicted accuracy values are negative.
 
-## Distributional Regression - Beta Regression
+## Distributional Regression - Beta
 
 It is important to note that there are several justifiable approaches for addressing the distributional issues observed in the data. For instance, one could analyze median accuracy instead of the mean, use some type of robust estimator for heterogeneity, or apply non-parametric methods to relax some of the model assumptions. Alternatively, we can address these issues directly by fitting distributional models [@kruschke2013; @kneib2023]. A key advantage of distributional models is that they are not limited to modeling only the mean or median of the outcome, but can also model parameters such as the variance (or other shape parameters) as functions of predictors. This allows examining how instructor fluency may influence not only average performance, but also the variability in performance across students. If we wanted to keep our mean accuracy variable and continue to use a Guassian model, we could use a distributional approach and model the effect of fluency on $\sigma$.
 
@@ -650,7 +650,7 @@ beta_brms <- brm(
   model_beta_bayes,
   data = data_beta,
   family = Beta(),
-  file = here::here("manuscript", "models", "model_beta_bayes_reg_01")
+  file = here::here("models", "model_beta_bayes_reg_01")
 )
 ```
 
@@ -678,7 +678,7 @@ beta_brms_dis <- brm(
   model_beta_bayes_disp,
   data = data_beta,
   family = Beta(),
-  file = here::here("manuscript", "models", "model_beta_bayes_dis_run01")
+  file = here::here("models", "model_beta_bayes_dis_run01")
 )
 ```
 
@@ -699,7 +699,7 @@ $$
 \frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).
 $$
 
-Because the 95% credible interval for $\beta^{(\phi)}_{\text{FluencyFluent}}$ does not include zero, we infer that there is a credible difference in precision between the fluent and disfluent conditions.
+Because the 95% credible interval for $\beta^{(\phi)}_{\text{Fluency}}$ does not include zero, we infer that there is a credible difference in precision between the fluent and disfluent conditions.
 
 It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
 
@@ -802,7 +802,7 @@ options(marginaleffects_posterior_center = mean) # make sure returns mean
 predictions(
   beta_brms,
   # need to specify the levels of the categorical predictor
-  newdata = datagrid(Fluency = c("Disfluent", "Fluent"))
+  variables = "Fluency"
 )
 ```
 
@@ -815,7 +815,7 @@ predictions(
 
 predictions(
   beta_brms,
-  newdata = datagrid(Fluency = c("Disfluent", "Fluent"))
+  variables = "Fluency"
 ) |>
   mutate(Fluency = ifelse(Fluency == "Fluent", "Fluent", "Disfluent")) |>
   mutate(
@@ -875,7 +875,7 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
 
 Marginal effects offer an interpretable way to quantify how changes in a predictor influence an outcome, while holding other factors constant in a specific manner. In recent years, there has been a thrust to move away from reporting regression coefficients alone, focusing instead on estimates that are easier to interpret and communicate—particularly in non-linear models [@mccabe2021; @rohrer2025models]. Technically, marginal effects are computed as partial derivatives for continuous variables or as finite differences for categorical (and sometimes continuous) predictors, depending on the structure of the data and the research question. Substantively, these procedures translate raw regression coefficients into quantities that reflect changes in the bounded outcome—for example, an $x$% change in the value of a proportion.
 
-There are various types of marginal effects, and their calculation can vary across software packages. For example, the popular {emmeans} package [@emmeans] computes marginal effects by holding all predictors at their means (MEM). In this tutorial, we will use the {marginaleffects} package [@margeffects2024], which focuses on average marginal effects (AMEs) by default. AMEs summarize effects by generating predictions for each row of the original dataset and then averaging these predictions. This approach retains a strong connection to the original data while offering a straightforward summary of the effect of interest.
+There are several types of marginal effects, and their computation can vary across software packages. For example, the popular {emmeans} package [@emmeans] computes marginal effects by holding all predictors at their means (marginal effects at the mean; MEM). In this tutorial, we use the {marginaleffects} package [@margeffects2024], which by default computes average marginal effects (AMEs). AMEs are based on counterfactual predictions: the dataset is conceptually replicated across all unique values of the predictor of interest, predictions are generated for each row under each counterfactual scenario, and the resulting differences are then averaged. This approach maintains a strong connection to the observed data—because predictions are made using each participant’s actual values—while providing a clear and interpretable summary of the effect of interest.
 
 One practical use of AMEs is to estimate the average difference between two groups or conditions which corresponds to the average treatment effect (ATE). Using the `avg_comparisons()` function in the {marginaleffects}package (@lst-avgcomp), we can compute this quantity directly. By default, the function returns the discrete difference between groups. When we take the difference in proportions between two groups it is called the risk difference. Depending on the audience and modeling goals, the function can also produce alternative effect size metrics, such as odds ratios or risk ratios. This flexibility makes it a powerful approach for summarizing and communicating regression results.
 
@@ -886,13 +886,16 @@ One practical use of AMEs is to estimate the average difference between two grou
 #| echo: true
 
 # get risk difference by default
-beta_avg_comp <- avg_comparisons(beta_brms, comparison = "difference")
+beta_avg_comp <- avg_comparisons(
+  beta_brms,
+  variables = "Fluency",
+  comparison = "difference"
+)
 ```
 
 ```{r}
 #| label: tbl-ame1
 #| echo: false
-#| eval: false
 #| tbl-cap: Fluency difference
 #| after-caption-space: 0pt
 
@@ -902,8 +905,6 @@ p_d <- beta_avg_comp |>
   select(pd)
 
 beta_avg_comp |>
-  # remove unwanted variables
-  select(-predicted_lo, -predicted_hi, -tmp_idx, -predicted) |>
   mutate(
     mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
     `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
@@ -928,6 +929,7 @@ We can also use {marginaleffects} to get the actual precision difference between
 
 beta_avg_phi <- avg_comparisons(
   beta_brms_dis,
+  variables = "Fluency",
   dpar = "phi",
   comparison = "difference"
 )
@@ -994,7 +996,7 @@ zib_model <- bf(
 fit_zi <- brm(
   formula = zib_model,
   data = data_beta_0,
-  file = here::here("manuscript", "models", "bayes_zib_model0not1.rds")
+  file = here::here("models", "bayes_zib_model0not1.rds")
 )
 ```
 
@@ -1243,7 +1245,7 @@ zoib_model <- bf(
 fit_zoib <- brm(
   formula = zoib_model,
   data = fluency_data,
-  file = here::here("manuscript", "models", "bayes_zoib_model")
+  file = here::here("models", "bayes_zoib_model")
 )
 ```
 
@@ -1282,7 +1284,7 @@ In addition, we show below how one can extract the predicted probabilities and m
 #| echo: true
 
 # get average predictions for coi param
-coi_probs <- avg_predictions(fit_zoib, by = c("Fluency"), dpar = "coi")
+coi_probs <- avg_predictions(fit_zoib, variables = "Fluency", dpar = "coi")
 # get differene between the two conditions
 coi_me <- avg_comparisons(fit_zoib, variables = c("Fluency"), dpar = "coi")
 ```
@@ -1331,7 +1333,7 @@ The {ordbetareg} package uses `brms` on the front-end so all the arguments we us
 ord_fit_brms <- ordbetareg(
   Accuracy ~ Fluency,
   data = fluency_data,
-  file = here::here("manuscript", "models", "bayes_ordbeta_model")
+  file = here::here("models", "bayes_ordbeta_model")
 )
 ```
 
@@ -1350,7 +1352,7 @@ m.phi <- ordbetareg(
   ord_beta_phi,
   data = fluency_data,
   phi_reg = 'both',
-  file = here::here("manuscript", "models", "bayes_ordbeta_phi_model")
+  file = here::here("models", "bayes_ordbeta_phi_model")
 )
 ```
 
@@ -1453,7 +1455,7 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 plot_heiss(
   ord_fit_brms,
   grouping_fac = "Fluency",
-  recode_group_labels = c("Fluency", "Disfluency"),
+  recode_group_labels = c("Disfluency", "Fluency"),
 )
 ```
 
@@ -1465,15 +1467,14 @@ In the {ordbetareg} function there is a `true_bound` argument. In cases where yo
 #| label: model_fits
 
 # fit models from ran models so tables and figures are in correct place.
-model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
+model1 <- read_rds(here("models", "model_reg_bayes.rds"))
 model2 <- read_rds(here(
-  "manuscript",
   "models",
   "model_beta_bayes_dis_run01.rds"
 ))
-model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
-model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
-model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
+model3 <- read_rds(here("models", "bayes_zib_model0not1.rds"))
+model4 <- read_rds(here("models", "bayes_zoib_model.rds"))
+model5 <- read_rds(here("models", "bayes_ordbeta_phi_model.rds"))
 ```
 
 ```{r}
