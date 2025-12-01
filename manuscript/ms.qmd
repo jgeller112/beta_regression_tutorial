@@ -802,7 +802,7 @@ options(marginaleffects_posterior_center = mean) # make sure returns mean
 predictions(
   beta_brms,
   # need to specify the levels of the categorical predictor
-  newdata = datagrid(Fluency = c("Disfluent", "Fluent"))
+  variables = "Fluency"
 )
 ```
 
@@ -815,7 +815,7 @@ predictions(
 
 predictions(
   beta_brms,
-  newdata = datagrid(Fluency = c("Disfluent", "Fluent"))
+  variables = "Fluency"
 ) |>
   mutate(Fluency = ifelse(Fluency == "Fluent", "Fluent", "Disfluent")) |>
   mutate(
