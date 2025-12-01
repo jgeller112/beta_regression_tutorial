@@ -216,7 +216,7 @@ if (!dir.exists(path)) {
 #| label: data-import
 #| echo: false
 
-fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
+fluency_data <- read.csv(here::here("data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
     Fluency = "Condition",
@@ -470,7 +470,7 @@ In Experiment 1A, ninety-six participants watched two short instructional videos
 #| echo: true
 
 # get data here from project folder
-fluency_data <- read_csv(here::here("manuscrip", "data", "fluency_data.csv"))
+fluency_data <- read_csv(here::here("data", "fluency_data.csv"))
 ```
 
 Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in @tbl-dataset. The dataset can be downloaded from GitHub (@lst-data). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce @wilford2020's analysis and then re-analyze the data using beta regression and highlight how it can improve our inferences.
