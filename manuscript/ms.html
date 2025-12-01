@@ -493,7 +493,7 @@ Listing&nbsp;1: Data needed to run examples
 </div>
 <p>Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in <a href="#tbl-dataset" class="quarto-xref" aria-expanded="false">Table&nbsp;1</a>. The dataset can be downloaded from GitHub (<a href="#lst-data" class="quarto-xref">Listing&nbsp;1</a>). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span>’s analysis and then re-analyze the data using beta regression and highlight how it can improve our inferences.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="1" data-custom-style="FigureWithoutNote">
-<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="1" data-after-caption-space="0pt" prefix="">
+<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="1">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dataset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -693,7 +693,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the {brms} package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(Bürkner, 2017)</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.</p>
-<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.083. The 95% Cr.I for this estimate spans from 0.001 to 0.167. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
+<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.083. The 95% Cr.I for this estimate spans from -0.003 to 0.164. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -707,12 +707,12 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     4210     3149
-FluencyFluent     0.08      0.04     0.00     0.17 1.00     4462     3166
+Intercept         0.26      0.03     0.20     0.31 1.00     3875     2810
+FluencyFluent     0.08      0.04    -0.00     0.16 1.00     4114     2849
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3795     3076</code></pre>
+sigma     0.21      0.01     0.18     0.24 1.00     3090     2619</code></pre>
 </div>
 </div>
 <p>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a>), provided by the {bayestestR} package <span class="citation" data-cites="makowski2019a makowski2019">(Makowski, Ben-Shachar, Chen, et al., 2019; Makowski, Ben-Shachar, &amp; Lüdecke, 2019)</span>. This measure offers an intuitive parallel to <em>p</em>-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative.</p>
@@ -947,7 +947,7 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="2" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-cap-location="top" data-tblnum="2" data-after-caption-space="0pt" prefix="">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="2" data-tbl-cap-location="top">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1045,13 +1045,13 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
         <tbody>
                 <tr>
                   <td>Disfluent</td>
-                  <td>0.297</td>
-                  <td>[0.249, 0.348]</td>
+                  <td>0.298</td>
+                  <td>[0.248, 0.351]</td>
                 </tr>
                 <tr>
                   <td>Fluent</td>
-                  <td>0.353</td>
-                  <td>[0.3, 0.407]</td>
+                  <td>0.354</td>
+                  <td>[0.301, 0.407]</td>
                 </tr>
         </tbody>
       </table>
@@ -1147,7 +1147,7 @@ Listing&nbsp;12: Calculating the difference between probabilities with <code>avg
 </figure>
 </div>
 </div>
-<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center FigureWithoutNote" data-tblnum="3" data-after-caption-space="0pt" prefix="" data-custom-style="FigureWithoutNote">
+<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center FigureWithoutNote" prefix="" data-after-caption-space="0pt" data-tblnum="3" data-custom-style="FigureWithoutNote">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ame1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1274,7 +1274,7 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="4" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="4" data-after-caption-space="0pt" prefix="">
+<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="4">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-mu-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1374,8 +1374,8 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td>Fluent - Disfluent</td>
                   <td>0.044</td>
-                  <td>[-0.031, 0.116]</td>
-                  <td>0.88</td>
+                  <td>[-0.032, 0.116]</td>
+                  <td>0.882</td>
                 </tr>
         </tbody>
       </table>
@@ -1402,7 +1402,7 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="5" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="5" data-after-caption-space="0pt" prefix="">
+<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="5">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-phi-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1501,9 +1501,9 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
         <tbody>
                 <tr>
                   <td>Fluent - Disfluent</td>
-                  <td>2.71</td>
-                  <td>[-0.881, 6.645]</td>
-                  <td>0.928</td>
+                  <td>2.72</td>
+                  <td>[-0.908, 6.551]</td>
+                  <td>0.934</td>
                 </tr>
         </tbody>
       </table>
@@ -1807,7 +1807,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_tt</span>(<span class="at">digits =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
 <span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_tt</span>(<span class="at">escape =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="6" data-after-caption-space="0pt" prefix="">
+<div id="tbl-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="6">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ordbeta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1906,9 +1906,9 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
         <tbody>
                 <tr>
                   <td>Fluent - Disfluent</td>
-                  <td>0.061</td>
-                  <td>[-0.015, 0.138]</td>
-                  <td>0.943</td>
+                  <td>0.06</td>
+                  <td>[-0.018, 0.137]</td>
+                  <td>0.935</td>
                 </tr>
         </tbody>
       </table>
@@ -1927,7 +1927,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <h4 data-anchor-id="cutpoints">Cutpoints.</h4>
 <p>The model cutpoints are not reported by default in the summary output, but we can access them with the R package <code>posterior</code> <span class="citation" data-cites="posterior2025a">(Bürkner et al., 2025)</span> and the functions <code>as_draws</code> and <code>summary_draws</code>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="7" data-custom-style="FigureWithoutNote">
-<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="7" data-after-caption-space="0pt" prefix="">
+<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="7">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cutpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2026,12 +2026,12 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td>cutzero</td>
                   <td>-2.97</td>
-                  <td>[-3.57, -2.42]</td>
+                  <td>[-3.57, -2.4]</td>
                 </tr>
                 <tr>
                   <td>cutone</td>
                   <td>1.85</td>
-                  <td>[1.63, 2.07]</td>
+                  <td>[1.63, 2.08]</td>
                 </tr>
         </tbody>
       </table>
@@ -2229,7 +2229,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize =</span> .<span class="dv">6</span></span>
 <span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-tbl-align="center" data-tblnum="8" data-after-caption-space="0pt" prefix="">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-tbl-align="center" data-tblnum="8">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2337,19 +2337,19 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>b_Intercept</td>
                   <td>Mean</td>
                   <td>0.257</td>
-                  <td>-0.826</td>
-                  <td>-0.828</td>
                   <td>-0.827</td>
-                  <td>-0.867</td>
+                  <td>-0.830</td>
+                  <td>-0.829</td>
+                  <td>-0.864</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
-                  <td>[0.2, 0.313]</td>
-                  <td>[-1.092, -0.555]</td>
-                  <td>[-1.08, -0.561]</td>
-                  <td>[-1.082, -0.557]</td>
-                  <td>[-1.128, -0.608]</td>
+                  <td>[0.201, 0.314]</td>
+                  <td>[-1.085, -0.556]</td>
+                  <td>[-1.097, -0.566]</td>
+                  <td>[-1.096, -0.547]</td>
+                  <td>[-1.123, -0.594]</td>
                 </tr>
                 <tr>
                   <td></td>
@@ -2364,28 +2364,28 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>b_Fluency</td>
                   <td>Mean</td>
                   <td>0.083</td>
-                  <td>0.199</td>
                   <td>0.201</td>
-                  <td>0.202</td>
-                  <td>0.262</td>
+                  <td>0.201</td>
+                  <td>0.205</td>
+                  <td>0.259</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
-                  <td>[0.001, 0.167]</td>
-                  <td>[-0.14, 0.547]</td>
-                  <td>[-0.138, 0.534]</td>
-                  <td>[-0.144, 0.542]</td>
-                  <td>[-0.067, 0.598]</td>
+                  <td>[-0.003, 0.164]</td>
+                  <td>[-0.14, 0.539]</td>
+                  <td>[-0.146, 0.544]</td>
+                  <td>[-0.146, 0.556]</td>
+                  <td>[-0.077, 0.597]</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>pd</td>
-                  <td>0.977*</td>
-                  <td>0.869</td>
-                  <td>0.880</td>
-                  <td>0.878</td>
-                  <td>0.943</td>
+                  <td>0.972</td>
+                  <td>0.879</td>
+                  <td>0.882</td>
+                  <td>0.866</td>
+                  <td>0.935</td>
                 </tr>
                 <tr>
                   <td>sigma</td>
@@ -2399,7 +2399,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
-                  <td>[0.181, 0.24]</td>
+                  <td>[0.182, 0.24]</td>
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
@@ -2418,19 +2418,19 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>b_phi_Intercept</td>
                   <td>Mean</td>
                   <td>-</td>
-                  <td>1.597</td>
-                  <td>1.598</td>
-                  <td>1.598</td>
-                  <td>1.620</td>
+                  <td>1.602</td>
+                  <td>1.604</td>
+                  <td>1.599</td>
+                  <td>1.615</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
                   <td>-</td>
-                  <td>[1.179, 1.983]</td>
-                  <td>[1.165, 1.999]</td>
-                  <td>[1.184, 1.978]</td>
-                  <td>[1.225, 1.992]</td>
+                  <td>[1.204, 1.988]</td>
+                  <td>[1.195, 1.987]</td>
+                  <td>[1.194, 1.981]</td>
+                  <td>[1.206, 2.003]</td>
                 </tr>
                 <tr>
                   <td></td>
@@ -2445,27 +2445,27 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>b_phi_Fluency</td>
                   <td>Mean</td>
                   <td>-</td>
-                  <td>0.436</td>
-                  <td>0.431</td>
-                  <td>0.427</td>
-                  <td>0.397</td>
+                  <td>0.424</td>
+                  <td>0.428</td>
+                  <td>0.423</td>
+                  <td>0.406</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>Cr.I</td>
                   <td>-</td>
-                  <td>[-0.135, 0.973]</td>
-                  <td>[-0.155, 1.026]</td>
-                  <td>[-0.144, 0.994]</td>
-                  <td>[-0.153, 0.953]</td>
+                  <td>[-0.126, 0.979]</td>
+                  <td>[-0.157, 0.994]</td>
+                  <td>[-0.143, 1.008]</td>
+                  <td>[-0.164, 0.971]</td>
                 </tr>
                 <tr>
                   <td></td>
                   <td>pd</td>
                   <td>-</td>
-                  <td>0.936</td>
-                  <td>0.928</td>
+                  <td>0.930</td>
                   <td>0.934</td>
+                  <td>0.928</td>
                   <td>0.918</td>
                 </tr>
                 <tr>
@@ -2473,7 +2473,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Mean</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-1.664</td>
+                  <td>-1.671</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2482,7 +2482,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Cr.I</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-2.465, -0.96]</td>
+                  <td>[-2.481, -0.97]</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2500,7 +2500,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Mean</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-2.110</td>
+                  <td>-2.127</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2509,7 +2509,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>Cr.I</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-4.437, -0.362]</td>
+                  <td>[-4.741, -0.312]</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2518,7 +2518,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>pd</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>0.994**</td>
+                  <td>0.991**</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
@@ -2528,7 +2528,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-1.538</td>
+                  <td>-1.542</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2537,7 +2537,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-2.281, -0.88]</td>
+                  <td>[-2.338, -0.827]</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2555,7 +2555,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>-2.236</td>
+                  <td>-2.229</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2564,7 +2564,34 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-4.63, -0.488]</td>
+                  <td>[-4.52, -0.467]</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>pd</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0.996***</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>b_coi_Intercept</td>
+                  <td>Mean</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-2.050</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>Cr.I</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>[-4.407, -0.317]</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2577,39 +2604,12 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                 </tr>
                 <tr>
-                  <td>b_coi_Intercept</td>
-                  <td>Mean</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-2.045</td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td>Cr.I</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>[-4.456, -0.3]</td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td>pd</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>0.991**</td>
-                  <td>-</td>
-                </tr>
-                <tr>
                   <td>b_coi_Fluency</td>
                   <td>Mean</td>
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>0.168</td>
+                  <td>0.170</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2618,7 +2618,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>[-6.889, 5.657]</td>
+                  <td>[-6.894, 5.616]</td>
                   <td>-</td>
                 </tr>
                 <tr>
@@ -2627,7 +2627,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td>-</td>
                   <td>-</td>
                   <td>-</td>
-                  <td>0.561</td>
+                  <td>0.566</td>
                   <td>-</td>
                 </tr>
         </tbody>
