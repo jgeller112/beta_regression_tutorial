@@ -27,7 +27,7 @@ required_packages = c(
 library(rix)
 
 rix(
-  date = "2025-04-07",
+  date = "2025-10-07",
   r_pkgs = required_packages,
   system_pkgs = c(
     "quarto",

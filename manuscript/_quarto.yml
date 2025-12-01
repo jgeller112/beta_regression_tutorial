@@ -20,8 +20,9 @@ format:
     code-summary: "Show R code"
 
     site-url: https://jgeller112.github.io/beta_regression_tutorial/
-  apaquarto-docx:
     comments:
       hypothesis: true
+  apaquarto-docx:
+
 execute: 
   echo: true
