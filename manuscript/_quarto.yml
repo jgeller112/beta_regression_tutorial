@@ -22,7 +22,5 @@ format:
     site-url: https://jgeller112.github.io/beta_regression_tutorial/
     comments:
       hypothesis: true
-  apaquarto-docx:
-
 execute: 
   echo: true
