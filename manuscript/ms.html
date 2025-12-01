@@ -318,7 +318,7 @@ Preprint
 <span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-curves" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="1">
+<div id="fig-curves" class="quarto-float quarto-figure quarto-figure-center" data-fignum="1" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-curves-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -452,7 +452,7 @@ Preprint
 <span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>post <span class="sc">/</span> freq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-p-value-pd-comp" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="2">
+<div id="fig-p-value-pd-comp" class="quarto-float quarto-figure quarto-figure-center" data-fignum="2" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-p-value-pd-comp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -498,7 +498,7 @@ Listing&nbsp;1: Data needed to run examples
 </div>
 <p>Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in <a href="#tbl-dataset" class="quarto-xref" aria-expanded="false">Table&nbsp;1</a>. The dataset can be downloaded from GitHub (<a href="#lst-data" class="quarto-xref">Listing&nbsp;1</a>). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span>’s analysis and then re-analyze the data using beta regression and highlight how it can improve our inferences.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="1" data-custom-style="FigureWithoutNote">
-<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="1" prefix="">
+<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="1" prefix="" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dataset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -602,7 +602,7 @@ Listing&nbsp;1: Data needed to run examples
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_publication</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-flu1" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="3">
+<div id="fig-flu1" class="quarto-float quarto-figure quarto-figure-center" data-fignum="3" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-flu1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -662,7 +662,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the {brms} package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(Bürkner, 2017)</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.</p>
-<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% Cr.I for this estimate spans from -0.001 to 0.17. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
+<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.256 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% Cr.I for this estimate spans from -0.001 to 0.164. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -676,12 +676,12 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     3935     2631
-FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3699     2978
+Intercept         0.26      0.03     0.20     0.31 1.00     3783     2920
+FluencyFluent     0.08      0.04    -0.00     0.16 1.00     3684     3009
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     4130     2941</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     3363     2720</code></pre>
 </div>
 </div>
 <p>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a>), provided by the {bayestestR} package <span class="citation" data-cites="makowski2019a makowski2019">(Makowski, Ben-Shachar, Chen, et al., 2019; Makowski, Ben-Shachar, &amp; Lüdecke, 2019)</span>. This measure offers an intuitive parallel to <em>p</em>-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative.</p>
@@ -732,7 +732,7 @@ Listing&nbsp;4: Getting ROPE from <code>bayes_reg_model</code> obect using <code
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>p_annotated</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-rope" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="4">
+<div id="fig-rope" class="quarto-float quarto-figure quarto-figure-center" data-fignum="4" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-rope-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -767,7 +767,7 @@ Listing&nbsp;5: Checking assumptions with the <code>check_model()</code> from {e
 </figure>
 </div>
 <div class="cell-output-display">
-<div id="fig-reg-assump" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="5">
+<div id="fig-reg-assump" class="quarto-float quarto-figure quarto-figure-center" data-fignum="5" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-reg-assump-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -875,7 +875,7 @@ Listing&nbsp;7: Fitting beta model with dispersion.
 <p>While it is advisable to model precision, if there is uncertainty about the best model, a relatively agnostic approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-plt-diff" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="6">
+<div id="fig-plt-diff" class="quarto-float quarto-figure quarto-figure-center" data-fignum="6" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-plt-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -923,7 +923,7 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
 <div aria-describedby="lst-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <details class="code-fold">
 <summary>Show R code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predictions</span>(</span>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">avg_predictions</span>(</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  beta_brms,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># need to specify the levels of the categorical predictor</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">"Fluency"</span></span>
@@ -934,7 +934,7 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="2" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="2" data-tbl-cap-location="top" prefix="">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="2" prefix="" data-after-caption-space="0pt" data-tbl-cap-location="top">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -957,7 +957,7 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '172', j: 1 }, { i: '172', j: 2 }, { i: '172', j: 3 } ], css_id: 'tinytable_css_gc6o77oii04opttvuwyj',}, 
+          { positions: [ { i: '2', j: 1 }, { i: '2', j: 2 }, { i: '2', j: 3 } ], css_id: 'tinytable_css_gc6o77oii04opttvuwyj',}, 
           { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 } ], css_id: 'tinytable_css_agfp8isb187vl6zj24lt',}, 
           ];
 
@@ -991,862 +991,12 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency.
                 <tr>
                   <td data-row="1" data-col="1">Disfluent</td>
                   <td data-row="1" data-col="2">0.297</td>
-                  <td data-row="1" data-col="3">[0.247, 0.351]</td>
+                  <td data-row="1" data-col="3">[0.248, 0.351]</td>
                 </tr>
                 <tr>
-                  <td data-row="2" data-col="1">Disfluent</td>
-                  <td data-row="2" data-col="2">0.297</td>
-                  <td data-row="2" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="3" data-col="1">Disfluent</td>
-                  <td data-row="3" data-col="2">0.297</td>
-                  <td data-row="3" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="4" data-col="1">Disfluent</td>
-                  <td data-row="4" data-col="2">0.297</td>
-                  <td data-row="4" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="5" data-col="1">Disfluent</td>
-                  <td data-row="5" data-col="2">0.297</td>
-                  <td data-row="5" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="6" data-col="1">Disfluent</td>
-                  <td data-row="6" data-col="2">0.297</td>
-                  <td data-row="6" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="7" data-col="1">Disfluent</td>
-                  <td data-row="7" data-col="2">0.297</td>
-                  <td data-row="7" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="8" data-col="1">Disfluent</td>
-                  <td data-row="8" data-col="2">0.297</td>
-                  <td data-row="8" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="9" data-col="1">Disfluent</td>
-                  <td data-row="9" data-col="2">0.297</td>
-                  <td data-row="9" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="10" data-col="1">Disfluent</td>
-                  <td data-row="10" data-col="2">0.297</td>
-                  <td data-row="10" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="11" data-col="1">Disfluent</td>
-                  <td data-row="11" data-col="2">0.297</td>
-                  <td data-row="11" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="12" data-col="1">Disfluent</td>
-                  <td data-row="12" data-col="2">0.297</td>
-                  <td data-row="12" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="13" data-col="1">Disfluent</td>
-                  <td data-row="13" data-col="2">0.297</td>
-                  <td data-row="13" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="14" data-col="1">Disfluent</td>
-                  <td data-row="14" data-col="2">0.297</td>
-                  <td data-row="14" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="15" data-col="1">Disfluent</td>
-                  <td data-row="15" data-col="2">0.297</td>
-                  <td data-row="15" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="16" data-col="1">Disfluent</td>
-                  <td data-row="16" data-col="2">0.297</td>
-                  <td data-row="16" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="17" data-col="1">Disfluent</td>
-                  <td data-row="17" data-col="2">0.297</td>
-                  <td data-row="17" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="18" data-col="1">Disfluent</td>
-                  <td data-row="18" data-col="2">0.297</td>
-                  <td data-row="18" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="19" data-col="1">Disfluent</td>
-                  <td data-row="19" data-col="2">0.297</td>
-                  <td data-row="19" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="20" data-col="1">Disfluent</td>
-                  <td data-row="20" data-col="2">0.297</td>
-                  <td data-row="20" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="21" data-col="1">Disfluent</td>
-                  <td data-row="21" data-col="2">0.297</td>
-                  <td data-row="21" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="22" data-col="1">Disfluent</td>
-                  <td data-row="22" data-col="2">0.297</td>
-                  <td data-row="22" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="23" data-col="1">Disfluent</td>
-                  <td data-row="23" data-col="2">0.297</td>
-                  <td data-row="23" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="24" data-col="1">Disfluent</td>
-                  <td data-row="24" data-col="2">0.297</td>
-                  <td data-row="24" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="25" data-col="1">Disfluent</td>
-                  <td data-row="25" data-col="2">0.297</td>
-                  <td data-row="25" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="26" data-col="1">Disfluent</td>
-                  <td data-row="26" data-col="2">0.297</td>
-                  <td data-row="26" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="27" data-col="1">Disfluent</td>
-                  <td data-row="27" data-col="2">0.297</td>
-                  <td data-row="27" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="28" data-col="1">Disfluent</td>
-                  <td data-row="28" data-col="2">0.297</td>
-                  <td data-row="28" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="29" data-col="1">Disfluent</td>
-                  <td data-row="29" data-col="2">0.297</td>
-                  <td data-row="29" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="30" data-col="1">Disfluent</td>
-                  <td data-row="30" data-col="2">0.297</td>
-                  <td data-row="30" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="31" data-col="1">Disfluent</td>
-                  <td data-row="31" data-col="2">0.297</td>
-                  <td data-row="31" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="32" data-col="1">Disfluent</td>
-                  <td data-row="32" data-col="2">0.297</td>
-                  <td data-row="32" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="33" data-col="1">Disfluent</td>
-                  <td data-row="33" data-col="2">0.297</td>
-                  <td data-row="33" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="34" data-col="1">Disfluent</td>
-                  <td data-row="34" data-col="2">0.297</td>
-                  <td data-row="34" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="35" data-col="1">Disfluent</td>
-                  <td data-row="35" data-col="2">0.297</td>
-                  <td data-row="35" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="36" data-col="1">Disfluent</td>
-                  <td data-row="36" data-col="2">0.297</td>
-                  <td data-row="36" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="37" data-col="1">Disfluent</td>
-                  <td data-row="37" data-col="2">0.297</td>
-                  <td data-row="37" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="38" data-col="1">Disfluent</td>
-                  <td data-row="38" data-col="2">0.297</td>
-                  <td data-row="38" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="39" data-col="1">Disfluent</td>
-                  <td data-row="39" data-col="2">0.297</td>
-                  <td data-row="39" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="40" data-col="1">Disfluent</td>
-                  <td data-row="40" data-col="2">0.297</td>
-                  <td data-row="40" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="41" data-col="1">Disfluent</td>
-                  <td data-row="41" data-col="2">0.297</td>
-                  <td data-row="41" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="42" data-col="1">Disfluent</td>
-                  <td data-row="42" data-col="2">0.297</td>
-                  <td data-row="42" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="43" data-col="1">Disfluent</td>
-                  <td data-row="43" data-col="2">0.297</td>
-                  <td data-row="43" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="44" data-col="1">Disfluent</td>
-                  <td data-row="44" data-col="2">0.297</td>
-                  <td data-row="44" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="45" data-col="1">Disfluent</td>
-                  <td data-row="45" data-col="2">0.297</td>
-                  <td data-row="45" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="46" data-col="1">Disfluent</td>
-                  <td data-row="46" data-col="2">0.297</td>
-                  <td data-row="46" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="47" data-col="1">Disfluent</td>
-                  <td data-row="47" data-col="2">0.297</td>
-                  <td data-row="47" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="48" data-col="1">Disfluent</td>
-                  <td data-row="48" data-col="2">0.297</td>
-                  <td data-row="48" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="49" data-col="1">Disfluent</td>
-                  <td data-row="49" data-col="2">0.297</td>
-                  <td data-row="49" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="50" data-col="1">Disfluent</td>
-                  <td data-row="50" data-col="2">0.297</td>
-                  <td data-row="50" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="51" data-col="1">Disfluent</td>
-                  <td data-row="51" data-col="2">0.297</td>
-                  <td data-row="51" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="52" data-col="1">Disfluent</td>
-                  <td data-row="52" data-col="2">0.297</td>
-                  <td data-row="52" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="53" data-col="1">Disfluent</td>
-                  <td data-row="53" data-col="2">0.297</td>
-                  <td data-row="53" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="54" data-col="1">Disfluent</td>
-                  <td data-row="54" data-col="2">0.297</td>
-                  <td data-row="54" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="55" data-col="1">Disfluent</td>
-                  <td data-row="55" data-col="2">0.297</td>
-                  <td data-row="55" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="56" data-col="1">Disfluent</td>
-                  <td data-row="56" data-col="2">0.297</td>
-                  <td data-row="56" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="57" data-col="1">Disfluent</td>
-                  <td data-row="57" data-col="2">0.297</td>
-                  <td data-row="57" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="58" data-col="1">Disfluent</td>
-                  <td data-row="58" data-col="2">0.297</td>
-                  <td data-row="58" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="59" data-col="1">Disfluent</td>
-                  <td data-row="59" data-col="2">0.297</td>
-                  <td data-row="59" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="60" data-col="1">Disfluent</td>
-                  <td data-row="60" data-col="2">0.297</td>
-                  <td data-row="60" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="61" data-col="1">Disfluent</td>
-                  <td data-row="61" data-col="2">0.297</td>
-                  <td data-row="61" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="62" data-col="1">Disfluent</td>
-                  <td data-row="62" data-col="2">0.297</td>
-                  <td data-row="62" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="63" data-col="1">Disfluent</td>
-                  <td data-row="63" data-col="2">0.297</td>
-                  <td data-row="63" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="64" data-col="1">Disfluent</td>
-                  <td data-row="64" data-col="2">0.297</td>
-                  <td data-row="64" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="65" data-col="1">Disfluent</td>
-                  <td data-row="65" data-col="2">0.297</td>
-                  <td data-row="65" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="66" data-col="1">Disfluent</td>
-                  <td data-row="66" data-col="2">0.297</td>
-                  <td data-row="66" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="67" data-col="1">Disfluent</td>
-                  <td data-row="67" data-col="2">0.297</td>
-                  <td data-row="67" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="68" data-col="1">Disfluent</td>
-                  <td data-row="68" data-col="2">0.297</td>
-                  <td data-row="68" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="69" data-col="1">Disfluent</td>
-                  <td data-row="69" data-col="2">0.297</td>
-                  <td data-row="69" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="70" data-col="1">Disfluent</td>
-                  <td data-row="70" data-col="2">0.297</td>
-                  <td data-row="70" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="71" data-col="1">Disfluent</td>
-                  <td data-row="71" data-col="2">0.297</td>
-                  <td data-row="71" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="72" data-col="1">Disfluent</td>
-                  <td data-row="72" data-col="2">0.297</td>
-                  <td data-row="72" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="73" data-col="1">Disfluent</td>
-                  <td data-row="73" data-col="2">0.297</td>
-                  <td data-row="73" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="74" data-col="1">Disfluent</td>
-                  <td data-row="74" data-col="2">0.297</td>
-                  <td data-row="74" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="75" data-col="1">Disfluent</td>
-                  <td data-row="75" data-col="2">0.297</td>
-                  <td data-row="75" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="76" data-col="1">Disfluent</td>
-                  <td data-row="76" data-col="2">0.297</td>
-                  <td data-row="76" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="77" data-col="1">Disfluent</td>
-                  <td data-row="77" data-col="2">0.297</td>
-                  <td data-row="77" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="78" data-col="1">Disfluent</td>
-                  <td data-row="78" data-col="2">0.297</td>
-                  <td data-row="78" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="79" data-col="1">Disfluent</td>
-                  <td data-row="79" data-col="2">0.297</td>
-                  <td data-row="79" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="80" data-col="1">Disfluent</td>
-                  <td data-row="80" data-col="2">0.297</td>
-                  <td data-row="80" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="81" data-col="1">Disfluent</td>
-                  <td data-row="81" data-col="2">0.297</td>
-                  <td data-row="81" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="82" data-col="1">Disfluent</td>
-                  <td data-row="82" data-col="2">0.297</td>
-                  <td data-row="82" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="83" data-col="1">Disfluent</td>
-                  <td data-row="83" data-col="2">0.297</td>
-                  <td data-row="83" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="84" data-col="1">Disfluent</td>
-                  <td data-row="84" data-col="2">0.297</td>
-                  <td data-row="84" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="85" data-col="1">Disfluent</td>
-                  <td data-row="85" data-col="2">0.297</td>
-                  <td data-row="85" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="86" data-col="1">Disfluent</td>
-                  <td data-row="86" data-col="2">0.297</td>
-                  <td data-row="86" data-col="3">[0.247, 0.351]</td>
-                </tr>
-                <tr>
-                  <td data-row="87" data-col="1">Fluent</td>
-                  <td data-row="87" data-col="2">0.354</td>
-                  <td data-row="87" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="88" data-col="1">Fluent</td>
-                  <td data-row="88" data-col="2">0.354</td>
-                  <td data-row="88" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="89" data-col="1">Fluent</td>
-                  <td data-row="89" data-col="2">0.354</td>
-                  <td data-row="89" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="90" data-col="1">Fluent</td>
-                  <td data-row="90" data-col="2">0.354</td>
-                  <td data-row="90" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="91" data-col="1">Fluent</td>
-                  <td data-row="91" data-col="2">0.354</td>
-                  <td data-row="91" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="92" data-col="1">Fluent</td>
-                  <td data-row="92" data-col="2">0.354</td>
-                  <td data-row="92" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="93" data-col="1">Fluent</td>
-                  <td data-row="93" data-col="2">0.354</td>
-                  <td data-row="93" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="94" data-col="1">Fluent</td>
-                  <td data-row="94" data-col="2">0.354</td>
-                  <td data-row="94" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="95" data-col="1">Fluent</td>
-                  <td data-row="95" data-col="2">0.354</td>
-                  <td data-row="95" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="96" data-col="1">Fluent</td>
-                  <td data-row="96" data-col="2">0.354</td>
-                  <td data-row="96" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="97" data-col="1">Fluent</td>
-                  <td data-row="97" data-col="2">0.354</td>
-                  <td data-row="97" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="98" data-col="1">Fluent</td>
-                  <td data-row="98" data-col="2">0.354</td>
-                  <td data-row="98" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="99" data-col="1">Fluent</td>
-                  <td data-row="99" data-col="2">0.354</td>
-                  <td data-row="99" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="100" data-col="1">Fluent</td>
-                  <td data-row="100" data-col="2">0.354</td>
-                  <td data-row="100" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="101" data-col="1">Fluent</td>
-                  <td data-row="101" data-col="2">0.354</td>
-                  <td data-row="101" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="102" data-col="1">Fluent</td>
-                  <td data-row="102" data-col="2">0.354</td>
-                  <td data-row="102" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="103" data-col="1">Fluent</td>
-                  <td data-row="103" data-col="2">0.354</td>
-                  <td data-row="103" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="104" data-col="1">Fluent</td>
-                  <td data-row="104" data-col="2">0.354</td>
-                  <td data-row="104" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="105" data-col="1">Fluent</td>
-                  <td data-row="105" data-col="2">0.354</td>
-                  <td data-row="105" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="106" data-col="1">Fluent</td>
-                  <td data-row="106" data-col="2">0.354</td>
-                  <td data-row="106" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="107" data-col="1">Fluent</td>
-                  <td data-row="107" data-col="2">0.354</td>
-                  <td data-row="107" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="108" data-col="1">Fluent</td>
-                  <td data-row="108" data-col="2">0.354</td>
-                  <td data-row="108" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="109" data-col="1">Fluent</td>
-                  <td data-row="109" data-col="2">0.354</td>
-                  <td data-row="109" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="110" data-col="1">Fluent</td>
-                  <td data-row="110" data-col="2">0.354</td>
-                  <td data-row="110" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="111" data-col="1">Fluent</td>
-                  <td data-row="111" data-col="2">0.354</td>
-                  <td data-row="111" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="112" data-col="1">Fluent</td>
-                  <td data-row="112" data-col="2">0.354</td>
-                  <td data-row="112" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="113" data-col="1">Fluent</td>
-                  <td data-row="113" data-col="2">0.354</td>
-                  <td data-row="113" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="114" data-col="1">Fluent</td>
-                  <td data-row="114" data-col="2">0.354</td>
-                  <td data-row="114" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="115" data-col="1">Fluent</td>
-                  <td data-row="115" data-col="2">0.354</td>
-                  <td data-row="115" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="116" data-col="1">Fluent</td>
-                  <td data-row="116" data-col="2">0.354</td>
-                  <td data-row="116" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="117" data-col="1">Fluent</td>
-                  <td data-row="117" data-col="2">0.354</td>
-                  <td data-row="117" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="118" data-col="1">Fluent</td>
-                  <td data-row="118" data-col="2">0.354</td>
-                  <td data-row="118" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="119" data-col="1">Fluent</td>
-                  <td data-row="119" data-col="2">0.354</td>
-                  <td data-row="119" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="120" data-col="1">Fluent</td>
-                  <td data-row="120" data-col="2">0.354</td>
-                  <td data-row="120" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="121" data-col="1">Fluent</td>
-                  <td data-row="121" data-col="2">0.354</td>
-                  <td data-row="121" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="122" data-col="1">Fluent</td>
-                  <td data-row="122" data-col="2">0.354</td>
-                  <td data-row="122" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="123" data-col="1">Fluent</td>
-                  <td data-row="123" data-col="2">0.354</td>
-                  <td data-row="123" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="124" data-col="1">Fluent</td>
-                  <td data-row="124" data-col="2">0.354</td>
-                  <td data-row="124" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="125" data-col="1">Fluent</td>
-                  <td data-row="125" data-col="2">0.354</td>
-                  <td data-row="125" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="126" data-col="1">Fluent</td>
-                  <td data-row="126" data-col="2">0.354</td>
-                  <td data-row="126" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="127" data-col="1">Fluent</td>
-                  <td data-row="127" data-col="2">0.354</td>
-                  <td data-row="127" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="128" data-col="1">Fluent</td>
-                  <td data-row="128" data-col="2">0.354</td>
-                  <td data-row="128" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="129" data-col="1">Fluent</td>
-                  <td data-row="129" data-col="2">0.354</td>
-                  <td data-row="129" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="130" data-col="1">Fluent</td>
-                  <td data-row="130" data-col="2">0.354</td>
-                  <td data-row="130" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="131" data-col="1">Fluent</td>
-                  <td data-row="131" data-col="2">0.354</td>
-                  <td data-row="131" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="132" data-col="1">Fluent</td>
-                  <td data-row="132" data-col="2">0.354</td>
-                  <td data-row="132" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="133" data-col="1">Fluent</td>
-                  <td data-row="133" data-col="2">0.354</td>
-                  <td data-row="133" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="134" data-col="1">Fluent</td>
-                  <td data-row="134" data-col="2">0.354</td>
-                  <td data-row="134" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="135" data-col="1">Fluent</td>
-                  <td data-row="135" data-col="2">0.354</td>
-                  <td data-row="135" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="136" data-col="1">Fluent</td>
-                  <td data-row="136" data-col="2">0.354</td>
-                  <td data-row="136" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="137" data-col="1">Fluent</td>
-                  <td data-row="137" data-col="2">0.354</td>
-                  <td data-row="137" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="138" data-col="1">Fluent</td>
-                  <td data-row="138" data-col="2">0.354</td>
-                  <td data-row="138" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="139" data-col="1">Fluent</td>
-                  <td data-row="139" data-col="2">0.354</td>
-                  <td data-row="139" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="140" data-col="1">Fluent</td>
-                  <td data-row="140" data-col="2">0.354</td>
-                  <td data-row="140" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="141" data-col="1">Fluent</td>
-                  <td data-row="141" data-col="2">0.354</td>
-                  <td data-row="141" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="142" data-col="1">Fluent</td>
-                  <td data-row="142" data-col="2">0.354</td>
-                  <td data-row="142" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="143" data-col="1">Fluent</td>
-                  <td data-row="143" data-col="2">0.354</td>
-                  <td data-row="143" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="144" data-col="1">Fluent</td>
-                  <td data-row="144" data-col="2">0.354</td>
-                  <td data-row="144" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="145" data-col="1">Fluent</td>
-                  <td data-row="145" data-col="2">0.354</td>
-                  <td data-row="145" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="146" data-col="1">Fluent</td>
-                  <td data-row="146" data-col="2">0.354</td>
-                  <td data-row="146" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="147" data-col="1">Fluent</td>
-                  <td data-row="147" data-col="2">0.354</td>
-                  <td data-row="147" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="148" data-col="1">Fluent</td>
-                  <td data-row="148" data-col="2">0.354</td>
-                  <td data-row="148" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="149" data-col="1">Fluent</td>
-                  <td data-row="149" data-col="2">0.354</td>
-                  <td data-row="149" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="150" data-col="1">Fluent</td>
-                  <td data-row="150" data-col="2">0.354</td>
-                  <td data-row="150" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="151" data-col="1">Fluent</td>
-                  <td data-row="151" data-col="2">0.354</td>
-                  <td data-row="151" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="152" data-col="1">Fluent</td>
-                  <td data-row="152" data-col="2">0.354</td>
-                  <td data-row="152" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="153" data-col="1">Fluent</td>
-                  <td data-row="153" data-col="2">0.354</td>
-                  <td data-row="153" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="154" data-col="1">Fluent</td>
-                  <td data-row="154" data-col="2">0.354</td>
-                  <td data-row="154" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="155" data-col="1">Fluent</td>
-                  <td data-row="155" data-col="2">0.354</td>
-                  <td data-row="155" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="156" data-col="1">Fluent</td>
-                  <td data-row="156" data-col="2">0.354</td>
-                  <td data-row="156" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="157" data-col="1">Fluent</td>
-                  <td data-row="157" data-col="2">0.354</td>
-                  <td data-row="157" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="158" data-col="1">Fluent</td>
-                  <td data-row="158" data-col="2">0.354</td>
-                  <td data-row="158" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="159" data-col="1">Fluent</td>
-                  <td data-row="159" data-col="2">0.354</td>
-                  <td data-row="159" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="160" data-col="1">Fluent</td>
-                  <td data-row="160" data-col="2">0.354</td>
-                  <td data-row="160" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="161" data-col="1">Fluent</td>
-                  <td data-row="161" data-col="2">0.354</td>
-                  <td data-row="161" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="162" data-col="1">Fluent</td>
-                  <td data-row="162" data-col="2">0.354</td>
-                  <td data-row="162" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="163" data-col="1">Fluent</td>
-                  <td data-row="163" data-col="2">0.354</td>
-                  <td data-row="163" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="164" data-col="1">Fluent</td>
-                  <td data-row="164" data-col="2">0.354</td>
-                  <td data-row="164" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="165" data-col="1">Fluent</td>
-                  <td data-row="165" data-col="2">0.354</td>
-                  <td data-row="165" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="166" data-col="1">Fluent</td>
-                  <td data-row="166" data-col="2">0.354</td>
-                  <td data-row="166" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="167" data-col="1">Fluent</td>
-                  <td data-row="167" data-col="2">0.354</td>
-                  <td data-row="167" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="168" data-col="1">Fluent</td>
-                  <td data-row="168" data-col="2">0.354</td>
-                  <td data-row="168" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="169" data-col="1">Fluent</td>
-                  <td data-row="169" data-col="2">0.354</td>
-                  <td data-row="169" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="170" data-col="1">Fluent</td>
-                  <td data-row="170" data-col="2">0.354</td>
-                  <td data-row="170" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="171" data-col="1">Fluent</td>
-                  <td data-row="171" data-col="2">0.354</td>
-                  <td data-row="171" data-col="3">[0.302, 0.407]</td>
-                </tr>
-                <tr>
-                  <td data-row="172" data-col="1">Fluent</td>
-                  <td data-row="172" data-col="2">0.354</td>
-                  <td data-row="172" data-col="3">[0.302, 0.407]</td>
+                  <td data-row="2" data-col="1">Fluent</td>
+                  <td data-row="2" data-col="2">0.353</td>
+                  <td data-row="2" data-col="3">[0.3, 0.407]</td>
                 </tr>
         </tbody>
       </table>
@@ -1912,7 +1062,7 @@ Listing&nbsp;11: Extracting posterior draws from the beta regression model.
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-draws-fluency" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="7">
+<div id="fig-draws-fluency" class="quarto-float quarto-figure quarto-figure-center" data-fignum="7" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-draws-fluency-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1956,7 +1106,7 @@ Listing&nbsp;12: Calculating the difference between probabilities with <code>avg
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="3" data-custom-style="FigureWithoutNote">
-<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="3" prefix="">
+<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="3" prefix="" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ame1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2014,7 +1164,7 @@ Listing&nbsp;12: Calculating the difference between probabilities with <code>avg
                 <tr>
                   <td data-row="1" data-col="1">Fluent - Disfluent</td>
                   <td data-row="1" data-col="2">0.056</td>
-                  <td data-row="1" data-col="3">[-0.016, 0.129]</td>
+                  <td data-row="1" data-col="3">[-0.017, 0.132]</td>
                   <td data-row="1" data-col="4">0.94</td>
                 </tr>
         </tbody>
@@ -2143,7 +1293,7 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="4" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="4" prefix="">
+<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="4" prefix="" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-mu-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2201,8 +1351,8 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
                 <tr>
                   <td data-row="1" data-col="1">Fluent - Disfluent</td>
                   <td data-row="1" data-col="2">0.044</td>
-                  <td data-row="1" data-col="3">[-0.033, 0.116]</td>
-                  <td data-row="1" data-col="4">0.873</td>
+                  <td data-row="1" data-col="3">[-0.032, 0.118]</td>
+                  <td data-row="1" data-col="4">0.874</td>
                 </tr>
         </tbody>
       </table>
@@ -2229,7 +1379,7 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="5" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="5" prefix="">
+<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="5" prefix="" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-phi-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2286,9 +1436,9 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
         <tbody>
                 <tr>
                   <td data-row="1" data-col="1">Fluent - Disfluent</td>
-                  <td data-row="1" data-col="2">2.72</td>
-                  <td data-row="1" data-col="3">[-0.807, 6.568]</td>
-                  <td data-row="1" data-col="4">0.933</td>
+                  <td data-row="1" data-col="2">2.67</td>
+                  <td data-row="1" data-col="3">[-0.951, 6.758]</td>
+                  <td data-row="1" data-col="4">0.923</td>
                 </tr>
         </tbody>
       </table>
@@ -2317,7 +1467,7 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
 </div>
 <div class="cell FigureWithoutNote" data-custom-style="FigureWithoutNote">
 <div class="cell-output-display">
-<div id="fig-zi-plot" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="8">
+<div id="fig-zi-plot" class="quarto-float quarto-figure quarto-figure-center" data-fignum="8" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-zi-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2428,7 +1578,7 @@ Listing&nbsp;14: Fitting zib model with <code>brm()</code>
 <span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="fu">label_percent</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-zoib" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="9">
+<div id="fig-zoib" class="quarto-float quarto-figure quarto-figure-center" data-fignum="9" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-zoib-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2607,7 +1757,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_tt</span>(<span class="at">digits =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
 <span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_tt</span>(<span class="at">escape =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="6" prefix="">
+<div id="tbl-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="6" prefix="" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ordbeta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2664,9 +1814,9 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
         <tbody>
                 <tr>
                   <td data-row="1" data-col="1">Fluent - Disfluent</td>
-                  <td data-row="1" data-col="2">0.06</td>
-                  <td data-row="1" data-col="3">[-0.015, 0.137]</td>
-                  <td data-row="1" data-col="4">0.939</td>
+                  <td data-row="1" data-col="2">0.061</td>
+                  <td data-row="1" data-col="3">[-0.014, 0.137]</td>
+                  <td data-row="1" data-col="4">0.944</td>
                 </tr>
         </tbody>
       </table>
@@ -2685,7 +1835,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <h4 data-anchor-id="cutpoints">Cutpoints.</h4>
 <p>The model cutpoints are not reported by default in the summary output, but we can access them with the R package <code>posterior</code> <span class="citation" data-cites="posterior2025a">(Bürkner et al., 2025)</span> and the functions <code>as_draws</code> and <code>summary_draws</code>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="7" data-custom-style="FigureWithoutNote">
-<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="7" prefix="">
+<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" data-tblnum="7" prefix="" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cutpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2742,7 +1892,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td data-row="1" data-col="1">cutzero</td>
                   <td data-row="1" data-col="2">-2.97</td>
-                  <td data-row="1" data-col="3">[-3.56, -2.43]</td>
+                  <td data-row="1" data-col="3">[-3.57, -2.42]</td>
                 </tr>
                 <tr>
                   <td data-row="2" data-col="1">cutone</td>
@@ -2780,7 +1930,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(plots<span class="sc">$</span>discrete, plots<span class="sc">$</span>continuous, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-ppcheckord" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="10">
+<div id="fig-ppcheckord" class="quarto-float quarto-figure quarto-figure-center" data-fignum="10" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-ppcheckord-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2815,7 +1965,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-heiss" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="11">
+<div id="fig-heiss" class="quarto-float quarto-figure quarto-figure-center" data-fignum="11" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-heiss-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2944,7 +2094,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb38-89"><a href="#cb38-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize =</span> .<span class="dv">6</span></span>
 <span id="cb38-90"><a href="#cb38-90" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tblnum="8" data-tbl-align="center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." prefix="">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`." data-tbl-align="center" data-tblnum="8" prefix="" data-after-caption-space="0pt">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2962,21 +2112,21 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 
     <script>
       // Create table-specific functions using external factory
-      const tableFns_gz7myhqlwenrmpwt5ni8 = TinyTable.createTableFunctions("tinytable_gz7myhqlwenrmpwt5ni8");
+      const tableFns_oodprgz7myhqlwenrmpw = TinyTable.createTableFunctions("tinytable_oodprgz7myhqlwenrmpw");
       // tinytable span after
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '11', j: 1 }, { i: '12', j: 1 }, { i: '14', j: 1 }, { i: '15', j: 1 }, { i: '17', j: 1 }, { i: '18', j: 1 }, { i: '20', j: 1 }, { i: '21', j: 1 }, { i: '23', j: 1 }, { i: '24', j: 1 }, { i: '26', j: 1 }, { i: '27', j: 1 }, { i: '29', j: 1 }, { i: '30', j: 1 }, { i: '32', j: 1 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '14', j: 2 }, { i: '15', j: 2 }, { i: '17', j: 2 }, { i: '18', j: 2 }, { i: '20', j: 2 }, { i: '21', j: 2 }, { i: '23', j: 2 }, { i: '24', j: 2 }, { i: '26', j: 2 }, { i: '27', j: 2 }, { i: '29', j: 2 }, { i: '30', j: 2 }, { i: '32', j: 2 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '14', j: 3 }, { i: '15', j: 3 }, { i: '17', j: 3 }, { i: '18', j: 3 }, { i: '20', j: 3 }, { i: '21', j: 3 }, { i: '23', j: 3 }, { i: '24', j: 3 }, { i: '26', j: 3 }, { i: '27', j: 3 }, { i: '29', j: 3 }, { i: '30', j: 3 }, { i: '32', j: 3 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '14', j: 4 }, { i: '15', j: 4 }, { i: '17', j: 4 }, { i: '18', j: 4 }, { i: '20', j: 4 }, { i: '21', j: 4 }, { i: '23', j: 4 }, { i: '24', j: 4 }, { i: '26', j: 4 }, { i: '27', j: 4 }, { i: '29', j: 4 }, { i: '30', j: 4 }, { i: '32', j: 4 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '11', j: 5 }, { i: '12', j: 5 }, { i: '14', j: 5 }, { i: '15', j: 5 }, { i: '17', j: 5 }, { i: '18', j: 5 }, { i: '20', j: 5 }, { i: '21', j: 5 }, { i: '23', j: 5 }, { i: '24', j: 5 }, { i: '26', j: 5 }, { i: '27', j: 5 }, { i: '29', j: 5 }, { i: '30', j: 5 }, { i: '32', j: 5 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '11', j: 6 }, { i: '12', j: 6 }, { i: '14', j: 6 }, { i: '15', j: 6 }, { i: '17', j: 6 }, { i: '18', j: 6 }, { i: '20', j: 6 }, { i: '21', j: 6 }, { i: '23', j: 6 }, { i: '24', j: 6 }, { i: '26', j: 6 }, { i: '27', j: 6 }, { i: '29', j: 6 }, { i: '30', j: 6 }, { i: '32', j: 6 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '11', j: 7 }, { i: '12', j: 7 }, { i: '14', j: 7 }, { i: '15', j: 7 }, { i: '17', j: 7 }, { i: '18', j: 7 }, { i: '20', j: 7 }, { i: '21', j: 7 }, { i: '23', j: 7 }, { i: '24', j: 7 }, { i: '26', j: 7 }, { i: '27', j: 7 }, { i: '29', j: 7 }, { i: '30', j: 7 }, { i: '32', j: 7 } ], css_id: 'tinytable_css_20xpfq85zpzj7kz0pq6x',}, 
-          { positions: [ { i: '1', j: 1 }, { i: '4', j: 1 }, { i: '7', j: 1 }, { i: '10', j: 1 }, { i: '13', j: 1 }, { i: '16', j: 1 }, { i: '19', j: 1 }, { i: '22', j: 1 }, { i: '25', j: 1 }, { i: '28', j: 1 }, { i: '31', j: 1 }, { i: '1', j: 2 }, { i: '4', j: 2 }, { i: '7', j: 2 }, { i: '10', j: 2 }, { i: '13', j: 2 }, { i: '16', j: 2 }, { i: '19', j: 2 }, { i: '22', j: 2 }, { i: '25', j: 2 }, { i: '28', j: 2 }, { i: '31', j: 2 }, { i: '1', j: 3 }, { i: '4', j: 3 }, { i: '7', j: 3 }, { i: '10', j: 3 }, { i: '13', j: 3 }, { i: '16', j: 3 }, { i: '19', j: 3 }, { i: '22', j: 3 }, { i: '25', j: 3 }, { i: '28', j: 3 }, { i: '31', j: 3 }, { i: '1', j: 4 }, { i: '4', j: 4 }, { i: '7', j: 4 }, { i: '10', j: 4 }, { i: '13', j: 4 }, { i: '16', j: 4 }, { i: '19', j: 4 }, { i: '22', j: 4 }, { i: '25', j: 4 }, { i: '28', j: 4 }, { i: '31', j: 4 }, { i: '1', j: 5 }, { i: '4', j: 5 }, { i: '7', j: 5 }, { i: '10', j: 5 }, { i: '13', j: 5 }, { i: '16', j: 5 }, { i: '19', j: 5 }, { i: '22', j: 5 }, { i: '25', j: 5 }, { i: '28', j: 5 }, { i: '31', j: 5 }, { i: '1', j: 6 }, { i: '4', j: 6 }, { i: '7', j: 6 }, { i: '10', j: 6 }, { i: '13', j: 6 }, { i: '16', j: 6 }, { i: '19', j: 6 }, { i: '22', j: 6 }, { i: '25', j: 6 }, { i: '28', j: 6 }, { i: '31', j: 6 }, { i: '1', j: 7 }, { i: '4', j: 7 }, { i: '7', j: 7 }, { i: '10', j: 7 }, { i: '13', j: 7 }, { i: '16', j: 7 }, { i: '19', j: 7 }, { i: '22', j: 7 }, { i: '25', j: 7 }, { i: '28', j: 7 }, { i: '31', j: 7 } ], css_id: 'tinytable_css_sjde2t0jgorx3thwyfoi',}, 
-          { positions: [ { i: '33', j: 1 }, { i: '33', j: 2 }, { i: '33', j: 3 }, { i: '33', j: 4 }, { i: '33', j: 5 }, { i: '33', j: 6 }, { i: '33', j: 7 } ], css_id: 'tinytable_css_pl3vm2tsp8to5b8zv6hv',}, 
-          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 }, { i: '0', j: 7 } ], css_id: 'tinytable_css_acztbkpr2pbmf0s974sw',}, 
+          { positions: [ { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '11', j: 1 }, { i: '12', j: 1 }, { i: '14', j: 1 }, { i: '15', j: 1 }, { i: '17', j: 1 }, { i: '18', j: 1 }, { i: '20', j: 1 }, { i: '21', j: 1 }, { i: '23', j: 1 }, { i: '24', j: 1 }, { i: '26', j: 1 }, { i: '27', j: 1 }, { i: '29', j: 1 }, { i: '30', j: 1 }, { i: '32', j: 1 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '14', j: 2 }, { i: '15', j: 2 }, { i: '17', j: 2 }, { i: '18', j: 2 }, { i: '20', j: 2 }, { i: '21', j: 2 }, { i: '23', j: 2 }, { i: '24', j: 2 }, { i: '26', j: 2 }, { i: '27', j: 2 }, { i: '29', j: 2 }, { i: '30', j: 2 }, { i: '32', j: 2 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '14', j: 3 }, { i: '15', j: 3 }, { i: '17', j: 3 }, { i: '18', j: 3 }, { i: '20', j: 3 }, { i: '21', j: 3 }, { i: '23', j: 3 }, { i: '24', j: 3 }, { i: '26', j: 3 }, { i: '27', j: 3 }, { i: '29', j: 3 }, { i: '30', j: 3 }, { i: '32', j: 3 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '14', j: 4 }, { i: '15', j: 4 }, { i: '17', j: 4 }, { i: '18', j: 4 }, { i: '20', j: 4 }, { i: '21', j: 4 }, { i: '23', j: 4 }, { i: '24', j: 4 }, { i: '26', j: 4 }, { i: '27', j: 4 }, { i: '29', j: 4 }, { i: '30', j: 4 }, { i: '32', j: 4 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '11', j: 5 }, { i: '12', j: 5 }, { i: '14', j: 5 }, { i: '15', j: 5 }, { i: '17', j: 5 }, { i: '18', j: 5 }, { i: '20', j: 5 }, { i: '21', j: 5 }, { i: '23', j: 5 }, { i: '24', j: 5 }, { i: '26', j: 5 }, { i: '27', j: 5 }, { i: '29', j: 5 }, { i: '30', j: 5 }, { i: '32', j: 5 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '11', j: 6 }, { i: '12', j: 6 }, { i: '14', j: 6 }, { i: '15', j: 6 }, { i: '17', j: 6 }, { i: '18', j: 6 }, { i: '20', j: 6 }, { i: '21', j: 6 }, { i: '23', j: 6 }, { i: '24', j: 6 }, { i: '26', j: 6 }, { i: '27', j: 6 }, { i: '29', j: 6 }, { i: '30', j: 6 }, { i: '32', j: 6 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '11', j: 7 }, { i: '12', j: 7 }, { i: '14', j: 7 }, { i: '15', j: 7 }, { i: '17', j: 7 }, { i: '18', j: 7 }, { i: '20', j: 7 }, { i: '21', j: 7 }, { i: '23', j: 7 }, { i: '24', j: 7 }, { i: '26', j: 7 }, { i: '27', j: 7 }, { i: '29', j: 7 }, { i: '30', j: 7 }, { i: '32', j: 7 } ], css_id: 'tinytable_css_wyfoi20xpfq85zpzj7kz',}, 
+          { positions: [ { i: '1', j: 1 }, { i: '4', j: 1 }, { i: '7', j: 1 }, { i: '10', j: 1 }, { i: '13', j: 1 }, { i: '16', j: 1 }, { i: '19', j: 1 }, { i: '22', j: 1 }, { i: '25', j: 1 }, { i: '28', j: 1 }, { i: '31', j: 1 }, { i: '1', j: 2 }, { i: '4', j: 2 }, { i: '7', j: 2 }, { i: '10', j: 2 }, { i: '13', j: 2 }, { i: '16', j: 2 }, { i: '19', j: 2 }, { i: '22', j: 2 }, { i: '25', j: 2 }, { i: '28', j: 2 }, { i: '31', j: 2 }, { i: '1', j: 3 }, { i: '4', j: 3 }, { i: '7', j: 3 }, { i: '10', j: 3 }, { i: '13', j: 3 }, { i: '16', j: 3 }, { i: '19', j: 3 }, { i: '22', j: 3 }, { i: '25', j: 3 }, { i: '28', j: 3 }, { i: '31', j: 3 }, { i: '1', j: 4 }, { i: '4', j: 4 }, { i: '7', j: 4 }, { i: '10', j: 4 }, { i: '13', j: 4 }, { i: '16', j: 4 }, { i: '19', j: 4 }, { i: '22', j: 4 }, { i: '25', j: 4 }, { i: '28', j: 4 }, { i: '31', j: 4 }, { i: '1', j: 5 }, { i: '4', j: 5 }, { i: '7', j: 5 }, { i: '10', j: 5 }, { i: '13', j: 5 }, { i: '16', j: 5 }, { i: '19', j: 5 }, { i: '22', j: 5 }, { i: '25', j: 5 }, { i: '28', j: 5 }, { i: '31', j: 5 }, { i: '1', j: 6 }, { i: '4', j: 6 }, { i: '7', j: 6 }, { i: '10', j: 6 }, { i: '13', j: 6 }, { i: '16', j: 6 }, { i: '19', j: 6 }, { i: '22', j: 6 }, { i: '25', j: 6 }, { i: '28', j: 6 }, { i: '31', j: 6 }, { i: '1', j: 7 }, { i: '4', j: 7 }, { i: '7', j: 7 }, { i: '10', j: 7 }, { i: '13', j: 7 }, { i: '16', j: 7 }, { i: '19', j: 7 }, { i: '22', j: 7 }, { i: '25', j: 7 }, { i: '28', j: 7 }, { i: '31', j: 7 } ], css_id: 'tinytable_css_zv6hvsjde2t0jgorx3th',}, 
+          { positions: [ { i: '33', j: 1 }, { i: '33', j: 2 }, { i: '33', j: 3 }, { i: '33', j: 4 }, { i: '33', j: 5 }, { i: '33', j: 6 }, { i: '33', j: 7 } ], css_id: 'tinytable_css_974swpl3vm2tsp8to5b8',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 }, { i: '0', j: 7 } ], css_id: 'tinytable_css_t5ni8acztbkpr2pbmf0s',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  tableFns_gz7myhqlwenrmpwt5ni8.styleCell(cell.i, cell.j, group.css_id);
+                  tableFns_oodprgz7myhqlwenrmpw.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -2985,13 +2135,13 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
     <style>
     /* tinytable css entries after */
-    #tinytable_gz7myhqlwenrmpwt5ni8 td.tinytable_css_20xpfq85zpzj7kz0pq6x, #tinytable_gz7myhqlwenrmpwt5ni8 th.tinytable_css_20xpfq85zpzj7kz0pq6x { font-style: italic; text-align: center; font-size: 0.9em }
-    #tinytable_gz7myhqlwenrmpwt5ni8 td.tinytable_css_sjde2t0jgorx3thwyfoi, #tinytable_gz7myhqlwenrmpwt5ni8 th.tinytable_css_sjde2t0jgorx3thwyfoi { text-align: center; font-size: 0.9em }
-    #tinytable_gz7myhqlwenrmpwt5ni8 td.tinytable_css_pl3vm2tsp8to5b8zv6hv, #tinytable_gz7myhqlwenrmpwt5ni8 th.tinytable_css_pl3vm2tsp8to5b8zv6hv {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; font-style: italic; text-align: center; font-size: 0.9em }
-    #tinytable_gz7myhqlwenrmpwt5ni8 td.tinytable_css_acztbkpr2pbmf0s974sw, #tinytable_gz7myhqlwenrmpwt5ni8 th.tinytable_css_acztbkpr2pbmf0s974sw {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center; font-size: 0.9em }
+    #tinytable_oodprgz7myhqlwenrmpw td.tinytable_css_wyfoi20xpfq85zpzj7kz, #tinytable_oodprgz7myhqlwenrmpw th.tinytable_css_wyfoi20xpfq85zpzj7kz { font-style: italic; text-align: center; font-size: 0.9em }
+    #tinytable_oodprgz7myhqlwenrmpw td.tinytable_css_zv6hvsjde2t0jgorx3th, #tinytable_oodprgz7myhqlwenrmpw th.tinytable_css_zv6hvsjde2t0jgorx3th { text-align: center; font-size: 0.9em }
+    #tinytable_oodprgz7myhqlwenrmpw td.tinytable_css_974swpl3vm2tsp8to5b8, #tinytable_oodprgz7myhqlwenrmpw th.tinytable_css_974swpl3vm2tsp8to5b8 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; font-style: italic; text-align: center; font-size: 0.9em }
+    #tinytable_oodprgz7myhqlwenrmpw td.tinytable_css_t5ni8acztbkpr2pbmf0s, #tinytable_oodprgz7myhqlwenrmpw th.tinytable_css_t5ni8acztbkpr2pbmf0s {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center; font-size: 0.9em }
     </style>
     <div class="container">
-      <table class="tinytable" id="tinytable_gz7myhqlwenrmpwt5ni8" style="table-layout: fixed; width: 95% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="tinytable" id="tinytable_oodprgz7myhqlwenrmpw" style="table-layout: fixed; width: 95% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         
         <thead>
               <tr>
@@ -3009,20 +2159,20 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td data-row="1" data-col="1">b_Intercept</td>
                   <td data-row="1" data-col="2">Mean</td>
-                  <td data-row="1" data-col="3">0.257</td>
-                  <td data-row="1" data-col="4">-0.824</td>
+                  <td data-row="1" data-col="3">0.256</td>
+                  <td data-row="1" data-col="4">-0.828</td>
                   <td data-row="1" data-col="5">-0.830</td>
-                  <td data-row="1" data-col="6">-0.824</td>
-                  <td data-row="1" data-col="7">-0.863</td>
+                  <td data-row="1" data-col="6">-0.828</td>
+                  <td data-row="1" data-col="7">-0.867</td>
                 </tr>
                 <tr>
                   <td data-row="2" data-col="1"></td>
                   <td data-row="2" data-col="2">Cr.I</td>
-                  <td data-row="2" data-col="3">[0.199, 0.313]</td>
-                  <td data-row="2" data-col="4">[-1.095, -0.544]</td>
-                  <td data-row="2" data-col="5">[-1.093, -0.565]</td>
-                  <td data-row="2" data-col="6">[-1.091, -0.559]</td>
-                  <td data-row="2" data-col="7">[-1.129, -0.61]</td>
+                  <td data-row="2" data-col="3">[0.201, 0.314]</td>
+                  <td data-row="2" data-col="4">[-1.102, -0.554]</td>
+                  <td data-row="2" data-col="5">[-1.091, -0.571]</td>
+                  <td data-row="2" data-col="6">[-1.101, -0.554]</td>
+                  <td data-row="2" data-col="7">[-1.131, -0.609]</td>
                 </tr>
                 <tr>
                   <td data-row="3" data-col="1"></td>
@@ -3037,33 +2187,33 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="4" data-col="1">b_Fluency</td>
                   <td data-row="4" data-col="2">Mean</td>
                   <td data-row="4" data-col="3">0.084</td>
-                  <td data-row="4" data-col="4">0.197</td>
-                  <td data-row="4" data-col="5">0.201</td>
-                  <td data-row="4" data-col="6">0.196</td>
-                  <td data-row="4" data-col="7">0.259</td>
+                  <td data-row="4" data-col="4">0.201</td>
+                  <td data-row="4" data-col="5">0.202</td>
+                  <td data-row="4" data-col="6">0.201</td>
+                  <td data-row="4" data-col="7">0.262</td>
                 </tr>
                 <tr>
                   <td data-row="5" data-col="1"></td>
                   <td data-row="5" data-col="2">Cr.I</td>
-                  <td data-row="5" data-col="3">[-0.001, 0.17]</td>
-                  <td data-row="5" data-col="4">[-0.155, 0.546]</td>
-                  <td data-row="5" data-col="5">[-0.145, 0.533]</td>
-                  <td data-row="5" data-col="6">[-0.135, 0.537]</td>
-                  <td data-row="5" data-col="7">[-0.066, 0.591]</td>
+                  <td data-row="5" data-col="3">[-0.001, 0.164]</td>
+                  <td data-row="5" data-col="4">[-0.139, 0.544]</td>
+                  <td data-row="5" data-col="5">[-0.142, 0.541]</td>
+                  <td data-row="5" data-col="6">[-0.14, 0.552]</td>
+                  <td data-row="5" data-col="7">[-0.058, 0.599]</td>
                 </tr>
                 <tr>
                   <td data-row="6" data-col="1"></td>
                   <td data-row="6" data-col="2">pd</td>
                   <td data-row="6" data-col="3">0.974</td>
-                  <td data-row="6" data-col="4">0.859</td>
-                  <td data-row="6" data-col="5">0.873</td>
-                  <td data-row="6" data-col="6">0.874</td>
-                  <td data-row="6" data-col="7">0.939</td>
+                  <td data-row="6" data-col="4">0.872</td>
+                  <td data-row="6" data-col="5">0.874</td>
+                  <td data-row="6" data-col="6">0.866</td>
+                  <td data-row="6" data-col="7">0.944</td>
                 </tr>
                 <tr>
                   <td data-row="7" data-col="1">sigma</td>
                   <td data-row="7" data-col="2">Mean</td>
-                  <td data-row="7" data-col="3">0.208</td>
+                  <td data-row="7" data-col="3">0.209</td>
                   <td data-row="7" data-col="4">-</td>
                   <td data-row="7" data-col="5">-</td>
                   <td data-row="7" data-col="6">-</td>
@@ -3072,7 +2222,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td data-row="8" data-col="1"></td>
                   <td data-row="8" data-col="2">Cr.I</td>
-                  <td data-row="8" data-col="3">[0.182, 0.242]</td>
+                  <td data-row="8" data-col="3">[0.181, 0.242]</td>
                   <td data-row="8" data-col="4">-</td>
                   <td data-row="8" data-col="5">-</td>
                   <td data-row="8" data-col="6">-</td>
@@ -3091,19 +2241,19 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="10" data-col="1">b_phi_Intercept</td>
                   <td data-row="10" data-col="2">Mean</td>
                   <td data-row="10" data-col="3">-</td>
-                  <td data-row="10" data-col="4">1.600</td>
-                  <td data-row="10" data-col="5">1.598</td>
-                  <td data-row="10" data-col="6">1.594</td>
-                  <td data-row="10" data-col="7">1.612</td>
+                  <td data-row="10" data-col="4">1.602</td>
+                  <td data-row="10" data-col="5">1.603</td>
+                  <td data-row="10" data-col="6">1.595</td>
+                  <td data-row="10" data-col="7">1.611</td>
                 </tr>
                 <tr>
                   <td data-row="11" data-col="1"></td>
                   <td data-row="11" data-col="2">Cr.I</td>
                   <td data-row="11" data-col="3">-</td>
-                  <td data-row="11" data-col="4">[1.175, 1.989]</td>
-                  <td data-row="11" data-col="5">[1.189, 1.986]</td>
-                  <td data-row="11" data-col="6">[1.169, 1.972]</td>
-                  <td data-row="11" data-col="7">[1.211, 1.986]</td>
+                  <td data-row="11" data-col="4">[1.18, 1.995]</td>
+                  <td data-row="11" data-col="5">[1.193, 1.987]</td>
+                  <td data-row="11" data-col="6">[1.179, 1.978]</td>
+                  <td data-row="11" data-col="7">[1.195, 1.997]</td>
                 </tr>
                 <tr>
                   <td data-row="12" data-col="1"></td>
@@ -3118,35 +2268,35 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="13" data-col="1">b_phi_Fluency</td>
                   <td data-row="13" data-col="2">Mean</td>
                   <td data-row="13" data-col="3">-</td>
-                  <td data-row="13" data-col="4">0.426</td>
-                  <td data-row="13" data-col="5">0.431</td>
-                  <td data-row="13" data-col="6">0.436</td>
-                  <td data-row="13" data-col="7">0.407</td>
+                  <td data-row="13" data-col="4">0.422</td>
+                  <td data-row="13" data-col="5">0.420</td>
+                  <td data-row="13" data-col="6">0.434</td>
+                  <td data-row="13" data-col="7">0.412</td>
                 </tr>
                 <tr>
                   <td data-row="14" data-col="1"></td>
                   <td data-row="14" data-col="2">Cr.I</td>
                   <td data-row="14" data-col="3">-</td>
-                  <td data-row="14" data-col="4">[-0.145, 0.997]</td>
-                  <td data-row="14" data-col="5">[-0.136, 0.996]</td>
-                  <td data-row="14" data-col="6">[-0.139, 0.991]</td>
-                  <td data-row="14" data-col="7">[-0.171, 0.958]</td>
+                  <td data-row="14" data-col="4">[-0.163, 1]</td>
+                  <td data-row="14" data-col="5">[-0.163, 0.999]</td>
+                  <td data-row="14" data-col="6">[-0.139, 0.997]</td>
+                  <td data-row="14" data-col="7">[-0.16, 1.001]</td>
                 </tr>
                 <tr>
                   <td data-row="15" data-col="1"></td>
                   <td data-row="15" data-col="2">pd</td>
                   <td data-row="15" data-col="3">-</td>
-                  <td data-row="15" data-col="4">0.931</td>
-                  <td data-row="15" data-col="5">0.933</td>
-                  <td data-row="15" data-col="6">0.930</td>
-                  <td data-row="15" data-col="7">0.919</td>
+                  <td data-row="15" data-col="4">0.920</td>
+                  <td data-row="15" data-col="5">0.923</td>
+                  <td data-row="15" data-col="6">0.933</td>
+                  <td data-row="15" data-col="7">0.918</td>
                 </tr>
                 <tr>
                   <td data-row="16" data-col="1">b_zi_Intercept</td>
                   <td data-row="16" data-col="2">Mean</td>
                   <td data-row="16" data-col="3">-</td>
                   <td data-row="16" data-col="4">-</td>
-                  <td data-row="16" data-col="5">-1.670</td>
+                  <td data-row="16" data-col="5">-1.661</td>
                   <td data-row="16" data-col="6">-</td>
                   <td data-row="16" data-col="7">-</td>
                 </tr>
@@ -3155,7 +2305,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="17" data-col="2">Cr.I</td>
                   <td data-row="17" data-col="3">-</td>
                   <td data-row="17" data-col="4">-</td>
-                  <td data-row="17" data-col="5">[-2.498, -0.966]</td>
+                  <td data-row="17" data-col="5">[-2.485, -0.939]</td>
                   <td data-row="17" data-col="6">-</td>
                   <td data-row="17" data-col="7">-</td>
                 </tr>
@@ -3173,7 +2323,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="19" data-col="2">Mean</td>
                   <td data-row="19" data-col="3">-</td>
                   <td data-row="19" data-col="4">-</td>
-                  <td data-row="19" data-col="5">-2.091</td>
+                  <td data-row="19" data-col="5">-2.133</td>
                   <td data-row="19" data-col="6">-</td>
                   <td data-row="19" data-col="7">-</td>
                 </tr>
@@ -3182,7 +2332,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="20" data-col="2">Cr.I</td>
                   <td data-row="20" data-col="3">-</td>
                   <td data-row="20" data-col="4">-</td>
-                  <td data-row="20" data-col="5">[-4.55, -0.378]</td>
+                  <td data-row="20" data-col="5">[-4.485, -0.305]</td>
                   <td data-row="20" data-col="6">-</td>
                   <td data-row="20" data-col="7">-</td>
                 </tr>
@@ -3191,7 +2341,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="21" data-col="2">pd</td>
                   <td data-row="21" data-col="3">-</td>
                   <td data-row="21" data-col="4">-</td>
-                  <td data-row="21" data-col="5">0.994**</td>
+                  <td data-row="21" data-col="5">0.991**</td>
                   <td data-row="21" data-col="6">-</td>
                   <td data-row="21" data-col="7">-</td>
                 </tr>
@@ -3201,7 +2351,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="22" data-col="3">-</td>
                   <td data-row="22" data-col="4">-</td>
                   <td data-row="22" data-col="5">-</td>
-                  <td data-row="22" data-col="6">-1.542</td>
+                  <td data-row="22" data-col="6">-1.545</td>
                   <td data-row="22" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3210,7 +2360,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="23" data-col="3">-</td>
                   <td data-row="23" data-col="4">-</td>
                   <td data-row="23" data-col="5">-</td>
-                  <td data-row="23" data-col="6">[-2.308, -0.869]</td>
+                  <td data-row="23" data-col="6">[-2.334, -0.87]</td>
                   <td data-row="23" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3228,7 +2378,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="25" data-col="3">-</td>
                   <td data-row="25" data-col="4">-</td>
                   <td data-row="25" data-col="5">-</td>
-                  <td data-row="25" data-col="6">-2.292</td>
+                  <td data-row="25" data-col="6">-2.258</td>
                   <td data-row="25" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3237,7 +2387,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="26" data-col="3">-</td>
                   <td data-row="26" data-col="4">-</td>
                   <td data-row="26" data-col="5">-</td>
-                  <td data-row="26" data-col="6">[-4.836, -0.458]</td>
+                  <td data-row="26" data-col="6">[-4.637, -0.487]</td>
                   <td data-row="26" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3246,7 +2396,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="27" data-col="3">-</td>
                   <td data-row="27" data-col="4">-</td>
                   <td data-row="27" data-col="5">-</td>
-                  <td data-row="27" data-col="6">0.993**</td>
+                  <td data-row="27" data-col="6">0.994**</td>
                   <td data-row="27" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3255,7 +2405,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="28" data-col="3">-</td>
                   <td data-row="28" data-col="4">-</td>
                   <td data-row="28" data-col="5">-</td>
-                  <td data-row="28" data-col="6">-2.070</td>
+                  <td data-row="28" data-col="6">-2.067</td>
                   <td data-row="28" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3264,7 +2414,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="29" data-col="3">-</td>
                   <td data-row="29" data-col="4">-</td>
                   <td data-row="29" data-col="5">-</td>
-                  <td data-row="29" data-col="6">[-4.572, -0.335]</td>
+                  <td data-row="29" data-col="6">[-4.506, -0.348]</td>
                   <td data-row="29" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3273,7 +2423,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="30" data-col="3">-</td>
                   <td data-row="30" data-col="4">-</td>
                   <td data-row="30" data-col="5">-</td>
-                  <td data-row="30" data-col="6">0.992**</td>
+                  <td data-row="30" data-col="6">0.993**</td>
                   <td data-row="30" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3282,7 +2432,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="31" data-col="3">-</td>
                   <td data-row="31" data-col="4">-</td>
                   <td data-row="31" data-col="5">-</td>
-                  <td data-row="31" data-col="6">0.132</td>
+                  <td data-row="31" data-col="6">0.273</td>
                   <td data-row="31" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3291,7 +2441,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="32" data-col="3">-</td>
                   <td data-row="32" data-col="4">-</td>
                   <td data-row="32" data-col="5">-</td>
-                  <td data-row="32" data-col="6">[-7.058, 5.817]</td>
+                  <td data-row="32" data-col="6">[-6.257, 5.654]</td>
                   <td data-row="32" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -3300,7 +2450,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="33" data-col="3">-</td>
                   <td data-row="33" data-col="4">-</td>
                   <td data-row="33" data-col="5">-</td>
-                  <td data-row="33" data-col="6">0.553</td>
+                  <td data-row="33" data-col="6">0.564</td>
                   <td data-row="33" data-col="7">-</td>
                 </tr>
         </tbody>
@@ -3359,7 +2509,7 @@ Listing&nbsp;19: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-ppcheckall" class="quarto-float quarto-figure quarto-figure-center" prefix="" data-fignum="12">
+<div id="fig-ppcheckall" class="quarto-float quarto-figure quarto-figure-center" data-fignum="12" prefix="">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-ppcheckall-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -4844,7 +3994,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <span id="cb40-845"><a href="#cb40-845" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
 <span id="cb40-846"><a href="#cb40-846" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb40-847"><a href="#cb40-847" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-848"><a href="#cb40-848" aria-hidden="true" tabindex="-1"></a><span class="fu">predictions</span>(</span>
+<span id="cb40-848"><a href="#cb40-848" aria-hidden="true" tabindex="-1"></a><span class="fu">avg_predictions</span>(</span>
 <span id="cb40-849"><a href="#cb40-849" aria-hidden="true" tabindex="-1"></a>  beta_brms,</span>
 <span id="cb40-850"><a href="#cb40-850" aria-hidden="true" tabindex="-1"></a>  <span class="co"># need to specify the levels of the categorical predictor</span></span>
 <span id="cb40-851"><a href="#cb40-851" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">"Fluency"</span></span>
@@ -4858,7 +4008,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <span id="cb40-861"><a href="#cb40-861" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
 <span id="cb40-862"><a href="#cb40-862" aria-hidden="true" tabindex="-1"></a><span class="co">#| after-caption-space: 0pt</span></span>
 <span id="cb40-863"><a href="#cb40-863" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-864"><a href="#cb40-864" aria-hidden="true" tabindex="-1"></a><span class="fu">predictions</span>(</span>
+<span id="cb40-864"><a href="#cb40-864" aria-hidden="true" tabindex="-1"></a><span class="fu">avg_predictions</span>(</span>
 <span id="cb40-865"><a href="#cb40-865" aria-hidden="true" tabindex="-1"></a>  beta_brms,</span>
 <span id="cb40-866"><a href="#cb40-866" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">"Fluency"</span></span>
 <span id="cb40-867"><a href="#cb40-867" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
