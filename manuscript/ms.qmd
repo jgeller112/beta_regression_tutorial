@@ -216,7 +216,7 @@ if (!dir.exists(path)) {
 #| label: data-import
 #| echo: false
 
-fluency_data <- read.csv(here("manuscript", "data", "miko_data.csv")) %>%
+fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
     Fluency = "Condition",
