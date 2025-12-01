@@ -799,7 +799,7 @@ options(marginaleffects_posterior_center = mean) # make sure returns mean
 #| eval: false
 #| echo: true
 
-predictions(
+avg_predictions(
   beta_brms,
   # need to specify the levels of the categorical predictor
   variables = "Fluency"
@@ -813,7 +813,7 @@ predictions(
 #| echo: false
 #| after-caption-space: 0pt
 
-predictions(
+avg_predictions(
   beta_brms,
   variables = "Fluency"
 ) |>
