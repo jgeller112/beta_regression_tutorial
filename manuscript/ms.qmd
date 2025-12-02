@@ -204,7 +204,7 @@ theme_publication <- function(
 ```
 
 ```{r}
-path <- here::here("models")
+path <- here::here("manuscript", "models")
 
 # Create the directory if it doesn't exist
 if (!dir.exists(path)) {
@@ -936,7 +936,7 @@ beta_avg_comp_rope <- avg_comparisons(
 
 ```
 
-The ROPE can also be obtained with the {marginaleffects} package by specifying the equivalence bounds argument in `avg_comparisons()` . Running the code below (@lst-merope) returns a ROPE of 23%, indicating insufficient evidence to conclude that the effect exceeds 2%.
+,The ROPE can also be obtained using the {marginaleffects} package by specifying the `equivalence` bounds in `avg_comparisons()`. Running the code in @lst-merope returns a ROPE probability of 23%, indicating that there is insufficient evidence to conclude that the effect exceeds 2% or is practically equivalent.
 
 #### $\phi$ difference
 
@@ -988,7 +988,7 @@ $$ {#eq-cohenh}
 
 ### Posterior Predictive Check
 
-@fig-ppcheckall (B) shows the predictive check for our beta model. The model's predictions generally conform to the data as the predictions are now between constrained to the 0-1 interval. However, we can further improve the model's predictive performance if we take into account the bounds of the scale more explicitly.
+@fig-ppcheckall (B) shows the predictive check for our beta model. The model's predictions generally conform to the data as the predictions are now between constrained to the 0-1 interval. However, the model's predictive performance can be improved the bounds of the scale are explicitly specified.
 
 ## Zero-Inflated beta (ZIB) Regression
 
