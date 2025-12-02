@@ -1,7 +1,7 @@
 project:
   title: "A Beta Way"
   render:
-    - ms.qmd
+    - /manuscript/ms.qmd
 
 site-url: https://jgeller112.github.io/beta_regression_tutorial/
 
