@@ -920,8 +920,7 @@ beta_avg_comp |>
 
 #### $\mu$ Difference
 
-@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval includes 0 among the most credible values, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd also indicates the effect is non-significant (*p* > .05). 
-Above we extracted the ROPE value using the {bayestestR} package. We can also extract the ROPE using the {marginaleffects} package by setting the equivalaence bounds argument in the `avg_comparisons()` function (@lst-margeffectrope). Running the code below returns ROPE of 23% which means there is not enough evidence to conclude the effect is larger than 2%. 
+@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval includes 0 among the most credible values, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd also indicates the effect is non-significant (*p* > .05). In the basic regression model above, the ROPE value was extracted using the {bayestestR} package. The ROPE can also be obtained with the {marginaleffects} package by specifying the equivalence bounds argument in `avg_comparisons()` (@lst-margeeffectrope). Running the code below returns a ROPE of 23%, indicating insufficient evidence to conclude that the effect exceeds 2%.
 
 ```{r}
 #| label: margeffect_rope
@@ -1634,18 +1633,8 @@ pp_check3 <- pp_check(
   xlim(0, 1) +
   coord_cartesian(ylim = c(0, 6))
 
-pp_check3 <- pp_check(
-  model4,
-  type = "dens_overlay_grouped",
-  group = "Fluency",
-  ndraws = 100
-) +
-  theme_publication() +
-  xlim(0, 1) +
-  coord_cartesian(ylim = c(0, 6))
-
 # Use `plot_spacer()` for the empty 4th spot
-combined_plot <- (pp_check1 / pp_check2 / pp_check3 / pp_check4) +
+combined_plot <- (pp_check1 / pp_check2 / pp_check3) +
   plot_annotation(
     tag_levels = 'A',
     tag_prefix = "(",
@@ -1659,7 +1648,7 @@ combined_plot
 
 The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to turn the tides. Beta regression models are an attractive alternative to models that impose unrealistic assumptions like normality, linearity, homoscedasticity, and unbounded data. Beyond these models, there are a diverse array of different models that can be used depending on your outcome of interest.
 
-Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results.
+Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results using the {marginaleffects} package.  
 
 Comparing our analysis with that of @wilford2020, we demonstrated that using a traditional approache (e.g., *t*-test) to analyze mean accuracy data can lead to biased inferences. Although we successfully reproduced one of their key findings, our use of beta regression and its extensions revealed important nuances in the results. With a traditional beta regression model–which accounts for both the mean and the precision (dispersion)–we observed similar effects of instructor fluency on performance. However, the standard beta model does not accommodate boundary values (i.e., 0s and 1s).
 
