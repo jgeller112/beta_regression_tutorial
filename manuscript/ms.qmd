@@ -271,7 +271,7 @@ Typically, the expected value (or mean) of the response variable is the central 
 
 The beta distribution is continuous and restricted to values between 0 and 1 (exclusive). Its two parameters--commonly called shape1 ($\alpha$) and shape2 ($\beta$)--govern the distribution’s location, skewness, and spread. By adjusting these parameters, the distribution can take many functional forms (e.g., it can be symmetric, skewed, U-shaped, or even approximately uniform; see @fig-curves).
 
-To illustrate, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as $\alpha$, and the number of points missed (2) as $\beta$. The resulting beta distribution would be skewed toward higher values, reflecting a high performance (yellow line in @fig-curves; "beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (green line in @fig-curves; "beta(2, 5)").
+To illustrate, consider a test question worth seven points. Suppose a participant scores five out of seven. The number of points received (5) can be treated as $\alpha$, and the number of points missed (2) as $\beta$. The resulting beta distribution would be skewed toward higher values, reflecting a high performance (pink line in @fig-curves; "beta(5, 2)"). Reversing these values would produce a distribution skewed toward lower values, representing poorer performance (orange line in @fig-curves; "beta(2, 5)").
 
 ```{r}
 #| label: fig-curves
@@ -511,7 +511,7 @@ fluency_data |>
 
 We first replicate this analysis in a regression framework using {brms}. We model final test mean accuracy--the proportion of correctly recalled idea units across the videos--as the dependent variable. Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.
 
-### Regression Model
+### Regression Analysis
 
 We first start by loading the {brms} [@brms] and {cmdstanr} [@cmdstanr] packages (@lst-loadbrms). We use the cmdstanr backend for Stan [@stan2023] because it's faster than the default used to run models (i.e., `rstan`),[^6] though all of these models can also be fit with `brms` defaults.
 
@@ -562,7 +562,7 @@ The output also includes the effective sample size (ESS) and R̂ (R-hat) values,
 
 Importantly, pd does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, readers can consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
 
-The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}, the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with default settings suggests that 6% lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).
+The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}, the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with default settings suggests that less than 5% lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).
 
 ```{r}
 #| label: rope-brms
@@ -602,6 +602,8 @@ p_annotated <- p +
 
 p_annotated
 ```
+
+#### Assumptions
 
 @wilford2020 observed that instructor fluency impacts actual learning, using a standard *t*-test on the mean accuracy. But recall this approach assumes normality of residuals and homoskedasticity. These assumptions are unrealistic when the response values approach the scale boundaries [@sladekova2024unicorns]. Does the data we have meet those assumptions? We can use the function `check_model()` from {easystats} [@easystats] to check our assumptions easily. The code in @lst-check1 produces @fig-reg-assump. We can see some issues with our model. Specifically, there appears to be violations of constant variance across the values of the scale (homoskedasticity). In plain terms, this type of model mis-specfication means that a standard OLS model can predict non-sensical values outside the bounds of the scale.
 
@@ -782,7 +784,7 @@ Parameter estimates can be difficult to interpret, and researchers can instead d
 
 In our example, we can use the `plogis()` function in base R to convert estimates from the logit scale to the probability scale. The intercept of our model is -0.918, which reflects the logit of the mean accuracy in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the logit scale, we first add this value to the intercept value (-0.918) to get the logit for the fluent condition: `-0.83 + 0.20 = -0.63`. We then use `plogis()` to convert both logit values to probabilities (Fluent = 35%, Disfluent = 30%).
 
-With single coefficients this calculation is trivial, but in more complex models with interactions, it can be quite cumbersome. To help us extract predictions from our model and visualize them we will use a package called {marginaleffects} [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the $\mu$ parameter we can use the function from the package called `predictions()`. These are displayed in @tbl-predict-prob. These probabilities match what we calculated above.
+With single coefficients this calculation is trivial, but in more complex models with interactions, it can be quite cumbersome. To help us extract predictions from our model and visualize them we will use a package called {marginaleffects} [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the $\mu$ parameter we can use the function from the package called `avg_predictions()`. These are displayed in @tbl-predict-prob. These probabilities match what we calculated above.
 
 ```{r}
 #| echo: true
@@ -795,12 +797,12 @@ options(marginaleffects_posterior_center = mean) # make sure returns mean
 
 ```{r}
 #| lst-label: lst-pred
-#| lst-cap: Predictions from the beta model for each level of Fluency.
+#| lst-cap: Predictions from the beta model for each level of Fluency ($\mu$).
 #| eval: false
 #| echo: true
 
 avg_predictions(
-  beta_brms,
+  beta_brms_dis,
   # need to specify the levels of the categorical predictor
   variables = "Fluency"
 )
@@ -808,13 +810,13 @@ avg_predictions(
 
 ```{r}
 #| label: tbl-predict-prob
-#| tbl-cap: Predicted probabilities for fluency factor.
+#| tbl-cap: Predicted probabilities for fluency factor ($\mu$).
 #| tbl-cap-location: top
 #| echo: false
 #| after-caption-space: 0pt
 
 avg_predictions(
-  beta_brms,
+  beta_brms_dis,
   variables = "Fluency"
 ) |>
   mutate(Fluency = ifelse(Fluency == "Fluent", "Fluent", "Disfluent")) |>
@@ -829,7 +831,7 @@ avg_predictions(
   format_tt(escape = TRUE)
 ```
 
-For the `Fluency` factor, we can interpret `Mean` as proportions or percentages. That is, participants who watched the fluent instructor scored on average 35% on the final exam compared to 30% for those who watched the disfluent instructor. We can also visualize these from {marginaleffects} using the `plot_predictions()` function (see @lst-plotbeta).
+For the `Fluency` factor, we can interpret the estimates under the `Mean` column as a proportion or percentage. That is, participants who watched the fluent instructor scored on average 35% on the final exam compared to 30% for those who watched the disfluent instructor. We can also visualize these from {marginaleffects} using the `plot_predictions()` function (see @lst-plotbeta).
 
 ```{r}
 #| label: plot beta
@@ -837,7 +839,7 @@ For the `Fluency` factor, we can interpret `Mean` as proportions or percentages.
 #| lst-cap: Plot predicted probabilities using `plot_predictions()` from {marginaleffects}
 #| echo: true
 
-beta_plot <- plot_predictions(beta_brms, by = "Fluency")
+beta_plot <- plot_predictions(beta_brms_dis, by = "Fluency")
 ```
 
 The `plot_predictions()` function will only display the point estimate with the 95% credible interval. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the {marginaleffects} package, we can obtain samples from the posterior distribution with the `posterior_draws()` function (see @lst-posdraws). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (see @fig-draws-fluency).
@@ -848,13 +850,13 @@ The `plot_predictions()` function will only display the point estimate with the 
 #| echo: true
 
 # Add a model identifier to each dataset
-pred_draws_beta <- avg_predictions(beta_brms, variables = "Fluency") |>
+pred_draws_beta <- avg_predictions(beta_brms_dis, variables = "Fluency") |>
   posterior_draws()
 ```
 
 ```{r}
 #| label: fig-draws-fluency
-#| fig-cap: Predicted probablity posterior distributions by fluency
+#| fig-cap: Predicted probablity posterior distributions by instructor fluency
 # Plot both models
 ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
   stat_halfeye(.width = c(.5, .8, .95), alpha = 0.7) +
@@ -882,13 +884,13 @@ One practical use of AMEs is to estimate the average difference between two grou
 ```{r}
 #| label: ame1
 #| lst-label: lst-avgcomp
-#| lst-cap: "Calculating the difference between probabilities with `avg_comparisons()`"
+#| lst-cap: Calculating the difference between probabilities ($\mu$) for fluency with `avg_comparisons()`
 #| echo: true
 
 # get risk difference by default
 beta_avg_comp <- avg_comparisons(
-  beta_brms,
-  variables = "Fluency",
+  beta_brms_dis,
+  variables = "Fluency", # counterfactural difference
   comparison = "difference"
 )
 ```
@@ -896,7 +898,7 @@ beta_avg_comp <- avg_comparisons(
 ```{r}
 #| label: tbl-ame1
 #| echo: false
-#| tbl-cap: Fluency difference
+#| tbl-cap: Fluency difference ($\mu$)
 #| after-caption-space: 0pt
 
 p_d <- beta_avg_comp |>
@@ -916,9 +918,29 @@ beta_avg_comp |>
   format_tt(escape = TRUE)
 ```
 
-@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval includes 0 among the most credible values, suggesting we cannot rule out the possibility of a null or weakly negative effect.
+#### $\mu$ Difference
 
-We can also use {marginaleffects} to get the actual precision difference between the two groups on $\phi$ using similar code to above by setting `dpar` to "phi" {@lst-avgphi}.
+@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval includes 0 among the most credible values, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd also indicates the effect is non-significant (*p* > .05). 
+Above we extracted the ROPE value using the {bayestestR} package. We can also extract the ROPE using the {marginaleffects} package by setting the equivalaence bounds argument in the `avg_comparisons()` function (@lst-margeffectrope). Running the code below returns ROPE of 23% which means there is not enough evidence to conclude the effect is larger than 2%. 
+
+```{r}
+#| label: margeffect_rope
+#| lst-label: lst-margeeffectrope
+#| lst-cap: Extracting ROPE using {marginaleffects} for $\mu$ difference
+
+# get risk difference by default
+beta_avg_comp_rope <- avg_comparisons(
+  beta_brms_dis,
+  variables = "Fluency", # counterfactural difference
+  comparison = "difference",
+  equivalence=c(-0.02, .02)
+)
+
+```
+
+#### $\phi$ difference
+
+In addition, with {marginaleffects}, we can get the actual precision difference between the two groups on $\phi$ using similar code to above by setting `dpar` to "phi" {@lst-avgphi}.
 
 ```{r}
 #| label: ame-phi
@@ -955,6 +977,8 @@ h_lower <- 2 * (asin(sqrt(p1_lower)) - asin(sqrt(p2_upper)))
 # Upper bound of h
 h_upper <- 2 * (asin(sqrt(p1_upper)) - asin(sqrt(p2_lower)))
 ```
+
+#### Effect Size
 
 In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (@eq-cohenh) to calculate Cohen's *h* along with the 95% Cr.I around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% credible interval \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
 
@@ -1578,7 +1602,7 @@ pretty_table |>
 
 ```{r}
 #| label: fig-ppcheckall
-#| fig-cap: The plots show 100 posterior predicted distributions with the label yrep (light blue), the distribution of accuracy as function of fluency in dark blue for regular regression (A) , beta regression (B), and ZIB (C) models
+#| fig-cap: The plots show 100 posterior predicted distributions with the label yrep (light blue), the distribution of accuracy as function of fluency in dark blue for regular regression (A) , beta regression (B), ZIB (C) and ZOIB (D).
 #| fig-height: 20
 #| fig-width: 8
 
@@ -1610,8 +1634,18 @@ pp_check3 <- pp_check(
   xlim(0, 1) +
   coord_cartesian(ylim = c(0, 6))
 
+pp_check3 <- pp_check(
+  model4,
+  type = "dens_overlay_grouped",
+  group = "Fluency",
+  ndraws = 100
+) +
+  theme_publication() +
+  xlim(0, 1) +
+  coord_cartesian(ylim = c(0, 6))
+
 # Use `plot_spacer()` for the empty 4th spot
-combined_plot <- (pp_check1 / pp_check2 / pp_check3) +
+combined_plot <- (pp_check1 / pp_check2 / pp_check3 / pp_check4) +
   plot_annotation(
     tag_levels = 'A',
     tag_prefix = "(",
