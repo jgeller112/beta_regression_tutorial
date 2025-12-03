@@ -33,7 +33,7 @@ author:
   - name: Chelsea M. Parlett Pelleriti
     orcid: 0000-0001-9301-1398
     affiliations:
-      - name: Canva
+      - name: Chapman University
     roles:
      - Formal analysis
      - Writing - review & editing
