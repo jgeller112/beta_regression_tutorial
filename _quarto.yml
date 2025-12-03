@@ -7,7 +7,7 @@ site-url: https://jgeller112.github.io/beta_regression_tutorial/
 
 format:
   apaquarto-pdf:
-    documentmode: man
+    documentmode: doc
   apaquarto-docx: default
   apaquarto-html:
     toc: true
