@@ -936,7 +936,7 @@ beta_avg_comp_rope <- avg_comparisons(
 
 ```
 
-,The ROPE can also be obtained using the {marginaleffects} package by specifying the `equivalence` bounds in `avg_comparisons()`. Running the code in @lst-merope returns a ROPE probability of 23%, indicating that there is insufficient evidence to conclude that the effect exceeds 2% or is practically equivalent.
+The ROPE can also be obtained using the {marginaleffects} package by specifying the `equivalence` bounds in `avg_comparisons()`. Running the code in @lst-merope returns a ROPE probability of 23%, indicating that there is insufficient evidence to conclude that the effect exceeds 2% or is practically equivalent.
 
 #### $\phi$ difference
 
