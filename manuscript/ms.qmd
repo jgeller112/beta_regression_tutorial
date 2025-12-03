@@ -1491,11 +1491,11 @@ In the {ordbetareg} function there is a `true_bound` argument. In cases where yo
 #| label: model_fits
 
 # fit models from ran models so tables and figures are in correct place.
-model1 <- read_rds(here("models", "model_reg_bayes.rds"))
-model2 <- read_rds(here("models", "model_beta_bayes_dis_run01.rds"))
-model3 <- read_rds(here("models", "bayes_zib_model0not1.rds"))
-model4 <- read_rds(here("models", "bayes_zoib_model.rds"))
-model5 <- read_rds(here("models", "bayes_ordbeta_phi_model.rds"))
+model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
+model2 <- read_rds(here("manuscript", "models", "model_beta_bayes_dis_run01.rds"))
+model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
+model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
+model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
 ```
 
 ```{r}
