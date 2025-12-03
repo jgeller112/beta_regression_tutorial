@@ -204,7 +204,7 @@ theme_publication <- function(
 ```
 
 ```{r}
-path <- here::here("models")
+path <- here::here("manuscript", "models")
 
 # Create the directory if it doesn't exist
 if (!dir.exists(path)) {
@@ -216,7 +216,7 @@ if (!dir.exists(path)) {
 #| label: data-import
 #| echo: false
 
-fluency_data <- read.csv(here::here("data", "miko_data.csv")) %>%
+fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
     Fluency = "Condition",
@@ -470,7 +470,7 @@ In Experiment 1A, ninety-six participants watched two short instructional videos
 #| echo: true
 
 # get data here from project folder
-fluency_data <- read_csv(here::here("data", "fluency_data.csv"))
+fluency_data <- read_csv(here::here("manuscript", "data", "fluency_data.csv"))
 ```
 
 Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in @tbl-dataset. The dataset can be downloaded from GitHub (@lst-data). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce @wilford2020's analysis and then re-analyze the data using beta regression and highlight how it can improve our inferences.
@@ -538,7 +538,7 @@ bayes_reg_model <- brm(
   Accuracy ~ Fluency,
   data = fluency_data,
   family = gaussian(),
-  file = here::here("models", "model_reg_bayes")
+  file = here::here("manuscript", "models", "model_reg_bayes")
 )
 ```
 
@@ -652,7 +652,7 @@ beta_brms <- brm(
   model_beta_bayes,
   data = data_beta,
   family = Beta(),
-  file = here::here("models", "model_beta_bayes_reg_01")
+  file = here::here("manuscript","models", "model_beta_bayes_reg_01")
 )
 ```
 
@@ -680,7 +680,7 @@ beta_brms_dis <- brm(
   model_beta_bayes_disp,
   data = data_beta,
   family = Beta(),
-  file = here::here("models", "model_beta_bayes_dis_run01")
+  file = here::here("manuscript","models", "model_beta_bayes_dis_run01")
 )
 ```
 
@@ -920,13 +920,12 @@ beta_avg_comp |>
 
 #### $\mu$ Difference
 
-@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval includes 0 among the most credible values, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd also indicates the effect is non-significant (*p* > .05). In the basic regression model above, the ROPE value was extracted using the {bayestestR} package. The ROPE can also be obtained with the {marginaleffects} package by specifying the equivalence bounds argument in `avg_comparisons()` (@lst-margeeffectrope). Running the code below returns a ROPE of 23%, indicating insufficient evidence to conclude that the effect exceeds 2%.
+@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval includes 0 among the most credible values, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd also indicates the effect is non-significant (*p* \> .05). In the basic regression model above, the ROPE value was extracted using the {bayestestR} package.
 
 ```{r}
-#| label: margeffect_rope
-#| lst-label: lst-margeeffectrope
+#| lst-label: lst-merope
 #| lst-cap: Extracting ROPE using {marginaleffects} for $\mu$ difference
-
+#| echo: true 
 # get risk difference by default
 beta_avg_comp_rope <- avg_comparisons(
   beta_brms_dis,
@@ -937,9 +936,11 @@ beta_avg_comp_rope <- avg_comparisons(
 
 ```
 
+,The ROPE can also be obtained using the {marginaleffects} package by specifying the `equivalence` bounds in `avg_comparisons()`. Running the code in @lst-merope returns a ROPE probability of 23%, indicating that there is insufficient evidence to conclude that the effect exceeds 2% or is practically equivalent.
+
 #### $\phi$ difference
 
-In addition, with {marginaleffects}, we can get the actual precision difference between the two groups on $\phi$ using similar code to above by setting `dpar` to "phi" {@lst-avgphi}.
+In addition, with {marginaleffects}, we can get the actual precision difference between the two groups on $\phi$ using similar code to above by setting `dpar` to "phi" (@lst-avgphi).
 
 ```{r}
 #| label: ame-phi
@@ -987,7 +988,7 @@ $$ {#eq-cohenh}
 
 ### Posterior Predictive Check
 
-@fig-ppcheckall (B) shows the predictive check for our beta model. The model's predictions generally conform to the data as the predictions are now between constrained to the 0-1 interval. However, we can further improve the model's predictive performance if we take into account the bounds of the scale more explicitly.
+@fig-ppcheckall (B) shows the predictive check for our beta model. The model's predictions generally conform to the data as the predictions are now between constrained to the 0-1 interval. However, the model's predictive performance can be improved the bounds of the scale are explicitly specified.
 
 ## Zero-Inflated beta (ZIB) Regression
 
@@ -1019,7 +1020,7 @@ zib_model <- bf(
 fit_zi <- brm(
   formula = zib_model,
   data = data_beta_0,
-  file = here::here("models", "bayes_zib_model0not1.rds")
+  file = here::here("manuscript","models", "bayes_zib_model0not1.rds")
 )
 ```
 
@@ -1268,7 +1269,7 @@ zoib_model <- bf(
 fit_zoib <- brm(
   formula = zoib_model,
   data = fluency_data,
-  file = here::here("models", "bayes_zoib_model")
+  file = here::here("manuscript", "models", "bayes_zoib_model")
 )
 ```
 
@@ -1356,7 +1357,7 @@ The {ordbetareg} package uses `brms` on the front-end so all the arguments we us
 ord_fit_brms <- ordbetareg(
   Accuracy ~ Fluency,
   data = fluency_data,
-  file = here::here("models", "bayes_ordbeta_model")
+  file = here::here("manuscript","models", "bayes_ordbeta_model")
 )
 ```
 
@@ -1375,7 +1376,7 @@ m.phi <- ordbetareg(
   ord_beta_phi,
   data = fluency_data,
   phi_reg = 'both',
-  file = here::here("models", "bayes_ordbeta_phi_model")
+  file = here::here("manuscript", "models", "bayes_ordbeta_phi_model")
 )
 ```
 
@@ -1490,14 +1491,11 @@ In the {ordbetareg} function there is a `true_bound` argument. In cases where yo
 #| label: model_fits
 
 # fit models from ran models so tables and figures are in correct place.
-model1 <- read_rds(here("models", "model_reg_bayes.rds"))
-model2 <- read_rds(here(
-  "models",
-  "model_beta_bayes_dis_run01.rds"
-))
-model3 <- read_rds(here("models", "bayes_zib_model0not1.rds"))
-model4 <- read_rds(here("models", "bayes_zoib_model.rds"))
-model5 <- read_rds(here("models", "bayes_ordbeta_phi_model.rds"))
+model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
+model2 <- read_rds(here("manuscript", "models", "model_beta_bayes_dis_run01.rds"))
+model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
+model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
+model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
 ```
 
 ```{r}
@@ -1648,7 +1646,7 @@ combined_plot
 
 The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to turn the tides. Beta regression models are an attractive alternative to models that impose unrealistic assumptions like normality, linearity, homoscedasticity, and unbounded data. Beyond these models, there are a diverse array of different models that can be used depending on your outcome of interest.
 
-Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results using the {marginaleffects} package.  
+Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results using the {marginaleffects} package.
 
 Comparing our analysis with that of @wilford2020, we demonstrated that using a traditional approache (e.g., *t*-test) to analyze mean accuracy data can lead to biased inferences. Although we successfully reproduced one of their key findings, our use of beta regression and its extensions revealed important nuances in the results. With a traditional beta regression model–which accounts for both the mean and the precision (dispersion)–we observed similar effects of instructor fluency on performance. However, the standard beta model does not accommodate boundary values (i.e., 0s and 1s).
 
