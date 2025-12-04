@@ -713,7 +713,7 @@ While it is advisable to model precision, if there is uncertainty about the best
 
 ```{r}
 #| label: fig-plt-diff
-#| fig-cap: "Comparison of posterior distributions for the risk difference in fluency: Simple model  (no dispersion for Fluency) vs. complex model with dispersion"
+#| fig-cap: "Comparison of posterior distributions for the percentage point difference between fluent and disfluent instructors: Simple model  (no dispersion for Fluency) vs. complex model with dispersion"
 #| echo: false
 
 # Add a model identifier to each dataset
@@ -810,7 +810,7 @@ avg_predictions(
 
 ```{r}
 #| label: tbl-predict-prob
-#| tbl-cap: Predicted probabilities for fluency factor ($\mu$).
+#| tbl-cap: Predicted probabilities for each level of Fluency ($\mu$).
 #| tbl-cap-location: top
 #| echo: false
 #| after-caption-space: 0pt
@@ -884,10 +884,11 @@ One practical use of AMEs is to estimate the average difference between two grou
 ```{r}
 #| label: ame1
 #| lst-label: lst-avgcomp
-#| lst-cap: Calculating the difference between probabilities ($\mu$) for fluency with `avg_comparisons()`
+#| lst-cap: Calculating the difference between probabilities ($\mu$) for instructor fluency with `avg_comparisons()`
 #| echo: true
 
 # get risk difference by default
+
 beta_avg_comp <- avg_comparisons(
   beta_brms_dis,
   variables = "Fluency", # counterfactural difference
@@ -1396,7 +1397,7 @@ ord_beta_avg <- m.phi |>
 
 ```{r}
 #| label: tbl-ordbeta
-#| tbl-cap: "Marginal effect of fluency ordered beta model"
+#| tbl-cap: "Marginal effect of fluency ($\mu$) for ordered beta model"
 #| after-caption-space: 0pt
 
 p_d <- ord_beta_avg |>
@@ -1479,7 +1480,7 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 plot_heiss(
   ord_fit_brms,
   grouping_fac = "Fluency",
-  recode_group_labels = c("Disfluency", "Fluency"),
+  recode_group_labels = c("Disfluency", "Fluency")
 )
 ```
 
@@ -1594,7 +1595,7 @@ pretty_table |>
     ),
     italic = TRUE,
     fontsize = .6
-  )
+  ) 
 ```
 
 ```{r}
