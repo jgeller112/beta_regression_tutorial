@@ -34,6 +34,7 @@ beta_regression_tutorial/
 ├── LICENSE                          # Project license
 ├── README.md                        # Project overview (this file)
 ├── air.toml                         # Air formatter configuration
+├── betareg.code-workspace           # functions like rstudio.proj file (open it and open in positron)
 ├── create_env_dev.R                 # Script to create dev environment (rix)
 ├── default.nix                      # Nix definition for full reproducibility
 ├── grateful-refs.bib                # Bibliography generated for installed packages
