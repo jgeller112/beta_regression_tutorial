@@ -1397,14 +1397,13 @@ ord_beta_avg <- m.phi |>
 
 ```{r}
 #| label: tbl-ordbeta
-#| tbl-cap: "Marginal effect of fluency ($\mu$) for ordered beta model"
+#| tbl-cap: "Marginal effect of fluency for ordered beta model"
 #| after-caption-space: 0pt
 
 p_d <- ord_beta_avg |>
   p_direction() |>
   as.data.frame() |>
   select(pd)
-
 ord_beta_avg |>
   select(term, contrast, estimate, conf.low, conf.high) |>
   mutate(
