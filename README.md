@@ -183,8 +183,6 @@ sudo apt install g++ make
 
 ## Packages used
 
-## Packages used
-
 | Package        | Version     | Citation                                                                                      |
 |----------------|-------------|-----------------------------------------------------------------------------------------------|
 | base           | 4.5.1       | R Core Team (2025)                                                                            |
@@ -201,7 +199,7 @@ sudo apt install g++ make
 | ggrain         | 0.1.0       | Author (Unpublished package or GitHub repository)                                             |
 | here           | 1.0.1       | Müller (2020)                                                                                 |
 | knitr          | 1.50        | Xie (2014); Xie (2015); Xie (2025)                                                            |
-| marginaleffects| 0.27.0      | Arel-Bundock, Greifer, and Heiss (2024)                                                       |
+| marginaleffects| 0.31.0      | Arel-Bundock, Greifer, and Heiss (2024)                                                       |
 | ordbetareg     | 0.8         | Kubinec (2025)                                                                                |
 | patchwork      | 1.3.1       | Pedersen (2025)                                                                               |
 | performance    | 0.14.0      | Lüdecke et al. (2021)                                                                         |
