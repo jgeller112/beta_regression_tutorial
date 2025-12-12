@@ -54,7 +54,6 @@ jobs:
       uses: cachix/cachix-action@v15
       with:
         name: rstats-on-nix
-        authToken: '${{ secrets.CACHIX_AUTH }}'
 
 
     - name: Generate default.nix
