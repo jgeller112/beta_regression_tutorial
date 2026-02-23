@@ -73,6 +73,10 @@ beta_regression_tutorial/
 
 This repository contains all the resources needed to reproduce the manuscript associated with this project. To ensure maximum reproducibility, we used [Quarto](https://quarto.org/) for creating the manuscript. This allows computational figures, tables, and text to be programmatically included directly in the manuscript, ensuring that all results are seamlessly integrated into the document. We also provide a file called default.nix which contains the definition of the development environment that was used to work on the analysis. Reproducers can easily re-use the exact same environment by installing the Nix package manager and using the included default.nix file to set up the right environment.
 
+
+**Note: cmdstan is installed outside the Nix environment (in your home directory). See: https://github.com/ropensci/rix/issues/481#issuecomment-2820450557. Because it is not managed by Nix, this can conflict with any other cmdstan installation on your system.
+
+Also note that results may not be perfectly reproducible across machines/runs due to aspects of the brms/Stan toolchain and numerical behavior. See: https://mc-stan.org/docs/reference-manual/reproducibility.html**
 ## Video Tutorial
 
 Here is a video tutorial showing an example of how to reproduce a manuscript using Nix/Rix
