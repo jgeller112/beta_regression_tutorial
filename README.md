@@ -137,7 +137,7 @@ Once in the shell (after calling nix-shell), You can:
 1. Reproduce the manuscript
 
 ```
-quarto render "~/manuscript/ms.qmd"
+quarto render "quarto render manuscript/ms.qmd"
 ```
 
 
