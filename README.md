@@ -104,8 +104,8 @@ To reproduce the manuscript, you will need the following if not using rix/nix:
 #### Installation Guides
 
 - **Nix and Rix**
-  - For Windows and Linux: [Setup Guide](https://docs.ropensci.org/rix/articles/b1-setting-up-and-using-rix-on-linux-and-windows.html)
-  - For macOS: [Setup Guide](https://docs.ropensci.org/rix/articles/b2-setting-up-and-using-rix-on-macos.html)
+  - For Windows and Linux: [Setup Guide](https://docs.ropensci.org/rix/articles/setting-up-linux-windows.html)
+  - For macOS: [Setup Guide](https://docs.ropensci.org/rix/articles/setting-up-macos.html)
 
 #### 1. Clone the Repository
 
