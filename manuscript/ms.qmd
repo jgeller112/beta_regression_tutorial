@@ -60,11 +60,8 @@ keywords: [beta regression, beta distribution, R tutorial, psychology, learning 
 floatsintext: true
 # Numbered lines (.pdf and .docx only)
 numbered-lines: true
-# File with references
 suppress-title-page: false
-# Link citations to references
 link-citations: false
-# Masks references that appear in the masked-citations list
 mask: false
 word-count: true
 # Language options. See https://quarto.org/docs/authoring/language.html

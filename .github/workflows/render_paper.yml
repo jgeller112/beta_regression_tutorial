@@ -74,7 +74,7 @@ jobs:
     - name: Replace rstudioWrapper with rWrapper
       if: env.changed == 'true'
       run: |
-        sed -i 's/rstudioWrapper/rWrapper/g' default.ni
+        sed -i 's/rstudioWrapper/rWrapper/g' default.nix
 
     - name: Build development environment
       if: env.changed == 'true'
