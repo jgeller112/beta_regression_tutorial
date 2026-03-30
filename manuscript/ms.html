@@ -160,17 +160,18 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#a-beta-way-is-possible" id="toc-a-beta-way-is-possible" class="nav-link" data-scroll-target="#a-beta-way-is-possible">A Beta Way Is Possible</a></li>
   <li><a href="#beta-distribution" id="toc-beta-distribution" class="nav-link" data-scroll-target="#beta-distribution">Beta Distribution</a></li>
-  <li><a href="#i-cant-believe-its-not-beta" id="toc-i-cant-believe-its-not-beta" class="nav-link" data-scroll-target="#i-cant-believe-its-not-beta">I Can’t Believe It’s Not beta</a></li>
+  <li><a href="#i-cant-believe-its-not-beta" id="toc-i-cant-believe-its-not-beta" class="nav-link" data-scroll-target="#i-cant-believe-its-not-beta">I Can’t Believe It’s Not Beta</a></li>
   <li><a href="#bayesian-approach-to-beta-regression" id="toc-bayesian-approach-to-beta-regression" class="nav-link" data-scroll-target="#bayesian-approach-to-beta-regression">Bayesian Approach to Beta Regression</a></li>
   </ul></li>
   <li><a href="#beta-regression-tutorial" id="toc-beta-regression-tutorial" class="nav-link" data-scroll-target="#beta-regression-tutorial">Beta Regression Tutorial</a>
   <ul class="collapse">
-  <li><a href="#example-data" id="toc-example-data" class="nav-link" data-scroll-target="#example-data">Example Data</a></li>
+  <li><a href="#case-study-1" id="toc-case-study-1" class="nav-link" data-scroll-target="#case-study-1">Case Study 1</a></li>
   <li><a href="#reanalysis-of-wilford-et-al.-experiment-1a" id="toc-reanalysis-of-wilford-et-al.-experiment-1a" class="nav-link" data-scroll-target="#reanalysis-of-wilford-et-al.-experiment-1a">Reanalysis of Wilford et al.&nbsp;Experiment 1A</a></li>
   <li><a href="#distributional-regression---beta" id="toc-distributional-regression---beta" class="nav-link" data-scroll-target="#distributional-regression---beta">Distributional Regression - Beta</a></li>
   <li><a href="#zero-inflated-beta-zib-regression" id="toc-zero-inflated-beta-zib-regression" class="nav-link" data-scroll-target="#zero-inflated-beta-zib-regression">Zero-Inflated beta (ZIB) Regression</a></li>
-  <li><a href="#zero-one-inflated-beta-zoib" id="toc-zero-one-inflated-beta-zoib" class="nav-link" data-scroll-target="#zero-one-inflated-beta-zoib">Zero-One-Inflated beta (ZOIB)</a></li>
+  <li><a href="#zero-one-inflated-beta-zoib" id="toc-zero-one-inflated-beta-zoib" class="nav-link" data-scroll-target="#zero-one-inflated-beta-zoib">Zero-One-Inflated Beta (ZOIB)</a></li>
   <li><a href="#ordered-beta-regression" id="toc-ordered-beta-regression" class="nav-link" data-scroll-target="#ordered-beta-regression">Ordered Beta Regression</a></li>
+  <li><a href="#case-study-2" id="toc-case-study-2" class="nav-link" data-scroll-target="#case-study-2">Case Study 2</a></li>
   </ul></li>
   <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">Discussion</a>
   <ul class="collapse">
@@ -190,7 +191,7 @@ window.Quarto = {
 <br>
 
 <section id="title" class="level1 title unnumbered unlisted">
-<h1 class="title unnumbered unlisted">A Beta Way: A <em>Bayesian</em> Tutorial For Using Beta Regression in Psychological Research</h1>
+<h1 class="title unnumbered unlisted">A Beta Way: A <strong>Bayesian</strong> Tutorial For Using Beta Regression in Psychological Research</h1>
 <div class="Author">
 <br>
 
@@ -219,14 +220,14 @@ window.Quarto = {
 <section id="abstract" class="level1 unnumbered unlisted AuthorNote">
 <h1 class="unnumbered unlisted AuthorNote">Abstract</h1>
 <div class="AbstractFirstParagraph">
-<p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale using the packages <strong>{marginaleffects}</strong> and the <strong>{easystats}</strong> ecosystem. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familiarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://doi.org/10.5281/zenodo.15830595.</p>
+<p>Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale using the packages <strong>{marginaleffects}</strong> and the <strong>{easystats}</strong>. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familiarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://doi.org/10.5281/zenodo.15830595.</p>
 </div>
 <p><em>Keywords</em>: beta regression, beta distribution, R tutorial, psychology, learning and memory</p>
-<p><em>Word Count</em>: 27865</p>
+<p><em>Word Count</em>: 27873</p>
 <br>
 </section>
 <section id="firstheader" class="level1 title unnumbered unlisted">
-<h1 class="title unnumbered unlisted">A Beta Way: A <em>Bayesian</em> Tutorial For Using Beta Regression in Psychological Research</h1>
+<h1 class="title unnumbered unlisted">A Beta Way: A <strong>Bayesian</strong> Tutorial For Using Beta Regression in Psychological Research</h1>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -337,7 +338,7 @@ Preprint
 </div>
 </section>
 <section id="i-cant-believe-its-not-beta" class="level2">
-<h2 data-anchor-id="i-cant-believe-its-not-beta">I Can’t Believe It’s Not beta</h2>
+<h2 data-anchor-id="i-cant-believe-its-not-beta">I Can’t Believe It’s Not Beta</h2>
 <p>While the standard parameterization of the beta distribution uses <span class="math inline">\alpha</span> and <span class="math inline">\beta</span>, a reparameterization to a mean (<span class="math inline">\mu</span>) and precision (<span class="math inline">\phi</span>) is more useful for regression models. The mean represents the expected value of the distribution, while the dispersion, which is inversely related to variance, reflects how concentrated the distribution is around the mean, with higher values indicating a narrower distribution and lower values indicating a wider one. The connections between the beta distribution’s parameters are shown in <a href="#eq-beta" class="quarto-xref">Equation&nbsp;1</a>. Importantly, the variance depends on the average value of the response because uncertainty intervals need to adjust for how close the value of the response is to the boundary.</p>
 <p><span id="eq-beta"><span class="math display">
 \begin{aligned}[t]
@@ -476,8 +477,8 @@ Preprint
 </section>
 <section id="beta-regression-tutorial" class="level1">
 <h1>Beta Regression Tutorial</h1>
-<section id="example-data" class="level2">
-<h2 data-anchor-id="example-data">Example Data</h2>
+<section id="case-study-1" class="level2">
+<h2 data-anchor-id="case-study-1">Case Study 1</h2>
 <p>Throughout this tutorial, we analyze data from a memory experiment examining whether the fluency of an instructor’s delivery affects recall performance <span class="citation" data-cites="wilford2020">(Wilford et al., 2020, Experiment 1A)</span>. Instructor fluency—marked by expressive gestures, dynamic vocal tone, and confident pacing—has been shown to influence students’ perceptions of learning, often leading learners to rate fluent instructors more favorably <span class="citation" data-cites="carpenter2013">(Carpenter et al., 2013)</span>. However, previous research suggests that these impressions do not reliably translate into improved memory performance <span class="citation" data-cites="carpenter2013 toftness2017 witherby2022">(e.g., Carpenter et al., 2013; Toftness et al., 2017; Witherby &amp; Carpenter, 2022)</span>. In contrast, <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> found that participants actually recalled more information after watching a fluent instructor compared to a disfluent one. This surprising finding makes the dataset a compelling case study for analyzing proportion data, as recall was scored out of 10 possible idea units per video.</p>
 <p>In Experiment 1A, ninety-six participants watched two short instructional videos, each delivered either fluently or disfluently. Fluent videos featured instructors with smooth delivery and natural pacing, while disfluent videos included hesitations, monotone speech, and awkward pauses. After a distractor task, participants completed a free recall test, writing down as much content as they could remember from each video within a three-minute window. Their recall was then scored for the number of idea units correctly remembered.</p>
 <div class="cell">
@@ -498,7 +499,7 @@ Listing&nbsp;1: Data needed to run examples
 </div>
 <p>Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in <a href="#tbl-dataset" class="quarto-xref" aria-expanded="false">Table&nbsp;1</a>. The dataset can be downloaded from GitHub (<a href="#lst-data" class="quarto-xref">Listing&nbsp;1</a>). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span>’s analysis and then re-analyze the data using beta regression and highlight how it can improve our inferences.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="1" data-custom-style="FigureWithoutNote">
-<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="1">
+<div id="tbl-dataset" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="1">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dataset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -665,7 +666,7 @@ Listing&nbsp;3: Fitting a gaussian model with brm().
 </div>
 </div>
 <p>We fit the model using the <code>brm()</code> function from the {brms} package (<a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a>, the model summary output will appear in the R console. The output from <code>bayes_reg_model</code> shows each parameter’s posterior summary: The posterior distribution’s mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm’s performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS &gt;= 1000 is recommended <span class="citation" data-cites="brms">(Bürkner, 2017)</span>. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.</p>
-<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.084. The 95% Cr.I for this estimate spans from -0.001 to 0.166. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
+<p>Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by <a href="#lst-gauss" class="quarto-xref">Listing&nbsp;3</a> (also see <a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a> under Bayesian LM). the <code>Intercept</code> refers to the posterior mean accuracy in the disfluent condition, <em>M</em> = 0.257 , as fluency was dummy-coded. The fluency coefficient (<code>FluencyFluent</code>) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: <em>b</em> = 0.083. The 95% Cr.I for this estimate spans from -0.002 to 0.166. These values are shown in the “95% Cr.I” columns of the output. These results closely mirror the findings reported by <span class="citation" data-cites="wilford2020">Wilford et al. (2020)</span> (Experiment 1A).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -679,12 +680,12 @@ Formula: Accuracy ~ Fluency
 
 Regression Coefficients:
               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-Intercept         0.26      0.03     0.20     0.31 1.00     4028     2961
-FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3718     2749
+Intercept         0.26      0.03     0.20     0.31 1.00     3859     3181
+FluencyFluent     0.08      0.04    -0.00     0.17 1.00     3832     2515
 
 Further Distributional Parameters:
       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-sigma     0.21      0.02     0.18     0.24 1.00     3993     3140</code></pre>
+sigma     0.21      0.02     0.18     0.24 1.00     3683     2870</code></pre>
 </div>
 </div>
 <p>The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (<a href="#tbl-all" class="quarto-xref" aria-expanded="false">Table&nbsp;8</a>), provided by the {bayestestR} package <span class="citation" data-cites="makowski2019a makowski2019">(Makowski, Ben-Shachar, Chen, et al., 2019; Makowski, Ben-Shachar, &amp; Lüdecke, 2019)</span>. This measure offers an intuitive parallel to <em>p</em>-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative.</p>
@@ -938,7 +939,7 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency (<span
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="2" data-tbl-cap-location="top" data-custom-style="FigureWithoutNote">
-<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" data-tbl-cap-location="top" prefix="" data-tblnum="2">
+<div id="tbl-predict-prob" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="2" data-tbl-cap-location="top">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-predict-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -994,13 +995,13 @@ Listing&nbsp;9: Predictions from the beta model for each level of Fluency (<span
         <tbody>
                 <tr>
                   <td data-row="1" data-col="1">Disfluent</td>
-                  <td data-row="1" data-col="2">0.305</td>
-                  <td data-row="1" data-col="3">[0.251, 0.367]</td>
+                  <td data-row="1" data-col="2">0.304</td>
+                  <td data-row="1" data-col="3">[0.251, 0.363]</td>
                 </tr>
                 <tr>
                   <td data-row="2" data-col="1">Fluent</td>
                   <td data-row="2" data-col="2">0.349</td>
-                  <td data-row="2" data-col="3">[0.303, 0.399]</td>
+                  <td data-row="2" data-col="3">[0.302, 0.4]</td>
                 </tr>
         </tbody>
       </table>
@@ -1111,7 +1112,7 @@ Listing&nbsp;12: Calculating the difference between probabilities (<span class="
 </div>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="3" data-custom-style="FigureWithoutNote">
-<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="3">
+<div id="tbl-ame1" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="3">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ame1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1168,9 +1169,9 @@ Listing&nbsp;12: Calculating the difference between probabilities (<span class="
         <tbody>
                 <tr>
                   <td data-row="1" data-col="1">Fluent - Disfluent</td>
-                  <td data-row="1" data-col="2">0.043</td>
-                  <td data-row="1" data-col="3">[-0.036, 0.118]</td>
-                  <td data-row="1" data-col="4">0.87</td>
+                  <td data-row="1" data-col="2">0.044</td>
+                  <td data-row="1" data-col="3">[-0.029, 0.121]</td>
+                  <td data-row="1" data-col="4">0.88</td>
                 </tr>
         </tbody>
       </table>
@@ -1327,7 +1328,7 @@ Listing&nbsp;15: Fitting zib model with <code>brm()</code>
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="4" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="4">
+<div id="tbl-marg-mu-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="4">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-mu-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1386,7 +1387,7 @@ Listing&nbsp;15: Fitting zib model with <code>brm()</code>
                   <td data-row="1" data-col="1">Fluent - Disfluent</td>
                   <td data-row="1" data-col="2">0.044</td>
                   <td data-row="1" data-col="3">[-0.03, 0.118]</td>
-                  <td data-row="1" data-col="4">0.879</td>
+                  <td data-row="1" data-col="4">0.875</td>
                 </tr>
         </tbody>
       </table>
@@ -1413,7 +1414,7 @@ Listing&nbsp;15: Fitting zib model with <code>brm()</code>
 </details>
 </div>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="5" data-custom-style="FigureWithoutNote">
-<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="5">
+<div id="tbl-marg-phi-brms" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="5">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-marg-phi-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1470,9 +1471,9 @@ Listing&nbsp;15: Fitting zib model with <code>brm()</code>
         <tbody>
                 <tr>
                   <td data-row="1" data-col="1">Fluent - Disfluent</td>
-                  <td data-row="1" data-col="2">2.68</td>
-                  <td data-row="1" data-col="3">[-0.923, 6.556]</td>
-                  <td data-row="1" data-col="4">0.927</td>
+                  <td data-row="1" data-col="2">2.71</td>
+                  <td data-row="1" data-col="3">[-0.849, 6.596]</td>
+                  <td data-row="1" data-col="4">0.932</td>
                 </tr>
         </tbody>
       </table>
@@ -1521,7 +1522,7 @@ Listing&nbsp;15: Fitting zib model with <code>brm()</code>
 </section>
 </section>
 <section id="zero-one-inflated-beta-zoib" class="level2">
-<h2 data-anchor-id="zero-one-inflated-beta-zoib">Zero-One-Inflated beta (ZOIB)</h2>
+<h2 data-anchor-id="zero-one-inflated-beta-zoib">Zero-One-Inflated Beta (ZOIB)</h2>
 <p>The ZIB model works well if there are 0s in your data, but not 1s.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> In our previous examples we either got rid of both 0s and 1s (beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds <span class="citation" data-cites="kong2016">(Kong &amp; Edwards, 2016)</span>, in JOL tasks <span class="citation" data-cites="wilford2020">(Wilford et al., 2020)</span>, or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 <span class="citation" data-cites="bendixen2023">(Bendixen &amp; Purzycki, 2023)</span>. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.</p>
 <p>Similar to the beta and zero-inflated models discussed above, we can fit a zero-and-one‐inflated beta (ZOIB) model in {brms} using the <code>zero_one_inflated_beta</code> family. This formulation simultaneously estimates the mean <span class="math inline">\mu</span> and precision <span class="math inline">\phi</span> of the Beta component, as well as two inflation parameters: <span class="math inline">\alpha</span> , the probability that an observation is at either boundary (0 or 1), and <span class="math inline">\gamma</span> , the conditional probability that, given an observation falls on a boundary, it takes the value 1 rather than 0. In other words, <span class="math inline">\alpha</span> determines how often responses occur exactly at the endpoints, and <span class="math inline">\gamma</span> determines the balance between zeros and ones among those endpoint values. This specification allows the model to capture both the continuous variation in the interior of the (0, 1) interval and the presence of exact boundary values.</p>
 <p>To illustrate how <span class="math inline">\alpha</span> and <span class="math inline">\gamma</span> shape the distribution, <a href="#fig-zoib" class="quarto-xref" aria-expanded="false">Figure&nbsp;9</a> displays simulated data across a range of parameter combinations. As <span class="math inline">\alpha</span> increases, more responses occur at the endpoints. As <span class="math inline">\gamma</span> increases, the proportion of those endpoint responses that are 1 increases relative to 0, producing increasingly pronounced spikes at 1 as <span class="math inline">\gamma</span> approaches 1. Together, these parameters give the ZOIB model the flexibility to represent datasets with mixtures of continuous values and exact zeros and ones.</p>
@@ -1790,7 +1791,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_tt</span>(<span class="at">digits =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
 <span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">format_tt</span>(<span class="at">escape =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="6">
+<div id="tbl-ordbeta" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="6">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ordbeta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1848,8 +1849,8 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td data-row="1" data-col="1">Fluent - Disfluent</td>
                   <td data-row="1" data-col="2">0.061</td>
-                  <td data-row="1" data-col="3">[-0.016, 0.136]</td>
-                  <td data-row="1" data-col="4">0.938</td>
+                  <td data-row="1" data-col="3">[-0.015, 0.135]</td>
+                  <td data-row="1" data-col="4">0.944</td>
                 </tr>
         </tbody>
       </table>
@@ -1868,7 +1869,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
 <h4 data-anchor-id="cutpoints">Cutpoints.</h4>
 <p>The model cutpoints are not reported by default in the summary output, but we can access them with the R package <code>posterior</code> <span class="citation" data-cites="posterior2025a">(Bürkner et al., 2025)</span> and the functions <code>as_draws</code> and <code>summary_draws</code>.</p>
 <div class="cell FigureWithoutNote" data-after-caption-space="0pt" prefix="" data-tblnum="7" data-custom-style="FigureWithoutNote">
-<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tblnum="7">
+<div id="tbl-cutpoints" class="cell quarto-float quarto-figure quarto-figure-center" prefix="" data-after-caption-space="0pt" data-tblnum="7">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cutpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -1924,13 +1925,13 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
         <tbody>
                 <tr>
                   <td data-row="1" data-col="1">cutzero</td>
-                  <td data-row="1" data-col="2">-2.98</td>
-                  <td data-row="1" data-col="3">[-3.59, -2.44]</td>
+                  <td data-row="1" data-col="2">-2.97</td>
+                  <td data-row="1" data-col="3">[-3.57, -2.44]</td>
                 </tr>
                 <tr>
                   <td data-row="2" data-col="1">cutone</td>
                   <td data-row="2" data-col="2">1.85</td>
-                  <td data-row="2" data-col="3">[1.65, 2.07]</td>
+                  <td data-row="2" data-col="3">[1.64, 2.08]</td>
                 </tr>
         </tbody>
       </table>
@@ -2129,7 +2130,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
 <span id="cb39-89"><a href="#cb39-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize =</span> .<span class="dv">6</span></span>
 <span id="cb39-90"><a href="#cb39-90" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-after-caption-space="0pt" prefix="" data-tbl-align="center" data-tblnum="8" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`.">
+<div id="tbl-all" class="cell quarto-float quarto-figure quarto-figure-center" data-tbl-align="center" prefix="" data-after-caption-space="0pt" data-tblnum="8" data-apa-note="Link functions: b_mean = logit; b_phi = log; b_zoi (zero-one inflation) = logit; b_coi (conditional one-inflation) = logit. Asterisks reflect approximate two-sided p-values derived from the posterior pd. pd ≥ 0.975 (p ≤ .05) = `*`; pd ≥ 0.990 (p ≤ .01) = `**`; pd ≥ 0.998 (p ≤ .001) = `***`.">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="FigureTitle" data-custom-style="FigureTitle">
@@ -2147,21 +2148,21 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
 
     <script>
       // Create table-specific functions using external factory
-      const tableFns_f6grd3707ou34u44hyon = TinyTable.createTableFunctions("tinytable_f6grd3707ou34u44hyon");
+      const tableFns_6dg5lyyxv6y0x1ysjec8 = TinyTable.createTableFunctions("tinytable_6dg5lyyxv6y0x1ysjec8");
       // tinytable span after
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '11', j: 1 }, { i: '12', j: 1 }, { i: '14', j: 1 }, { i: '15', j: 1 }, { i: '17', j: 1 }, { i: '18', j: 1 }, { i: '20', j: 1 }, { i: '21', j: 1 }, { i: '23', j: 1 }, { i: '24', j: 1 }, { i: '26', j: 1 }, { i: '27', j: 1 }, { i: '29', j: 1 }, { i: '30', j: 1 }, { i: '32', j: 1 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '14', j: 2 }, { i: '15', j: 2 }, { i: '17', j: 2 }, { i: '18', j: 2 }, { i: '20', j: 2 }, { i: '21', j: 2 }, { i: '23', j: 2 }, { i: '24', j: 2 }, { i: '26', j: 2 }, { i: '27', j: 2 }, { i: '29', j: 2 }, { i: '30', j: 2 }, { i: '32', j: 2 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '14', j: 3 }, { i: '15', j: 3 }, { i: '17', j: 3 }, { i: '18', j: 3 }, { i: '20', j: 3 }, { i: '21', j: 3 }, { i: '23', j: 3 }, { i: '24', j: 3 }, { i: '26', j: 3 }, { i: '27', j: 3 }, { i: '29', j: 3 }, { i: '30', j: 3 }, { i: '32', j: 3 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '14', j: 4 }, { i: '15', j: 4 }, { i: '17', j: 4 }, { i: '18', j: 4 }, { i: '20', j: 4 }, { i: '21', j: 4 }, { i: '23', j: 4 }, { i: '24', j: 4 }, { i: '26', j: 4 }, { i: '27', j: 4 }, { i: '29', j: 4 }, { i: '30', j: 4 }, { i: '32', j: 4 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '11', j: 5 }, { i: '12', j: 5 }, { i: '14', j: 5 }, { i: '15', j: 5 }, { i: '17', j: 5 }, { i: '18', j: 5 }, { i: '20', j: 5 }, { i: '21', j: 5 }, { i: '23', j: 5 }, { i: '24', j: 5 }, { i: '26', j: 5 }, { i: '27', j: 5 }, { i: '29', j: 5 }, { i: '30', j: 5 }, { i: '32', j: 5 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '11', j: 6 }, { i: '12', j: 6 }, { i: '14', j: 6 }, { i: '15', j: 6 }, { i: '17', j: 6 }, { i: '18', j: 6 }, { i: '20', j: 6 }, { i: '21', j: 6 }, { i: '23', j: 6 }, { i: '24', j: 6 }, { i: '26', j: 6 }, { i: '27', j: 6 }, { i: '29', j: 6 }, { i: '30', j: 6 }, { i: '32', j: 6 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '11', j: 7 }, { i: '12', j: 7 }, { i: '14', j: 7 }, { i: '15', j: 7 }, { i: '17', j: 7 }, { i: '18', j: 7 }, { i: '20', j: 7 }, { i: '21', j: 7 }, { i: '23', j: 7 }, { i: '24', j: 7 }, { i: '26', j: 7 }, { i: '27', j: 7 }, { i: '29', j: 7 }, { i: '30', j: 7 }, { i: '32', j: 7 } ], css_id: 'tinytable_css_aw41d8z3fpk7jkli4wld',}, 
-          { positions: [ { i: '1', j: 1 }, { i: '4', j: 1 }, { i: '7', j: 1 }, { i: '10', j: 1 }, { i: '13', j: 1 }, { i: '16', j: 1 }, { i: '19', j: 1 }, { i: '22', j: 1 }, { i: '25', j: 1 }, { i: '28', j: 1 }, { i: '31', j: 1 }, { i: '1', j: 2 }, { i: '4', j: 2 }, { i: '7', j: 2 }, { i: '10', j: 2 }, { i: '13', j: 2 }, { i: '16', j: 2 }, { i: '19', j: 2 }, { i: '22', j: 2 }, { i: '25', j: 2 }, { i: '28', j: 2 }, { i: '31', j: 2 }, { i: '1', j: 3 }, { i: '4', j: 3 }, { i: '7', j: 3 }, { i: '10', j: 3 }, { i: '13', j: 3 }, { i: '16', j: 3 }, { i: '19', j: 3 }, { i: '22', j: 3 }, { i: '25', j: 3 }, { i: '28', j: 3 }, { i: '31', j: 3 }, { i: '1', j: 4 }, { i: '4', j: 4 }, { i: '7', j: 4 }, { i: '10', j: 4 }, { i: '13', j: 4 }, { i: '16', j: 4 }, { i: '19', j: 4 }, { i: '22', j: 4 }, { i: '25', j: 4 }, { i: '28', j: 4 }, { i: '31', j: 4 }, { i: '1', j: 5 }, { i: '4', j: 5 }, { i: '7', j: 5 }, { i: '10', j: 5 }, { i: '13', j: 5 }, { i: '16', j: 5 }, { i: '19', j: 5 }, { i: '22', j: 5 }, { i: '25', j: 5 }, { i: '28', j: 5 }, { i: '31', j: 5 }, { i: '1', j: 6 }, { i: '4', j: 6 }, { i: '7', j: 6 }, { i: '10', j: 6 }, { i: '13', j: 6 }, { i: '16', j: 6 }, { i: '19', j: 6 }, { i: '22', j: 6 }, { i: '25', j: 6 }, { i: '28', j: 6 }, { i: '31', j: 6 }, { i: '1', j: 7 }, { i: '4', j: 7 }, { i: '7', j: 7 }, { i: '10', j: 7 }, { i: '13', j: 7 }, { i: '16', j: 7 }, { i: '19', j: 7 }, { i: '22', j: 7 }, { i: '25', j: 7 }, { i: '28', j: 7 }, { i: '31', j: 7 } ], css_id: 'tinytable_css_alibe378jdu9ren9lcz5',}, 
-          { positions: [ { i: '33', j: 1 }, { i: '33', j: 2 }, { i: '33', j: 3 }, { i: '33', j: 4 }, { i: '33', j: 5 }, { i: '33', j: 6 }, { i: '33', j: 7 } ], css_id: 'tinytable_css_g2xgnuka8a61xzltxech',}, 
-          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 }, { i: '0', j: 7 } ], css_id: 'tinytable_css_z1m2h99kfp86eisp40bo',}, 
+          { positions: [ { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '11', j: 1 }, { i: '12', j: 1 }, { i: '14', j: 1 }, { i: '15', j: 1 }, { i: '17', j: 1 }, { i: '18', j: 1 }, { i: '20', j: 1 }, { i: '21', j: 1 }, { i: '23', j: 1 }, { i: '24', j: 1 }, { i: '26', j: 1 }, { i: '27', j: 1 }, { i: '29', j: 1 }, { i: '30', j: 1 }, { i: '32', j: 1 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '14', j: 2 }, { i: '15', j: 2 }, { i: '17', j: 2 }, { i: '18', j: 2 }, { i: '20', j: 2 }, { i: '21', j: 2 }, { i: '23', j: 2 }, { i: '24', j: 2 }, { i: '26', j: 2 }, { i: '27', j: 2 }, { i: '29', j: 2 }, { i: '30', j: 2 }, { i: '32', j: 2 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '14', j: 3 }, { i: '15', j: 3 }, { i: '17', j: 3 }, { i: '18', j: 3 }, { i: '20', j: 3 }, { i: '21', j: 3 }, { i: '23', j: 3 }, { i: '24', j: 3 }, { i: '26', j: 3 }, { i: '27', j: 3 }, { i: '29', j: 3 }, { i: '30', j: 3 }, { i: '32', j: 3 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '14', j: 4 }, { i: '15', j: 4 }, { i: '17', j: 4 }, { i: '18', j: 4 }, { i: '20', j: 4 }, { i: '21', j: 4 }, { i: '23', j: 4 }, { i: '24', j: 4 }, { i: '26', j: 4 }, { i: '27', j: 4 }, { i: '29', j: 4 }, { i: '30', j: 4 }, { i: '32', j: 4 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '11', j: 5 }, { i: '12', j: 5 }, { i: '14', j: 5 }, { i: '15', j: 5 }, { i: '17', j: 5 }, { i: '18', j: 5 }, { i: '20', j: 5 }, { i: '21', j: 5 }, { i: '23', j: 5 }, { i: '24', j: 5 }, { i: '26', j: 5 }, { i: '27', j: 5 }, { i: '29', j: 5 }, { i: '30', j: 5 }, { i: '32', j: 5 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '11', j: 6 }, { i: '12', j: 6 }, { i: '14', j: 6 }, { i: '15', j: 6 }, { i: '17', j: 6 }, { i: '18', j: 6 }, { i: '20', j: 6 }, { i: '21', j: 6 }, { i: '23', j: 6 }, { i: '24', j: 6 }, { i: '26', j: 6 }, { i: '27', j: 6 }, { i: '29', j: 6 }, { i: '30', j: 6 }, { i: '32', j: 6 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '11', j: 7 }, { i: '12', j: 7 }, { i: '14', j: 7 }, { i: '15', j: 7 }, { i: '17', j: 7 }, { i: '18', j: 7 }, { i: '20', j: 7 }, { i: '21', j: 7 }, { i: '23', j: 7 }, { i: '24', j: 7 }, { i: '26', j: 7 }, { i: '27', j: 7 }, { i: '29', j: 7 }, { i: '30', j: 7 }, { i: '32', j: 7 } ], css_id: 'tinytable_css_uka8a61xzltxechalibe',}, 
+          { positions: [ { i: '1', j: 1 }, { i: '4', j: 1 }, { i: '7', j: 1 }, { i: '10', j: 1 }, { i: '13', j: 1 }, { i: '16', j: 1 }, { i: '19', j: 1 }, { i: '22', j: 1 }, { i: '25', j: 1 }, { i: '28', j: 1 }, { i: '31', j: 1 }, { i: '1', j: 2 }, { i: '4', j: 2 }, { i: '7', j: 2 }, { i: '10', j: 2 }, { i: '13', j: 2 }, { i: '16', j: 2 }, { i: '19', j: 2 }, { i: '22', j: 2 }, { i: '25', j: 2 }, { i: '28', j: 2 }, { i: '31', j: 2 }, { i: '1', j: 3 }, { i: '4', j: 3 }, { i: '7', j: 3 }, { i: '10', j: 3 }, { i: '13', j: 3 }, { i: '16', j: 3 }, { i: '19', j: 3 }, { i: '22', j: 3 }, { i: '25', j: 3 }, { i: '28', j: 3 }, { i: '31', j: 3 }, { i: '1', j: 4 }, { i: '4', j: 4 }, { i: '7', j: 4 }, { i: '10', j: 4 }, { i: '13', j: 4 }, { i: '16', j: 4 }, { i: '19', j: 4 }, { i: '22', j: 4 }, { i: '25', j: 4 }, { i: '28', j: 4 }, { i: '31', j: 4 }, { i: '1', j: 5 }, { i: '4', j: 5 }, { i: '7', j: 5 }, { i: '10', j: 5 }, { i: '13', j: 5 }, { i: '16', j: 5 }, { i: '19', j: 5 }, { i: '22', j: 5 }, { i: '25', j: 5 }, { i: '28', j: 5 }, { i: '31', j: 5 }, { i: '1', j: 6 }, { i: '4', j: 6 }, { i: '7', j: 6 }, { i: '10', j: 6 }, { i: '13', j: 6 }, { i: '16', j: 6 }, { i: '19', j: 6 }, { i: '22', j: 6 }, { i: '25', j: 6 }, { i: '28', j: 6 }, { i: '31', j: 6 }, { i: '1', j: 7 }, { i: '4', j: 7 }, { i: '7', j: 7 }, { i: '10', j: 7 }, { i: '13', j: 7 }, { i: '16', j: 7 }, { i: '19', j: 7 }, { i: '22', j: 7 }, { i: '25', j: 7 }, { i: '28', j: 7 }, { i: '31', j: 7 } ], css_id: 'tinytable_css_99kfp86eisp40bog2xgn',}, 
+          { positions: [ { i: '33', j: 1 }, { i: '33', j: 2 }, { i: '33', j: 3 }, { i: '33', j: 4 }, { i: '33', j: 5 }, { i: '33', j: 6 }, { i: '33', j: 7 } ], css_id: 'tinytable_css_3707ou34u44hyonz1m2h',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 }, { i: '0', j: 7 } ], css_id: 'tinytable_css_gnopge223kk42ocf6grd',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  tableFns_f6grd3707ou34u44hyon.styleCell(cell.i, cell.j, group.css_id);
+                  tableFns_6dg5lyyxv6y0x1ysjec8.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -2170,13 +2171,13 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
     <style>
     /* tinytable css entries after */
-    #tinytable_f6grd3707ou34u44hyon td.tinytable_css_aw41d8z3fpk7jkli4wld, #tinytable_f6grd3707ou34u44hyon th.tinytable_css_aw41d8z3fpk7jkli4wld { font-style: italic; text-align: center; font-size: 0.9em }
-    #tinytable_f6grd3707ou34u44hyon td.tinytable_css_alibe378jdu9ren9lcz5, #tinytable_f6grd3707ou34u44hyon th.tinytable_css_alibe378jdu9ren9lcz5 { text-align: center; font-size: 0.9em }
-    #tinytable_f6grd3707ou34u44hyon td.tinytable_css_g2xgnuka8a61xzltxech, #tinytable_f6grd3707ou34u44hyon th.tinytable_css_g2xgnuka8a61xzltxech {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; font-style: italic; text-align: center; font-size: 0.9em }
-    #tinytable_f6grd3707ou34u44hyon td.tinytable_css_z1m2h99kfp86eisp40bo, #tinytable_f6grd3707ou34u44hyon th.tinytable_css_z1m2h99kfp86eisp40bo {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center; font-size: 0.9em }
+    #tinytable_6dg5lyyxv6y0x1ysjec8 td.tinytable_css_uka8a61xzltxechalibe, #tinytable_6dg5lyyxv6y0x1ysjec8 th.tinytable_css_uka8a61xzltxechalibe { font-style: italic; text-align: center; font-size: 0.9em }
+    #tinytable_6dg5lyyxv6y0x1ysjec8 td.tinytable_css_99kfp86eisp40bog2xgn, #tinytable_6dg5lyyxv6y0x1ysjec8 th.tinytable_css_99kfp86eisp40bog2xgn { text-align: center; font-size: 0.9em }
+    #tinytable_6dg5lyyxv6y0x1ysjec8 td.tinytable_css_3707ou34u44hyonz1m2h, #tinytable_6dg5lyyxv6y0x1ysjec8 th.tinytable_css_3707ou34u44hyonz1m2h {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; font-style: italic; text-align: center; font-size: 0.9em }
+    #tinytable_6dg5lyyxv6y0x1ysjec8 td.tinytable_css_gnopge223kk42ocf6grd, #tinytable_6dg5lyyxv6y0x1ysjec8 th.tinytable_css_gnopge223kk42ocf6grd {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center; font-size: 0.9em }
     </style>
     <div class="container">
-      <table class="tinytable" id="tinytable_f6grd3707ou34u44hyon" style="table-layout: fixed; width: 95% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="tinytable" id="tinytable_6dg5lyyxv6y0x1ysjec8" style="table-layout: fixed; width: 95% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         
         <thead>
               <tr>
@@ -2195,19 +2196,19 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="1" data-col="1">b_Intercept</td>
                   <td data-row="1" data-col="2">Mean</td>
                   <td data-row="1" data-col="3">0.257</td>
-                  <td data-row="1" data-col="4">-0.825</td>
-                  <td data-row="1" data-col="5">-0.829</td>
+                  <td data-row="1" data-col="4">-0.830</td>
+                  <td data-row="1" data-col="5">-0.826</td>
                   <td data-row="1" data-col="6">-0.827</td>
-                  <td data-row="1" data-col="7">-0.864</td>
+                  <td data-row="1" data-col="7">-0.866</td>
                 </tr>
                 <tr>
                   <td data-row="2" data-col="1"></td>
                   <td data-row="2" data-col="2">Cr.I</td>
-                  <td data-row="2" data-col="3">[0.2, 0.314]</td>
-                  <td data-row="2" data-col="4">[-1.095, -0.546]</td>
-                  <td data-row="2" data-col="5">[-1.097, -0.566]</td>
-                  <td data-row="2" data-col="6">[-1.089, -0.564]</td>
-                  <td data-row="2" data-col="7">[-1.124, -0.602]</td>
+                  <td data-row="2" data-col="3">[0.201, 0.313]</td>
+                  <td data-row="2" data-col="4">[-1.094, -0.564]</td>
+                  <td data-row="2" data-col="5">[-1.082, -0.558]</td>
+                  <td data-row="2" data-col="6">[-1.084, -0.546]</td>
+                  <td data-row="2" data-col="7">[-1.121, -0.598]</td>
                 </tr>
                 <tr>
                   <td data-row="3" data-col="1"></td>
@@ -2221,29 +2222,29 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                 <tr>
                   <td data-row="4" data-col="1">b_Fluency</td>
                   <td data-row="4" data-col="2">Mean</td>
-                  <td data-row="4" data-col="3">0.084</td>
-                  <td data-row="4" data-col="4">0.198</td>
-                  <td data-row="4" data-col="5">0.202</td>
+                  <td data-row="4" data-col="3">0.083</td>
+                  <td data-row="4" data-col="4">0.203</td>
+                  <td data-row="4" data-col="5">0.201</td>
                   <td data-row="4" data-col="6">0.198</td>
-                  <td data-row="4" data-col="7">0.260</td>
+                  <td data-row="4" data-col="7">0.262</td>
                 </tr>
                 <tr>
                   <td data-row="5" data-col="1"></td>
                   <td data-row="5" data-col="2">Cr.I</td>
-                  <td data-row="5" data-col="3">[-0.001, 0.166]</td>
-                  <td data-row="5" data-col="4">[-0.16, 0.547]</td>
-                  <td data-row="5" data-col="5">[-0.136, 0.544]</td>
-                  <td data-row="5" data-col="6">[-0.134, 0.531]</td>
-                  <td data-row="5" data-col="7">[-0.067, 0.584]</td>
+                  <td data-row="5" data-col="3">[-0.002, 0.166]</td>
+                  <td data-row="5" data-col="4">[-0.131, 0.559]</td>
+                  <td data-row="5" data-col="5">[-0.133, 0.543]</td>
+                  <td data-row="5" data-col="6">[-0.143, 0.542]</td>
+                  <td data-row="5" data-col="7">[-0.062, 0.582]</td>
                 </tr>
                 <tr>
                   <td data-row="6" data-col="1"></td>
                   <td data-row="6" data-col="2">pd</td>
                   <td data-row="6" data-col="3">0.973</td>
-                  <td data-row="6" data-col="4">0.871</td>
-                  <td data-row="6" data-col="5">0.879</td>
-                  <td data-row="6" data-col="6">0.877</td>
-                  <td data-row="6" data-col="7">0.938</td>
+                  <td data-row="6" data-col="4">0.876</td>
+                  <td data-row="6" data-col="5">0.875</td>
+                  <td data-row="6" data-col="6">0.866</td>
+                  <td data-row="6" data-col="7">0.944</td>
                 </tr>
                 <tr>
                   <td data-row="7" data-col="1">sigma</td>
@@ -2276,19 +2277,19 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="10" data-col="1">b_phi_Intercept</td>
                   <td data-row="10" data-col="2">Mean</td>
                   <td data-row="10" data-col="3">-</td>
-                  <td data-row="10" data-col="4">1.595</td>
-                  <td data-row="10" data-col="5">1.600</td>
-                  <td data-row="10" data-col="6">1.597</td>
-                  <td data-row="10" data-col="7">1.618</td>
+                  <td data-row="10" data-col="4">1.604</td>
+                  <td data-row="10" data-col="5">1.597</td>
+                  <td data-row="10" data-col="6">1.600</td>
+                  <td data-row="10" data-col="7">1.613</td>
                 </tr>
                 <tr>
                   <td data-row="11" data-col="1"></td>
                   <td data-row="11" data-col="2">Cr.I</td>
                   <td data-row="11" data-col="3">-</td>
-                  <td data-row="11" data-col="4">[1.185, 1.98]</td>
-                  <td data-row="11" data-col="5">[1.179, 1.984]</td>
-                  <td data-row="11" data-col="6">[1.181, 1.992]</td>
-                  <td data-row="11" data-col="7">[1.211, 1.991]</td>
+                  <td data-row="11" data-col="4">[1.203, 1.978]</td>
+                  <td data-row="11" data-col="5">[1.166, 1.989]</td>
+                  <td data-row="11" data-col="6">[1.166, 1.982]</td>
+                  <td data-row="11" data-col="7">[1.212, 2.007]</td>
                 </tr>
                 <tr>
                   <td data-row="12" data-col="1"></td>
@@ -2303,28 +2304,28 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="13" data-col="1">b_phi_Fluency</td>
                   <td data-row="13" data-col="2">Mean</td>
                   <td data-row="13" data-col="3">-</td>
-                  <td data-row="13" data-col="4">0.437</td>
-                  <td data-row="13" data-col="5">0.426</td>
-                  <td data-row="13" data-col="6">0.431</td>
-                  <td data-row="13" data-col="7">0.402</td>
+                  <td data-row="13" data-col="4">0.420</td>
+                  <td data-row="13" data-col="5">0.430</td>
+                  <td data-row="13" data-col="6">0.427</td>
+                  <td data-row="13" data-col="7">0.407</td>
                 </tr>
                 <tr>
                   <td data-row="14" data-col="1"></td>
                   <td data-row="14" data-col="2">Cr.I</td>
                   <td data-row="14" data-col="3">-</td>
-                  <td data-row="14" data-col="4">[-0.145, 1.017]</td>
-                  <td data-row="14" data-col="5">[-0.156, 1.002]</td>
-                  <td data-row="14" data-col="6">[-0.145, 1.004]</td>
-                  <td data-row="14" data-col="7">[-0.183, 0.988]</td>
+                  <td data-row="14" data-col="4">[-0.155, 0.995]</td>
+                  <td data-row="14" data-col="5">[-0.147, 0.984]</td>
+                  <td data-row="14" data-col="6">[-0.153, 1.027]</td>
+                  <td data-row="14" data-col="7">[-0.174, 0.982]</td>
                 </tr>
                 <tr>
                   <td data-row="15" data-col="1"></td>
                   <td data-row="15" data-col="2">pd</td>
                   <td data-row="15" data-col="3">-</td>
-                  <td data-row="15" data-col="4">0.932</td>
-                  <td data-row="15" data-col="5">0.927</td>
-                  <td data-row="15" data-col="6">0.930</td>
-                  <td data-row="15" data-col="7">0.915</td>
+                  <td data-row="15" data-col="4">0.930</td>
+                  <td data-row="15" data-col="5">0.932</td>
+                  <td data-row="15" data-col="6">0.936</td>
+                  <td data-row="15" data-col="7">0.920</td>
                 </tr>
                 <tr>
                   <td data-row="16" data-col="1">b_zi_Intercept</td>
@@ -2340,7 +2341,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="17" data-col="2">Cr.I</td>
                   <td data-row="17" data-col="3">-</td>
                   <td data-row="17" data-col="4">-</td>
-                  <td data-row="17" data-col="5">[-2.478, -0.955]</td>
+                  <td data-row="17" data-col="5">[-2.473, -0.942]</td>
                   <td data-row="17" data-col="6">-</td>
                   <td data-row="17" data-col="7">-</td>
                 </tr>
@@ -2358,7 +2359,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="19" data-col="2">Mean</td>
                   <td data-row="19" data-col="3">-</td>
                   <td data-row="19" data-col="4">-</td>
-                  <td data-row="19" data-col="5">-2.126</td>
+                  <td data-row="19" data-col="5">-2.116</td>
                   <td data-row="19" data-col="6">-</td>
                   <td data-row="19" data-col="7">-</td>
                 </tr>
@@ -2367,7 +2368,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="20" data-col="2">Cr.I</td>
                   <td data-row="20" data-col="3">-</td>
                   <td data-row="20" data-col="4">-</td>
-                  <td data-row="20" data-col="5">[-4.432, -0.384]</td>
+                  <td data-row="20" data-col="5">[-4.595, -0.323]</td>
                   <td data-row="20" data-col="6">-</td>
                   <td data-row="20" data-col="7">-</td>
                 </tr>
@@ -2386,7 +2387,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="22" data-col="3">-</td>
                   <td data-row="22" data-col="4">-</td>
                   <td data-row="22" data-col="5">-</td>
-                  <td data-row="22" data-col="6">-1.549</td>
+                  <td data-row="22" data-col="6">-1.548</td>
                   <td data-row="22" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2395,7 +2396,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="23" data-col="3">-</td>
                   <td data-row="23" data-col="4">-</td>
                   <td data-row="23" data-col="5">-</td>
-                  <td data-row="23" data-col="6">[-2.31, -0.894]</td>
+                  <td data-row="23" data-col="6">[-2.308, -0.851]</td>
                   <td data-row="23" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2413,7 +2414,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="25" data-col="3">-</td>
                   <td data-row="25" data-col="4">-</td>
                   <td data-row="25" data-col="5">-</td>
-                  <td data-row="25" data-col="6">-2.229</td>
+                  <td data-row="25" data-col="6">-2.268</td>
                   <td data-row="25" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2422,7 +2423,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="26" data-col="3">-</td>
                   <td data-row="26" data-col="4">-</td>
                   <td data-row="26" data-col="5">-</td>
-                  <td data-row="26" data-col="6">[-4.599, -0.474]</td>
+                  <td data-row="26" data-col="6">[-4.718, -0.486]</td>
                   <td data-row="26" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2431,7 +2432,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="27" data-col="3">-</td>
                   <td data-row="27" data-col="4">-</td>
                   <td data-row="27" data-col="5">-</td>
-                  <td data-row="27" data-col="6">0.995***</td>
+                  <td data-row="27" data-col="6">0.997***</td>
                   <td data-row="27" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2440,7 +2441,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="28" data-col="3">-</td>
                   <td data-row="28" data-col="4">-</td>
                   <td data-row="28" data-col="5">-</td>
-                  <td data-row="28" data-col="6">-2.057</td>
+                  <td data-row="28" data-col="6">-2.066</td>
                   <td data-row="28" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2449,7 +2450,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="29" data-col="3">-</td>
                   <td data-row="29" data-col="4">-</td>
                   <td data-row="29" data-col="5">-</td>
-                  <td data-row="29" data-col="6">[-4.418, -0.335]</td>
+                  <td data-row="29" data-col="6">[-4.408, -0.287]</td>
                   <td data-row="29" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2458,7 +2459,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="30" data-col="3">-</td>
                   <td data-row="30" data-col="4">-</td>
                   <td data-row="30" data-col="5">-</td>
-                  <td data-row="30" data-col="6">0.993**</td>
+                  <td data-row="30" data-col="6">0.991**</td>
                   <td data-row="30" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2467,7 +2468,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="31" data-col="3">-</td>
                   <td data-row="31" data-col="4">-</td>
                   <td data-row="31" data-col="5">-</td>
-                  <td data-row="31" data-col="6">0.184</td>
+                  <td data-row="31" data-col="6">0.284</td>
                   <td data-row="31" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2476,7 +2477,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="32" data-col="3">-</td>
                   <td data-row="32" data-col="4">-</td>
                   <td data-row="32" data-col="5">-</td>
-                  <td data-row="32" data-col="6">[-7.043, 5.91]</td>
+                  <td data-row="32" data-col="6">[-6.67, 5.854]</td>
                   <td data-row="32" data-col="7">-</td>
                 </tr>
                 <tr>
@@ -2485,7 +2486,7 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
                   <td data-row="33" data-col="3">-</td>
                   <td data-row="33" data-col="4">-</td>
                   <td data-row="33" data-col="5">-</td>
-                  <td data-row="33" data-col="6">0.565</td>
+                  <td data-row="33" data-col="6">0.573</td>
                   <td data-row="33" data-col="7">-</td>
                 </tr>
         </tbody>
@@ -2562,6 +2563,9 @@ Listing&nbsp;20: Fitting ordered beta model with dispersion using <code>ordbetar
 </div>
 </div>
 </section>
+</section>
+<section id="case-study-2" class="level2">
+<h2 data-anchor-id="case-study-2">Case Study 2</h2>
 </section>
 </section>
 <section id="discussion" class="level1">
@@ -3229,7 +3233,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb41" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "A Beta Way: A *Bayesian* Tutorial For Using Beta Regression in Psychological Research"</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "A Beta Way: A **Bayesian** Tutorial For Using Beta Regression in Psychological Research"</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="an">shorttitle:</span><span class="co"> "Beta Regression Tutorial"</span></span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co">  - name: Jason Geller</span></span>
@@ -3285,7 +3289,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <span id="cb41-55"><a href="#cb41-55" aria-hidden="true" tabindex="-1"></a><span class="co">    conflict-of-interest: The authors have no conflicts of interest to disclose.</span></span>
 <span id="cb41-56"><a href="#cb41-56" aria-hidden="true" tabindex="-1"></a><span class="co">    financial-support: ~</span></span>
 <span id="cb41-57"><a href="#cb41-57" aria-hidden="true" tabindex="-1"></a><span class="co">    authorship-agreements: ~</span></span>
-<span id="cb41-58"><a href="#cb41-58" aria-hidden="true" tabindex="-1"></a><span class="an">abstract:</span><span class="co"> "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale using the packages **{marginaleffects}** and the **{easystats}** ecosystem. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familiarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://doi.org/10.5281/zenodo.15830595."</span></span>
+<span id="cb41-58"><a href="#cb41-58" aria-hidden="true" tabindex="-1"></a><span class="an">abstract:</span><span class="co"> "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale using the packages **{marginaleffects}** and the **{easystats}**. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familiarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://doi.org/10.5281/zenodo.15830595."</span></span>
 <span id="cb41-59"><a href="#cb41-59" aria-hidden="true" tabindex="-1"></a><span class="an">keywords:</span><span class="co"> [beta regression, beta distribution, R tutorial, psychology, learning and memory]</span></span>
 <span id="cb41-60"><a href="#cb41-60" aria-hidden="true" tabindex="-1"></a><span class="an">floatsintext:</span><span class="co"> true</span></span>
 <span id="cb41-61"><a href="#cb41-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Numbered lines (.pdf and .docx only)</span></span>
@@ -3545,7 +3549,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <span id="cb41-325"><a href="#cb41-325" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)</span>
 <span id="cb41-326"><a href="#cb41-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb41-327"><a href="#cb41-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-328"><a href="#cb41-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## I Can't Believe It's Not beta</span></span>
+<span id="cb41-328"><a href="#cb41-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## I Can't Believe It's Not Beta</span></span>
 <span id="cb41-329"><a href="#cb41-329" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-330"><a href="#cb41-330" aria-hidden="true" tabindex="-1"></a>While the standard parameterization of the beta distribution uses $\alpha$ and $\beta$, a reparameterization to a mean ($\mu$) and precision ($\phi$) is more useful for regression models. The mean represents the expected value of the distribution, while the dispersion, which is inversely related to variance, reflects how concentrated the distribution is around the mean, with higher values indicating a narrower distribution and lower values indicating a wider one. The connections between the beta distribution's parameters are shown in @eq-beta. Importantly, the variance depends on the average value of the response because uncertainty intervals need to adjust for how close the value of the response is to the boundary.</span>
 <span id="cb41-331"><a href="#cb41-331" aria-hidden="true" tabindex="-1"></a></span>
@@ -3682,7 +3686,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <span id="cb41-464"><a href="#cb41-464" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-465"><a href="#cb41-465" aria-hidden="true" tabindex="-1"></a><span class="fu"># Beta Regression Tutorial</span></span>
 <span id="cb41-466"><a href="#cb41-466" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-467"><a href="#cb41-467" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example Data</span></span>
+<span id="cb41-467"><a href="#cb41-467" aria-hidden="true" tabindex="-1"></a><span class="fu">## Case Study 1</span></span>
 <span id="cb41-468"><a href="#cb41-468" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-469"><a href="#cb41-469" aria-hidden="true" tabindex="-1"></a>Throughout this tutorial, we analyze data from a memory experiment examining whether the fluency of an instructor’s delivery affects recall performance <span class="co">[</span><span class="ot">@wilford2020, Experiment 1A</span><span class="co">]</span>. Instructor fluency—marked by expressive gestures, dynamic vocal tone, and confident pacing—has been shown to influence students’ perceptions of learning, often leading learners to rate fluent instructors more favorably <span class="co">[</span><span class="ot">@carpenter2013</span><span class="co">]</span>. However, previous research suggests that these impressions do not reliably translate into improved memory performance <span class="co">[</span><span class="ot">e.g., @carpenter2013; @toftness2017; @witherby2022</span><span class="co">]</span>. In contrast, @wilford2020 found that participants actually recalled more information after watching a fluent instructor compared to a disfluent one. This surprising finding makes the dataset a compelling case study for analyzing proportion data, as recall was scored out of 10 possible idea units per video.</span>
 <span id="cb41-470"><a href="#cb41-470" aria-hidden="true" tabindex="-1"></a></span>
@@ -4374,7 +4378,7 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <span id="cb41-1222"><a href="#cb41-1222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
 <span id="cb41-1223"><a href="#cb41-1223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb41-1224"><a href="#cb41-1224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1225"><a href="#cb41-1225" aria-hidden="true" tabindex="-1"></a><span class="fu">## Zero-One-Inflated beta (ZOIB)</span></span>
+<span id="cb41-1225"><a href="#cb41-1225" aria-hidden="true" tabindex="-1"></a><span class="fu">## Zero-One-Inflated Beta (ZOIB)</span></span>
 <span id="cb41-1226"><a href="#cb41-1226" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-1227"><a href="#cb41-1227" aria-hidden="true" tabindex="-1"></a>The ZIB model works well if there are 0s in your data, but not 1s.<span class="ot">[^8]</span> In our previous examples we either got rid of both 0s and 1s (beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds <span class="co">[</span><span class="ot">@kong2016</span><span class="co">]</span>, in JOL tasks <span class="co">[</span><span class="ot">@wilford2020</span><span class="co">]</span>, or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 <span class="co">[</span><span class="ot">@bendixen2023</span><span class="co">]</span>. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.</span>
 <span id="cb41-1228"><a href="#cb41-1228" aria-hidden="true" tabindex="-1"></a></span>
@@ -4873,34 +4877,38 @@ Ye, M., &amp; Heiss, A. (2023). Enforcing <span>Boundaries</span>: <span>China</
 <span id="cb41-1751"><a href="#cb41-1751" aria-hidden="true" tabindex="-1"></a>combined_plot</span>
 <span id="cb41-1752"><a href="#cb41-1752" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb41-1753"><a href="#cb41-1753" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1754"><a href="#cb41-1754" aria-hidden="true" tabindex="-1"></a><span class="fu"># Discussion</span></span>
+<span id="cb41-1754"><a href="#cb41-1754" aria-hidden="true" tabindex="-1"></a><span class="fu">## Case Study 2</span></span>
 <span id="cb41-1755"><a href="#cb41-1755" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1756"><a href="#cb41-1756" aria-hidden="true" tabindex="-1"></a>The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to turn the tides. Beta regression models are an attractive alternative to models that impose unrealistic assumptions like normality, linearity, homoscedasticity, and unbounded data. Beyond these models, there are a diverse array of different models that can be used depending on your outcome of interest.</span>
+<span id="cb41-1756"><a href="#cb41-1756" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-1757"><a href="#cb41-1757" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1758"><a href="#cb41-1758" aria-hidden="true" tabindex="-1"></a>Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results using the {marginaleffects} package.</span>
+<span id="cb41-1758"><a href="#cb41-1758" aria-hidden="true" tabindex="-1"></a><span class="fu"># Discussion</span></span>
 <span id="cb41-1759"><a href="#cb41-1759" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1760"><a href="#cb41-1760" aria-hidden="true" tabindex="-1"></a>Comparing our analysis with that of @wilford2020, we demonstrated that using a traditional approache (e.g., *t*-test) to analyze mean accuracy data can lead to biased inferences. Although we successfully reproduced one of their key findings, our use of beta regression and its extensions revealed important nuances in the results. With a traditional beta regression model–which accounts for both the mean and the precision (dispersion)–we observed similar effects of instructor fluency on performance. However, the standard beta model does not accommodate boundary values (i.e., 0s and 1s).</span>
+<span id="cb41-1760"><a href="#cb41-1760" aria-hidden="true" tabindex="-1"></a>The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to turn the tides. Beta regression models are an attractive alternative to models that impose unrealistic assumptions like normality, linearity, homoscedasticity, and unbounded data. Beyond these models, there are a diverse array of different models that can be used depending on your outcome of interest.</span>
 <span id="cb41-1761"><a href="#cb41-1761" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1762"><a href="#cb41-1762" aria-hidden="true" tabindex="-1"></a>When we applied a ZIB model, which explicitly accounts for structural 0s, we found no effect of fluency on the mean ($\mu$) part of the model. Instead, the effect of fluency emerged in the structural zero (inflated zero; $\alpha$) component. This pattern was consistent when using a zero-one-inflated beta (ZOIB) model. Furthermore, we fit an ordered beta regression model <span class="co">[</span><span class="ot">@kubinec2022</span><span class="co">]</span>, which appropriately models the full range of values, including 0s and 1s. Here, we did not observe a reliable effect of fluency on the mean once we accounted for dispersion.</span>
+<span id="cb41-1762"><a href="#cb41-1762" aria-hidden="true" tabindex="-1"></a>Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results using the {marginaleffects} package.</span>
 <span id="cb41-1763"><a href="#cb41-1763" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1764"><a href="#cb41-1764" aria-hidden="true" tabindex="-1"></a>These analyses emphasize the importance of fitting a model that aligns with the nature of the data. The simplest and recommended approach when dealing with data that contains 0s and/or 1s is to fit an ordered beta model, assuming the process is truly continuous. However, if you believe the process is distinct in nature, a ZIB or ZOIB model might be a better choice. Ultimately, this decision should be guided by theory.</span>
+<span id="cb41-1764"><a href="#cb41-1764" aria-hidden="true" tabindex="-1"></a>Comparing our analysis with that of @wilford2020, we demonstrated that using a traditional approache (e.g., *t*-test) to analyze mean accuracy data can lead to biased inferences. Although we successfully reproduced one of their key findings, our use of beta regression and its extensions revealed important nuances in the results. With a traditional beta regression model–which accounts for both the mean and the precision (dispersion)–we observed similar effects of instructor fluency on performance. However, the standard beta model does not accommodate boundary values (i.e., 0s and 1s).</span>
 <span id="cb41-1765"><a href="#cb41-1765" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1766"><a href="#cb41-1766" aria-hidden="true" tabindex="-1"></a>For instance, if we believe fluency influences the boundaries (0 and 1), we might want to model this process separately using a ZIB or ZOIB. With the current dataset, fluency might affect specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This effect could be due to participant disengagement during the disfluent lecture. If students fail to pay attention because of features of disfluency, they may miss relevant information, leading to a floor effect at the test. Follwoing from this, disfluency would be expected to influence the boundary (O) and not the continuous part of the model. If this is the case, we would want to model this appropriately. However, if we believe fluency effects general performance levels (the continuous part), a model that takes in to account the entire process accounting for the 0s and 1s might be appropriate.</span>
+<span id="cb41-1766"><a href="#cb41-1766" aria-hidden="true" tabindex="-1"></a>When we applied a ZIB model, which explicitly accounts for structural 0s, we found no effect of fluency on the mean ($\mu$) part of the model. Instead, the effect of fluency emerged in the structural zero (inflated zero; $\alpha$) component. This pattern was consistent when using a zero-one-inflated beta (ZOIB) model. Furthermore, we fit an ordered beta regression model <span class="co">[</span><span class="ot">@kubinec2022</span><span class="co">]</span>, which appropriately models the full range of values, including 0s and 1s. Here, we did not observe a reliable effect of fluency on the mean once we accounted for dispersion.</span>
 <span id="cb41-1767"><a href="#cb41-1767" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1768"><a href="#cb41-1768" aria-hidden="true" tabindex="-1"></a>In the discussion section of @wilford2020, they were unable to offer a tenable explanation for performance differences based on instructor fluency. A model that accounts for the excess 0s in the dataset provides one testable explanation: watching a disfluent lecture may lead to lapses in attention, resulting in poorer performance in that group. These lapses, in turn, contribute to the observed differences in the fluent condition. This modeling approach opens a promising avenue for future research--one that would have remained inaccessible otherwise.</span>
+<span id="cb41-1768"><a href="#cb41-1768" aria-hidden="true" tabindex="-1"></a>These analyses emphasize the importance of fitting a model that aligns with the nature of the data. The simplest and recommended approach when dealing with data that contains 0s and/or 1s is to fit an ordered beta model, assuming the process is truly continuous. However, if you believe the process is distinct in nature, a ZIB or ZOIB model might be a better choice. Ultimately, this decision should be guided by theory.</span>
 <span id="cb41-1769"><a href="#cb41-1769" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1770"><a href="#cb41-1770" aria-hidden="true" tabindex="-1"></a>Not everyone will be eager to implement the techniques discussed herein. In such cases, the key question becomes: What is the least problematic approach to handling proportional data? One reasonable option is to fit multiple models tailored to the specific characteristics of your data. For example, if your data contain 0s, you might fit two models: a traditional linear model excluding the 0s, and a logistic model to account for the zero versus non-zero distinction. If your data contain both 0s and 1s, you could fit separate models for the 0s and 1s in addition to the OLS model. There are many defensible strategies to choose from depending on the context. However, we do not recommend transforming the values of your data (e.g., 0s to .01 and 1s to .99) or ignoring the properties of your data simply to fit traditional statistical models.</span>
+<span id="cb41-1770"><a href="#cb41-1770" aria-hidden="true" tabindex="-1"></a>For instance, if we believe fluency influences the boundaries (0 and 1), we might want to model this process separately using a ZIB or ZOIB. With the current dataset, fluency might affect specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This effect could be due to participant disengagement during the disfluent lecture. If students fail to pay attention because of features of disfluency, they may miss relevant information, leading to a floor effect at the test. Follwoing from this, disfluency would be expected to influence the boundary (O) and not the continuous part of the model. If this is the case, we would want to model this appropriately. However, if we believe fluency effects general performance levels (the continuous part), a model that takes in to account the entire process accounting for the 0s and 1s might be appropriate.</span>
 <span id="cb41-1771"><a href="#cb41-1771" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1772"><a href="#cb41-1772" aria-hidden="true" tabindex="-1"></a>In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For example, the {betareg} package <span class="co">[</span><span class="ot">@betareg</span><span class="co">]</span> {glmmTMB} <span class="co">[</span><span class="ot">@glmmTMB</span><span class="co">]</span> and {gamlss} <span class="co">[</span><span class="ot">@gamlss</span><span class="co">]</span> are nice options. To this end, I have included supplemental materials demonstrating how to use frequentist packages to analyze the data presented herein.</span>
+<span id="cb41-1772"><a href="#cb41-1772" aria-hidden="true" tabindex="-1"></a>In the discussion section of @wilford2020, they were unable to offer a tenable explanation for performance differences based on instructor fluency. A model that accounts for the excess 0s in the dataset provides one testable explanation: watching a disfluent lecture may lead to lapses in attention, resulting in poorer performance in that group. These lapses, in turn, contribute to the observed differences in the fluent condition. This modeling approach opens a promising avenue for future research--one that would have remained inaccessible otherwise.</span>
 <span id="cb41-1773"><a href="#cb41-1773" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1774"><a href="#cb41-1774" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
+<span id="cb41-1774"><a href="#cb41-1774" aria-hidden="true" tabindex="-1"></a>Not everyone will be eager to implement the techniques discussed herein. In such cases, the key question becomes: What is the least problematic approach to handling proportional data? One reasonable option is to fit multiple models tailored to the specific characteristics of your data. For example, if your data contain 0s, you might fit two models: a traditional linear model excluding the 0s, and a logistic model to account for the zero versus non-zero distinction. If your data contain both 0s and 1s, you could fit separate models for the 0s and 1s in addition to the OLS model. There are many defensible strategies to choose from depending on the context. However, we do not recommend transforming the values of your data (e.g., 0s to .01 and 1s to .99) or ignoring the properties of your data simply to fit traditional statistical models.</span>
 <span id="cb41-1775"><a href="#cb41-1775" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1776"><a href="#cb41-1776" aria-hidden="true" tabindex="-1"></a>Overall, this tutorial emphasizes the importance of modeling the data you have. Although the example provided is relatively simple (a one-factor model with two levels), we hope it demonstrates that even with a basic dataset, there is much nuance in interpretation and inference. Properly modeling your data can lead to deeper insights, far beyond what traditional measures might offer. With the tools introduced in this tutorial, researchers now have the means to analyze their data effectively, uncover patterns, make accurate predictions, and support their findings with robust statistical evidence. By applying these modeling techniques, researchers can improve the validity and reliability of their studies, ultimately leading to more informed decisions and advancements in their respective fields.</span>
+<span id="cb41-1776"><a href="#cb41-1776" aria-hidden="true" tabindex="-1"></a>In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For example, the {betareg} package <span class="co">[</span><span class="ot">@betareg</span><span class="co">]</span> {glmmTMB} <span class="co">[</span><span class="ot">@glmmTMB</span><span class="co">]</span> and {gamlss} <span class="co">[</span><span class="ot">@gamlss</span><span class="co">]</span> are nice options. To this end, I have included supplemental materials demonstrating how to use frequentist packages to analyze the data presented herein.</span>
 <span id="cb41-1777"><a href="#cb41-1777" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1778"><a href="#cb41-1778" aria-hidden="true" tabindex="-1"></a><span class="fu"># References</span></span>
+<span id="cb41-1778"><a href="#cb41-1778" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
 <span id="cb41-1779"><a href="#cb41-1779" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-1780"><a href="#cb41-1780" aria-hidden="true" tabindex="-1"></a>::: {#refs}</span>
-<span id="cb41-1781"><a href="#cb41-1781" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb41-1780"><a href="#cb41-1780" aria-hidden="true" tabindex="-1"></a>Overall, this tutorial emphasizes the importance of modeling the data you have. Although the example provided is relatively simple (a one-factor model with two levels), we hope it demonstrates that even with a basic dataset, there is much nuance in interpretation and inference. Properly modeling your data can lead to deeper insights, far beyond what traditional measures might offer. With the tools introduced in this tutorial, researchers now have the means to analyze their data effectively, uncover patterns, make accurate predictions, and support their findings with robust statistical evidence. By applying these modeling techniques, researchers can improve the validity and reliability of their studies, ultimately leading to more informed decisions and advancements in their respective fields.</span>
+<span id="cb41-1781"><a href="#cb41-1781" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-1782"><a href="#cb41-1782" aria-hidden="true" tabindex="-1"></a><span class="fu"># References</span></span>
+<span id="cb41-1783"><a href="#cb41-1783" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-1784"><a href="#cb41-1784" aria-hidden="true" tabindex="-1"></a>::: {#refs}</span>
+<span id="cb41-1785"><a href="#cb41-1785" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
