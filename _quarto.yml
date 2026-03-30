@@ -24,3 +24,5 @@ format:
       hypothesis: true
 execute: 
   echo: true
+  execute-dir: project
+

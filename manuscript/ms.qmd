@@ -1,5 +1,5 @@
 ---
-title: "A Beta Way: A *Bayesian* Tutorial For Using Beta Regression in Psychological Research"
+title: "A Beta Way: A **Bayesian** Tutorial For Using Beta Regression in Psychological Research"
 shorttitle: "Beta Regression Tutorial"
 author:
   - name: Jason Geller
@@ -55,7 +55,7 @@ author-note:
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
     authorship-agreements: ~
-abstract: "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale using the packages **{marginaleffects}** and the **{easystats}** ecosystem. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familiarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://doi.org/10.5281/zenodo.15830595."
+abstract: "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale using the packages **{marginaleffects}** and the **{easystats}**. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familiarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://doi.org/10.5281/zenodo.15830595."
 keywords: [beta regression, beta distribution, R tutorial, psychology, learning and memory]
 floatsintext: true
 # Numbered lines (.pdf and .docx only)
@@ -315,7 +315,7 @@ ggplot(
   theme(legend.position = "right")
 ```
 
-## I Can't Believe It's Not beta
+## I Can't Believe It's Not Beta
 
 While the standard parameterization of the beta distribution uses $\alpha$ and $\beta$, a reparameterization to a mean ($\mu$) and precision ($\phi$) is more useful for regression models. The mean represents the expected value of the distribution, while the dispersion, which is inversely related to variance, reflects how concentrated the distribution is around the mean, with higher values indicating a narrower distribution and lower values indicating a wider one. The connections between the beta distribution's parameters are shown in @eq-beta. Importantly, the variance depends on the average value of the response because uncertainty intervals need to adjust for how close the value of the response is to the boundary.
 
@@ -452,7 +452,7 @@ For reasons of space, we refer readers unfamiliar to Bayesian data analysis to s
 
 # Beta Regression Tutorial
 
-## Example Data
+## Case Study 1
 
 Throughout this tutorial, we analyze data from a memory experiment examining whether the fluency of an instructor’s delivery affects recall performance [@wilford2020, Experiment 1A]. Instructor fluency—marked by expressive gestures, dynamic vocal tone, and confident pacing—has been shown to influence students’ perceptions of learning, often leading learners to rate fluent instructors more favorably [@carpenter2013]. However, previous research suggests that these impressions do not reliably translate into improved memory performance [e.g., @carpenter2013; @toftness2017; @witherby2022]. In contrast, @wilford2020 found that participants actually recalled more information after watching a fluent instructor compared to a disfluent one. This surprising finding makes the dataset a compelling case study for analyzing proportion data, as recall was scored out of 10 possible idea units per video.
 
@@ -1146,7 +1146,7 @@ marg_zi_brms |>
   theme(legend.position = "none")
 ```
 
-## Zero-One-Inflated beta (ZOIB)
+## Zero-One-Inflated Beta (ZOIB)
 
 The ZIB model works well if there are 0s in your data, but not 1s.[^8] In our previous examples we either got rid of both 0s and 1s (beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
@@ -1644,6 +1644,10 @@ combined_plot <- (pp_check1 / pp_check2 / pp_check3) +
 
 combined_plot
 ```
+
+## Case Study 2
+
+
 
 # Discussion
 
