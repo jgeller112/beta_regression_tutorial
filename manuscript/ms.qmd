@@ -49,9 +49,7 @@ author-note:
     affiliation-change: ~
     deceased: ~
   disclosures:
-    # Example: This study was registered at X (Identifier Y).
     study-registration: "The analyses herein were not preregistered."
-    # Acknowledge and cite data/materials to be shared.
     data-sharing: Data, code, and materials for this manuscript can be found at https://doi.org/10.5281/zenodo.1583059.
     related-report: ~
     conflict-of-interest: The authors have no conflicts of interest to disclose.
