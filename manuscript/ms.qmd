@@ -1,5 +1,5 @@
 ---
-title: "A Beta Way: A Tutorial For Using Beta Regression in Psychological Research"
+title: "A Beta Way: A *Bayesian* Tutorial For Using Beta Regression in Psychological Research"
 shorttitle: "Beta Regression Tutorial"
 author:
   - name: Jason Geller
@@ -9,7 +9,7 @@ author:
     affiliations:
       - name: Boston College
         department: Department of Psychology and Neuroscience
-        address: McGuinn 300z
+        address: McGuinn 300
         city: Chestnut Hill
         region: MA
         country: USA
@@ -57,7 +57,7 @@ author-note:
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
     authorship-agreements: ~
-abstract: "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familiarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://doi.org/10.5281/zenodo.15830595."
+abstract: "Rates, percentages, and proportions are common outcomes in psychology and the social sciences. These outcomes are often analyzed using models that assume normality, but this practice overlooks important features of the data, such as their natural bounds at 0 and 1. As a result, estimates can become distorted. In contrast, treating such outcomes as beta-distributed respects these limits and can yield more accurate estimates. Despite these advantages, the use of beta models in applied research remains limited. Our goal is to provide researchers with practical guidance for adopting beta regression models, illustrated with an example drawn from the psychological literature. We begin by introducing the beta distribution and beta regression, emphasizing key components and assumptions. Next, using data from a learning and memory study, we demonstrate how to fit a beta regression model in R with the Bayesian package {brms} and how to interpret results on the response scale using packages like **{marginaleffects}** and the **{easystats}** ecosystem. We also discuss model extensions, including zero-inflated, zero- and one-inflated, and ordered beta models. Basic familiarity with regression modeling and R is assumed. To promote wider adoption of these methods, we provide detailed code and materials at https://doi.org/10.5281/zenodo.15830595."
 keywords: [beta regression, beta distribution, R tutorial, psychology, learning and memory]
 floatsintext: true
 # Numbered lines (.pdf and .docx only)
@@ -146,9 +146,9 @@ options(
   scipen = 999,
   marginaleffects_posterior_center = mean,
   brms.short_summary = TRUE,
-  rms.backend = Sys.getenv("BRMS_BACKEND", "cmdstanr"),
+  rms.backend = Sys.getenv("BRMS_BACKEND", "cmdstanr"), # use cmdstanr and not rstan
   brms.threads = as.numeric(Sys.getenv("BRMS_THREADS", 2)),
-  mc.cores = as.numeric(Sys.getenv("MAX_CORES", 4))
+  mc.cores = as.numeric(Sys.getenv("MAX_CORES", 4)) # use 4 cores when fitting brms models
 )
 
 is_html <- knitr::is_html_output()
@@ -500,7 +500,7 @@ fluency_data |>
   stat_dotsinterval(
     point_interval = "mean_qi",
     .width = 0.95,
-     scale = 0.9,
+    scale = 0.9,
     slab_size = 0.6,
     alpha = 0.45,
     slab_linewidth = 0
@@ -549,8 +549,7 @@ bayes_reg_model <- brm(
 #| label: fit-gauss-parameters
 #| echo: false
 
-brms_model_new <- model_parameters(bayes_reg_model, 
-centrality = "mean")
+brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 ```
 
 We fit the model using the `brm()` function from the {brms} package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.
@@ -574,9 +573,7 @@ The `rope()` function in the {bayestestR} package computes the proportion of the
 #| lst-cap: Getting ROPE from `bayes_reg_model` obect using `rope` function from {bayestestR}
 #| echo: true
 
-brms_rope <- bayestestR::rope(bayes_reg_model, 
-ci = .95, 
-ci_method = "ETI")
+brms_rope <- bayestestR::rope(bayes_reg_model, ci = .95, ci_method = "ETI")
 ```
 
 ```{r}
@@ -620,8 +617,7 @@ p_annotated
 #| fig-cap: "Two assumption checks for our OLS model: Normality (right) and Homoskedasticity (left)"
 #| echo: true
 
-check_model(bayes_reg_model, 
-check = c("homogeneity", "qq"))
+check_model(bayes_reg_model, check = c("homogeneity", "qq"))
 ```
 
 We can also examine how well the data fits the model by performing a posterior predictive check using the `pp_check()` function from {brms}. A posterior predictive check involves looking at multiple model-predicted values and plotting them against the observed data. Ideally, the predicted values (the light blue lines) should show reasonable resemblance with the observed data (dark blue line). In our example (see @fig-ppcheckall (A)) the model-predicted density is slightly too peaked and narrow compared to the data. In addition, some of the predicted accuracy values are negative.
@@ -659,7 +655,7 @@ beta_brms <- brm(
   model_beta_bayes,
   data = data_beta,
   family = Beta(),
-  file = here::here("manuscript","models", "model_beta_bayes_reg_01")
+  file = here::here("manuscript", "models", "model_beta_bayes_reg_01")
 )
 ```
 
@@ -687,7 +683,7 @@ beta_brms_dis <- brm(
   model_beta_bayes_disp,
   data = data_beta,
   family = Beta(),
-  file = here::here("manuscript","models", "model_beta_bayes_dis_run01")
+  file = here::here("manuscript", "models", "model_beta_bayes_dis_run01")
 )
 ```
 
@@ -846,8 +842,7 @@ For the `Fluency` factor, we can interpret the estimates under the `Mean` column
 #| lst-cap: Plot predicted probabilities using `plot_predictions()` from {marginaleffects}
 #| echo: true
 
-beta_plot <- plot_predictions(beta_brms_dis, 
-by = "Fluency")
+beta_plot <- plot_predictions(beta_brms_dis, by = "Fluency")
 ```
 
 The `plot_predictions()` function will only display the point estimate with the 95% credible interval. However, Bayesian estimation methods generate distributions for each parameter. This approach allows visualizing full uncertainty estimates beyond points and intervals. Using the {marginaleffects} package, we can obtain samples from the posterior distribution with the `posterior_draws()` function (see @lst-posdraws). We can then plot these results to illustrate the range of plausible values for our estimates at different levels of uncertainty (see @fig-draws-fluency).
@@ -858,8 +853,7 @@ The `plot_predictions()` function will only display the point estimate with the 
 #| echo: true
 
 # Add a model identifier to each dataset
-pred_draws_beta <- avg_predictions(beta_brms_dis, 
-variables = "Fluency") |>
+pred_draws_beta <- avg_predictions(beta_brms_dis, variables = "Fluency") |>
   posterior_draws()
 ```
 
@@ -935,13 +929,13 @@ beta_avg_comp |>
 ```{r}
 #| lst-label: lst-merope
 #| lst-cap: Extracting ROPE using {marginaleffects} for $\mu$ difference
-#| echo: true 
+#| echo: true
 # get risk difference by default
 beta_avg_comp_rope <- avg_comparisons(
   beta_brms_dis,
   variables = "Fluency", # counterfactural difference
   comparison = "difference",
-  equivalence=c(-0.02, .02)
+  equivalence = c(-0.02, .02)
 )
 
 ```
@@ -1030,7 +1024,7 @@ zib_model <- bf(
 fit_zi <- brm(
   formula = zib_model,
   data = data_beta_0,
-  file = here::here("manuscript","models", "bayes_zib_model0not1.rds")
+  file = here::here("manuscript", "models", "bayes_zib_model0not1.rds")
 )
 ```
 
@@ -1367,7 +1361,7 @@ The {ordbetareg} package uses `brms` on the front-end so all the arguments we us
 ord_fit_brms <- ordbetareg(
   Accuracy ~ Fluency,
   data = fluency_data,
-  file = here::here("manuscript","models", "bayes_ordbeta_model")
+  file = here::here("manuscript", "models", "bayes_ordbeta_model")
 )
 ```
 
@@ -1468,12 +1462,10 @@ plots <- pp_check_ordbeta(
   outcome_label = "Final Test Accuracy"
 )
 
-plot <- plots + 
-theme_publication()
+plot <- plots +
+  theme_publication()
 
-plot_grid(plots$discrete, 
-plots$continuous, 
-labels = c("A", "B"))
+plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
 ```
 
 The discrete plot, which is a bar graph, shows that the posterior distribution accurately captures the number of different types of responses (discrete or continuous) in the data. For the continuous plot shown as a density plot with one line per posterior draw, the model does a very good job at capturing the distribution.
@@ -1504,7 +1496,11 @@ In the {ordbetareg} function there is a `true_bound` argument. In cases where yo
 
 # fit models from ran models so tables and figures are in correct place.
 model1 <- read_rds(here("manuscript", "models", "model_reg_bayes.rds"))
-model2 <- read_rds(here("manuscript", "models", "model_beta_bayes_dis_run01.rds"))
+model2 <- read_rds(here(
+  "manuscript",
+  "models",
+  "model_beta_bayes_dis_run01.rds"
+))
 model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
 model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
 model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
@@ -1606,7 +1602,7 @@ pretty_table |>
     ),
     italic = TRUE,
     fontsize = .6
-  ) 
+  )
 ```
 
 ```{r}

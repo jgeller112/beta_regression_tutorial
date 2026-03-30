@@ -1,19 +1,19 @@
-
 # Beta Regression Tutorial
 
-[![DOI](https://zenodo.org/badge/826370441.svg)](https://doi.org/10.5281/zenodo.15830595)
+[![DOI](https://zenodo.org/badge/826370441.svg)](https://doi.org/10.5281/zenodo.15830595) 
 
-This repository provides a fully reproducible workflow for our beta regression manuscript (A Beta Way: A Tutorial For Using Beta Regression in Psychological Research) using **R**, **Quarto**, and **Nix**. It includes scripts, data, references, and CI pipelines to automate rendering and ensure reproducibility. 
+This repository provides a fully reproducible workflow for our beta regression manuscript (A Beta Way: A Tutorial For Using Beta Regression in Psychological Research) using **R**, **Quarto**, and **Nix**. It includes scripts, data, references, and CI pipelines to automate rendering and ensure reproducibility.
 
-## Authors/Contributors 
-- Jason Geller* (drjasongeller@gmail.com)
-- Robert Kubinec
-- Chelsea M. Parlett Pelleriti
-- Matti Vuorre
+## Authors/Contributors
+
+-   Jason Geller\* (drjasongeller\@gmail.com)
+-   Robert Kubinec
+-   Chelsea M. Parlett Pelleriti
+-   Matti Vuorre
 
 ## Project Structure
 
-```
+```         
 beta_regression_tutorial/
 ├── .github/
 │   └── workflows/
@@ -24,7 +24,7 @@ beta_regression_tutorial/
 |   |   _quarto.yml                   # manuscript metadata amd rendering
 │   ├── data/
 │   │   ├── fluency_data.csv         # Aggregate data used for example
-│   │   └── miko_data.csv            # Aaw data from Expt 1A from Wilford Paper
+│   │   └── miko_data.csv            # Raw data from Expt 1A from Wilford Paper
 │   ├── _extensions/
 │   │   └── apaquarto/
 │   ├── ms.qmd                       # Main manuscript file (Quarto)
@@ -34,50 +34,45 @@ beta_regression_tutorial/
 ├── LICENSE                          # Project license
 ├── README.md                        # Project overview (this file)
 ├── air.toml                         # Air formatter configuration
-├── betareg.code-workspace           # functions like rstudio.proj file (open it and open in positron)
+├── beta_regression_tutorial.code-workspace # functions like rstudio.proj file (open it and open in positron)
 ├── create_env_dev.R                 # Script to create dev environment (rix)
 ├── default.nix                      # Nix definition for full reproducibility
 ├── grateful-refs.bib                # Bibliography generated for installed packages
 ├── grateful-report.html             # Report of installed packages
 ├── install_cmdstan.R                # Install the latest CmdStan in the shell
-├── nix-beta_reg_ms.Rproj            # RStudio project file (opens this project in RStudio)
-
+├── beta_regression_tutorial.Rproj    # RStudio project file (opens this project in RStudio)
 ```
 
-
-- **`.github`**: contains render_paper.yml that builds the manuscript using nix anew every time it detects a new change
-- **`.Rprofile`**: Configuration file for R sessions.
-- **`.gitignore`**: Specifies files and directories for Git to ignore.
-- **`Rproj`**: RStudio project file.
-- **`README.md`**: Provides an overview of the project.
-- **`create_env_dev.R`**: Script to set up the nix environment
-- **`default.nix`**: Configuration file for the Nix package manager.
-- **`.project`**: Project configuration file.
-- ** install_cmdstan.R**: R script to install cmdstanr via rix/nix hook.
-- **grateful**: references for packages used in project
-- **air.toml**: formatter setting positron
+-   **`.github`**: contains render_paper.yml that builds the manuscript using nix anew every time it detects a new change
+-   **`.Rprofile`**: Configuration file for R sessions.
+-   **`.gitignore`**: Specifies files and directories for Git to ignore.
+-   **`Rproj`**: RStudio project file.
+-   **`README.md`**: Provides an overview of the project.
+-   **`create_env_dev.R`**: Script to set up the nix environment
+-   **`default.nix`**: Configuration file for the Nix package manager.
+-   **`.project`**: Project configuration file.
+-   ** `.code-workspace`** Positron project file (opens up Positron instance)
+-   **install_cmdstan.R**: R script to install cmdstanr via rix/nix hook.
+-   **grateful**: references for packages used in project
+-   **air.toml**: formatter setting positron
 
 ## Directories
 
-- **`_extensions/`**: Contains extensions, including:
-  - **`wjschne/apaquarto/`**
-
-- **`manuscript/`**: Manuscript-related files.
-
+-   **`_extensions/`**: Contains extensions, including:
+    -   **`wjschne/apaquarto/`**
+-   **`manuscript/`**: Manuscript-related files.
 
 ## Data
 
-- All data for this manuscript can be found under /data.
- 
+-   All data for this manuscript can be found under /data.
+
 # Reproducing the Manuscript
 
 This repository contains all the resources needed to reproduce the manuscript associated with this project. To ensure maximum reproducibility, we used [Quarto](https://quarto.org/) for creating the manuscript. This allows computational figures, tables, and text to be programmatically included directly in the manuscript, ensuring that all results are seamlessly integrated into the document. We also provide a file called default.nix which contains the definition of the development environment that was used to work on the analysis. Reproducers can easily re-use the exact same environment by installing the Nix package manager and using the included default.nix file to set up the right environment.
 
+\*\*Note: cmdstan is installed outside the Nix environment (in your home directory). See: https://github.com/ropensci/rix/issues/481#issuecomment-2820450557. Because it is not managed by Nix, this can conflict with any other cmdstan installation on your system.
 
-**Note: cmdstan is installed outside the Nix environment (in your home directory). See: https://github.com/ropensci/rix/issues/481#issuecomment-2820450557. Because it is not managed by Nix, this can conflict with any other cmdstan installation on your system.
-
-Also note that results may not be perfectly reproducible across machines/runs due to aspects of the brms/Stan toolchain and numerical behavior. See: https://mc-stan.org/docs/reference-manual/reproducibility.html**
-## Video Tutorial
+Also note that results may not be perfectly reproducible across machines/runs due to aspects of the brms/Stan toolchain and numerical behavior. See: https://mc-stan.org/docs/reference-manual/reproducibility.html\*\* \## Video Tutorial
 
 Here is a video tutorial showing an example of how to reproduce a manuscript using Nix/Rix
 
@@ -89,13 +84,13 @@ Here is a video tutorial showing an example of how to reproduce a manuscript usi
 
 To reproduce the manuscript, you will need the following if not using rix/nix:
 
-- **Git** - To get Github repos [https://git-scm.com/downloads]
--  **RStudio** or **Positron**  or **VS Code**- To run the R scripts and render the Quarto document.
--  **Quarto** - To compile the manuscript.
+-   **Git** - To get Github repos \[https://git-scm.com/downloads\]
+-   **RStudio** or **Positron** or **VS Code**- To run the R scripts and render the Quarto document.
+-   **Quarto** - To compile the manuscript.
 
-### Template 
+### Template
 
-- **apaQuarto** - APA manuscript template [https://github.com/wjschne/apaquarto/tree/main] (you should not have to download this if you download the repo as the _extension file contains all the files needed)
+-   **apaQuarto** - APA manuscript template \[https://github.com/wjschne/apaquarto/tree/main\] (you should not have to download this if you download the repo as the \_extension file contains all the files needed)
 
 ## Steps to Reproduce
 
@@ -103,76 +98,79 @@ To reproduce the manuscript, you will need the following if not using rix/nix:
 
 #### Installation Guides
 
-- **Nix and Rix**
-  - For Windows and Linux: [Setup Guide](https://docs.ropensci.org/rix/articles/setting-up-linux-windows.html)
-  - For macOS: [Setup Guide](https://docs.ropensci.org/rix/articles/setting-up-macos.html)
+-   **Nix and Rix**
+    -   For Windows and Linux: [Setup Guide](https://docs.ropensci.org/rix/articles/setting-up-linux-windows.html)
+    -   For macOS: [Setup Guide](https://docs.ropensci.org/rix/articles/setting-up-macos.html)
 
 #### 1. Clone the Repository
 
 Clone this repository to your local machine:
 
-```bash
+``` bash
 git clone https://github.com/jgeller112/beta_regression_tutorial.git
 cd nix_beta_regression_ms
 ```
-- You can also clone the repository from Github using the SSH and opeining a project in RStudio/Positron. 
-  <img width="984" height="440" alt="Screenshot 2025-08-11 at 1 56 59 PM" src="https://github.com/user-attachments/assets/946ce905-640b-43ed-913e-57815256a95d" />
 
- 
+-   You can also clone the repository from Github using the SSH and opeining a project in RStudio/Positron. <img src="https://github.com/user-attachments/assets/946ce905-640b-43ed-913e-57815256a95d" alt="Screenshot 2025-08-11 at 1 56 59 PM" width="984" height="440"/>
+
 #### 2. Open the Project
-- Open the R project file `nix-beta_regression_ms.Rproj` in RStudio or Open folder in Positron.
 
+-   Open the R project file `nix-beta_regression_ms.Rproj` in RStudio or Open folder in Positron.
 
 #### 3. Build the Environment
+
 Use Nix to set up the reproducible environment:
-```
+
+```         
 nix-build
 ```
 
-```
+```         
 nix-shell
 ```
-Once in the shell (after calling nix-shell), You can: 
 
-1. Reproduce the manuscript
+Once in the shell (after calling nix-shell), You can:
 
-```
+1.  Reproduce the manuscript
+
+```         
 quarto render "quarto render manuscript/ms.qmd"
 ```
 
+or
 
-or 
+2.  Launch your IDE in the correct environment in run code and analyses (the IDE needs to be set explicility):
 
-2. Launch your IDE in the correct environment in run code and analyses (the IDE needs to be set explicility):
+-   Positron
+    -   To use Positron from the shell you will need to make sure the correct path is set (see https://github.com/posit-dev/positron/discussions/4485#discussioncomment-10456159). Once this is done you can open Positron from the shell
+    -   If you are using Positron within WSL/Windows you need to download WSL for Positron.
+        -   You should also download `direnv` in Positron to access the nix-shell when running projects.
 
-- Positron
-  - To use Positron from the shell you will need to make sure the correct path is set (see https://github.com/posit-dev/positron/discussions/4485#discussioncomment-10456159). Once this is done you can open Positron from the shell
-  - If you are using Positron within WSL/Windows you need to download WSL for Positron.
-    - You should also download `direnv` in Positron to access the nix-shell when running projects. 
-
-```bash
+``` bash
 positron
 ```
+
 For RStudio, simply type:
-```bash
+
+``` bash
 rstudio
 ```
 
-###  Run locally with packages installed systemwide
+### Run locally with packages installed systemwide
 
 Finally, it’s also possible to forget {rix} and instead run everything using R packages that you install systemwide.
 
-- Make sure the required software is installed above and you have the following packages:
+-   Make sure the required software is installed above and you have the following packages:
 
-  - R 4.4.1 (or later) and RStudio.
+    -   R 4.4.1 (or later) and RStudio.
 
-  - Quarto 1.6.1 (or later) (please not Typst will not work for APAquarto)
-  
-  - A C++ compiler and GNU Make. Complete instructions for macOS, Windows, and Linux are available at CmdStan’s documentation. In short, do this:
+    -   Quarto 1.6.1 (or later) (please not Typst will not work for APAquarto)
 
-    - macOS: Run this terminal command and follow the dialog that pops up after to install macOS’s Command Line Tools:
+    -   A C++ compiler and GNU Make. Complete instructions for macOS, Windows, and Linux are available at CmdStan’s documentation. In short, do this:
 
-```
+        -   macOS: Run this terminal command and follow the dialog that pops up after to install macOS’s Command Line Tools:
+
+```         
   xcode-select --install
 ```
 
@@ -180,47 +178,46 @@ Windows: Download and install Rtools from CRAN
 
 Linux: Run this terminal command (depending on your distribution; this assumes Ubuntu/Debian):
 
-```
+```         
 sudo apt install g++ make
 (macOS only): Download and install XQuartz
 ```
 
 ## Packages used
 
-| Package        | Version     | Citation                                                                                      |
-|----------------|-------------|-----------------------------------------------------------------------------------------------|
-| base           | 4.5.1       | R Core Team (2025)                                                                            |
-| bayesplot      | 1.13.0      | Gabry et al. (2019); Gabry and Mahr (2025)                                                    |
-| brms           | 2.22.0      | Bürkner (2017); Bürkner (2018); Bürkner (2021)                                                |
-| cmdstanr       | 0.9.0.9000  | Gabry et al. (2025)                                                                           |
-| cowplot        | 1.1.3       | Wilke (2024)                                                                                  |
-| easystats      | 0.7.4       | Lüdecke et al. (2022)                                                                         |
-| extraDistr     | 1.10.0      | Wolodzko (2023)                                                                               |
-| geomtextpath   | 0.1.5       | Cameron and van den Brand (2025)                                                              |
-| ggdist         | 3.3.3       | Kay (2024); Kay (2025)                                                                        |
-| ggokabeito     | 0.1.0       | Barrett (2021)                                                                                |
-| glmmTMB        | 1.1.8       | Brooks et al. (2017); Magnusson et al. (2022)                                                 |
-| ggrain         | 0.1.0       | Author (Unpublished package or GitHub repository)                                             |
-| here           | 1.0.1       | Müller (2020)                                                                                 |
-| knitr          | 1.50        | Xie (2014); Xie (2015); Xie (2025)                                                            |
-| marginaleffects| 0.31.0      | Arel-Bundock, Greifer, and Heiss (2024)                                                       |
-| ordbetareg     | 0.8         | Kubinec (2025)                                                                                |
-| patchwork      | 1.3.1       | Pedersen (2025)                                                                               |
-| performance    | 0.14.0      | Lüdecke et al. (2021)                                                                         |
-| posterior      | 1.6.1       | Vehtari et al. (2021); Lambert and Vehtari (2022); Margossian et al. (2024); Vehtari et al. (2024); Bürkner et al. (2025) |
-| quarto         | 1.4.553     | Allaire et al. (2024)                                                                         |
-| rix            | 0.16.0      | Rodrigues and Baumann (2025)                                                                  |
-| rmarkdown      | 2.29        | Xie, Allaire, and Grolemund (2018); Xie, Dervieux, and Riederer (2020); Allaire et al. (2024) |
-| scales         | 1.4.0       | Wickham, Pedersen, and Seidel (2025)                                                          |
-| tidybayes      | 3.0.5       | Kay (2024); Kay (2025)                                                                        |
-| tidyverse      | 2.0.0       | Wickham et al. (2019)                                                                         |
-| tinytable      | 0.9.0       | Arel-Bundock (2025)                                                                           |
-| tinytext       | 0.22.0      | Funaki and Sato (2025)                                                                        |
-| transformr     | 0.1.4       | Pedersen (2022)                                                                               |
-| webshot2       | 0.1.0       | Cheng, Xie (2022)                                                                             |
+| Package | Version | Citation |
+|------------|------------|-----------------------------------------------|
+| base | 4.5.1 | R Core Team (2025) |
+| bayesplot | 1.13.0 | Gabry et al. (2019); Gabry and Mahr (2025) |
+| brms | 2.22.0 | Bürkner (2017); Bürkner (2018); Bürkner (2021) |
+| cmdstanr | 0.9.0.9000 | Gabry et al. (2025) |
+| cowplot | 1.1.3 | Wilke (2024) |
+| easystats | 0.7.4 | Lüdecke et al. (2022) |
+| extraDistr | 1.10.0 | Wolodzko (2023) |
+| geomtextpath | 0.1.5 | Cameron and van den Brand (2025) |
+| ggdist | 3.3.3 | Kay (2024); Kay (2025) |
+| ggokabeito | 0.1.0 | Barrett (2021) |
+| glmmTMB | 1.1.8 | Brooks et al. (2017); Magnusson et al. (2022) |
+| ggrain | 0.1.0 | Author (Unpublished package or GitHub repository) |
+| here | 1.0.1 | Müller (2020) |
+| knitr | 1.50 | Xie (2014); Xie (2015); Xie (2025) |
+| marginaleffects | 0.31.0 | Arel-Bundock, Greifer, and Heiss (2024) |
+| ordbetareg | 0.8 | Kubinec (2025) |
+| patchwork | 1.3.1 | Pedersen (2025) |
+| performance | 0.14.0 | Lüdecke et al. (2021) |
+| posterior | 1.6.1 | Vehtari et al. (2021); Lambert and Vehtari (2022); Margossian et al. (2024); Vehtari et al. (2024); Bürkner et al. (2025) |
+| quarto | 1.4.553 | Allaire et al. (2024) |
+| rix | 0.16.0 | Rodrigues and Baumann (2025) |
+| rmarkdown | 2.29 | Xie, Allaire, and Grolemund (2018); Xie, Dervieux, and Riederer (2020); Allaire et al. (2024) |
+| scales | 1.4.0 | Wickham, Pedersen, and Seidel (2025) |
+| tidybayes | 3.0.5 | Kay (2024); Kay (2025) |
+| tidyverse | 2.0.0 | Wickham et al. (2019) |
+| tinytable | 0.9.0 | Arel-Bundock (2025) |
+| tinytext | 0.22.0 | Funaki and Sato (2025) |
+| transformr | 0.1.4 | Pedersen (2022) |
+| webshot2 | 0.1.0 | Cheng, Xie (2022) |
 
-
-```
+```         
 required_packages = c(
   "tidyverse",
   "tinytex", 
@@ -246,27 +243,25 @@ required_packages = c(
 )
 ```
 
-```
+```         
 install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", "https://packagemanager.posit.co/cran/latest"))
 ```
 
-```
+```         
 # install cmdstan 
 cmdstanr::install_cmdstan()
 ```
 
-```
+```         
 #install tinytex to generate pdf 
 tinytex::install_tinytex()
 ```
 
-1. Download the repository from Github
-![Screenshot 2025-07-07 at 9 44 10 PM](https://github.com/user-attachments/assets/86d2ad9b-28de-41e6-83a9-21dd32d211fa)
-
-
+1.  Download the repository from Github ![Screenshot 2025-07-07 at 9 44 10 PM](https://github.com/user-attachments/assets/86d2ad9b-28de-41e6-83a9-21dd32d211fa)
 
 2.  Open `beta_regression_tutorial.Rproj` to open a new RStudio project
-  - Or open in Positron/Vs Code
+
+-   Or open in Positron/Vs Code
 
 4.  Open `/manuscript/ms.qmd`
 
