@@ -41,7 +41,7 @@
 #  > "setspace",
 #  > "fancyvrb",
 #  > "anyfontsize"),
-#  > ide = "rstudio",
+#  > ide = "positron",
 #  > project_path = ".",
 #  > overwrite = TRUE,
 #  > shell_hook = "Rscript install_cmdstan.R",
@@ -51,7 +51,7 @@
 # Apple Silicon computers.
 # Report any issues to https://github.com/ropensci/rix
 let
- pkgs = import (fetchTarball "https://github.com/rstats-on-nix/nixpkgs/archive/2026-03-23.tar.gz") {};
+ pkgs = import (fetchTarball "https://github.com/rstats-on-nix/nixpkgs/archive/2026-03-23.tar.gz") { config.allowUnfree = true; };
  
   rpkgs = builtins.attrValues {
     inherit (pkgs.rPackages) 
@@ -154,6 +154,7 @@ let
       libintl
       nix
       pandoc
+      positron-bin
       quarto
       R
       stanc
@@ -161,11 +162,7 @@ let
       typst
       which;
   };
- 
-  wrapped_pkgs = pkgs.rstudioWrapper.override {
-    packages = [ cmdstanr ordbetareg_pack rpkgs  ];
-  };
- 
+  
   shell = pkgs.mkShell {
     LOCALE_ARCHIVE = if pkgs.stdenv.hostPlatform.system == "x86_64-linux" then "${pkgs.glibcLocales}/lib/locale/locale-archive" else "";
     LANG = "en_US.UTF-8";
@@ -175,7 +172,7 @@ let
     LC_PAPER = "en_US.UTF-8";
     LC_MEASUREMENT = "en_US.UTF-8";
     
-    buildInputs = [ cmdstanr ordbetareg_pack rpkgs tex system_packages wrapped_pkgs ];
+    buildInputs = [ cmdstanr ordbetareg_pack rpkgs tex system_packages ];
     shellHook = ''
     Rscript install_cmdstan.R
   '';
