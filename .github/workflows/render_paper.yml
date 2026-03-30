@@ -67,6 +67,15 @@ jobs:
         sudo apt-get install -y --no-install-recommends fontconfig ttf-mscorefonts-installer
         fc-cache -fv
 
+    - name: Generate default.nix
+      if: env.changed == 'true'
+      run: nix-shell -p R rPackages.rix --run 'R -e "source(\"create_env_dev.R\")"'
+
+    - name: Replace rstudioWrapper with rWrapper
+      if: env.changed == 'true'
+      run: |
+        sed -i 's/rstudioWrapper/rWrapper/g' default.ni
+
     - name: Build development environment
       if: env.changed == 'true'
       run: nix-build

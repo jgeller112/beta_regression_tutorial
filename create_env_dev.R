@@ -27,7 +27,7 @@ required_packages = c(
 library(rix)
 
 rix(
-  date = "2026-03-23",
+  date = "2025-10-07",
   r_pkgs = required_packages,
   system_pkgs = c(
     "quarto",
@@ -79,7 +79,7 @@ rix(
     "anyfontsize"
   ),
   shell_hook = "Rscript install_cmdstan.R",
-  ide = "positron",
+  ide = "rstudio",
   project_path = ".",
   overwrite = TRUE
 )
