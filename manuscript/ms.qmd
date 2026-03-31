@@ -344,11 +344,12 @@ Beta regression models can be estimated using either frequentist or Bayesian met
 
 [^4]: A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package [@brms], which provides a high-level interface to Stan [@stan2023] and uses familiar R formula syntax (similar to `lm()`), making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.
 
-There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the {brms} package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution. By default, Bayesian models run 4 chains with 2,000 iterations each.[^5] The first 1,000 iterations per chain are warmup and are discarded. The remaining 1,000 iterations per chain are retained as posterior draws, yielding 4,000 total post-warmup draws across all chains. From these draws, we can compute the posterior mean (analogous to a frequentist point estimate) and the 95% credible interval (Cr.I.), which is often compared to a confidence interval.
+There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the {brms} package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution. By default, Bayesian models **run in Stan and {brms}** run 4 chains with 2,000 iterations each.[^5] The first 1,000 iterations per chain are warmup and are discarded. The remaining 1,000 iterations per chain are retained as posterior draws, yielding 4,000 total post-warmup draws across all chains. From these draws, we can compute the posterior mean (analogous to a frequentist point estimate) and the 95% credible interval (Cr.I.). **From these draws, we can compute the posterior mean (analogous to a frequentist 
+point estimate) and the 95% credible interval (Cr.I.). **Unlike a frequentist confidence interval, a credible interval directly expresses the probability that the parameter lies within a given range: there is a 95% posterior probability that the true parameter falls within this interval, given the data and prior.**
 
 [^5]: The Hamiltonian Monte Carlo sampler employed by Stan, which we also use in this paper, can converge with significantly fewer iterations, though rapid convergence depends on model complexity, which is why we use a more conservative standard in this paper.
 
-In addition, an important part of Bayesian analyses is prior specification. Priors encode our assumptions about plausible parameter values before observing the data and allow the model to regularize estimates, especially when data are sparse or parameters are weakly identified. To help bridge the conceptual gap for users more familiar with frequentist models, we begin with the default priors (flat/non-informative, or weakly informative in some cases) provided by {brms}. These priors are intentionally non-informative, and in many applications produce results that closely align with frequentist estimates, while still offering the flexibility and interpretive advantages of a Bayesian framework. We strongly urge readers to consider prior specification strongly in all their work.
+In addition, an important part of Bayesian analyses is prior specification. Priors encode our assumptions about plausible parameter values before observing the data and allow the model to regularize estimates, especially when data are sparse or parameters are weakly identified. To help bridge the conceptual gap for users more familiar with frequentist models, we begin with the default priors (flat/non-informative, or weakly informative in some cases) provided by {brms}. These priors are intentionally non-informative, and in many applications produce results that closely align with frequentist estimates, while still offering the flexibility and interpretive advantages of a Bayesian framework. We strongly urge readers to consider prior specification strongly in all their work **(see https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)**
 
 To ease readers into Bayesian data analysis we provide a metric known as the *probability of direction* (pd), which reflects the probability that a parameter is positive or negative. When a uniform prior is used (all values equally likely in the prior), pds of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided p-values of .10, .05, .01, and .001 (i.e., pd ≈ 1 − p/2 for symmetric posteriors with weak/flat priors) (see @fig-p-value-pd-comp for an illustrative comparison). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
 
@@ -454,7 +455,7 @@ For reasons of space, we refer readers unfamiliar to Bayesian data analysis to s
 
 ## Case Study 1
 
-Throughout this tutorial, we analyze data from a memory experiment examining whether the fluency of an instructor’s delivery affects recall performance [@wilford2020, Experiment 1A]. Instructor fluency—marked by expressive gestures, dynamic vocal tone, and confident pacing—has been shown to influence students’ perceptions of learning, often leading learners to rate fluent instructors more favorably [@carpenter2013]. However, previous research suggests that these impressions do not reliably translate into improved memory performance [e.g., @carpenter2013; @toftness2017; @witherby2022]. In contrast, @wilford2020 found that participants actually recalled more information after watching a fluent instructor compared to a disfluent one. This surprising finding makes the dataset a compelling case study for analyzing proportion data, as recall was scored out of 10 possible idea units per video.
+Throughout this tutorial, we analyze data from a memory experiment examining whether the fluency of an instructor’s delivery affects recall performance and **metamemory (i,e., judgements of learning (JOLs))** [@wilford2020, Experiment 1A and 1B]. Instructor fluency—marked by expressive gestures, dynamic vocal tone, and confident pacing—has been shown to influence students’ perceptions of learning, often leading learners to rate fluent instructors more favorably [@carpenter2013]. However, previous research suggests that these impressions do not reliably translate into improved memory performance [e.g., @carpenter2013; @toftness2017; @witherby2022]. In contrast, @wilford2020 found that participants actually recalled more information after watching a fluent instructor compared to a disfluent one. This surprising finding makes the dataset a compelling case study for analyzing proportion data, as recall was scored out of 10 possible idea units per video.
 
 In Experiment 1A, ninety-six participants watched two short instructional videos, each delivered either fluently or disfluently. Fluent videos featured instructors with smooth delivery and natural pacing, while disfluent videos included hesitations, monotone speech, and awkward pauses. After a distractor task, participants completed a free recall test, writing down as much content as they could remember from each video within a three-minute window. Their recall was then scored for the number of idea units correctly remembered.
 
@@ -468,7 +469,7 @@ In Experiment 1A, ninety-six participants watched two short instructional videos
 fluency_data <- read_csv(here::here("manuscript", "data", "fluency_data.csv"))
 ```
 
-Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in @tbl-dataset. The dataset can be downloaded from GitHub (@lst-data). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. In what follows, we reproduce @wilford2020's analysis and then re-analyze the data using beta regression and highlight how it can improve our inferences.
+Our primary outcome variable is the proportion of idea units recalled on the final test, calculated by dividing the number of correct units by 10. We show a sample of these data in @tbl-dataset. **The dataset can be retreived from the project repository referenced above**(@lst-data). Because this is a bounded continuous variable (i.e., it ranges from 0 to 1), it violates the assumptions of typical linear regression models that assume normally distributed residual errors. Despite this, it remains common in psychological research to analyze proportion data using models that assume normality. **In what follows, we re-analyze the data from @wilford2020 first using a Gaussian model (similar to the t-test used in the original paper) and then use beta regression and highlight how it can improve our inferences.**
 
 ```{r}
 #| label: tbl-dataset
@@ -484,7 +485,8 @@ fluency_data |>
 
 ## Reanalysis of Wilford et al. Experiment 1A
 
-In their original analysis of Experiment 1A, @wilford2020 compared memory performance between fluent and disfluent instructor conditions using a traditional independent-samples t-test on mean accuracy for 96 participants. They found that participants who watched the fluent instructor recalled significantly more idea units than those who viewed the disfluent version (see @fig-flu1).
+In their original analysis of Experiment 1A, @wilford2020 compared memory performance between fluent and disfluent instructor conditions using a traditional independent-samples t-test on mean accuracy for 96 participants. They found that participants who watched the fluent instructor recalled significantly more idea units than those who viewed the disfluent version, *t*(94) = 2.00,
+*p* = .048, *d* = 0.41, 95% CI [0.06, 16.56] (see @fig-flu1).
 
 ```{r}
 #| label: fig-flu1
@@ -507,7 +509,7 @@ fluency_data |>
 
 ```
 
-We first replicate this analysis in a regression framework using {brms}. We model final test mean accuracy--the proportion of correctly recalled idea units across the videos--as the dependent variable. Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.
+We first replicate this analysis in a regression framework using {brms}. We model final test mean accuracy--the proportion of correctly recalled idea units across the videos--as the dependent variable. **We assume a Guassian distribution.**  Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.
 
 ### Regression Analysis
 
@@ -547,7 +549,7 @@ bayes_reg_model <- brm(
 brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 ```
 
-We fit the model using the `brm()` function from the {brms} package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard linear models, though we note that these metrics are still important to pay attention to in case of model misfit.
+We fit the model using the `brm()` function from the {brms} package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard Gaussian models, though these metrics are still important to attend to in practice. **Note that `brms` reports potential model misfit as warnings.** 
 
 Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by @lst-gauss (also see @tbl-all under Bayesian LM). the `Intercept` refers to the posterior mean accuracy in the disfluent condition, *M* = `r round(brms_model_new$Mean[1], 3)` , as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% Cr.I for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% Cr.I" columns of the output. These results closely mirror the findings reported by @wilford2020 (Experiment 1A).
 
@@ -621,7 +623,14 @@ We can also examine how well the data fits the model by performing a posterior p
 
 It is important to note that there are several justifiable approaches for addressing the distributional issues observed in the data. For instance, one could analyze median accuracy instead of the mean, use some type of robust estimator for heterogeneity, or apply non-parametric methods to relax some of the model assumptions. Alternatively, we can address these issues directly by fitting distributional models [@kruschke2013; @kneib2023]. A key advantage of distributional models is that they are not limited to modeling only the mean or median of the outcome, but can also model parameters such as the variance (or other shape parameters) as functions of predictors. This allows examining how instructor fluency may influence not only average performance, but also the variability in performance across students. If we wanted to keep our mean accuracy variable and continue to use a Guassian model, we could use a distributional approach and model the effect of fluency on $\sigma$.
 
-Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in {brms}. In {brms}, we model each parameter independently. Recall from the introduction that in a beta model we model two parameters--$\mu$ and $\phi$. Again we do this by using the `bf()` function from {brms} (@lst-beta01). We specify two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling accuracy as a function of fluency only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying dispersion does not change as a function of fluency.
+**Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in {brms}.  In {brms}, we model each parameter independently. Recall from the introduction 
+that in a beta model we model two parameters--$\mu$ and $\phi$. Again we do this 
+by using the `bf()` function from {brms} (@lst-beta01). We specify two formulas, 
+one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object 
+below. In the below `bf()` call, we are modeling accuracy as a function of 
+fluency only for the $\mu$ parameter. For the $\phi$ parameter, we are only 
+modeling the intercept value. This is saying that the variability of the outcome 
+around $\mu$ does not change as a function of fluency.**
 
 To run our beta regression model, we need to exclude 0s and 1s in our data set. If we try to run a model with our data `data_fluency` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset.
 
@@ -654,135 +663,19 @@ beta_brms <- brm(
 )
 ```
 
-##### Model Parameters
+### Model Parameters
+
+#### $\mu$
 
 In @tbl-all, under the beta regression column, the coefficient with `b_` represents how fluency of instructor influences the $\mu$ parameter estimates (which is the mean of the distribution here). These coefficients are linear on the logit-scale, but not on the raw accuracy scale. The intercept term `(b_Intercept)` represents the log odds of the mean on accuracy for the fluent instructor. Log odds that are negative indicate that it is more likely a "success" (like getting the correct answer) will not happen than that it will happen. Similarly, regression coefficients in log odds forms that are negative indicate that an increase in that predictor leads to a decrease in the predicted probability of a "success".
 
-The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `phi` in @tbl-all. The dispersion ($\phi$) parameter tells us how precise our estimate is. Specifically, $\phi$ in beta regression tells us about the variability of the response variable around its mean. Specifically, a higher dispersion parameter indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.
-
-Understanding the dispersion parameter helps us gauge the precision of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all). It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the phi model in `bf()`. We model the precision (`phi`) of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
-
-```{r}
-#| label: brms-model-dis
-#| lst-label: lst-betadis
-#| lst-cap: Fitting beta model with dispersion.
-#| results: hide
-#| echo: true
-
-model_beta_bayes_disp <- bf(
-  Accuracy ~ Fluency, # Model of the mean
-  phi ~ Fluency # Model of the precision
-)
-
-beta_brms_dis <- brm(
-  model_beta_bayes_disp,
-  data = data_beta,
-  family = Beta(),
-  file = here::here("manuscript", "models", "model_beta_bayes_dis_run01")
-)
-```
-
-@tbl-all displays the model summary with the precision parameter labeled as `phi_Fluency`. Since $\phi$ is modeled on the log scale, the coefficients represent changes in log-$\phi$ rather than φ itself. To see the effect in the original units, we convert the values back by exponentiating. Thus, the effect of the Fluent condition can be understood by comparing the exponentiated predicted $\phi$ in the Fluent condition to that in the baseline condition.
-
-The $\phi$ parameters are estimated on the log scale. The term $\beta^{(\phi)}_{\text{Intercept}}$ represents the log-precision for the reference (disfluent) condition. The coefficient $\beta^{(\phi)}_{\text{FluencyFluent}}$ represents the change in log-precision when moving from the disfluent to the fluent condition.
-
-To obtain precision on the original scale, we exponentiate the linear predictor:
-
-$$
-\phi_{\text{disfluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}}\big), \qquad
-\phi_{\text{fluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}} + \beta^{(\phi)}_{\text{Fluency}}\big).
-$$
-
-The coefficient $\beta^{(\phi)}_{\text{Fluency}}$ therefore describes a *multiplicative* change in precision. Specifically,
-
-$$
-\frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).
-$$
-
-Because the 95% credible interval for $\beta^{(\phi)}_{\text{Fluency}}$ does not include zero, we infer that there is a credible difference in precision between the fluent and disfluent conditions.
-
-It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
-
-A critical assumption of the linear model is homoscedasticity, which means constant variance of the errors. With beta regression model we can include a dispersion parameter for Fluency. Properly accounting for dispersion is crucial because it impacts the precision of our mean estimates and, consequently, the substantive inferences we might make about the coefficients. The inclusion of dispersion in the model increased the uncertainty of the $\mu$ coefficient (see @fig-plt-diff). This highlights the potential utility of an approach like beta regression over a traditional approach as beta regression can explicitly model dispersion and address issues of heteroscedasticity.
-
-While it is advisable to model precision, if there is uncertainty about the best model, a relatively agnostic approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.[^7]
-
-[^7]: The model fit statistic LOO-CV can be compared for any set of fitted brms models with the function `loo()`.
-
-```{r}
-#| label: fig-plt-diff
-#| fig-cap: "Comparison of posterior distributions for the percentage point difference between fluent and disfluent instructors: Simple model  (no dispersion for Fluency) vs. complex model with dispersion"
-#| echo: false
-
-# Add a model identifier to each dataset
-pred_no <- avg_comparisons(beta_brms, variables = "Fluency") |>
-  posterior_draws() |>
-  mutate(model = "No Dispersion")
-
-pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") |>
-  posterior_draws() |>
-  mutate(model = "Dispersion")
-
-# Combine both datasets
-pred_combined <- bind_rows(pred_no, pred_yes)
-
-ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
-  stat_halfeye(.width = c(.8, .95), alpha = 0.7) +
-  scale_fill_okabe_ito() +
-  # guides(fill = guide_legend(title = "Model")) +  # Remove or comment out
-  labs(
-    x = "Difference in Final Recall Performance",
-    y = "Model",
-    caption = "80% and 95% credible intervals shown in black"
-  ) +
-  scale_y_discrete(expand = expansion(mult = 0.1)) +
-  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
-  theme_publication() +
-  theme(legend.position = "none")
-```
-
-```{r}
-#| label: beta-brms
-#| echo: false
-#| eval: false
-#| after-caption-space: 0pt
-
-model_parameters(beta_brms, "mean") |>
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
-  ) |>
-  select(Parameter, Mean, `95% Cr.I`, pd) |>
-  tt() |>
-  format_tt(digits = 3) |>
-  format_tt(escape = TRUE)
-```
-
-```{r}
-#| label: beta-mu
-#| eval: false
-#| echo: false
-#| after-caption-space: 0pt
-
-model_parameters(beta_brms, "mean") |>
-  filter(!startsWith(Parameter, "b_phi")) |>
-  mutate(
-    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
-    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
-  ) |>
-  select(Parameter, Mean, `95% Cr.I`, pd) |>
-  tt() |>
-  format_tt(digits = 3) |>
-  format_tt(escape = TRUE)
-```
-
-### Predicted Probabilities
+##### Predicted Probabilities
 
 Parameter estimates can be difficult to interpret, and researchers can instead discuss effects on the actual outcome scale (in this case the 0-1 scale). The logit link allows us to transform back and forth between the scale of a linear model and the nonlinear scale of the outcome, which is bounded by 0 and 1. By using the inverse of the logit, we can easily transform our linear coefficients to obtain average effects on the scale of the proportions or percentages, which is usually easier to interpret. In a simple case, we can do this manually, but when there are many factors in your model this can be quite complex.
 
 In our example, we can use the `plogis()` function in base R to convert estimates from the logit scale to the probability scale. The intercept of our model is -0.918, which reflects the logit of the mean accuracy in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the logit scale, we first add this value to the intercept value (-0.918) to get the logit for the fluent condition: `-0.83 + 0.20 = -0.63`. We then use `plogis()` to convert both logit values to probabilities (Fluent = 35%, Disfluent = 30%).
 
-With single coefficients this calculation is trivial, but in more complex models with interactions, it can be quite cumbersome. To help us extract predictions from our model and visualize them we will use a package called {marginaleffects} [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the $\mu$ parameter we can use the function from the package called `avg_predictions()`. These are displayed in @tbl-predict-prob. These probabilities match what we calculated above.
+**In a Bayesian framework transformations can be quite cumbersome.** To help us work with the data and extract predictions from our model and visualize them we will use a package called {marginaleffects} [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the $\mu$ parameter we can use the function from the package called `avg_predictions()`. These are displayed in @tbl-predict-prob. These probabilities match what we calculated above.
 
 ```{r}
 #| echo: true
@@ -871,7 +764,7 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
   theme(legend.position = "none")
 ```
 
-### Marginal Effects
+##### Marginal Effects
 
 Marginal effects offer an interpretable way to quantify how changes in a predictor influence an outcome, while holding other factors constant in a specific manner. In recent years, there has been a thrust to move away from reporting regression coefficients alone, focusing instead on estimates that are easier to interpret and communicate—particularly in non-linear models [@mccabe2021; @rohrer2025models]. Technically, marginal effects are computed as partial derivatives for continuous variables or as finite differences for categorical (and sometimes continuous) predictors, depending on the structure of the data and the research question. Substantively, these procedures translate raw regression coefficients into quantities that reflect changes in the bounded outcome—for example, an $x$% change in the value of a proportion.
 
@@ -917,9 +810,9 @@ beta_avg_comp |>
   format_tt(escape = TRUE)
 ```
 
-#### $\mu$ Difference
+##### $\mu$ Difference
 
-@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval includes 0 among the most credible values, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd also indicates the effect is non-significant (*p* \> .05). In the basic regression model above, the ROPE value was extracted using the {bayestestR} package.
+@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.06, indicating that participants who watched a fluent instructor scored, on average, 6% higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval is quite wide, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd also indicates only X% of the distibution is positive. In the basic regression model above, the ROPE value was extracted using the {bayestestR} package.
 
 ```{r}
 #| lst-label: lst-merope
@@ -937,9 +830,136 @@ beta_avg_comp_rope <- avg_comparisons(
 
 The ROPE can also be obtained using the {marginaleffects} package by specifying the `equivalence` bounds in `avg_comparisons()`. Running the code in @lst-merope returns a ROPE probability of 23%, indicating that there is insufficient evidence to conclude that the effect exceeds 2% or is practically equivalent.
 
+#### $\phi$
+
+The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `phi` in @tbl-all. Specifically, $\phi$ in beta regression tells us about the variability of the response variable around its mean. Specifically, a higher parameter value indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.
+
+Understanding the dispersion parameter helps us gauge the variability of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all). It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the phi model in `bf()`. We model variability ($\phi$) of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
+
+```{r}
+#| label: brms-model-dis
+#| lst-label: lst-betadis
+#| lst-cap: Fitting beta model with dispersion.
+#| results: hide
+#| echo: true
+
+model_beta_bayes_disp <- bf(
+  Accuracy ~ Fluency, # Model of the mean
+  phi ~ Fluency # Model of the precision
+)
+
+beta_brms_dis <- brm(
+  model_beta_bayes_disp,
+  data = data_beta,
+  family = Beta(),
+  file = here::here("manuscript", "models", "model_beta_bayes_dis_run01")
+)
+```
+
+@tbl-all displays the model summary with the precision parameter labeled as `phi_Fluency`. Since $\phi$ is modeled on the log scale, the coefficients represent changes in log-$\phi$ rather than φ itself. To see the effect in the original units, we convert the values back by exponentiating. Thus, the effect of the Fluent condition can be understood by comparing the exponentiated predicted $\phi$ in the Fluent condition to that in the baseline condition.
+
+The $\phi$ parameters are estimated on the log scale. The term $\beta^{(\phi)}_{\text{Intercept}}$ represents the log-precision for the reference (disfluent) condition. The coefficient $\beta^{(\phi)}_{\text{FluencyFluent}}$ represents the change in log-precision when moving from the disfluent to the fluent condition.
+
+To obtain precision on the original scale, we exponentiate the linear predictor:
+
+$$
+\phi_{\text{disfluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}}\big), \qquad
+\phi_{\text{fluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}} + \beta^{(\phi)}_{\text{Fluency}}\big).
+$$
+
+The coefficient $\beta^{(\phi)}_{\text{Fluency}}$ therefore describes a *multiplicative* change in precision. 
+$$
+\frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).
+$$
+
+**Looking at @tbl-all, the 95% Cr.I spans between X and Y, indicating likely values for the parameter. The pd is X, indicating there is a difference between the two conditions.**
+
+It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
+
+A critical assumption of Gaussian models is homoscedasticity — constant variance 
+of the errors. Beta regression relaxes this assumption by allowing us to 
+explicitly model the precision parameter $\phi$ as a function of predictors. 
+This matters because failing to account for heteroscedasticity can distort 
+inferences about the mean: as shown in @fig-plt-diff, including Fluency as a 
+predictor of $\phi$ increased the uncertainty of the $\mu$ coefficient. This 
+illustrates the broader utility of distributional models combined with beta regression, which directly model 
+parameters like $\phi$ rather than assuming they are constant across observations.
+
+While it is advisable to model precision, if there is uncertainty about the best model, a relatively agnostic approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.[^7]
+
+[^7]: The model fit statistic LOO-CV can be compared for any set of fitted brms models with the function `loo()`.
+
+```{r}
+#| label: fig-plt-diff
+#| fig-cap: "Comparison of posterior distributions for the percentage point difference between fluent and disfluent instructors: Simple model  (no dispersion for Fluency) vs. complex model with dispersion"
+#| echo: false
+
+# Add a model identifier to each dataset
+pred_no <- avg_comparisons(beta_brms, variables = "Fluency") |>
+  posterior_draws() |>
+  mutate(model = "No Dispersion")
+
+pred_yes <- avg_comparisons(beta_brms_dis, variables = "Fluency") |>
+  posterior_draws() |>
+  mutate(model = "Dispersion")
+
+# Combine both datasets
+pred_combined <- bind_rows(pred_no, pred_yes)
+
+ggplot(pred_combined, aes(x = draw, y = model, fill = model)) +
+  stat_halfeye(.width = c(.8, .95), alpha = 0.7) +
+  scale_fill_okabe_ito() +
+  # guides(fill = guide_legend(title = "Model")) +  # Remove or comment out
+  labs(
+    x = "Difference in Final Recall Performance",
+    y = "Model",
+    caption = "80% and 95% credible intervals shown in black"
+  ) +
+  scale_y_discrete(expand = expansion(mult = 0.1)) +
+  geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 1.2) +
+  theme_publication() +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| label: beta-brms
+#| echo: false
+#| eval: false
+#| after-caption-space: 0pt
+
+model_parameters(beta_brms, "mean") |>
+  mutate(
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
+  tt() |>
+  format_tt(digits = 3) |>
+  format_tt(escape = TRUE)
+```
+
+```{r}
+#| label: beta-mu
+#| eval: false
+#| echo: false
+#| after-caption-space: 0pt
+
+model_parameters(beta_brms, "mean") |>
+  filter(!startsWith(Parameter, "b_phi")) |>
+  mutate(
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{CI_low}, {CI_high}]")
+  ) |>
+  select(Parameter, Mean, `95% Cr.I`, pd) |>
+  tt() |>
+  format_tt(digits = 3) |>
+  format_tt(escape = TRUE)
+```
+
+
 #### $\phi$ difference
 
-In addition, with {marginaleffects}, we can get the actual precision difference between the two groups on $\phi$ using similar code to above by setting `dpar` to "phi" (@lst-avgphi).
+With {marginaleffects}, we can get the actual precision difference between the two groups on $\phi$ using similar code to above by setting `dpar` to "phi" (@lst-avgphi).
 
 ```{r}
 #| label: ame-phi
@@ -987,13 +1007,13 @@ $$ {#eq-cohenh}
 
 ### Posterior Predictive Check
 
-@fig-ppcheckall (B) shows the predictive check for our beta model. The model's predictions generally conform to the data as the predictions are now between constrained to the 0-1 interval. However, the model's predictive performance can be improved the bounds of the scale are explicitly specified.
+@fig-ppcheckall (B) shows the predictive check for our beta model. The model's predictions generally conform to the data as the predictions are now between constrained to the 0-1 interval. However, the model's predictive performance can be improved when the bounds of the scale are explicitly specified.
 
 ## Zero-Inflated beta (ZIB) Regression
 
-A limitation of the beta regression model is that it can only accommodate values strictly between 0 and 1—a probability cannot take on values of 0 (the event will not occur with certainty) or 1 (the event will occur with certainty). In our dataset, we observed 9 rows where Accuracy equals zero. To fit a beta regression model, we removed these values, but we have left out potentially valuable information from our model--especially if the end points of the scale are distinctive in some way. In our case, these 0s may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. We will discuss two approaches for jointly modeling these end points with the continuous data. First, we can use a zero-inflated beta (ZIB) model. This model still estimates the mean ($\mu$) and precision ($\phi$) of the beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural 0s.
+**A limitation of beta regression is that it can only accommodate values strictly between 0 and 1, excluding exact zeros and ones — that is, cases where the  outcome is observed at the boundary of the scale.** In our dataset, we observed 9 rows where Accuracy equals zero. To fit a beta regression model, we removed these values, but we have left out potentially valuable information from our model--especially if the end points of the scale are distinctive in some way. In our case, these 0s may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. We will discuss two approaches for jointly modeling these end points with the continuous data. First, we can use a zero-inflated beta (ZIB) model. This model still estimates the mean ($\mu$) and precision ($\phi$) of the beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural 0s.
 
-The zero-inflated beta models a mixture of the data-generating process. The $\alpha$ parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.
+The zero-inflated beta models a mixture of the data-generating process. **Please note that these models are sometimes called hurdle models.** The $\alpha$ parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.
 
 We can fit a ZIB model using `brms()` and use the {marginaleffects} package to make inferences about our parameters of interest. Before we run a zero-inflated beta model, we will need to transform our data again and remove the one 1 value in our data--we can keep our 0s. Similar to our beta regression model we fit in `brms`, we will use the `bf()` function to fit several models. We fit our $\mu$ and $\phi$ parameters as well as our zero-inflated parameter ($\alpha$; here labeled as `zi`). In `brms` we can use the zero_inflated_beta family (see @lst-zib).
 
@@ -1031,9 +1051,9 @@ The ZIB model does a bit better at capturing the structure of the data then the 
 
 @tbl-all, under the zero-inflated beta regression column, provides a summary of the posterior distribution for each parameter. As stated before, it is preferable to back-transform our estimates to get probabilities. To get the predicted probabilities we can again use the `avg_predictions()` and `avg_comparisons()` functions from {marginaleffects} package [@marginaleffects] to get predicted probabilities and the probability difference between the levels of each factor. We can model the parameters separately using the `dpar` argument setting to: $\mu$, $\phi$, $\alpha$. Here we look at the risk difference for Fluency under each parameter. If one were interested in the average effect for the entire model, the `dpar` argument could be removed.
 
-#### Mu
+#### $\mu$
 
-As shown in @tbl-marg-mu-brms, there is little evidence for an effect of Fluency -- the 95% Cr.I includes zero, suggesting substantial uncertainty about the direction and magnitude of the effect--that is, though most of the posterior density supports positive effects, nil and weakly negative effects cannot be ruled out.
+As shown in @tbl-marg-mu-brms, **evidence for an effect of Fluency is inconclusive -- the 95% Cr.I is wide, suggesting substantial uncertainty about the direction and magnitude of the effect--that is, though most of the posterior density supports positive effects, nil and weakly negative effects cannot be ruled out.**
 
 ```{r}
 
@@ -1070,9 +1090,9 @@ marg_zi_brms |>
   format_tt(escape = TRUE)
 ```
 
-#### Dispersion
+#### $\phi$
 
-As shown in @tbl-marg-phi-brms, the posterior estimates suggest a credible effect of Fluency on dispersion ($\phi$), with disfluent responses showing greater variability. The 95% Cr.I for the fluency contrast does not include zero, indicating a high probability in differences in precision.
+As shown in @tbl-marg-phi-brms, **evidence for an effect of Fluency on disperation is inconclusive -- the 95% Cr.I is wide, encompaing negative, nil, and positive values, suggesting uncertainty about the direction and magnitude of the effect.**
 
 ```{r}
 
@@ -1111,7 +1131,15 @@ marg_phi_brms |>
 
 ### Zero-Inflation
 
-We can use {marginaleffects} to estimate and plot the posterior difference between the fluent and disfluent conditions (see @fig-zi-plot). In @fig-zi-plot, the posterior distribution for this contrast lies mostly below zero, indicating that a fluent instructor is associated with a lower probability of zero responses. The estimated reduction is approximately 13%. The 95% credible interval does not include zero, which indicates that the data provide consistent evidence for a reduction in zero responses under fluent instruction.
+**We can use {marginaleffects} to estimate and plot the posterior difference 
+between the fluent and disfluent conditions (see @fig-zi-plot). In 
+@fig-zi-plot, the posterior distribution for this contrast lies mostly below 
+zero, indicating that a fluent instructor is associated with a lower probability 
+of zero responses. The estimated reduction is approximately 13%, and the 
+posterior probability of a negative effect (PD) is XX%, suggesting 
+[strong/moderate] evidence that fluent instruction reduces the probability of 
+zero responses.**
+
 
 ```{r}
 #| label: tbl marg-zib-brms
@@ -1661,11 +1689,9 @@ When we applied a ZIB model, which explicitly accounts for structural 0s, we fou
 
 These analyses emphasize the importance of fitting a model that aligns with the nature of the data. The simplest and recommended approach when dealing with data that contains 0s and/or 1s is to fit an ordered beta model, assuming the process is truly continuous. However, if you believe the process is distinct in nature, a ZIB or ZOIB model might be a better choice. Ultimately, this decision should be guided by theory.
 
-For instance, if we believe fluency influences the boundaries (0 and 1), we might want to model this process separately using a ZIB or ZOIB. With the current dataset, fluency might affect specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This effect could be due to participant disengagement during the disfluent lecture. If students fail to pay attention because of features of disfluency, they may miss relevant information, leading to a floor effect at the test. Follwoing from this, disfluency would be expected to influence the boundary (O) and not the continuous part of the model. If this is the case, we would want to model this appropriately. However, if we believe fluency effects general performance levels (the continuous part), a model that takes in to account the entire process accounting for the 0s and 1s might be appropriate.
+For instance, if we believe fluency influences the boundaries (0 and 1), we might want to model this process separately using a ZIB or ZOIB. With the current dataset, fluency might affect specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This effect could be due to participant disengagement during the disfluent lecture. If students fail to pay attention because of features of disfluency, they may miss relevant information, leading to a floor effect at the test. Following from this, disfluency would be expected to influence the boundary (O) and not the continuous part of the model. If this is the case, we would want to model this appropriately. However, if we believe fluency effects general performance levels (the continuous part), a model that takes in to account the entire process accounting for the 0s and 1s might be appropriate.
 
 In the discussion section of @wilford2020, they were unable to offer a tenable explanation for performance differences based on instructor fluency. A model that accounts for the excess 0s in the dataset provides one testable explanation: watching a disfluent lecture may lead to lapses in attention, resulting in poorer performance in that group. These lapses, in turn, contribute to the observed differences in the fluent condition. This modeling approach opens a promising avenue for future research--one that would have remained inaccessible otherwise.
-
-Not everyone will be eager to implement the techniques discussed herein. In such cases, the key question becomes: What is the least problematic approach to handling proportional data? One reasonable option is to fit multiple models tailored to the specific characteristics of your data. For example, if your data contain 0s, you might fit two models: a traditional linear model excluding the 0s, and a logistic model to account for the zero versus non-zero distinction. If your data contain both 0s and 1s, you could fit separate models for the 0s and 1s in addition to the OLS model. There are many defensible strategies to choose from depending on the context. However, we do not recommend transforming the values of your data (e.g., 0s to .01 and 1s to .99) or ignoring the properties of your data simply to fit traditional statistical models.
 
 In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For example, the {betareg} package [@betareg] {glmmTMB} [@glmmTMB] and {gamlss} [@gamlss] are nice options. To this end, I have included supplemental materials demonstrating how to use frequentist packages to analyze the data presented herein.
 
