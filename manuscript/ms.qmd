@@ -687,6 +687,27 @@ options(marginaleffects_posterior_center = mean) # make sure returns mean
 ```
 
 ```{r}
+#| label: brms-model-dis
+#| lst-label: lst-betadis
+#| lst-cap: Fitting beta model with dispersion.
+#| results: hide
+#| echo: true
+
+model_beta_bayes_disp <- bf(
+  Accuracy ~ Fluency, # Model of the mean
+  phi ~ Fluency # Model of the precision
+)
+
+beta_brms_dis <- brm(
+  model_beta_bayes_disp,
+  data = data_beta,
+  family = Beta(),
+  file = here::here("manuscript", "models", "model_beta_bayes_dis_run01")
+)
+```
+
+
+```{r}
 #| lst-label: lst-pred
 #| lst-cap: Predictions from the beta model for each level of Fluency ($\mu$).
 #| eval: false
@@ -835,26 +856,6 @@ The ROPE can also be obtained using the {marginaleffects} package by specifying 
 The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `phi` in @tbl-all. Specifically, $\phi$ in beta regression tells us about the variability of the response variable around its mean. Specifically, a higher parameter value indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.
 
 Understanding the dispersion parameter helps us gauge the variability of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all). It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the phi model in `bf()`. We model variability ($\phi$) of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
-
-```{r}
-#| label: brms-model-dis
-#| lst-label: lst-betadis
-#| lst-cap: Fitting beta model with dispersion.
-#| results: hide
-#| echo: true
-
-model_beta_bayes_disp <- bf(
-  Accuracy ~ Fluency, # Model of the mean
-  phi ~ Fluency # Model of the precision
-)
-
-beta_brms_dis <- brm(
-  model_beta_bayes_disp,
-  data = data_beta,
-  family = Beta(),
-  file = here::here("manuscript", "models", "model_beta_bayes_dis_run01")
-)
-```
 
 @tbl-all displays the model summary with the precision parameter labeled as `phi_Fluency`. Since $\phi$ is modeled on the log scale, the coefficients represent changes in log-$\phi$ rather than φ itself. To see the effect in the original units, we convert the values back by exponentiating. Thus, the effect of the Fluent condition can be understood by comparing the exponentiated predicted $\phi$ in the Fluent condition to that in the baseline condition.
 
