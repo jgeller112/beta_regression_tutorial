@@ -1,5 +1,5 @@
 ---
-title: "A Beta Way: A **Bayesian** Tutorial For Using Beta Regression in Psychological Research"
+title: "A Beta Way: A **Bayesian** Tutorial on Beta Regression for Psychological Research"
 shorttitle: "Beta Regression Tutorial"
 author:
   - name: Jason Geller
@@ -344,14 +344,13 @@ Beta regression models can be estimated using either frequentist or Bayesian met
 
 [^4]: A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package [@brms], which provides a high-level interface to Stan [@stan2023] and uses familiar R formula syntax (similar to `lm()`), making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.
 
-There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the {brms} package uses Stan’s computational algorithms to draw random samples from the posterior distribution, which represents uncertainty about the model parameters. This posterior is conceptually analogous to a frequentist sampling distribution. By default, Bayesian models **run in Stan and {brms}** run 4 chains with 2,000 iterations each.[^5] The first 1,000 iterations per chain are warmup and are discarded. The remaining 1,000 iterations per chain are retained as posterior draws, yielding 4,000 total post-warmup draws across all chains. From these draws, we can compute the posterior mean (analogous to a frequentist point estimate) and the 95% credible interval (Cr.I.). **From these draws, we can compute the posterior mean (analogous to a frequentist 
-point estimate) and the 95% credible interval (Cr.I.). **Unlike a frequentist confidence interval, a credible interval directly expresses the probability that the parameter lies within a given range: there is a 95% posterior probability that the true parameter falls within this interval, given the data and prior.**
+**There are several important differences between our Bayesian analysis and the frequentist methods readers may be more familiar with—most notably, the absence of *t*- and *p*-values. To estimate models, the {brms} package uses Stan's computational algorithms to draw random samples from the posterior distribution, which represents the probability of the model parameters given the observed data. By default, {brms} runs 4 chains with 2,000 iterations each.[^5] The first 1,000 iterations per chain are warmup and are discarded. The remaining 1,000 iterations per chain are retained as posterior draws, yielding 4,000 total post-warmup draws across all chains. From these draws, we can compute the posterior mean (analogous to a frequentist point estimate) and the 95% credible interval (Cr.I.). Unlike a frequentist confidence interval, a credible interval directly expresses the probability that the parameter lies within a given range: there is a 95% posterior probability that the true parameter falls within this interval, given the data and prior.**
 
 [^5]: The Hamiltonian Monte Carlo sampler employed by Stan, which we also use in this paper, can converge with significantly fewer iterations, though rapid convergence depends on model complexity, which is why we use a more conservative standard in this paper.
 
 In addition, an important part of Bayesian analyses is prior specification. Priors encode our assumptions about plausible parameter values before observing the data and allow the model to regularize estimates, especially when data are sparse or parameters are weakly identified. To help bridge the conceptual gap for users more familiar with frequentist models, we begin with the default priors (flat/non-informative, or weakly informative in some cases) provided by {brms}. These priors are intentionally non-informative, and in many applications produce results that closely align with frequentist estimates, while still offering the flexibility and interpretive advantages of a Bayesian framework. We strongly urge readers to consider prior specification strongly in all their work **(see https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)**
 
-To ease readers into Bayesian data analysis we provide a metric known as the *probability of direction* (pd), which reflects the probability that a parameter is positive or negative. When a uniform prior is used (all values equally likely in the prior), pds of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided p-values of .10, .05, .01, and .001 (i.e., pd ≈ 1 − p/2 for symmetric posteriors with weak/flat priors) (see @fig-p-value-pd-comp for an illustrative comparison). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016].
+To ease readers into Bayesian data analysis we provide a metric known as the *probability of direction* (pd), which reflects the probability that a parameter is positive or negative. When a uniform prior is used (all values equally likely in the prior), pds of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided p-values of .10, .05, .01, and .001 (i.e., pd ≈ 1 − p/2 for symmetric posteriors with weak/flat priors) (see @fig-p-value-pd-comp for an illustrative comparison). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016]. **For readers interested in frequentist approaches to beta regression, we provide an online supplement containing code for fitting beta regression models within a frequentist framework.**
 
 ```{r}
 #| label: fig-p-value-pd-comp
@@ -485,33 +484,51 @@ fluency_data |>
 
 ## Reanalysis of Wilford et al. Experiment 1A
 
-In their original analysis of Experiment 1A, @wilford2020 compared memory performance between fluent and disfluent instructor conditions using a traditional independent-samples t-test on mean accuracy for 96 participants. They found that participants who watched the fluent instructor recalled significantly more idea units than those who viewed the disfluent version, *t*(94) = 2.00,
-*p* = .048, *d* = 0.41, 95% CI [0.06, 16.56] (see @fig-flu1).
+**In their original analysis of Experiment 1A, @wilford2020 compared memory performance between fluent and disfluent instructor conditions using a traditional independent-samples t-test on mean accuracy for 96 participants. In @lst-lm-flu we provide the code to reproduce their results using a frequentist linear model. We model final test mean accuracy---the proportion of correctly recalled idea units across the videos---as the dependent variable, assuming a Gaussian distribution. There is one predictor---instructor fluency---with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.**
+
+```{r}
+#| label: lst-lm-flu
+
+flu_org <- lm(Accuracy ~ Fluency, data = fluency_data)
+
+```
+
+```{r}
+#| label: lm-results
+#|
+summary(flu_org)
+
+```
+
+**When @lst-lm-flu is run, the summary output shows there is a significant difference between Fluent and Disfluent conditions (*M* = .08, *SE* = .04), *t*(94) = 2.00, *p* = .048 (see @fig-flu1), consistent with the results reported by @wilford2020.**
 
 ```{r}
 #| label: fig-flu1
-#| fig-cap: "Dot plot depicting accuracy distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and summary statistics (mean and 95% percentile interval) to illustrate variability and central tendency."
+#| fig-cap: "Dot plot depicting accuracy distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and summary statistics (mean (diamond))"
 #|
 fluency_data |>
   ggplot(aes(x = Accuracy, y = Fluency, fill = Fluency)) +
   stat_dotsinterval(
-    point_interval = "mean_qi",
-    .width = 0.95,
-    scale = 0.9,
-    slab_size = 0.6,
-    alpha = 0.45,
-    slab_linewidth = 0
+    point_interval = mean_qi,
+    show_interval = FALSE
+  ) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 23, # filled diamond
+    size = 5,
+    color = "white",
+    aes(fill = Fluency)
   ) +
   scale_x_continuous(labels = label_percent()) +
   scale_y_discrete(NULL, expand = expansion(mult = 0.1)) +
   scale_fill_okabe_ito(breaks = NULL) +
   theme_publication()
-
 ```
 
-We first replicate this analysis in a regression framework using {brms}. We model final test mean accuracy--the proportion of correctly recalled idea units across the videos--as the dependent variable. **We assume a Guassian distribution.**  Our predictor is instructor fluency, with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, Disfluent is the reference, and the coefficient for Fluent reflects the contrast between fluent and disfluent instructor conditions.
+We will now replicate this analysis in {brms}.
 
-### Regression Analysis
+### Bayesian Regression Analysis
 
 We first start by loading the {brms} [@brms] and {cmdstanr} [@cmdstanr] packages (@lst-loadbrms). We use the cmdstanr backend for Stan [@stan2023] because it's faster than the default used to run models (i.e., `rstan`),[^6] though all of these models can also be fit with `brms` defaults.
 
@@ -538,6 +555,7 @@ bayes_reg_model <- brm(
   Accuracy ~ Fluency,
   data = fluency_data,
   family = gaussian(),
+  seed = 666,
   file = here::here("manuscript", "models", "model_reg_bayes")
 )
 ```
@@ -549,7 +567,7 @@ bayes_reg_model <- brm(
 brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 ```
 
-We fit the model using the `brm()` function from the {brms} package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard Gaussian models, though these metrics are still important to attend to in practice. **Note that `brms` reports potential model misfit as warnings.** 
+We fit the model using the `brm()` function from the {brms} package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval, which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output indicates numerical estimates of the sampling algorithm's performance: Rhat should be close to one, and the ESS (effective sample size) metrics should be as large as possible given the number of iterations specified (default is 4000). Generally, ESS \>= 1000 is recommended [@brms]. For the models we present in this paper, convergence is trivial with standard Gaussian models, though these metrics are still important to attend to in practice. **Note that models run in {brms} report potential model misfit as warnings by default.** 
 
 Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by @lst-gauss (also see @tbl-all under Bayesian LM). the `Intercept` refers to the posterior mean accuracy in the disfluent condition, *M* = `r round(brms_model_new$Mean[1], 3)` , as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean posterior difference in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% Cr.I for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% Cr.I" columns of the output. These results closely mirror the findings reported by @wilford2020 (Experiment 1A).
 
@@ -558,11 +576,29 @@ Our main question of interest is: what is the causal effect of instructor fluenc
 summary(bayes_reg_model)
 ```
 
-The output also includes the effective sample size (ESS) and R̂ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (@tbl-all), provided by the {bayestestR} package [@makowski2019a; @makowski2019]. This measure offers an intuitive parallel to *p*-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative.
+The output also includes the effective sample size (ESS) and $\hat{R}$ (R-hat) values, both of which fall within acceptable ranges, indicating good model convergence. Throughout the tutorial, we focus primarily on posterior mean estimates and their 95% credible intervals. In addition, we report the pd measure in the main summary table (@tbl-all), provided by the {bayestestR} package [@makowski2019a; @makowski2019]. This measure offers an intuitive parallel to *p*-values, which many readers may find familiar. For example, the fluency effect has a pd of .977, indicating a high probability that the effect is positive rather than negative.
 
-Importantly, pd does not indicate whether an effect is meaningfully different from a point value—it only reflects the proportion of the posterior in one direction. To address questions of practical significance, readers can consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
+**Another option to examine effect existence to compare competing hypotheses directly using a Bayes factor (BF). A BF quantifies the relative evidence the data provide for one hypothesis over another: a BF of 10, for instance, means the observed data are 10 times more likely under the focal hypothesis than under the alternative. Unlike a p-value, a BF is inherently comparative and depends critically on the prior distribution placed over the parameter of interest under each model—the prior defines what each model predicts, and the BF rewards whichever model predicted the observed data better. For directional hypotheses, this prior sensitivity is relatively modest, because both models share the same likelihood structure. For point-null hypotheses, however, the prior under the alternative must be specified carefully, as we discuss below.**
 
-The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}, the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with default settings suggests that less than 5% lies within the default ROPE (indicating the effect is larger than .02) (see @fig-rope).
+**To test the strength of evidence for the effect, we can compare a model where the effect is greater than 0 to one where it is less than 0 using the `hypothesis()` function in {brms} (see @lst-hypo). The resulting evidence ratio (ER) column contains the Bayes factor for 
+this directional hypothesis, comparing the model $\delta > 0$ against  $\delta < 0$. Using some heuristics, a BF > 3 provides modest evidence for an effect where BF > 10 provides strong evidence for an effect [@jeffries1961; @kass1995]. The BF for the fluency effect is `r round(fluency_effect_BF$hypothesis$Evid.Ratio, 2)`, providing very strong evidence that the effect is positive and not 0. If we instead wanted to test a point-null hypothesis—that is, whether the effect is equivalent to exactly 0—we would need to specify non-default priors and rely on the Savage-Dickey method, which evaluates the ratio of the posterior to the prior density at the null value and is therefore directly sensitive to that prior choice. Without specifying a weak prior, one cannot calculate a BF. In {brms} the default prior for fixed effects are flat and uninformative (have no likelihood).**
+
+**Importantly, pd and BFs do not indicate whether an effect is meaningfully different--it only reflects the proportion of the posterior in one direction. To address questions of practical significance, Readers can also consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
+
+```{r}
+#| lst-label: lst-hypo
+#| lst-cap: Getting Bayes Factor using `hypothesis()` function from `brms`
+#| echo: true
+
+# test non-zero effect
+
+fluency_effect_BF <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
+```
+
+
+**The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}, the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In our case, we can instead anchor the ROPE in prior empirical work. Specifically, @carpenter2013 (the study @wilford2020 is based on) reported a difference in actual learning of approximately 4% between conditions in Experiment 1. Other examinations of this effect have also yielded differences that are very close to zero. This suggests that a ROPE of approximately ±4% is reasonable for the present context. Effects falling within this range can be considered practically equivalent (i.e., negligible), whereas effects exceeding this range would be interpreted as meaningfully different.**
+
+In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the function with our rope range of ±4% suggests that 13% lies within the default ROPE (indicating inconclusive results) (see @fig-rope). Taken together, the effect likely exists (pd and BF), but whether its magnitude is meaningful remains inconclusive.
 
 ```{r}
 #| label: rope-brms
@@ -570,7 +606,12 @@ The `rope()` function in the {bayestestR} package computes the proportion of the
 #| lst-cap: Getting ROPE from `bayes_reg_model` obect using `rope` function from {bayestestR}
 #| echo: true
 
-brms_rope <- bayestestR::rope(bayes_reg_model, ci = .95, ci_method = "ETI")
+brms_rope <- bayestestR::rope(
+  bayes_reg_model,
+  ci = .95,
+  ci_method = "ETI",
+  range = c(-0.04, 0.04)
+)
 ```
 
 ```{r}
@@ -623,16 +664,14 @@ We can also examine how well the data fits the model by performing a posterior p
 
 It is important to note that there are several justifiable approaches for addressing the distributional issues observed in the data. For instance, one could analyze median accuracy instead of the mean, use some type of robust estimator for heterogeneity, or apply non-parametric methods to relax some of the model assumptions. Alternatively, we can address these issues directly by fitting distributional models [@kruschke2013; @kneib2023]. A key advantage of distributional models is that they are not limited to modeling only the mean or median of the outcome, but can also model parameters such as the variance (or other shape parameters) as functions of predictors. This allows examining how instructor fluency may influence not only average performance, but also the variability in performance across students. If we wanted to keep our mean accuracy variable and continue to use a Guassian model, we could use a distributional approach and model the effect of fluency on $\sigma$.
 
-**Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in {brms}.  In {brms}, we model each parameter independently. Recall from the introduction 
-that in a beta model we model two parameters--$\mu$ and $\phi$. Again we do this 
-by using the `bf()` function from {brms} (@lst-beta01). We specify two formulas, 
+**Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in {brms}.  In {brms}, we model each parameter independently. Recall from the introduction  that in a beta model we model two parameters--$\mu$ and $\phi$. Again we do this  by using the `bf()` function from {brms} (@lst-beta01). We specify two formulas, 
 one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object 
 below. In the below `bf()` call, we are modeling accuracy as a function of 
 fluency only for the $\mu$ parameter. For the $\phi$ parameter, we are only 
 modeling the intercept value. This is saying that the variability of the outcome 
 around $\mu$ does not change as a function of fluency.**
 
-To run our beta regression model, we need to exclude 0s and 1s in our data set. If we try to run a model with our data `data_fluency` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset.
+To run our beta regression model, we need to exclude 0s and 1s in our data set. If we try to run a model with our data `data_fluency` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset. 
 
 The dataset contains nine 0s and one 1. One approach is to nudge our 0s towards .01 and our 1s to .99, or apply a special formula [@smithson2006] so values fall within the \[0, 1\] interval. We implore readers not to engage in this practice. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. To run this beta model we will remove the 0s and 1s, and later in this article we will show how to jointly model these scale end points with the rest of the data. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are removed. When we run this code we should not get an error.
 
@@ -675,7 +714,7 @@ Parameter estimates can be difficult to interpret, and researchers can instead d
 
 In our example, we can use the `plogis()` function in base R to convert estimates from the logit scale to the probability scale. The intercept of our model is -0.918, which reflects the logit of the mean accuracy in the disfluent condition. If the estimated difference between the fluent and disfluent conditions is 0.24 on the logit scale, we first add this value to the intercept value (-0.918) to get the logit for the fluent condition: `-0.83 + 0.20 = -0.63`. We then use `plogis()` to convert both logit values to probabilities (Fluent = 35%, Disfluent = 30%).
 
-**In a Bayesian framework transformations can be quite cumbersome.** To help us work with the data and extract predictions from our model and visualize them we will use a package called {marginaleffects} [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the $\mu$ parameter we can use the function from the package called `avg_predictions()`. These are displayed in @tbl-predict-prob. These probabilities match what we calculated above.
+**In a Bayesian framework with more than one predictor and complex models, back-transformations can be quite cumbersome.** To help us work with the data and extract predictions from our model and visualize them we will use a package called {marginaleffects} [@margeffects2024] (see @lst-me). To get the proportions for each of our categorical predictors on the $\mu$ parameter we can use the function from the package called `avg_predictions()`. These are displayed in @tbl-predict-prob. These probabilities match what we calculated above.
 
 ```{r}
 #| echo: true
@@ -791,7 +830,7 @@ Marginal effects offer an interpretable way to quantify how changes in a predict
 
 There are several types of marginal effects, and their computation can vary across software packages. For example, the popular {emmeans} package [@emmeans] computes marginal effects by holding all predictors at their means (marginal effects at the mean; MEM). In this tutorial, we use the {marginaleffects} package [@margeffects2024], which by default computes average marginal effects (AMEs). AMEs are based on counterfactual predictions: the dataset is conceptually replicated across all unique values of the predictor of interest, predictions are generated for each row under each counterfactual scenario, and the resulting differences are then averaged. This approach maintains a strong connection to the observed data—because predictions are made using each participant’s actual values—while providing a clear and interpretable summary of the effect of interest.
 
-One practical use of AMEs is to estimate the average difference between two groups or conditions which corresponds to the average treatment effect (ATE). Using the `avg_comparisons()` function in the {marginaleffects}package (@lst-avgcomp), we can compute this quantity directly. By default, the function returns the discrete difference between groups. When we take the difference in proportions between two groups it is called the risk difference. Depending on the audience and modeling goals, the function can also produce alternative effect size metrics, such as odds ratios or risk ratios. This flexibility makes it a powerful approach for summarizing and communicating regression results.
+One practical use of AMEs is to estimate the average difference between two groups or conditions which corresponds to the average treatment effect (ATE). Using the `avg_comparisons()` function in the {marginaleffects} package (@lst-avgcomp), we can compute this quantity directly. By default, the function returns the discrete difference between groups. When we take the difference in proportions between two groups it is called the risk difference. Depending on the audience and modeling goals, the function can also produce alternative effect size metrics, such as odds ratios or risk ratios. This flexibility makes it a powerful approach for summarizing and communicating regression results.
 
 ```{r}
 #| label: ame1
@@ -844,7 +883,7 @@ beta_avg_comp_rope <- avg_comparisons(
   beta_brms_dis,
   variables = "Fluency", # counterfactural difference
   comparison = "difference",
-  equivalence = c(-0.02, .02)
+  equivalence = c(-0.04, .04)
 )
 
 ```
@@ -873,7 +912,7 @@ $$
 \frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).
 $$
 
-**Looking at @tbl-all, the 95% Cr.I spans between X and Y, indicating likely values for the parameter. The pd is X, indicating there is a difference between the two conditions.**
+**Looking at @tbl-all, the 95% Cr.I spans between X and Y, indicating likely values for the parameter. The pd is X%, indicating that a large part of the distrbution of the difference is postive.**
 
 It is important to note that these estimates are not the same as the marginal effects we discussed earlier. Changes in dispersion affect the spread or variability of the response distribution without necessarily altering its mean. This makes dispersion particularly relevant for research questions that focus on features of the distribution beyond the average—such as how concentrated responses are. For instance, high dispersion might indicate that individuals cluster at the extremes (e.g., very high or very low ratings), suggesting clustering in the outcome.
 
@@ -1093,7 +1132,7 @@ marg_zi_brms |>
 
 #### $\phi$
 
-As shown in @tbl-marg-phi-brms, **evidence for an effect of Fluency on disperation is inconclusive -- the 95% Cr.I is wide, encompaing negative, nil, and positive values, suggesting uncertainty about the direction and magnitude of the effect.**
+As shown in @tbl-marg-phi-brms, **evidence for an effect of Fluency on disperation is inconclusive -- the 95% Cr.I is wide, encompaing negative, nil, and positive values, suggesting uncertainty about the direction and magnitude of the effect.** 
 
 ```{r}
 
@@ -1694,7 +1733,7 @@ For instance, if we believe fluency influences the boundaries (0 and 1), we migh
 
 In the discussion section of @wilford2020, they were unable to offer a tenable explanation for performance differences based on instructor fluency. A model that accounts for the excess 0s in the dataset provides one testable explanation: watching a disfluent lecture may lead to lapses in attention, resulting in poorer performance in that group. These lapses, in turn, contribute to the observed differences in the fluent condition. This modeling approach opens a promising avenue for future research--one that would have remained inaccessible otherwise.
 
-In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For example, the {betareg} package [@betareg] {glmmTMB} [@glmmTMB] and {gamlss} [@gamlss] are nice options. To this end, I have included supplemental materials demonstrating how to use frequentist packages to analyze the data presented herein.
+In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For example, the {betareg} package [@betareg] {glmmTMB} [@glmmTMB] and {gamlss} [@gamlss] are nice options. To this end, **we** have included supplemental materials demonstrating how to use frequentist packages to analyze the data presented herein.
 
 ## Conclusion
 
