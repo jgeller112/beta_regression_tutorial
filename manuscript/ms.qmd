@@ -504,7 +504,7 @@ summary(flu_org)
 
 ```{r}
 #| label: fig-flu1
-#| fig-cap: "Dot plot depicting accuracy distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and summary statistics (mean (diamond))"
+#| fig-cap: "Dot plot depicting accuracy distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and mean (diamond))"
 #|
 fluency_data |>
   ggplot(aes(x = Accuracy, y = Fluency, fill = Fluency)) +
@@ -515,9 +515,9 @@ fluency_data |>
   stat_summary(
     fun = mean,
     geom = "point",
-    shape = 23, # filled diamond
+    shape = 18, # filled diamond
     size = 5,
-    color = "white",
+    color = "black",
     aes(fill = Fluency)
   ) +
   scale_x_continuous(labels = label_percent()) +
