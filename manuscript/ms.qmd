@@ -50,7 +50,7 @@ author-note:
     deceased: ~
   disclosures:
     study-registration: "The analyses herein were not preregistered."
-    data-sharing: Data, code, and materials for this manuscript can be found at https://doi.org/10.5281/zenodo.1583059.
+    data-sharing: Data, code, and materials for this manuscript can be found at https://doi.org/10.5281/zenodo.15830595.
     related-report: ~
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
@@ -580,11 +580,6 @@ The output also includes the effective sample size (ESS) and $\hat{R}$ (R-hat) v
 
 **Another option to examine effect existence to compare competing hypotheses directly using a Bayes factor (BF). A BF quantifies the relative evidence the data provide for one hypothesis over another: a BF of 10, for instance, means the observed data are 10 times more likely under the focal hypothesis than under the alternative. Unlike a p-value, a BF is inherently comparative and depends critically on the prior distribution placed over the parameter of interest under each model—the prior defines what each model predicts, and the BF rewards whichever model predicted the observed data better. For directional hypotheses, this prior sensitivity is relatively modest, because both models share the same likelihood structure. For point-null hypotheses, however, the prior under the alternative must be specified carefully, as we discuss below.**
 
-**To test the strength of evidence for the effect, we can compare a model where the effect is greater than 0 to one where it is less than 0 using the `hypothesis()` function in {brms} (see @lst-hypo). The resulting evidence ratio (ER) column contains the Bayes factor for 
-this directional hypothesis, comparing the model $\delta > 0$ against  $\delta < 0$. Using some heuristics, a BF > 3 provides modest evidence for an effect where BF > 10 provides strong evidence for an effect [@jeffries1961; @kass1995]. The BF for the fluency effect is `r round(fluency_effect_BF$hypothesis$Evid.Ratio, 2)`, providing very strong evidence that the effect is positive and not 0. If we instead wanted to test a point-null hypothesis—that is, whether the effect is equivalent to exactly 0—we would need to specify non-default priors and rely on the Savage-Dickey method, which evaluates the ratio of the posterior to the prior density at the null value and is therefore directly sensitive to that prior choice. Without specifying a weak prior, one cannot calculate a BF. In {brms} the default prior for fixed effects are flat and uninformative (have no likelihood).**
-
-**Importantly, pd and BFs do not indicate whether an effect is meaningfully different--it only reflects the proportion of the posterior in one direction. To address questions of practical significance, Readers can also consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
-
 ```{r}
 #| lst-label: lst-hypo
 #| lst-cap: Getting Bayes Factor using `hypothesis()` function from `brms`
@@ -595,6 +590,10 @@ this directional hypothesis, comparing the model $\delta > 0$ against  $\delta <
 fluency_effect_BF <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
 ```
 
+**To test the strength of evidence for the effect, we can compare a model where the effect is greater than 0 to one where it is less than 0 using the `hypothesis()` function in {brms} (see @lst-hypo). The resulting evidence ratio (ER) column contains the Bayes factor for 
+this directional hypothesis, comparing the model $\delta > 0$ against  $\delta < 0$. Using some heuristics, a BF > 3 provides modest evidence for an effect where BF > 10 provides strong evidence for an effect [@jeffries1961; @kass1995]. The BF for the fluency effect is `r round(fluency_effect_BF$hypothesis$Evid.Ratio, 2)`, providing very strong evidence that the effect is positive and not 0. If we instead wanted to test a point-null hypothesis—that is, whether the effect is equivalent to exactly 0—we would need to specify non-default priors and rely on the Savage-Dickey method, which evaluates the ratio of the posterior to the prior density at the null value and is therefore directly sensitive to that prior choice. Without specifying a weak prior, one cannot calculate a BF. In {brms} the default prior for fixed effects are flat and uninformative (have no likelihood).**
+
+**Importantly, pd and BFs do not indicate whether an effect is meaningfully different--it only reflects the proportion of the posterior in one direction. To address questions of practical significance, Readers can also consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
 
 **The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}, the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In our case, we can instead anchor the ROPE in prior empirical work. Specifically, @carpenter2013 (the study @wilford2020 is based on) reported a difference in actual learning of approximately 4% between conditions in Experiment 1. Other examinations of this effect have also yielded differences that are very close to zero. This suggests that a ROPE of approximately ±4% is reasonable for the present context. Effects falling within this range can be considered practically equivalent (i.e., negligible), whereas effects exceeding this range would be interpreted as meaningfully different.**
 
@@ -608,9 +607,9 @@ In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the fu
 
 brms_rope <- bayestestR::rope(
   bayes_reg_model,
-  ci = .95,
-  ci_method = "ETI",
-  range = c(-0.04, 0.04)
+  ci = .95, # CI
+  ci_method = "ETI", # equal tale CI
+  range = c(-0.04, 0.04) # ROPE value
 )
 ```
 
