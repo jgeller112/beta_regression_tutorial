@@ -593,7 +593,7 @@ fluency_effect_BF <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
 **To test the strength of evidence for the effect, we can compare a model where the effect is greater than 0 to one where it is less than 0 using the `hypothesis()` function in {brms} (see @lst-hypo). The resulting evidence ratio (ER) column contains the Bayes factor for 
 this directional hypothesis, comparing the model $\delta > 0$ against  $\delta < 0$. Using some heuristics, a BF > 3 provides modest evidence for an effect where BF > 10 provides strong evidence for an effect [@jeffries1961; @kass1995]. The BF for the fluency effect is `r round(fluency_effect_BF$hypothesis$Evid.Ratio, 2)`, providing very strong evidence that the effect is positive and not 0. If we instead wanted to test a point-null hypothesis—that is, whether the effect is equivalent to exactly 0—we would need to specify non-default priors and rely on the Savage-Dickey method, which evaluates the ratio of the posterior to the prior density at the null value and is therefore directly sensitive to that prior choice. Without specifying a weak prior, one cannot calculate a BF. In {brms} the default prior for fixed effects are flat and uninformative (have no likelihood).**
 
-**Importantly, pd and BFs do not indicate whether an effect is meaningfully different--it only reflects the proportion of the posterior in one direction. To address questions of practical significance, Readers can also consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
+**Importantly, pd and BFs do not indicate whether an effect is meaningfully large—they only reflect whether an effect exists. To address questions of practical significance, readers can also consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.**
 
 **The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}, the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In our case, we can instead anchor the ROPE in prior empirical work. Specifically, @carpenter2013 (the study @wilford2020 is based on) reported a difference in actual learning of approximately 4% between conditions in Experiment 1. Other examinations of this effect have also yielded differences that are very close to zero. This suggests that a ROPE of approximately ±4% is reasonable for the present context. Effects falling within this range can be considered practically equivalent (i.e., negligible), whereas effects exceeding this range would be interpreted as meaningfully different.**
 
@@ -1131,7 +1131,7 @@ marg_zi_brms |>
 
 #### $\phi$
 
-As shown in @tbl-marg-phi-brms, **evidence for an effect of Fluency on disperation is inconclusive -- the 95% Cr.I is wide, encompaing negative, nil, and positive values, suggesting uncertainty about the direction and magnitude of the effect.** 
+As shown in @tbl-marg-phi-brms, **evidence for an effect of Fluency on dispersion is inconclusive -- the 95% Cr.I encomposes negative, nil, and positive values, suggesting uncertainty about the direction and magnitude of the effect.** The pd is 
 
 ```{r}
 
@@ -1483,7 +1483,7 @@ ord_beta_avg |>
   format_tt(escape = TRUE)
 ```
 
-In @tbl-ordbeta the credible interval is close enough to zero relative to its uncertainty that we can conclude there likely aren’t differences between the conditions after taking dispersion and the 0s and 1s in our data into account.
+In @tbl-ordbeta **the credible interval for the fluent–disfluent difference is mostly positive [−0.018, 0.136], with 94% of the posterior above zero (pd = .94), suggesting that fluent instructions probably yield somewhat higher accuracy than disfluent instructions after accounting for boundary responses, though the effect remains uncertain.**
 
 #### Cutpoints
 
