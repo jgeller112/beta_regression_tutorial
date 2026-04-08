@@ -228,6 +228,28 @@ fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
   relocate(Accuracy, .after = last_col())
 ```
 
+```{r}
+#| label: data-import-jol
+#| echo: false
+#|
+jol_data <- read.csv(here::here(
+  "manuscript",
+  "data",
+  "wilford_jol_expt1b.csv"
+)) %>%
+  rename(
+    Participant = "ResponseID",
+    Fluency = "Condition",
+    JOL = "JOL1"
+  ) %>%
+  mutate(
+    JOL = JOL / 100,
+    Fluency = ifelse(Fluency == 1, "Fluent", "Disfluent")
+  ) %>%
+  mutate(Participant = dense_rank(Participant)) |>
+  select(Participant, Fluency, JOL)
+```
+
 # Introduction
 
 Many outcomes in psychological research are naturally expressed as proportions or percentages. These include the proportion of correct responses on a test (e.g., @kornell2008), the proportion of time a participant fixates on a stimulus in an eye-tracking task [e.g., @james2025], or the proportion of respondents endorsing a particular belief [e.g., @Costello2024]. A central question for studies involving proportional data is how to analyze these outcomes in a statistically appropriate and interpretable way.
@@ -352,7 +374,7 @@ Beta regression models can be estimated using either frequentist or Bayesian met
 
 In addition, an important part of Bayesian analyses is prior specification. Priors encode our assumptions about plausible parameter values before observing the data and allow the model to regularize estimates, especially when data are sparse or parameters are weakly identified. To help bridge the conceptual gap for users more familiar with frequentist models, we begin with the default priors (flat/non-informative, or weakly informative in some cases) provided by {brms}. These priors are intentionally non-informative, and in many applications produce results that closely align with frequentist estimates, while still offering the flexibility and interpretive advantages of a Bayesian framework. We strongly urge readers to consider prior specification strongly in all their work **(see https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)**
 
-To ease readers into Bayesian data analysis we provide a metric known as the *probability of direction* (pd), which reflects the probability that a parameter is positive or negative. When a uniform prior is used (all values equally likely in the prior), pds of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided p-values of .10, .05, .01, and .001 (i.e., pd ≈ 1 − p/2 for symmetric posteriors with weak/flat priors) (see @fig-p-value-pd-comp for an illustrative comparison). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016]. **For readers interested in frequentist approaches to beta regression, we provide an online supplement containing code for fitting beta regression models within a frequentist framework.**
+To ease readers into Bayesian data analysis we provide a metric known as the *probability of direction* (pd), which reflects the probability that a parameter is positive or negative. When a uniform prior is used (all values equally likely in the prior), pds of 95%, 97.5%, 99.5%, and 99.95% corresponds approximately to two-sided p-values of .10, .05, .01, and .001 (i.e., pd ≈ 1 − p/2 for symmetric posteriors with weak/flat priors) (see @fig-p-value-pd-comp for an illustrative comparison). For directional hypotheses, the pd can be interpreted as roughly equivalent to one minus the *p*-value [@marsmanThreeInsightsBayesian2016]. **For readers interested in frequentist approaches to beta regression, we provide an appendix supplement containing code for fitting beta regression models within a frequentist framework.**
 
 ```{r}
 #| label: fig-p-value-pd-comp
@@ -486,11 +508,11 @@ fluency_data |>
 
 ## Reanalysis of Wilford et al. Experiment 1A
 
-**In their original analysis of Experiment 1A, @wilford2020 compared memory performance between fluent and disfluent instructor conditions using a traditional independent-samples t-test on mean accuracy for 96 participants. In @lst-lm-flu we provide the code to reproduce their results using a frequentist linear model. We model final test mean accuracy---the proportion of correctly recalled idea units across the videos---as the dependent variable, assuming a Gaussian distribution. There is one predictor---instructor fluency---with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, the Disfluent condition is the reference (`Intercept`), and the coefficient (`FluencyFluent`) reflects the contrast between fluent and disfluent instructor conditions.**
+**In their original analysis of Experiment 1A, @wilford2020 compared memory performance between fluent and disfluent instructor conditions using a traditional independent-samples t-test on mean accuracy for 96 participants. In @lst-lm we provide the code to reproduce their results using a frequentist linear model. We model final test mean accuracy---the proportion of correctly recalled idea units across the videos---as the dependent variable, assuming a Gaussian distribution. There is one predictor---instructor fluency---with two levels: Fluent and Disfluent. We use treatment (dummy) coding, which is the default in R. This coding scheme sets the first level of a factor (in alphabetical order) as the reference level. In this case, the Disfluent condition is the reference (`Intercept`), and the coefficient (`FluencyFluent`) reflects the contrast between fluent and disfluent instructor conditions.**
 
 ```{r}
 #| lst-label: lst-lm
-#| lst-cap: lm() model syntax 
+#| lst-cap: lm() model syntax
 #| echo: true
 
 flu_org <- lm(Accuracy ~ Fluency, data = fluency_data)
@@ -595,7 +617,7 @@ fluency_effect_BF <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
 
 ```
 
-**To test the strength of evidence for the effect, we can compare a model where the effect is greater than 0 to one where it is less than 0 using the `hypothesis()` function in {brms} (@lst-hypo). The resulting evidence ratio (ER) column contains the Bayes factor for this directional hypothesis, comparing the model** $\delta > 0$ **against** $\delta < 0$**. Using some heuristics, a BF \> 3 provides modest evidence for an effect where BF \> 10 provides strong evidence for an effect [@jeffries1961; @kass1995]. The BF for the fluency effect is `r round(fluency_effect_BF$hypothesis$Evid.Ratio, 2)`, providing very strong evidence that the effect is positive and not 0. If we instead wanted to test a point-null hypothesis—that is, whether the effect is equivalent to exactly 0—we would need to specify non-default priors and rely on the Savage-Dickey method, which evaluates the ratio of the posterior to the prior density at the null value and is therefore directly sensitive to that prior choice. Without specifying a weak prior, one cannot calculate a BF. In {brms} the default prior for fixed effects are flat and uninformative (they have no likelihood).**
+**To test the strength of evidence for the effect, we can compare a model where the effect is greater than 0 to one where it is less than 0 using the `hypothesis()` function in {brms} (@lst-hypo). The resulting evidence ratio (ER) column contains the Bayes factor for this directional hypothesis, comparing the model** $\delta > 0$ **against** $\delta < 0$**. Using some heuristics, a BF \> 3 provides modest evidence for an effect where BF \> 10 provides strong evidence for an effect [@jeffries1961; @kass1995]. The BF for the fluency effect is `r round(fluency_effect_BF$hypothesis$Evid.Ratio, 2)`, providing very strong evidence that the effect is positive and not 0. If we instead wanted to test a point-null hypothesis—that is, whether the effect is equivalent to exactly 0—we would need to specify non-default priors and rely on the Savage-Dickey method, which evaluates the ratio of the posterior to the prior density at the null value and is therefore directly sensitive to that prior choice. Without specifying a weak or strong prior, one cannot calculate a BF. In {brms} the default prior for fixed effects are flat and uninformative (they have no likelihood).**
 
 **Importantly, pd and BFs do not indicate whether an effect is meaningfully large—they only reflect whether an effect exists. To address questions of practical significance, readers can also consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.**
 
@@ -1703,17 +1725,135 @@ combined_plot
 
 ## Case Study 2
 
-In Case Study 1, our accuracy measure contained both zeros and ones; however, there was only a single one in the dataset. To more clearly demonstrate boundary value handling, we use example data that contains multiple zeros and ones. In the same paper, \@wilford2020 also had participants provide metamemory judgments for each video using judgments of learning (JOLs). Metamemory judgments are judgments about future memory performance (i.e., how likely one is to remember a stimulus on a future memory test). JOLs require participants to rate an item on a scale from 0 to 100, where 0 indicates the item will not be remembered and 100 indicates they will definitely remember it. JOLs are widely used in the learning and memory literature \[\@carpenter2012; \@Rhodes2008; \@carpenter2013; \@rhodes2009; \@sungkhasettee2011\]. In the current example, we use data from Experiment 1b, in which participants completed the study online. As shown in Figure X, these judgments can generate zeros and ones in the dataset. \@wilford2020 were interested in whether disfluent videos received lower JOLs compared to fluent videos. Given the models fit previously, one could apply either a ZOIB model or an ordered beta model here. Because the authors were primarily interested in the overall effect of fluency on JOLs, we fit an ordered beta model to these data.
+**In Case Study 1, our accuracy measure contained both zeros and ones; however, there was only a single one in the dataset. To more clearly demonstrate boundary value handling, we use example data that contains multiple zeros and ones. In the same paper, \@wilford2020 also had participants provide metamemory judgments for each video using judgments of learning (JOLs). Metamemory judgments are judgments about future memory performance (i.e., how likely one is to remember a stimulus on a future memory test). JOLs require participants to rate an item on a scale from 0 to 100, where 0 indicates the item will not be remembered and 100 indicates they will definitely remember it. JOLs are widely used in the learning and memory literature [@carpenter2012; @Rhodes2008; @carpenter2013; @rhodes2009; @sungkhasettee2011]. In the current example, we use data from Experiment 1b, in which participants completed the study online. As shown in @fig-jol, these judgments can generate zeros and ones in the dataset. @wilford2020 were interested in whether disfluent videos received lower JOLs compared to fluent videos. Given the models fit previously, one could apply either a ZOIB model or an ordered beta model here. Because the authors were primarily interested in the overall effect of fluency on JOLs, we fit an ordered beta model to these data.**
 
 ```{r}
+#| lst-label: lst-joldata
+#| lst-cap: Read in JOL data 
 
+jol_data <- read_csv(here::here("manuscript", "data", "jol_data.csv"))
+```
+
+```{r}
+#| label: tbl-dataset-jol
+#| tbl-cap: "Four observations from @wilford2020 (Experiment 1b). JOL refers to how likley partiicpant will be to recall information from videos."
+#| echo: false
+#| after-caption-space: 0pt
+
+jol_data |>
+  sample_n(4) |>
+  tt() |>
+  format_tt(escape = TRUE) 
+```
+
+```{r}
+#| label: fig-jol
+#| fig-cap: "Dot plot depicting JOL distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and mean (diamond))"
+
+
+jol_data |>
+  ggplot(aes(x = JOL, y = Fluency, fill = Fluency)) +
+  stat_dotsinterval(
+    point_interval = mean_qi,
+    show_interval = FALSE
+  ) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18, # filled diamond
+    size = 5,
+    color = "black",
+    aes(fill = Fluency)
+  ) +
+  scale_x_continuous(labels = label_percent()) +
+  scale_y_discrete(NULL, expand = expansion(mult = 0.1)) +
+  scale_fill_okabe_ito(breaks = NULL) +
+  theme_publication()
+```
+
+### **Ordered Beta Regression**
+
+@lst-ordbetadispjol **shows the code for fitting an ordered beta regression model for JOLs as a fluency on** $\mu$ **and** $\phi$**. Using {marginaleffects} @lst-ordbetamargjol we see the difference between the conditions is 12% and the probability of direction is high (pd = 1) suggesting the difference is positive and above zero @tbl-jol.**
+
+```{r}
+#| label: brms ordered beta model phi jol
+#| lst-label: lst-ordbetadispjol
+#| lst-cap: Fitting ordered beta model with dispersion using `ordbetareg()` for JOLs
+#| results: hide
+#| echo: true
+
+ord_beta_phi_jol <- bf(JOL~ Fluency, phi ~ Fluency)
+
+m.phi_jol <- ordbetareg(
+  ord_beta_phi_jol,
+  data = jol_data,
+  phi_reg = 'both',
+  file = here::here("manuscript", "models", "bayes_ordbeta_phi_jol_model")
+)
+```
+
+```{r}
+#| label: brms ordered beta model marg jol
+#| lst-label: lst-ordbetamargjol
+#| lst-cap: marginal effects for JOL difference between conditions
+#| results: hide
+#| echo: true
+
+ord_beta_avg_jol<- avg_comparisons(m.phi_jol,
+    variables = "Fluency",
+    comparison = "difference"
+  )
+```
+
+```{r}
+#| label: tbl-jol
+#| tbl-cap: "Marginal effect of fluency as a fucntion of JOLs for ordered beta model"
+
+p_d <- ord_beta_avg_jol |>
+  p_direction() |>
+  as.data.frame() |>
+  select(pd)
+
+ord_beta_avg_jol |>
+  select(term, contrast, estimate, conf.low, conf.high) |>
+  mutate(
+    mutate(mutate(across(where(is.numeric), ~ round(.x, 3)))),
+    `95% Cr.I` = str_glue("[{conf.low}, {conf.high}]")
+  ) |>
+  rename("Contrast" = "contrast", "Mean" = "estimate", "Term" = "term") |>
+  bind_cols(p_d) |>
+  select(Contrast, Mean, `95% Cr.I`, pd) |>
+  tt() |>
+  format_tt(digits = 3) |>
+  format_tt(escape = TRUE)
+
+```
+
+### **Posterior Check**
+
+@fig-ppcheckjol **highlights our posterior check and the ordered beta model does a good job at describing our data.**
+
+```{r}
+#| label: fig-ppcheckjol
+#| fig-cap: "Posterior check for JOL ordered beta model"
+
+plots <- pp_check_ordbeta(
+  m.phi_jol,
+  ndraws = 100,
+  outcome_label = "JOLs"
+)
+
+plot <- plots +
+  theme_publication()
+
+plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
 ```
 
 # Discussion
 
 The use of beta regression in psychology, and the social sciences in general, is rare. With this tutorial, we hope to turn the tides. Beta regression models are an attractive alternative to models that impose unrealistic assumptions like normality, linearity, homoscedasticity, and unbounded data. Beyond these models, there are a diverse array of different models that can be used depending on your outcome of interest.
 
-Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives in a Bayesain framework using the {brms} package. In the current example, we used real data from @wilford2020 and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results using the {marginaleffects} package.
+Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives in a Bayesian framework using the {brms} package. In the current tutorial, we used real data from @wilford2020 (Experiments 1a and 1b) and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results using the {marginaleffects} package. Specifically, we used data that is commonly used in psychology–accuracy and JOLs.
 
 Comparing our analysis with that of @wilford2020, we demonstrated that using a traditional approach (e.g., *t*-test) to analyze mean accuracy data can lead to biased inferences. Although we successfully reproduced one of their key findings, our use of beta regression and its extensions revealed important nuances in the results. With a traditional beta regression model–which accounts for both the mean and the precision (dispersion)–we observed similar effects of instructor fluency on performance. However, the standard beta model does not accommodate boundary values (i.e., 0s and 1s).
 
@@ -1725,7 +1865,7 @@ For instance, if we believe fluency influences the boundaries (0 and 1), we migh
 
 In the discussion section of @wilford2020, they were unable to offer a tenable explanation for performance differences based on instructor fluency. A model that accounts for the excess 0s in the dataset provides one testable explanation: watching a disfluent lecture may lead to lapses in attention, resulting in poorer performance in that group. These lapses, in turn, contribute to the observed differences in the fluent condition. This modeling approach opens a promising avenue for future research--one that would have remained inaccessible otherwise.
 
-**In addition, with the fitting of Bayesian models we were able to move beyond the simple dichotomous thinking involved in frequentist statistics (yes there is an effect or no there is not an effect). With the inclusion of pd, ROPE, and when appropriate Bayes Factors, we discovered that while there may be an effect of fluency, the evidence is inconclusive. There is uncertainty both as to whether the effect exists and, if it does, whether the difference is meanignful enough compared to the the original study it is based on exceed our ROPE boundary of 4%.**
+**In addition, with the fitting of Bayesian models we were able to move beyond the simple dichotomous thinking involved in frequentist statistics (yes there is an effect or no there is not an effect). With the inclusion of pd, ROPE, and when appropriate Bayes Factors, we discovered that while there may be an effect of fluency, the evidence is inconclusive. There is uncertainty both as to whether the effect exists and, if it does, whether the difference is meaningnful enough compared to the the original study it is based on exceed our ROPE boundary of 4%.**
 
 In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For example, the {betareg} package [@betareg] {glmmTMB} [@glmmTMB] and {gamlss} [@gamlss] are nice options. To this end, **we** have included supplemental materials demonstrating how to use frequentist packages to analyze the data presented herein.
 

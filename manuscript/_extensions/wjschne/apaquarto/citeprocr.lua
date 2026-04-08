@@ -64,7 +64,7 @@ return {
   {
     Meta = function(meta)
       -- count references in nocite
-      if meta.nocite then
+      if meta.nocite and #meta.nocite > 0 then
         meta.nocite:walk {
           Cite = function(ct)
             n_citations = n_citations + 1
@@ -162,7 +162,7 @@ return {
       --look up nocite references
       local ct_meta = {}
       if metaanalysis then
-        if doc.meta.nocite then
+        if doc.meta.nocite and #doc.meta.nocite > 0 then
           doc.meta.nocite:walk {
             Cite = function(ct)
               ct_meta[ct.citations[1].id] = true
@@ -171,7 +171,7 @@ return {
 
           -- If reference is in nocite, then place an asterisk in front.
           for i, j in pairs(doc.meta.references) do
-            if ct_meta[j.id] then
+            if ct_meta[j.id] and j.author and j.author[1] then
               if j.author[1].literal then
                 j.author[1].literal = "*" .. j.author[1].literal
               else

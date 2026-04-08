@@ -562,7 +562,7 @@ return {
         end
       end
 
-      if meta["impact-statement"] and #meta["impact-statement"] > 0 and not meta["supress-impact-statement"] then
+      if meta["impact-statement"] and #meta["impact-statement"] > 0 and not meta["suppress-impact-statement"] then
         local impactheadertext = pandoc.Str("Impact Statement")
         if meta.language and meta.language["title-impact-statement"] then
           impactheadertext = meta.language["title-impact-statement"]
@@ -656,8 +656,6 @@ return {
       if meta["suppress-title-page"] then
         body = List:new {}
       end
-
-      ---- print(PANDOC_WRITER_OPTIONS["table_of_contents"])
 
       if FORMAT:match 'typst' and PANDOC_WRITER_OPTIONS["table_of_contents"] then
         body:extend({ pandoc.RawBlock('typst', '\n\n#outline(title: [Table of Contents], indent: 1.5em)\n\n') })
