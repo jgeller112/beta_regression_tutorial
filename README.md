@@ -189,6 +189,7 @@ sudo apt install g++ make
 |------------|------------|-----------------------------------------------|
 | base | 4.5.1 | R Core Team (2025) |
 | bayesplot | 1.13.0 | Gabry et al. (2019); Gabry and Mahr (2025) |
+| betareg | 3.2.4 | Cribari-Neto and Zeileis (2010) |
 | brms | 2.22.0 | Bürkner (2017); Bürkner (2018); Bürkner (2021) |
 | cmdstanr | 0.9.0.9000 | Gabry et al. (2025) |
 | cowplot | 1.1.3 | Wilke (2024) |
@@ -210,6 +211,7 @@ sudo apt install g++ make
 | rix | 0.16.0 | Rodrigues and Baumann (2025) |
 | rmarkdown | 2.29 | Xie, Allaire, and Grolemund (2018); Xie, Dervieux, and Riederer (2020); Allaire et al. (2024) |
 | scales | 1.4.0 | Wickham, Pedersen, and Seidel (2025) |
+| statmod | 1.5.1 | Smyth et al. (2025) |
 | tidybayes | 3.0.5 | Kay (2024); Kay (2025) |
 | tidyverse | 2.0.0 | Wickham et al. (2019) |
 | tinytable | 0.9.0 | Arel-Bundock (2025) |
@@ -239,7 +241,9 @@ required_packages = c(
   "collapse",
   "transformr",
   "ggrain",
-  "glmmTMB"
+  "glmmTMB",
+  "betareg",
+  "statmod"
 )
 ```
 
