@@ -2,6 +2,7 @@
 # Sys.setenv(PATH = paste("/nix/var/nix/profiles/default/bin", Sys.getenv("PATH"), sep=":"))
 
 required_packages = c(
+  "betareg", 
   "tidyverse",
   "dotwhisker",
   "brms",
