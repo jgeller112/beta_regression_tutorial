@@ -2047,6 +2047,7 @@ The ZIB model has three components, so we extract predictions and marginal effec
 #| lst-label: lst-zib-preds
 #| lst-cap: Predicted probabilities for the ZIB model
 #| eval: false
+#| echo: true
 
 # conditional mean
 avg_predictions(beta_model_0, variables = "Fluency", type = "conditional")
