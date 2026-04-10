@@ -1,6 +1,6 @@
 # Beta Regression Tutorial
 
-[![DOI](https://zenodo.org/badge/826370441.svg)](https://doi.org/10.5281/zenodo.15830595) 
+[![DOI](https://zenodo.org/badge/826370441.svg)](https://doi.org/10.5281/zenodo.15830595)
 
 This repository provides a fully reproducible workflow for our beta regression manuscript (A Beta Way: A Tutorial For Using Beta Regression in Psychological Research) using **R**, **Quarto**, and **Nix**. It includes scripts, data, references, and CI pipelines to automate rendering and ensure reproducibility.
 
@@ -70,9 +70,11 @@ beta_regression_tutorial/
 
 This repository contains all the resources needed to reproduce the manuscript associated with this project. To ensure maximum reproducibility, we used [Quarto](https://quarto.org/) for creating the manuscript. This allows computational figures, tables, and text to be programmatically included directly in the manuscript, ensuring that all results are seamlessly integrated into the document. We also provide a file called default.nix which contains the definition of the development environment that was used to work on the analysis. Reproducers can easily re-use the exact same environment by installing the Nix package manager and using the included default.nix file to set up the right environment.
 
-\*\*Note: cmdstan is installed outside the Nix environment (in your home directory). See: https://github.com/ropensci/rix/issues/481#issuecomment-2820450557. Because it is not managed by Nix, this can conflict with any other cmdstan installation on your system.
+**Note: cmdstan is installed outside the Nix environment (in your home directory). See: https://github.com/ropensci/rix/issues/481#issuecomment-2820450557. Because it is not managed by Nix, this can conflict with any other cmdstan installation on your system. We recommend using the version we have listed here.**
 
-Also note that results may not be perfectly reproducible across machines/runs due to aspects of the brms/Stan toolchain and numerical behavior. See: https://mc-stan.org/docs/reference-manual/reproducibility.html\*\* \## Video Tutorial
+**Also note that results may not be perfectly reproducible across machines/runs due to aspects of the brms/Stan toolchain and numerical behavior. See: https://mc-stan.org/docs/reference-manual/reproducibility.html**
+
+## Video Tutorial
 
 Here is a video tutorial showing an example of how to reproduce a manuscript using Nix/Rix
 
@@ -108,14 +110,14 @@ Clone this repository to your local machine:
 
 ``` bash
 git clone https://github.com/jgeller112/beta_regression_tutorial.git
-cd nix_beta_regression_ms
+cd beta_regression_tutorial
 ```
 
 -   You can also clone the repository from Github using the SSH and opeining a project in RStudio/Positron. <img src="https://github.com/user-attachments/assets/946ce905-640b-43ed-913e-57815256a95d" alt="Screenshot 2025-08-11 at 1 56 59 PM" width="984" height="440"/>
 
 #### 2. Open the Project
 
--   Open the R project file `nix-beta_regression_ms.Rproj` in RStudio or Open folder in Positron.
+-   Open the R project file `beta_regression_tutorial.Rproj` in RStudio or Open folder in Positron.
 
 #### 3. Build the Environment
 
@@ -186,7 +188,7 @@ sudo apt install g++ make
 ## Packages used
 
 | Package | Version | Citation |
-|------------|------------|-----------------------------------------------|
+|---------------|---------------|-------------------------------------------|
 | base | 4.5.1 | R Core Team (2025) |
 | bayesplot | 1.13.0 | Gabry et al. (2019); Gabry and Mahr (2025) |
 | betareg | 3.2.4 | Cribari-Neto and Zeileis (2010) |
