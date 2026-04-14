@@ -585,6 +585,7 @@ bayes_reg_model <- brm(
   seed = 666,
   file = here::here("manuscript", "models", "model_reg_bayes")
 )
+
 ```
 
 ```{r}
@@ -670,6 +671,8 @@ p_annotated <- p +
 p_annotated
 ```
 
+{{< pagebreak >}}
+
 #### Assumptions
 
 @wilford2020 observed that instructor fluency impacts actual learning, using a standard *t*-test on the mean accuracy. But recall this approach assumes normality of residuals and homoskedasticity. These assumptions are unrealistic when the response values approach the scale boundaries [@sladekova2024unicorns]. Does the data we have meet those assumptions? We can use the function `check_model()` from {easystats} [@easystats] to check our assumptions easily. The code in @lst-check1 produces @fig-reg-assump. We can see some issues with our model. Specifically, there appears to be violations of constant variance across the values of the scale (homoskedasticity). In plain terms, this type of model misspecfication means that a standard OLS model can predict non-sensical values outside the bounds of the scale.
@@ -680,6 +683,8 @@ p_annotated
 #| lst-cap: Checking assumptions with the `check_model()` from {easystats} package .
 #| fig-cap: "Two assumption checks for our OLS model: Normality (right) and Homoskedasticity (left)"
 #| echo: true
+#| fig-width: 8
+#| fig-height: 12
 
 check_model(bayes_reg_model, check = c("homogeneity", "qq"))
 ```
@@ -1578,6 +1583,7 @@ model2 <- read_rds(here(
 model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
 model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
 model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
+
 ```
 
 ```{r}
@@ -1680,53 +1686,115 @@ pretty_table |>
 ```
 
 ```{r}
+
+#| label: predictions models
+#| echo: false
+
+pred <- rbind(estimate_prediction(model1, keep_iterations = 50, iterations = 50) |>
+    reshape_iterations() |>
+    data_modify(Model = "LM"),
+  estimate_prediction(model2, keep_iterations = 50, iterations = 50) |>
+    reshape_iterations() |>
+    data_modify(Model = "Beta"),
+  estimate_prediction(model3, keep_iterations = 50, iterations = 50) |>
+    reshape_iterations() |>
+    data_modify(Model = "ZIB"),
+  estimate_prediction(model4, keep_iterations = 50, iterations = 50) |>
+    reshape_iterations() |>
+    data_modify(Model = "ZOIB"))
+
+
+```
+
+```{r}
 #| label: fig-ppcheckall
-#| fig-cap: The plots show 100 posterior predicted distributions with the label yrep (light blue), the distribution of accuracy as function of fluency in dark blue for regular regression (A) , beta regression (B), ZIB (C) and ZOIB (D).
+#| fig-cap: Posterior predictive checks of accuracy distributions by fluency for each model (LM, Beta, ZIB, ZOIB). Observed data are shown as histograms, with median predicted densities (solid lines) and 95% credible intervals (shaded ribbons) overlaid.
 #| fig-height: 20
 #| fig-width: 8
 
-pp_check1 <- pp_check(
-  model1,
-  type = "dens_overlay_grouped",
-  group = "Fluency",
-  ndraws = 100
-) +
-  theme_publication()
+model_levels <- c("LM", "Beta", "ZIB", "ZOIB")
 
-pp_check2 <- pp_check(
-  model2,
-  type = "dens_overlay_grouped",
-  group = "Fluency",
-  ndraws = 100
-) +
-  theme_publication() +
-  xlim(0, 1) +
-  coord_cartesian(ylim = c(0, 6)) # example limit – adjust as needed
+x_grid <- seq(0, 1, length.out = 300)
 
-pp_check3 <- pp_check(
-  model3,
-  type = "dens_overlay_grouped",
-  group = "Fluency",
-  ndraws = 100
-) +
-  theme_publication() +
-  xlim(0, 1) +
-  coord_cartesian(ylim = c(0, 6))
-
-# Use `plot_spacer()` for the empty 4th spot
-combined_plot <- (pp_check1 / pp_check2 / pp_check3) +
-  plot_annotation(
-    tag_levels = 'A',
-    tag_prefix = "(",
-    tag_suffix = ")"
+dens_summ <- pred %>%
+  mutate(Model = factor(Model, levels = model_levels)) %>%
+  split(.$iter_group) %>%                     # split by posterior draw
+  map_df(function(df_draw) {
+    
+    dens_list <- df_draw %>%
+      group_by(Model, Fluency) %>%
+      group_split()
+    
+    map_df(dens_list, function(df_sub) {
+      d <- density(df_sub$iter_value, from = 0, to = 1, n = length(x_grid))
+      
+      tibble(
+        Model = df_sub$Model[1],
+        Fluency = df_sub$Fluency[1],
+        x = d$x,
+        y = d$y
+      )
+    })
+    
+  }, .id = "iter_group") %>%
+  group_by(Model, Fluency, x) %>%
+  summarise(
+    y_med = median(y),
+    y_lo  = quantile(y, 0.025),
+    y_hi  = quantile(y, 0.975),
+    .groups = "drop"
   )
 
-combined_plot
+p <- ggplot() +
+  
+  # Observed histogram
+  geom_histogram(
+    data = fluency_data,
+    aes(x = Accuracy,
+        y = after_stat(density),
+        fill = Fluency),
+    bins = 25,
+    alpha = 0.30,
+    position = "identity"
+  ) +
+  
+  # Posterior predictive ribbon
+  geom_ribbon(
+    data = dens_summ,
+    aes(x = x, ymin = y_lo, ymax = y_hi, fill = Fluency),
+    alpha = 0.18
+  ) +
+  
+  # Median prediction
+  geom_line(
+    data = dens_summ,
+    aes(x = x, y = y_med, color = Fluency),
+    linewidth = 1
+  ) +
+  
+  facet_wrap(~Model) +
+  coord_cartesian(xlim = c(0, 1)) +
+  
+  scale_fill_manual(values = c(
+    "Disfluent" = "#E69F00",
+    "Fluent"    = "#56B4E9"
+  )) +
+  scale_color_manual(values = c(
+    "Disfluent" = "#E69F00",
+    "Fluent"    = "#56B4E9"
+  )) +
+  
+  labs(x = "Accuracy", y = "Density") +
+  scale_x_continuous(labels = label_percent()) +
+
+  theme_publication()
+
+p
 ```
 
 ## Case Study 2
 
-**In Case Study 1, our accuracy measure contained both zeros and ones; however, there was only a single one in the dataset. To more clearly demonstrate boundary value handling, we use example data that contains multiple zeros and ones. In the same paper, \@wilford2020 also had participants provide metamemory judgments for each video using judgments of learning (JOLs). Metamemory judgments are judgments about future memory performance (i.e., how likely one is to remember a stimulus on a future memory test). JOLs require participants to rate an item on a scale from 0 to 100, where 0 indicates the item will not be remembered and 100 indicates they will definitely remember it. JOLs are widely used in the learning and memory literature [@carpenter2012; @Rhodes2008; @carpenter2013; @rhodes2009; @sungkhasettee2011]. In the current example, we use data from Experiment 1b, in which participants completed the study online. As shown in @fig-jol, these judgments can generate zeros and ones in the dataset. @wilford2020 were interested in whether disfluent videos received lower JOLs compared to fluent videos. Given the models fit previously, one could apply either a ZOIB model or an ordered beta model here. Because the authors were primarily interested in the overall effect of fluency on JOLs, we fit an ordered beta model to these data.**
+**In Case Study 1, our accuracy measure contained both zeros and ones; however, there was only a single one in the dataset. To more clearly demonstrate boundary value handling, we use example data that contains multiple zeros and ones. In the same paper, @wilford2020 also had participants provide metamemory judgments for each video using judgments of learning (JOLs). Metamemory judgments are judgments about future memory performance (i.e., how likely one is to remember a stimulus on a future memory test). JOLs require participants to rate an item on a scale from 0 to 100, where 0 indicates the item will not be remembered and 100 indicates they will definitely remember it. JOLs are widely used in the learning and memory literature [@carpenter2012; @Rhodes2008; @carpenter2013; @rhodes2009; @sungkhasettee2011]. In the current example, we use data from Experiment 1b, in which participants completed the study online. As shown in @fig-jol, these judgments can generate zeros and ones in the dataset. @wilford2020 were interested in whether disfluent videos received lower JOLs compared to fluent videos. Given the models fit previously, one could apply either a ZOIB model or an ordered beta model here. Because the authors were primarily interested in the overall effect of fluency on JOLs, we fit an ordered beta model to these data.**
 
 ```{r}
 #| lst-label: lst-joldata
@@ -2225,7 +2293,9 @@ avg_comparisons(ord_fit_dis, variables = "Fluency") |>
 
 ## XBX Regression
 
-XBX regression [@kosmidis2025] is a recently developed approach that also handles boundary values (0s and 1s) natively, and is fit with the `betareg` package. The mean and precision submodels are specified jointly using the `|` operator in the formula.
+XBX regression [@kosmidis2025] is a recently developed approach that also handles boundary values (0s and 1s) natively, and is fit
+
+with the `betareg` package. The mean and precision submodels are specified jointly using the `|` operator in the formula.
 
 ```{r}
 #| label: fit-xbx
