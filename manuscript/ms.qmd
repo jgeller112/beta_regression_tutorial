@@ -283,9 +283,7 @@ We begin the tutorial with a non-technical overview of the beta distribution and
 
 Proportional data pose some challenges for standard modeling approaches: The data are bounded between 0 and 1 and often exhibit non-constant variance (heteroscedasticity) [@ferrari2004; @paolino2001]. Common distributions used within the generalized linear model frameworks often fail to capture these properties adequately, which can necessitate alternative modeling strategies.
 
-While we do not have time to delve fully into its derivation, the beta distribution is useful for modeling bounded continuous scales because it is the distribution for the probability of an event**. Given that a probability can take on any value from 0 (the event will not occur with certainty) to 1 (the event will occur with certainty)**, the beta distribution can likewise take on virtually any value in that bounded interval. As a consequence, the beta distribution is the maximum entropy distribution for *any* bounded continuous random variable, which means that the beta distribution can represent the full range of possibilities of such a scale.[^4] As a consequence, if we have a continuous scale with upper and lower bounds--and no other special conditions--the beta distribution will in principle provide a very good approximation of the uncertainty of the scale.
-
-[^4]: Technically, this maximum entropy condition is satisfied because the beta(1,1) distribution is uniform over its support. In addition, we assume that the scale has been re-scaled to the $[0,1]$ interval as we describe above.
+**While we do not have time to delve fully into its derivation, the beta distribution is useful for modeling bounded continuous scales because it is defined on the open interval (0, 1). This makes it well-suited for representing proportions and rates, which are naturally constrained to this range. By varying its two shape parameters, the beta distribution can take on a wide variety of forms (e.g., symmetric, skewed, U-shaped, or uniform), allowing it to flexibly capture different patterns of variability commonly observed in proportional data. As a result, when a response variable is continuous and bounded between 0 and 1, the beta distribution often provides a convenient and interpretable model for its variability, although its suitability should be evaluated in light of the specific characteristics of the data.**
 
 Typically, the expected value (or mean) of the response variable is the central estimand scholars want to estimate. A model should specify how this expected value depends on explanatory variables through two main components: a linear predictor, which combines the explanatory variables in a linear form ($a+b_1x_1+b_2x_2$, etc.), and a link function, which connects the expected value of the response variable to the linear predictor (e.g, $E[Y] = g(a + b_1x_1 + b_2x_2)$). In addition, a random component specifies the distribution of the response variable around its expected value (such as Poisson or binomial distributions, which belong to the exponential family) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
 
@@ -313,28 +311,29 @@ beta_df <- bind_rows(
   make_beta_df(0.5, 0.5),
   make_beta_df(2, 2),
   make_beta_df(5, 2),
-  make_beta_df(2, 5)
+  make_beta_df(2, 5),
+  make_beta_df(1, 1)
 ) |>
   mutate(label = factor(label))
 
 ggplot(
   beta_df,
-  aes(x = x, y = y, label = label, group = label, color = label)
+  aes(x = x, y = y, group = label, color = label)
 ) +
   geom_line(linewidth = 0.9) +
   scale_color_okabe_ito(
-    order = c(3, 2, 6, 7), # whichever correspond to desired colors
+    order = c(3, 2, 6, 7, 8),
     alpha = 0.7,
     name = "Distribution"
   ) +
   scale_x_continuous(
     "Proportion",
-    expand = expansion(0.01)
+    expand = expansion(mult = 0.01)
   ) +
   scale_y_continuous(
     "Density",
     limits = c(0, 5),
-    expand = expansion(0.01)
+    expand = expansion(mult = 0.01)
   ) +
   theme_publication() +
   theme(legend.position = "right")
@@ -365,9 +364,9 @@ By accounting for the observations' natural limits and non-constant variance, th
 
 ## Bayesian Approach to Beta Regression
 
-Beta regression models can be estimated using either frequentist or Bayesian methods. In this tutorial, we adopt a Bayesian framework because it facilitates the estimation and interpretation of a wide range of models that may be difficult to fit using frequentist approaches [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules].\]. Additionally, the use of Bayesin statistics in psychology has been steadily growing [@Pfadt2025]. In principle, frequentist methods like maximum likelihood can be framed as Bayesian models with uninformative priors, and as a result, the modeling perspective we put forward in this paper can apply to either approach. Nonetheless, we note that in non-linear and hierarchical models, frequentist estimation may require additional adjustments such as bootstrapping to obtain proper uncertainty intervals, whereas Bayesian modeling handles these extensions more naturally via exploration of the full joint posterior distribution.[^5]
+Beta regression models can be estimated using either frequentist or Bayesian methods. In this tutorial, we adopt a Bayesian framework because it facilitates the estimation and interpretation of a wide range of models that may be difficult to fit using frequentist approaches [@gelman2013bayesian; @mcelreath2020statistical; @bayes_rules].\]. Additionally, the use of Bayesin statistics in psychology has been steadily growing [@Pfadt2025]. In principle, frequentist methods like maximum likelihood can be framed as Bayesian models with uninformative priors, and as a result, the modeling perspective we put forward in this paper can apply to either approach. Nonetheless, we note that in non-linear and hierarchical models, frequentist estimation may require additional adjustments such as bootstrapping to obtain proper uncertainty intervals, whereas Bayesian modeling handles these extensions more naturally via exploration of the full joint posterior distribution.[^4]
 
-[^5]: A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package [@brms], which provides a high-level interface to Stan [@stan2023] and uses familiar R formula syntax (similar to `lm()`), making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.
+[^4]: A common concern is that Bayesian methods are slower than frequentist ones. While this is true in general, modern Bayesian computation engines are efficient, and in explanatory modeling our priority is to specify appropriate estimands rather than to optimize for computation speed. Moreover, we use the {brms} package [@brms], which provides a high-level interface to Stan [@stan2023] and uses familiar R formula syntax (similar to `lm()`), making advanced Bayesian modeling accessible to researchers with standard regression backgrounds. The package also supports parallelization, which substantially reduces computation time for large datasets.
 
 There are several important differences between the Bayesian analyses used here and the frequentist methods more commonly applied. First, frequentist statistics treats model parameters as fixed but unknown quantities that are estimated by maximizing the likelihood of the observed data. In contrast, Bayesian inference treats parameters as random variables and represents uncertainty about them using probability distributions.
 
@@ -559,9 +558,9 @@ We will now replicate this analysis in {brms}.
 
 ### Bayesian Regression Analysis
 
-We first start by loading the {brms} [@brms] and {cmdstanr} [@cmdstanr] packages (@lst-loadbrms). We use the cmdstanr backend for Stan [@stan2023] because it's faster than the default used to run models (i.e., `rstan`),[^6] though all of these models can also be fit with `brms` defaults.
+We first start by loading the {brms} [@brms] and {cmdstanr} [@cmdstanr] packages (@lst-loadbrms). We use the cmdstanr backend for Stan [@stan2023] because it's faster than the default used to run models (i.e., `rstan`),[^5] though all of these models can also be fit with `brms` defaults.
 
-[^6]: In order to use the cmdstanr backend you will need to first install the package (see `https://mc-stan.org/cmdstanr/`) and also run `cmdstanr::install_cmdstan()` if you have not done so already.
+[^5]: In order to use the cmdstanr backend you will need to first install the package (see `https://mc-stan.org/cmdstanr/`) and also run `cmdstanr::install_cmdstan()` if you have not done so already.
 
 ```{r}
 #| lst-label: lst-loadbrms
@@ -701,7 +700,7 @@ It is important to note that there are several justifiable approaches for addres
 
 To run our beta regression model, we need to exclude 0s and 1s in our data set. If we try to run a model with our data `data_fluency` we get an error: `Error: Family 'beta' requires response greater than 0`. This is because the beta distribution only supports observations in the 0 to 1 interval *excluding exact 0s and 1s*. We need make sure there are no 0s and 1s in our dataset.
 
-The dataset contains nine 0s and one 1. One approach is to nudge our 0s towards .01 and our 1s to .99, or apply a special formula [@smithson2006] so values fall within the \[0, 1\] interval. We implore readers not to engage in this practice. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. To run this beta model we will remove the 0s and 1s, and later in this article we will show how to jointly model these scale end points with the rest of the data. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are removed. When we run this code we should not get an error.
+The dataset contains nine 0s and one 1. One approach is to nudge our 0s towards .01 and our 1s to .99, or apply a special formula [@smithson2006] so values fall within the \[0, 1\] interval. We implore readers not to engage in this practice. @kubinec2022 showed that this practice can result in serious distortion of the outcome as the sample size 𝑁 grows larger, resulting in ever smaller values that are “nudged”. Because the beta distribution is a non-linear model of the outcome, values that are very close to the boundary, such as 0.00001 or 0.99999, will be highly influential outliers. To run this beta model we will remove the 0s and 1s (**this practice is also not ideal either**), and later in this article we will show how to jointly model these scale end points with the rest of the data. The model from @lst-beta01 uses a transformed `data_fluency` object (called `data_beta`) where 0s and 1s are removed. When we run this code we should not get an error.
 
 ```{r}
 #| label: beta_brms_01s
@@ -715,7 +714,7 @@ model_beta_bayes <- bf(
   phi ~ 1 # fit phi model
 )
 
-# transform 0 to 0.1 and 1 to .99
+# remove 0s and 1s
 data_beta <- fluency_data |>
   filter(
     Accuracy != 0,
@@ -944,9 +943,9 @@ It is important to note that these estimates are not the same as the marginal ef
 
 A critical assumption of Gaussian models is homoscedasticity — constant variance of the errors. Beta regression relaxes this assumption by allowing us to explicitly model the precision parameter $\phi$ as a function of predictors. This matters because failing to account for heteroscedasticity can distort inferences about the mean: as shown in @fig-plt-diff, including Fluency as a predictor of $\phi$ increased the uncertainty of the $\mu$ coefficient. This illustrates the broader utility of distributional models combined with beta regression, which directly model parameters like $\phi$ rather than assuming they are constant across observations.
 
-While it is advisable to model precision, if there is uncertainty about the best model, a relatively agnostic approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.[^7]
+While it is advisable to model precision, if there is uncertainty about the best model, a relatively agnostic approach would be to compare models, for example with leave one out (loo) cross validation, to examine if a dispersion parameter should be considered in our model.[^6]
 
-[^7]: The model fit statistic LOO-CV can be compared for any set of fitted brms models with the function `loo()`.
+[^6]: The model fit statistic LOO-CV can be compared for any set of fitted brms models with the function `loo()`.
 
 ```{r}
 #| label: fig-plt-diff
@@ -1069,7 +1068,13 @@ $$ {#eq-cohenh}
 
 ## Zero-Inflated beta (ZIB) Regression
 
-**A limitation of beta regression is that it can only accommodate values strictly between 0 and 1, excluding exact zeros and ones — that is, cases where the outcome is observed at the boundary of the scale.** In our dataset, we observed 9 rows where Accuracy equals zero. To fit a beta regression model, we removed these values, but we have left out potentially valuable information from our model--especially if the end points of the scale are distinctive in some way. In our case, these 0s may be structural—that is, they represent real, systematic instances where participants failed to answer correctly (rather than random noise or measurement error). For example, the fluency of the instructor might be a key factor in predicting these zero responses. We will discuss two approaches for jointly modeling these end points with the continuous data. First, we can use a zero-inflated beta (ZIB) model. This model still estimates the mean ($\mu$) and precision ($\phi$) of the beta distribution for values between 0 and 1, but it also includes an additional parameter, $\alpha$, which captures the probability of observing structural 0s.
+**A limitation of beta regression is that it can only accommodate values strictly between 0 and 1, excluding exact zeros and ones—that is, cases where the outcome is observed at the boundary of the scale. The Beta distribution is therefore not directly applicable when such boundary values are present.In our dataset, we observed 9 rows where Accuracy equals zero. To fit a standard beta regression model, we removed these values; however, doing so excludes potentially meaningful information—especially if the endpoints of the scale reflect substantively distinct outcomes. More generally, the appropriate treatment of 0s and 1s depends on how they arise. In some cases, boundary values may be structural, reflecting real and systematic outcomes (e.g., true failure or perfect performance). In other cases, they may arise from measurement constraints or discretization (e.g., proportions based on a small number of trials).**
+
+**In our case, these 0s may be structural—that is, they represent real instances where participants failed to answer correctly rather than random noise or measurement error. For example, the fluency of the instructor might influence the likelihood of these zero responses. When boundary values are thought to arise from a distinct process, it can be useful to model them separately from the continuous portion of the data.**
+
+**One approach is to use a zero-inflated beta (ZIB) model. This model estimates the mean (\$\\mu\$) and precision (\$\\phi\$) of the beta distribution for values between 0 and 1, while also including an additional parameter, \$\\alpha\$, that captures the probability of observing structural zeros. The ZIB model thus represents a mixture of data-generating processes: a logistic regression component models whether an observation is exactly 0, and a beta regression component models the continuous values in (0, 1).**
+
+**Substantively, this approach is appropriate when we believe that zeros arise from a process that is qualitatively distinct from the process generating non-zero values. For example, in a dataset measuring the proportion of looks to specific areas of a visual display, individuals who never fixate on a region may differ meaningfully from those who do, warranting a separate model for these boundary observations.**
 
 The zero-inflated beta models a mixture of the data-generating process. The $\alpha$ parameter uses a logistic regression to model whether the data is 0 or not. Substantively, this could be a useful model when we think that 0s come from a process that is relatively distinct from the data that is greater than 0. For example, if we had a dataset with proportion of looks or eye fixations to certain areas on marketing materials, we might want a separate model for those that do not look at certain areas on the screen because individuals who do not look might be substantively different than those that look.
 
@@ -1234,9 +1239,9 @@ marg_zi_brms |>
 
 ## Zero-One-Inflated Beta (ZOIB)
 
-The ZIB model works well if there are 0s in your data, but not 1s.[^8] In our previous examples we either got rid of both 0s and 1s (beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
+The ZIB model works well if there are 0s in your data, but not 1s.[^7] In our previous examples we either got rid of both 0s and 1s (beta regression), or removed the 1s (ZIB). Sometimes it is theoretically useful to model both 0s and 1s as separate processes or to consider these values as essentially similar parts of the continuous response, as we show later in the ordered beta regression model. For example, this is important in visual analog scale data where there might be a prevalence of responses at the bounds [@kong2016], in JOL tasks [@wilford2020], or in a free-list task where individuals provide open responses to some question or topic which are then recoded to fall between 0-1 [@bendixen2023]. Here 0s and 1s are meaningful; 0 means item was not listed and 1 means the item was listed first.
 
-[^8]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in {brms} by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
+[^7]: In cases where your data include exact 1s but no 0s, you can fit a one-inflated beta regression model in {brms} by setting the `coi` parameter to `1`. This tells the model that all point masses occur at 1, rather than being split between 0 and 1. In other words, `coi = 1` assumes that any inflation in the data is due entirely to values at 1. In our data, we have exactly one value equal to 1\[\^6\]. While probably not significant to alter our findings, we can model 1s with a special type of model called the zero-one-inflated beta (ZOIB) model [@liu2015] if we believe that both 0s and 1s are distinct outcomes.
 
 Similar to the beta and zero-inflated models discussed above, we can fit a zero-and-one‐inflated beta (ZOIB) model in {brms} using the `zero_one_inflated_beta` family. This formulation simultaneously estimates the mean $\mu$ and precision $\phi$ of the Beta component, as well as two inflation parameters: $\alpha$ , the probability that an observation is at either boundary (0 or 1), and $\gamma$ , the conditional probability that, given an observation falls on a boundary, it takes the value 1 rather than 0. In other words, $\alpha$ determines how often responses occur exactly at the endpoints, and $\gamma$ determines the balance between zeros and ones among those endpoint values. This specification allows the model to capture both the continuous variation in the interior of the (0, 1) interval and the presence of exact boundary values.
 
@@ -1400,9 +1405,9 @@ coi_me <- avg_comparisons(fit_zoib, variables = c("Fluency"), dpar = "coi")
 
 ## Ordered Beta Regression
 
-Looking at the output from the ZOIB model (@tbl-all), we can see how running a model like this can become fairly complex as it is fitting distinct sub-models for each component of the scale. The ability to consider 0s and 1s as distinct processes from continuous values comes at a price in terms of complexity and interpretability. A simplified version of the zero-one-inflated beta (ZOIB) model, known as ordered beta regression [@kubinec2022; see also @Makowski2025CHOCO for a reparameterized version called the *beta-Gate* model], has been recently proposed. The ordered beta regression model exploits the fact that, for most analyses, the continuous values (between 0-1) and the discrete outcomes (e.g., 0 or 1) are *ordered*. For example, as a covariate $x$ increases or decreases, we should expect the bounded outcome $y$ to increase or decrease monotonically as well from 0 to $(0,1)$ to 1. The ZOIB model does not impose this restriction; a covariate could increase and the response $y$ could increase in its continuous values while *simultaneously* decreasing at *both* end points.[^9] This complexity is not immediately obvious when fitting the ZOIB, nor is it a potential relationship that many scholars want to consider when examining how covariates influence a bounded scale.
+Looking at the output from the ZOIB model (@tbl-all), we can see how running a model like this can become fairly complex as it is fitting distinct sub-models for each component of the scale. The ability to consider 0s and 1s as distinct processes from continuous values comes at a price in terms of complexity and interpretability. A simplified version of the zero-one-inflated beta (ZOIB) model, known as ordered beta regression [@kubinec2022; see also @Makowski2025CHOCO for a reparameterized version called the *beta-Gate* model], has been recently proposed. The ordered beta regression model exploits the fact that, for most analyses, the continuous values (between 0-1) and the discrete outcomes (e.g., 0 or 1) are *ordered*. For example, as a covariate $x$ increases or decreases, we should expect the bounded outcome $y$ to increase or decrease monotonically as well from 0 to $(0,1)$ to 1. The ZOIB model does not impose this restriction; a covariate could increase and the response $y$ could increase in its continuous values while *simultaneously* decreasing at *both* end points.[^8] This complexity is not immediately obvious when fitting the ZOIB, nor is it a potential relationship that many scholars want to consider when examining how covariates influence a bounded scale.
 
-[^9]: For a more complete description of this issue, we refer the reader to @kubinec2022.
+[^8]: For a more complete description of this issue, we refer the reader to @kubinec2022.
 
 To make the response ordered, the ordered beta regression model estimates a weighted combination of a standard beta regression model for continuous responses and a logit model for the discrete values of the response. By doing so, the amount of distinctiveness between the continuous responses and the discrete end points is a function of the data (and any informative priors) rather than strictly defined as fully distinct processes as in the ZOIB. For some datasets, the continuous and discrete responses will be fairly distinct, and in others less so.
 
@@ -1412,9 +1417,9 @@ While we cannot measure Agreement directly, the ordinal response gives us some i
 
 In an ordered beta regression, three ordered categories are modeled: (1) exactly zero, (2) somewhere between zero and one, and (3) exactly one. In an ordered beta regression, (1) and (2) are modeled with cumulative logits, where one cutpoint is the the boundary between Exactly 0 and Between 0 and 1 and the other cutpoint is the boundary between *Between 0 and 1* and *Exactly 1.* The continuous values in the middle, 0 to 1 (3), are modeled as a vanilla beta regression with parameters reflecting the mean response on the logit scale as we have described previously. Ultimately, employing cutpoints allows for a smooth transition between the bounds and the continuous values, permitting both to be considered together rather than modeled separately as the ZOIB requires.
 
-The ordered beta regression model has shown to be more efficient and less biased than some of the methods discussed [@kubinec2022] herein and has seen increasing use across the biomedical and social sciences [@wilkesQuantifyingCoextinctionsEcosystem2024; @martinVocalComplexitySocially2024; @smithEcologicalMomentaryAssessment2024; @shresthaBigFiveTraits2024; @nouvianGlyphosateImpairsAversive2023] because it produces only a single set of coefficient estimates in a similar manner to a standard beta regression or OLS.[^10]
+The ordered beta regression model has shown to be more efficient and less biased than some of the methods discussed [@kubinec2022] herein and has seen increasing use across the biomedical and social sciences [@wilkesQuantifyingCoextinctionsEcosystem2024; @martinVocalComplexitySocially2024; @smithEcologicalMomentaryAssessment2024; @shresthaBigFiveTraits2024; @nouvianGlyphosateImpairsAversive2023] because it produces only a single set of coefficient estimates in a similar manner to a standard beta regression or OLS.[^9]
 
-[^10]: Please note that there are other models available that can model this continuous process like the beta-gate model [@Makowski2025CHOCO] and the censored extended beta regression model [@kosmidis2025].
+[^9]: Please note that there are other models available that can model this continuous process like the beta-gate model [@Makowski2025CHOCO] and the censored extended beta regression model [@kosmidis2025].
 
 ### Fitting an Ordered Beta Regression
 
@@ -1796,7 +1801,11 @@ p
 
 ## Case Study 2
 
-**In Case Study 1, our accuracy measure contained both zeros and ones; however, there was only a single one in the dataset. To more clearly demonstrate boundary value handling, we use example data that contains multiple zeros and ones. In the same paper, @wilford2020 also had participants provide metamemory judgments for each video using judgments of learning (JOLs). Metamemory judgments are judgments about future memory performance (i.e., how likely one is to remember a stimulus on a future memory test). JOLs require participants to rate an item on a scale from 0 to 100, where 0 indicates the item will not be remembered and 100 indicates they will definitely remember it. JOLs are widely used in the learning and memory literature [@carpenter2012; @Rhodes2008; @carpenter2013; @rhodes2009; @sungkhasettee2011]. In the current example, we use data from Experiment 1b, in which participants completed the study online. As shown in @fig-jol, these judgments can generate zeros and ones in the dataset. @wilford2020 were interested in whether disfluent videos received lower JOLs compared to fluent videos. Given the models fit previously, one could apply either a ZOIB model or an ordered beta model here. Because the authors were primarily interested in the overall effect of fluency on JOLs, we fit an ordered beta model to these data.**
+In Case Study 1, our accuracy measure included both zeros and ones; however, there was only a single value of one in the dataset. To more clearly demonstrate how boundary values can be handled, we instead use example data containing multiple zeros and ones. In the same paper, @wilford2020 also asked participants to provide metamemory judgments for each video using judgments of learning (JOLs). Metamemory judgments refer to predictions about future memory performance; that is, how likely a person believes they are to remember a stimulus on a later memory test. In JOL tasks, participants rate each item on a scale from 0 to 100, where 0 indicates that the item will not be remembered and 100 indicates that it will definitely be remembered. JOLs are widely used in the learning and memory literature [@carpenter2012; @Rhodes2008; @carpenter2013; @rhodes2009; @sungkhasettee2011].
+
+In the current example, we use data from Experiment 1b, in which participants viewed fluent and disfluent lectures online. After watching the videos, participants provided two JOLs, one after each video. As shown in @fig-jol, these judgments produced both zeros and ones in both conditions. @wilford2020 were interested in whether disfluent videos received lower JOLs than fluent videos and analyzed the data using a traditional Gaussian model. As shown in @fig-ppcheck-jol, this model does not fit the data well.
+
+Given the models fit previously, either a ZOIB model or an ordered beta model could be applied here. Because the authors were primarily interested in the overall effect of fluency on JOLs, we fit an ordered beta model to these data.
 
 ```{r}
 #| lst-label: lst-joldata
@@ -1840,6 +1849,34 @@ jol_data |>
   scale_y_discrete(NULL, expand = expansion(mult = 0.1)) +
   scale_fill_okabe_ito(breaks = NULL) +
   theme_publication()
+```
+
+```{r}
+#| label: linear_jol
+#| echo: false
+#| results: hide
+
+bayes_reg_jol <- brm(
+   JOL ~ Fluency,
+   data = jol_data,
+   family = gaussian(),
+   seed = 666,
+   file = here::here("manuscript", "models", "model_reg_JOL")
+ )
+```
+
+```{r}
+#| label: fig-ppcheck-jol
+#| fig-cap: "pp check for Guassian JOL model.  The plots show 100 posterior predicted distributions with the label yrep (light blue), the distribution of accuracy as function of fluency in dark blue for regular regression."
+
+  pp_check_jol <- pp_check(
+  bayes_reg_jol,
+  type = "dens_overlay_grouped",
+  group = "Fluency",
+  ndraws = 100
+) + theme_publication()
+
+pp_check_jol
 ```
 
 ### **Ordered Beta Regression**
@@ -1928,19 +1965,19 @@ The use of beta regression in psychology, and the social sciences in general, is
 
 Throughout this tutorial our main aim was to help guide researchers in running analyses with proportional or percentage outcomes using beta regression and some of its alternatives in a Bayesian framework using the {brms} package. In the current tutorial, we used real data from @wilford2020 (Experiments 1a and 1b) and discussed how to fit these models in R, interpret model parameters, extract predicted probabilities and marginal effects, and visualize the results using the {marginaleffects} package. Specifically, we used data that is commonly used in psychology–accuracy and JOLs.
 
-Comparing our analysis with that of @wilford2020, we demonstrated that using a traditional approach (e.g., *t*-test) to analyze mean accuracy data can lead to biased inferences. Although we successfully reproduced one of their key findings, our use of beta regression and its extensions revealed important nuances in the results. With a traditional beta regression model–which accounts for both the mean and the precision (dispersion)–we observed similar effects of instructor fluency on performance. However, the standard beta model does not accommodate boundary values (i.e., 0s and 1s).
+Comparing our analysis with that of @wilford2020, we demonstrated that using a traditional approach (e.g., *t*-test) can sometimes lead to biased inferences. For instance, **in case study 1**, our use of beta regression and its extensions revealed important nuances in the results. With a traditional beta regression model–which accounts for both the mean and the precision (dispersion)–we observed similar effects of instructor fluency on performance. However, the standard beta model does not accommodate boundary values (i.e., 0s and 1s).
 
 When we applied a ZIB model, which explicitly accounts for structural 0s, we found no effect of fluency on the mean ($\mu$) part of the model. Instead, the effect of fluency emerged in the structural zero (inflated zero; $\alpha$) component. This pattern was consistent when using a zero-one-inflated beta (ZOIB) model. Furthermore, we fit an ordered beta regression model [@kubinec2022], which appropriately models the full range of values, including 0s and 1s. Here, we did not observe a reliable effect of fluency on the mean once we accounted for dispersion.
 
 These analyses emphasize the importance of fitting a model that aligns with the nature of the data. The simplest and recommended approach when dealing with data that contains 0s and/or 1s is to fit an ordered beta model, assuming the process is truly continuous. However, if you believe the process is distinct in nature, a ZIB or ZOIB model might be a better choice. Ultimately, this decision should be guided by theory.
 
-For instance, if we believe fluency influences the boundaries (0 and 1), we might want to model this process separately using a ZIB or ZOIB. With the current dataset, fluency might affect specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This effect could be due to participant disengagement during the disfluent lecture. If students fail to pay attention because of features of disfluency, they may miss relevant information, leading to a floor effect at the test. Following from this, disfluency would be expected to influence the boundary (O) and not the continuous part of the model. If this is the case, we would want to model this appropriately. However, if we believe fluency effects general performance levels (the continuous part), a model that takes in to account the entire process accounting for the 0s and 1s might be appropriate.
+For instance, if we believe fluency influences the boundaries (0 and 1), we might want to model this process separately using a ZIB or ZOIB. With the current dataset, fluency might affect specific aspects of performance (such as the likelihood of complete failure) rather than general performance levels. This effect could be due to participant disengagement during the disfluent lecture. If students fail to pay attention because of features of disfluency, they may miss relevant information, leading to a floor effect at the test. Following from this, disfluency would be expected to influence the boundary (0) and not the continuous part of the model. If this is the case, we would want to model this appropriately. However, if we believe fluency effects general performance levels (the continuous part), a model that takes in to account the entire process accounting for the 0s and 1s might be appropriate.
 
 In the discussion section of @wilford2020, they were unable to offer a tenable explanation for performance differences based on instructor fluency. A model that accounts for the excess 0s in the dataset provides one testable explanation: watching a disfluent lecture may lead to lapses in attention, resulting in poorer performance in that group. These lapses, in turn, contribute to the observed differences in the fluent condition. This modeling approach opens a promising avenue for future research--one that would have remained inaccessible otherwise.
 
-**In addition, with the fitting of Bayesian models we were able to move beyond the simple dichotomous thinking involved in frequentist statistics (yes there is an effect or no there is not an effect). With the inclusion of pd, ROPE, and when appropriate Bayes Factors, we discovered that while there may be an effect of fluency, the evidence is inconclusive. There is uncertainty both as to whether the effect exists and, if it does, whether the difference is meaningful enough compared to the the original study it is based on exceed our ROPE boundary of +-4%.**
+**In addition, fitting Bayesian models allowed us to move beyond the dichotomous thinking often associated with frequentist inference (i.e., whether an effect is present or absent). By incorporating indices such as the probability of direction (pd), regions of practical equivalence (ROPE), and, when appropriate, Bayes factors, we found that although there may be an effect of fluency, the evidence is inconclusive. Specifically, there is uncertainty both about whether the effect exists and, if it does, whether it is meaningful in magnitude—particularly relative to the original study, where our ROPE was defined as ±4%.**
 
-In this tutorial, we demonstrated how to analyze these models from a Bayesian perspective. While we recognize that not everyone identifies as a Bayesian, implementing these models using a Bayesian framework is relatively straightforward--it requires only a single package, lowering the barrier to entry. For those who prefer frequentist analyses, several R packages are available. For example, the {betareg} package [@betareg] {glmmTMB} [@glmmTMB] and {gamlss} [@gamlss] are nice options. To this end, **we** have included supplemental materials demonstrating how to use frequentist packages to analyze the data presented herein.
+In this tutorial, we demonstrated how to analyze data using models from a Bayesian perspective. While we recognize that not all researchers are Bayesian, implementing these models in a Bayesian context is relatively straightforward and can be accomplished with a single package, lowering the barrier to entry. For those who prefer frequentist approaches, several R packages are available, including {betareg} [@betareg], {glmmTMB} [@glmmTMB], and {gamlss} [@gamlss]. To support this, we provide supplemental materials demonstrating how to analyze the present data using these frequentist tools in the Appendix.
 
 ## Conclusion
 
