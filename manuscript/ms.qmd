@@ -1507,7 +1507,7 @@ ord_beta_avg |>
   format_tt(escape = TRUE)
 ```
 
-In @tbl-ordbeta **the credible interval for the fluent–disfluent difference is mostly positive with `r round(p_d$pd, 2)` % the posterior above zero, suggesting that fluent instructions probably yield somewhat higher accuracy than disfluent instructions after accounting for boundary responses, though the effect remains uncertain.**
+In @tbl-ordbeta **the credible interval for the fluent–disfluent difference is mostly positive with `r round(p_d$pd, 3)` % the posterior above zero, suggesting that fluent instructions probably yield somewhat higher accuracy than disfluent instructions after accounting for boundary responses, though the effect remains uncertain. In addition the 95% Cr.I is wide suggesting uncertainty about the effect.**
 
 #### Cutpoints
 
