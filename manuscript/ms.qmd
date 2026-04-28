@@ -544,7 +544,7 @@ fluency_data |>
     fun = mean,
     geom = "point",
     shape = 18, # filled diamond
-    size = 5,
+    linewidth = 5,
     color = "black",
     aes(fill = Fluency)
   ) +
@@ -854,7 +854,7 @@ ggplot(pred_draws_beta, aes(x = draw, y = Fluency, fill = Fluency)) +
 
 ##### Marginal Effects
 
-Marginal effects offer an interpretable way to quantify how changes in a predictor influence an outcome, while holding other factors constant in a specific manner. In recent years, there has been a thrust to move away from reporting regression coefficients alone, focusing instead on estimates that are easier to interpret and communicate—particularly in non-linear models [@mccabe2021; @rohrer2025models]. Technically, marginal effects are computed as partial derivatives for continuous variables or as finite differences for categorical (and sometimes continuous) predictors, depending on the structure of the data and the research question. Substantively, these procedures translate raw regression coefficients into quantities that reflect changes in the bounded outcome—for example, an $x$% change in the value of a proportion.
+Marginal effects offer an interpretable way to quantify how changes in a predictor influence an outcome, while holding other factors constant in a specific manner. In recent years, there has been a thrust to move away from reporting regression coefficients alone, focusing instead on estimates that are easier to interpret and communicate—particularly in non-linear models [@mccabe2021; @rohrer2026models]. Technically, marginal effects are computed as partial derivatives for continuous variables or as finite differences for categorical (and sometimes continuous) predictors, depending on the structure of the data and the research question. Substantively, these procedures translate raw regression coefficients into quantities that reflect changes in the bounded outcome—for example, an $x$% change in the value of a proportion.
 
 There are several types of marginal effects, and their computation can vary across software packages. For example, the popular {emmeans} package [@emmeans] computes marginal effects by holding all predictors at their means (marginal effects at the mean; MEM). In this tutorial, we use the {marginaleffects} package [@margeffects2024], which by default computes average marginal effects (AMEs). AMEs are based on counterfactual predictions: the dataset is conceptually replicated across all unique values of the predictor of interest, predictions are generated for each row under each counterfactual scenario, and the resulting differences are then averaged. This approach maintains a strong connection to the observed data—because predictions are made using each participant’s actual values—while providing a clear and interpretable summary of the effect of interest.
 
