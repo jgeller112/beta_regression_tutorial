@@ -25,6 +25,8 @@ beta_regression_tutorial/
 │   ├── data/
 │   │   ├── fluency_data.csv         # Aggregate data used for example
 │   │   └── miko_data.csv            # Raw data from Expt 1A from Wilford Paper
+│   │   ├── jol_data.csv             # Aggregate data used for example 2
+│   │   └── wilford_jol_expt1b.csv   # Raw data from Expt 1b from Wilford Paper
 │   ├── _extensions/
 │   │   └── apaquarto/
 │   ├── ms.qmd                       # Main manuscript file (Quarto)
