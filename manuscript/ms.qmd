@@ -111,7 +111,6 @@ This manuscript is currently **under review** and has not been peer-reviewed. Co
 #| echo: false
 #| message: false
 #| warning: false
-
 library(easystats)
 library(betareg)
 library(tidyverse)
@@ -157,13 +156,18 @@ opts_chunk$set(
   echo = is_html
 )
 
+# define plot_hk function which isn't yet on CRAN
+
+plot_hk <- function(p, ...) {
+  plot_heiss(p, ...)
+}
+
 set.seed(666)
 ```
 
 ```{r}
 #| label: ggplot-theme
 #| echo: false
-
 IS_HTML <- knitr::is_html_output()
 
 theme_publication <- function(
@@ -196,7 +200,6 @@ theme_publication <- function(
     strip.background = element_rect(fill = "gray90", color = "black")
   )
 }
-
 ```
 
 ```{r}
@@ -211,7 +214,6 @@ if (!dir.exists(path)) {
 ```{r}
 #| label: data-import
 #| echo: false
-
 fluency_data <- read.csv(here::here("manuscript", "data", "miko_data.csv")) %>%
   rename(
     Participant = "ResponseID",
@@ -295,7 +297,6 @@ To illustrate, consider a test question worth seven points. Suppose a participan
 #| label: fig-curves
 #| fig-cap: "beta distributions with different shape1 and shape2 parameters."
 #| fig-asp: 0.52
-
 # Function to generate beta distribution data
 make_beta_df <- function(shape1, shape2, n = 9000) {
   x <- seq(0.001, 0.999, length.out = n)
@@ -383,7 +384,6 @@ To ease readers into Bayesian data analysis we provide a metric known as the *pr
 #| fig-cap: "A Bayesian posterior distribution (assuming a uniform prior) centered at a point estimate chosen so that the probability of direction (pd) equals 0.95, and a frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the pd, and the red area represents the remaining 1 − pd of the distribution. In the frequentist sampling distribution, the red tail areas represent the rejection region at α = 0.10. In this example, the posterior mean lies exactly at the $1 - \\frac{\\alpha}{2}$ quantile of the null sampling distribution. For symmetric posteriors with flat priors, the pd is numerically equivalent to the one-sided $p$-value."
 #| fig-asp: 0.8
 #| fig-height: 8
-
 # --- parameters ---
 pd <- 0.95
 alpha_two <- 2 * (1 - pd) # matching two-sided alpha
@@ -470,8 +470,6 @@ freq <- ggplot(data.frame(x = lim), aes(x)) +
 
 # --- Stack the plots ---
 post / freq
-
-
 ```
 
 For reasons of space, we refer readers unfamiliar to Bayesian data analysis to several existing books on the topic [@gelman2013bayesian; @mcelreath2020statistical; @kruschke2015doing]. In addition, we assume readers are familiar with R, but those in need of a refresher should find @wickhamDataScienceImport2023 useful.
@@ -489,7 +487,6 @@ In Experiment 1A, ninety-six participants watched two short instructional videos
 #| lst-cap: Data needed to run examples
 #| eval: false
 #| echo: true
-
 # get data here from project folder
 fluency_data <- read_csv(here::here("manuscript", "data", "fluency_data.csv"))
 ```
@@ -501,7 +498,6 @@ Our primary outcome variable is the proportion of idea units recalled on the fin
 #| tbl-cap: "Four observations from @wilford2020. Accuracy refers to the proportion of correctly recalled idea units."
 #| echo: false
 #| after-caption-space: 0pt
-
 fluency_data |>
   sample_n(4) |>
   tt() |>
@@ -516,16 +512,12 @@ fluency_data |>
 #| lst-label: lst-lm
 #| lst-cap: lm() model syntax
 #| echo: true
-
 flu_org <- lm(Accuracy ~ Fluency, data = fluency_data)
-
 ```
 
 ```{r}
 #| label: lm-results
-
 summary(flu_org)
-
 ```
 
 **When @lst-lm is run, the summary output () shows there is a significant difference between Fluent and Disfluent conditions (*M* = .08, *SE* = .04), *t*(94) = 2.00, *p* = .048 (see @fig-flu1), consistent with the results reported by @wilford2020.**
@@ -533,7 +525,6 @@ summary(flu_org)
 ```{r}
 #| label: fig-flu1
 #| fig-cap: "Dot plot depicting accuracy distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and mean (diamond))"
-#|
 fluency_data |>
   ggplot(aes(x = Accuracy, y = Fluency, fill = Fluency)) +
   stat_dotsinterval(
@@ -567,7 +558,6 @@ We first start by loading the {brms} [@brms] and {cmdstanr} [@cmdstanr] packages
 #| lst-cap: Load the {brms} and {cmdstanr} packages
 #| echo: true
 #| eval: false
-
 library(brms)
 library(cmdstanr)
 ```
@@ -578,7 +568,6 @@ library(cmdstanr)
 #| lst-cap: Fitting a gaussian model with brm().
 #| hide: false
 #| echo: true
-
 bayes_reg_model <- brm(
   Accuracy ~ Fluency,
   data = fluency_data,
@@ -586,13 +575,11 @@ bayes_reg_model <- brm(
   seed = 666,
   file = here::here("manuscript", "models", "model_reg_bayes")
 )
-
 ```
 
 ```{r}
 #| label: fit-gauss-parameters
 #| echo: false
-
 brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 ```
 
@@ -615,11 +602,9 @@ The output also includes the effective sample size (ESS) and $\hat{R}$ values, b
 #| lst-label: lst-hypo
 #| lst-cap: Getting Bayes Factor using `hypothesis()` function from `brms`
 #| echo: true
-
 # test non-zero effect
 
 fluency_effect_BF <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
-
 ```
 
 **To test the strength of evidence for the effect, we can compare a model where the effect is greater than 0 to one where it is less than 0 using the `hypothesis()` function in {brms} (@lst-hypo). The resulting evidence ratio (ER) column contains the Bayes factor for this directional hypothesis, comparing the model** $\delta > 0$ **against** $\delta < 0$**. The BF for the fluency effect is `r round(fluency_effect_BF$hypothesis$Evid.Ratio, 2)`, providing very strong evidence that the effect is positive and not 0. If we instead wanted to test a point-null hypothesis—that is, whether the effect is equivalent to exactly 0—we would need to specify non-default priors and rely on the Savage-Dickey method, which evaluates the ratio of the posterior to the prior density at the null value and is therefore directly sensitive to that prior choice. Without specifying a weak or strong prior, one cannot calculate a BF. In {brms} the default prior for fixed effects are flat and uninformative (they have no likelihood).**
@@ -635,7 +620,6 @@ In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the fu
 #| lst-label: lst-ropebrms
 #| lst-cap: Getting ROPE from `bayes_reg_model` obect using `rope` function from {bayestestR}
 #| echo: true
-
 brms_rope <- bayestestR::rope(
   bayes_reg_model,
   ci = .95, # CI
@@ -688,7 +672,6 @@ p_annotated
 #| echo: true
 #| fig-width: 8
 #| fig-height: 12
-
 check_model(bayes_reg_model, check = c("homogeneity", "qq"))
 ```
 
@@ -709,7 +692,6 @@ The dataset contains nine 0s and one 1. One approach is to nudge our 0s towards 
 #| lst-label: lst-beta01
 #| lst-cap: Fitting a beta model without 0s and 1s in brm().
 #| echo: true
-
 # set up model formual
 model_beta_bayes <- bf(
   Accuracy ~ Fluency, # fit mu model
@@ -749,7 +731,6 @@ In our example, we can use the `plogis()` function in base R to convert estimate
 #| echo: true
 #| lst-label: lst-me
 #| lst-cap: Load the {marginaleffects} package.
-
 library(marginaleffects)
 options(marginaleffects_posterior_center = mean) # make sure returns mean
 ```
@@ -760,7 +741,6 @@ options(marginaleffects_posterior_center = mean) # make sure returns mean
 #| lst-cap: Fitting beta model with dispersion.
 #| results: hide
 #| echo: true
-
 model_beta_bayes_disp <- bf(
   Accuracy ~ Fluency, # Model of the mean
   phi ~ Fluency # Model of the precision
@@ -779,7 +759,6 @@ beta_brms_dis <- brm(
 #| lst-cap: Predictions from the beta model for each level of Fluency ($\mu$).
 #| eval: false
 #| echo: true
-
 avg_predictions(
   beta_brms_dis,
   # need to specify the levels of the categorical predictor
@@ -793,7 +772,6 @@ avg_predictions(
 #| tbl-cap-location: top
 #| echo: false
 #| after-caption-space: 0pt
-
 avg_predictions(
   beta_brms_dis,
   variables = "Fluency"
@@ -817,7 +795,6 @@ For the `Fluency` factor, we can interpret the estimates under the `Mean` column
 #| lst-label: lst-plotbeta
 #| lst-cap: Plot predicted probabilities using `plot_predictions()` from {marginaleffects}
 #| echo: true
-
 beta_plot <- plot_predictions(beta_brms_dis, by = "Fluency")
 ```
 
@@ -827,7 +804,6 @@ The `plot_predictions()` function will only display the point estimate with the 
 #| lst-label: lst-posdraws
 #| lst-cap: Extracting posterior draws from the beta regression model.
 #| echo: true
-
 # Add a model identifier to each dataset
 pred_draws_beta <- avg_predictions(beta_brms_dis, variables = "Fluency") |>
   posterior_draws()
@@ -865,7 +841,6 @@ One practical use of AMEs is to estimate the average difference between two grou
 #| lst-label: lst-avgcomp
 #| lst-cap: Calculating the difference between probabilities ($\mu$) for instructor fluency with `avg_comparisons()`
 #| echo: true
-
 # get risk difference by default
 
 beta_avg_comp <- avg_comparisons(
@@ -880,7 +855,6 @@ beta_avg_comp <- avg_comparisons(
 #| echo: false
 #| tbl-cap: Fluency difference ($\mu$)
 #| after-caption-space: 0pt
-
 p_d <- beta_avg_comp |>
   p_direction() |>
   as.data.frame() |>
@@ -913,7 +887,6 @@ beta_avg_comp_rope <- avg_comparisons(
   comparison = "difference",
   equivalence = c(-0.04, .04)
 )
-
 ```
 
 The ROPE can also be obtained using the {marginaleffects} package by specifying the `equivalence` bounds in `avg_comparisons()`. Running the code in @lst-merope returns a ROPE probability of 23%, indicating that there is insufficient evidence to conclude that the effect exceeds 4% or is practically equivalent.
@@ -1562,13 +1535,13 @@ Overall, it is clear from the posterior distribution plot that the ordered beta 
 
 ### Model Visualization
 
-{ordbetareg} provides a useful visualization function called `plot_heiss()` [@yeEnforcingBoundariesChinas2023] that can represent dispersion in the entire outcome as a function of discrete covariates. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
+{ordbetareg} provides a useful visualization function called `plot_hk()` [@yeEnforcingBoundariesChinas2023] that can represent dispersion in the entire outcome as a function of discrete covariates. This function produces a plot of predicted proportions across the range of our `Fluency` factor. In @fig-heiss-kurz we get predicted proportions for Fluency across the bounded scale. Looking at the figure we can see there is much overlap between instructors in the middle portion ($\mu$) . However, we do see some small differences at the zero bounds.
 
 ```{r}
-#| label: fig-heiss
-#| fig-cap: "Heiss plot of predicted probabilities across the scale (0-100)"
+#| label: fig-heiss-kurz
+#| fig-cap: "Heiss-Kurz plot of predicted probabilities across the scale (0-100)"
 
-plot_heiss(
+plot_hk(
   ord_fit_brms,
   grouping_fac = "Fluency",
   recode_group_labels = c("Disfluency", "Fluency")
