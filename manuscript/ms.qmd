@@ -265,11 +265,11 @@ The challenges of analyzing proportional data are not new [see @bartlett1936]. F
 
 While in this paper we will focus on proportional-responses that lie between 0 and 1--it is important to note that our analysis applies to any bounded continuous scale. Any bounded scale can be mapped to lie within 0 and 1 without resulting in a loss of information as the transformation is linear.[^1] Consequently, a scale that has natural end points of -1,234 and +8,451--or any other end points on the real number line short of infinity—can be modeled using the approaches we describe in this paper.
 
-[^1]: Specifically, for any continuous bounded variable $x$, we can rescale this variable to lie within 0 and 1 by using the formula $x' = \frac{x - \min(x)}{\max(x) - \min(x)}$ where $0 \leq x' \leq 1$.
+[^1]: Specifically, for any continuous bounded variable $x$, we can rescale this variable to lie within 0 and 1 by using the formula $x' = \frac{x - \min(x)}{\max(x) - \min(x)}$ where $0 \leq x' \leq 1$. It is also possible to directly model arbitrary scale end points using the extended beta distribution, however that discussion is outside the scope of this tutorial (and largely unnecessary for most applied analyses).
 
 ## A Beta Way Is Possible
 
-With the widespread availability of open-source software such as R [@R] and its extensive ecosystem of user-developed packages, advanced models like beta regression have become increasingly accessible to applied researchers. Yet, their adoption in psychology remains relatively limited. One contributing factor may be the lack of domain-specific examples that demonstrate how these models address common challenges in psychological data. Although recent years have seen a growing interest in beta regression, and a number of useful tutorials are available [e.g., @smithson2006; @vuorre2019; @heiss2021; @bendixen2023; @coretta2025bayesian], these resources often either focus on basic implementation or briefly mention extensions without detailing how they can be applied to psychologically relevant research questions.
+With the widespread availability of open-source software such as R [@R] and its extensive ecosystem of user-developed packages, advanced models like beta regression have become increasingly accessible to applied researchers. Yet, their adoption in psychology remains relatively limited. One contributing factor may be the lack of domain-specific examples that demonstrate how these models address common challenges in psychological data. Although recent years have seen a growing interest in beta regression, and a number of useful tutorials are available [e.g., @smithson2006; @vuorre2019; @heiss2021; @bendixen2023; @coretta2025bayesian], these resources often either focus on a specific subset of available modeling approaches or briefly mention extensions without detailing how they can be applied to psychologically relevant research questions.
 
 The present tutorial aims to help bridge this gap by providing a comprehensive, applied introduction to beta regression and several of its extensions. In addition to the standard beta model, we walk through zero-inflated, zero-one-inflated, and ordered beta regression. These models are particularly useful for researchers working with proportion outcomes that include boundary values (e.g., exact 0s or 1s) or responses with an inherent ordinal structure. Our goal is to offer practical guidance that enables psychological researchers to implement, interpret, and report these models in ways that directly support their empirical questions.
 
@@ -285,7 +285,9 @@ We begin the tutorial with a non-technical overview of the beta distribution and
 
 Proportional data pose some challenges for standard modeling approaches: The data are bounded between 0 and 1 and often exhibit non-constant variance (heteroscedasticity) [@ferrari2004; @paolino2001]. Common distributions used within the generalized linear model frameworks often fail to capture these properties adequately, which can necessitate alternative modeling strategies.
 
-**While we do not have time to delve fully into its derivation, the beta distribution is useful for modeling bounded continuous scales because it is defined on the open interval (0, 1). This makes it well-suited for representing proportions and rates, which are naturally constrained to this range. By varying its two shape parameters, the beta distribution can take on a wide variety of forms (e.g., symmetric, skewed, U-shaped, or uniform), allowing it to flexibly capture different patterns of variability commonly observed in proportional data. As a result, when a response variable is continuous and bounded between 0 and 1, the beta distribution often provides a convenient and interpretable model for its variability, although its suitability should be evaluated in light of the specific characteristics of the data.**
+**While we do not have time to delve fully into its derivation, the beta distribution is useful for modeling bounded continuous scales because it is defined on the open interval (0, 1). This makes it well-suited for representing proportions and rates, which are naturally constrained to this range. The beta distribution naturally arises in a maximum entropy framework as a distribution of the *geometric* mean [@jaynes2003]. The geometric mean is used for taking an average of a set of percentiles or rates, and as such is widely used in finance and accounting. By extension, the beta distribution is useful for modeling social science data that can be represented as a proportion or percentile.**
+
+**By varying its two shape parameters, the beta distribution can take on a wide variety of forms (e.g., symmetric, skewed, U-shaped, or uniform), allowing it to flexibly capture different patterns of variability commonly observed in proportional data. As a result, when a response variable is continuous and bounded between 0 and 1, the beta distribution often provides a convenient and interpretable model for its variability, although its suitability should be evaluated in light of the specific characteristics of the data.**
 
 Typically, the expected value (or mean) of the response variable is the central estimand scholars want to estimate. A model should specify how this expected value depends on explanatory variables through two main components: a linear predictor, which combines the explanatory variables in a linear form ($a+b_1x_1+b_2x_2$, etc.), and a link function, which connects the expected value of the response variable to the linear predictor (e.g, $E[Y] = g(a + b_1x_1 + b_2x_2)$). In addition, a random component specifies the distribution of the response variable around its expected value (such as Poisson or binomial distributions, which belong to the exponential family) [@nelder1972]. Together, these components provide a flexible framework for modeling data with different distributional properties.
 
@@ -344,8 +346,7 @@ ggplot(
 
 While the standard parameterization of the beta distribution uses $\alpha$ and $\beta$, a reparameterization to a mean ($\mu$) and precision ($\phi$) is more useful for regression models. The mean represents the expected value of the distribution, **while the precision, which is inversely related to variance**, reflects how concentrated the distribution is around the mean, with higher values indicating a narrower distribution and lower values indicating a wider one. The connections between the beta distribution's parameters are shown in @eq-beta. Importantly, the variance depends on the average value of the response because uncertainty intervals need to adjust for how close the value of the response is to the boundary.
 
-$$
-\begin{aligned}[t]
+$$\begin{aligned}[t]
 \text{Shape 1:} && a &= \mu \phi \\
 \text{Shape 2:} && b &= (1 - \mu) \phi
 \end{aligned}
@@ -354,8 +355,8 @@ $$
 \text{Mean:} && \mu &= \frac{a}{a + b} \\
 \text{Precision:} && \phi &= a + b \\
 \text{Variance:} && var &= \frac{\mu \cdot (1 - \mu)}{1 + \phi}
-\end{aligned}
-$$ {#eq-beta}
+\end{aligned}$$
+ {#eq-beta}
 
 Thus, beta regression allows modeling both the mean and precision of the outcome distribution. To ensure that $\mu$ stays between 0 and 1, we apply a link function, which allows linear modeling of the mean on an unbounded scale. A common link-function choice is the logit, but other functions such as the probit or complementary log-log are possible.
 
@@ -903,14 +904,11 @@ The $\phi$ parameters are estimated on the log scale. The term $\beta^{(\phi)}_{
 
 To obtain precision on the original scale, we exponentiate the linear predictor:
 
-$$
-\phi_{\text{disfluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}}\big), \qquad
-\phi_{\text{fluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}} + \beta^{(\phi)}_{\text{Fluency}}\big).
-$$
+$$\phi_{\text{disfluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}}\big), \qquad
+\phi_{\text{fluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}} + \beta^{(\phi)}_{\text{Fluency}}\big).$$
 
-The coefficient $\beta^{(\phi)}_{\text{Fluency}}$ therefore describes a *multiplicative* change in precision. $$
-\frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).
-$$
+The coefficient $\beta^{(\phi)}_{\text{Fluency}}$ therefore describes a *multiplicative* change in precision.
+$$\frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).$$
 
 **Looking at @tbl-all, the 95% Cr.I spans between \[-0.167, 1.022\] . The pd is 92%, indicating that while the vast majority of the posterior is positive, zero and negative values are not entirely ruled out, howeer.**
 
@@ -1033,9 +1031,8 @@ h_upper <- 2 * (asin(sqrt(p1_upper)) - asin(sqrt(p2_lower)))
 
 In psychology, it is common to report effect size measures like Cohen's *d* [@cohen1977]. When working with proportions we can calculate something similar called Cohen's *h*. Taking our proportions, we can use the below equation (@eq-cohenh) to calculate Cohen's *h* along with the 95% Cr.I around it. Using this metric we see the effect size is small (`r round(cohens_h, 3)`), 95% credible interval \[`r round(h_lower,3)`, `r round(h_upper,3)`\].
 
-$$
-h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)
-$$ {#eq-cohenh}
+$$h = 2 \cdot \left( \arcsin\left(\sqrt{p_1}\right) - \arcsin\left(\sqrt{p_2}\right) \right)$$
+ {#eq-cohenh}
 
 ### Posterior Predictive Check
 
