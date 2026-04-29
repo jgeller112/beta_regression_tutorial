@@ -1,5 +1,5 @@
 ---
-title: "A Beta Way: A **Bayesian** Tutorial on Beta Regression for Psychological Research"
+title: "A Beta Way: A Tutorial on **Bayesian** Beta Regression for Psychological Research"
 shorttitle: "Beta Regression Tutorial"
 author:
   - name: Jason Geller
