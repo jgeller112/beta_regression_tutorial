@@ -51,7 +51,6 @@ author-note:
   disclosures:
     study-registration: "The analyses herein were not preregistered."
     data-sharing: Data, code, and materials for this manuscript can be found at https://doi.org/10.5281/zenodo.15830595.
-    related-report: ~
     conflict-of-interest: The authors have no conflicts of interest to disclose.
     financial-support: ~
     authorship-agreements: ~

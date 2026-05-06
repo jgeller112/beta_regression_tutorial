@@ -8,7 +8,9 @@ site-url: https://jgeller112.github.io/beta_regression_tutorial/
 format:
   apaquarto-pdf:
     documentmode: doc
-  apaquarto-docx: default
+  apaquarto-docx:
+    filters:
+      - manuscript/apacode-leftalign.lua
   apaquarto-html:
     toc: true
     toc-depth: 2
