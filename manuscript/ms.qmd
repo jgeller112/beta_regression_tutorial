@@ -71,7 +71,7 @@ language:
   citation-masked-author: "Masked Citation"
   citation-masked-date: "n.d."
   citation-masked-title: "Masked Title"
-  email: "Email"
+  email: "drjasongeller@gmail.com"
   title-block-author-note: "Author Note"
   title-block-correspondence-note: "Correspondence concerning this article should be addressed to"
   title-block-role-introduction: "Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows:"
@@ -1853,7 +1853,7 @@ pp_check_jol
 
 ### Ordered Beta Regression
 
-@lst-ordbetadispjol **shows the code for fitting an ordered beta regression model for JOLs as a fluency on** $\mu$ **and** $\phi$**. Using {marginaleffects} @lst-ordbetamargjol we see the difference between the conditions is 12% and the probability of direction is higher (pd = 1) suggesting the difference is above zero @tbl-jol.**
+@lst-ordbetadispjol **shows the code for fitting an ordered beta regression model for JOLs as a fluency on** $\mu$ **and** $\phi$**. Using {marginaleffects} @lst-ordbetamargjol we see the difference between the conditions is 12% and the probability of direction is higher (pd = 1) suggesting the difference is above zero (@tbl-jol.**
 
 ```{r}
 #| label: brms ordered beta model phi jol
