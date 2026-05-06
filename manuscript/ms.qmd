@@ -538,6 +538,7 @@ fluency_data |>
     geom = "point",
     shape = 18, # filled diamond
     linewidth = 5,
+    size=5, 
     color = "black",
     aes(fill = Fluency)
   ) +
@@ -1852,7 +1853,7 @@ pp_check_jol
 
 ### Ordered Beta Regression
 
-@lst-ordbetadispjol **shows the code for fitting an ordered beta regression model for JOLs as a fluency on** $\mu$ **and** $\phi$**. Using {marginaleffects} @lst-ordbetamargjol we see the difference between the conditions is 12% and the probability of direction is higher (pd = 1) suggesting the difference is positive and above zero @tbl-jol.**
+@lst-ordbetadispjol **shows the code for fitting an ordered beta regression model for JOLs as a fluency on** $\mu$ **and** $\phi$**. Using {marginaleffects} @lst-ordbetamargjol we see the difference between the conditions is 12% and the probability of direction is higher (pd = 1) suggesting the difference is above zero @tbl-jol.**
 
 ```{r}
 #| label: brms ordered beta model phi jol
@@ -1965,9 +1966,11 @@ Overall, this tutorial emphasizes the importance of modeling the data you have. 
 
 # Frequentist Beta Regression Approaches {#apx-beta}
 
+To demonstrate frequentist approaches to beta regression we use case study 1.
+
 ## Beta Regression
 
-Standard beta regression requires that the outcome lie strictly within the open interval $(0, 1)$, so we first remove boundary values. In @lst-betareg we fit the beta regression using `glmmTMB` [@glmmTMB-4], specifying `family = beta_family(link = "logit")`. The `disp = ~Fluency` argument allows the precision parameter $\phi$ to vary by fluency.Alternative packages for frequentist beta regression include `betareg` [@betareg] and `gamlss` [@gamlss], though `glmmTMB` is preferred here for its support of random effects and extended family options.
+In @lst-betareg we fit the beta regression using `glmmTMB` [@glmmTMB-4], specifying `family = beta_family(link = "logit")`. The `disp = ~Fluency` argument allows the precision parameter $\phi$ to vary by fluency.Alternative packages for frequentist beta regression include `betareg` [@betareg] and `gamlss` [@gamlss], though `glmmTMB` is preferred here for its support of random effects and extended family options.
 
 ```{r}
 #| label: filter-boundary
@@ -2072,8 +2075,6 @@ avg_comparisons(beta_model, variables = "Fluency", dpar = "mu") |>
 
 ## Zero-Inflated Beta Regression
 
-The zero-inflated beta (ZIB) model accommodates exact zeros but not ones, so we drop only the ones from the data.
-
 ```{r}
 #| lst-label: lst-zofilter
 #| lst-cap: Filtering out ones for the ZIB model
@@ -2103,7 +2104,7 @@ beta_model_0 <- glmmTMB(
 
 ### Model Parameters
 
-@tbl-zib-params reports the full ZIB model summary. Conditional ($\mu$) and zero-inflated ($\alpha$) coefficients are on the logit scale; the dispersion ($\phi$) coefficient is on the log scale.
+@tbl-zib-params reports the full ZIB model summary.
 
 ```{r}
 #| label: tbl-zib-params
@@ -2123,7 +2124,7 @@ beta_model_0 |>
 
 ### Predicted Probabilities and Marginal Effects
 
-The ZIB model has three components, so we extract predictions and marginal effects for $\mu$ and $\alpha$. @lst-zib-preds shows how to obtain predicted probabilities for the conditional mean ($\mu$) and the zero-inflation component (`type = "zprob"`); results appear in @tbl-zib-preds-mu and @tbl-zib-preds-zi.
+@lst-zib-preds shows how to obtain predicted probabilities for the conditional mean ($\mu$) and the zero-inflation component (`type = "zprob"`); results appear in @tbl-zib-preds-mu and @tbl-zib-preds-zi.
 
 ```{r}
 #| lst-label: lst-zib-preds
