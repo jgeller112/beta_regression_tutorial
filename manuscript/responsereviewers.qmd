@@ -128,32 +128,39 @@ Reviewer 2: The links to Nix in the README are broken.
 
 These have now been fixed. 
 
-::: {.memo-reviewer} Reviewer 2: The name of the folder in the README is wrong: it should be beta_regression_tutorial, but note that the .Rproj file is named nix-beta_reg_ms.Rproj (these could be made consistent). 
+::: memo-reviewer
+Reviewer 2: The name of the folder in the README is wrong: it should be beta_regression_tutorial, but note that the .Rproj file is named nix-beta_reg_ms.Rproj (these could be made consistent).
 :::
 
 We have updated the .Rproj file and Positron workspace to use a consistent name. 
 
-::: {.memo-reviewer} Reviewer 2: quarto render "\~/manuscript/ms.qmd" generates an error and should be quarto render manuscript/ms.qmd instead. The authors might also want to set the Quarto option exec-dir to "project" so that relative paths are resolved relative to the project root directory. 
+::: memo-reviewer
+
+Reviewer 2: quarto render "\~/manuscript/ms.qmd" generates an error and should be quarto render manuscript/ms.qmd instead. The authors might also want to set the Quarto option exec-dir to "project" so that relative paths are resolved relative to the project root directory. 
 ::: 
 
 We have made both of these corrections. 
 
-::: {.memo-reviewer} Reviewer 2: There were issues setting up the Nix environment at first, but as documented in issue #55 (Nix build failed due to duplicate RPATH), this was resolved. 
+::: memo-reviewer
+ Reviewer 2: There were issues setting up the Nix environment at first, but as documented in issue #55 (Nix build failed due to duplicate RPATH), this was resolved. 
 ::: 
 
 We have addressed this issue and thank this reviewer for actually testing the Nix/rix setup. We have also added additional documentation to the README clarifying that cmdstan must be installed outside the Nix environment. 
 
-::: {.memo-reviewer} Reviewer 2: When setting up the project without Nix, some packages required for rendering were missing beyond those listed in the README — including magick, which appears to be required by the APA extension to crop figures when rendering to PDF.
+::: memo-reviewer
+Reviewer 2: When setting up the project without Nix, some packages required for rendering were missing beyond those listed in the README — including magick, which appears to be required by the APA extension to crop figures when rendering to PDF.
 :::
 
 We were unable to reproduce this issue on our end. The nix environment runs successfully to reproduce the paper. Based on this, we list all the packages needed to reproduce the analyses and figures in the paper.
 
-::: {.memo-reviewer} Reviewer 2: I suggest committing the model output files to Git. Requiring users to correctly configure the environment and run the models from scratch introduces overhead that may be a barrier. 
+::: memo-reviewer 
+Reviewer 2: I suggest committing the model output files to Git. Requiring users to correctly configure the environment and run the models from scratch introduces overhead that may be a barrier. 
 :::
 
  We considered this option but prefer that readers generate the models themselves, as doing so is central to the tutorial's pedagogical goals. That said, we do maintain a separate branch that includes model output, which is used to render the paper's accompanying website. 
 
-::: {.memo-reviewer} Reviewer 2: When cloning the repository, the download was over 6 GB despite the working directory being very small. This suggests large files were previously committed and later removed. I recommend auditing the repository history for large files and cleaning up the commit history. 
+::: memo-reviewer
+ Reviewer 2: When cloning the repository, the download was over 6 GB despite the working directory being very small. This suggests large files were previously committed and later removed. I recommend auditing the repository history for large files and cleaning up the commit history. 
 ::: 
 
 We have audited and cleaned the Git history; the repository is now significantly smaller.
