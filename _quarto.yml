@@ -9,8 +9,6 @@ format:
   apaquarto-pdf:
     documentmode: doc
   apaquarto-docx:
-    filters:
-      - manuscript/apacode-leftalign.lua
   apaquarto-html:
     toc: true
     toc-depth: 2
