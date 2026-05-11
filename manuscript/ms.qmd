@@ -667,8 +667,6 @@ p_annotated
 #| lst-cap: Checking assumptions with the `check_model()` from {easystats} package .
 #| fig-cap: "Two assumption checks for our OLS model: Normality (right) and Homoskedasticity (left)"
 #| echo: true
-#| fig-width: 8
-#| fig-height: 12
 check_model(bayes_reg_model, check = c("homogeneity", "qq"))
 ```
 

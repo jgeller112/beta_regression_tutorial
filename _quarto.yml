@@ -8,6 +8,17 @@ site-url: https://jgeller112.github.io/beta_regression_tutorial/
 format:
   apaquarto-pdf:
     documentmode: doc
+    include-in-header:
+      - text: |
+          \usepackage{fvextra}
+          \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+          \renewcommand{\baselinestretch}{1.2}
+          \setlength{\parskip}{0.5em}
+          \usepackage{geometry}
+          \geometry{margin=1in}
+          \usepackage{setspace}
+          \setstretch{1.2}
+          \AtBeginEnvironment{verbatim}{\singlespacing}
   apaquarto-docx: default
   apaquarto-html:
     toc: true
