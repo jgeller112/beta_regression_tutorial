@@ -141,12 +141,26 @@ local processfloat = function(float)
 
     })
 
+    local tablecontent = pandoc.Blocks({})
+    local fittable = true
+    if float.attributes["fit-table"] then
+      fittable = not (pandoc.utils.stringify(float.attributes["fit-table"]) == "false")
+    end
+
+    if fittable then
+      tablecontent:insert(pandoc.RawBlock("latex",
+        "\\resizebox{\\ifdim\\width>\\linewidth 0.95\\linewidth\\else\\width\\fi}{!}{%"))
+    end
+    tablecontent:extend(float.content)
+    if fittable then
+      tablecontent:insert(pandoc.RawBlock("latex", "}"))
+    end
 
     -- Make table
     local returnblock = pandoc.Div({
       pandoc.RawBlock("latex", "\\begin{" .. latextableenv .. "}"),
       captionspan,
-      float.content
+      tablecontent
 
     }
     )

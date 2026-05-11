@@ -50,5 +50,8 @@ $endif$
 $if(suppress-title-page)$
   suppresstitlepage: $suppress-title-page$,
 $endif$
+$if(numbered-lines)$
+  numberedlines: $numbered-lines$,
+$endif$
   document,
 )
