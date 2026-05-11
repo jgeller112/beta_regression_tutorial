@@ -532,7 +532,7 @@ fluency_data |>
     geom = "point",
     shape = 18, # filled diamond
     linewidth = 5,
-    size=5, 
+    size = 5,
     color = "black",
     aes(fill = Fluency)
   ) +
@@ -882,7 +882,7 @@ beta_avg_comp_rope <- avg_comparisons(
   beta_brms_dis,
   variables = "Fluency", # counterfactural difference
   comparison = "difference",
-  equivalence = c(-0.04, .04)
+  equivalence = c(-0.04, 0.04)
 )
 ```
 
@@ -1001,7 +1001,6 @@ beta_avg_phi <- avg_comparisons(
   dpar = "phi",
   comparison = "difference"
 )
-
 ```
 
 ```{r}
@@ -1087,7 +1086,6 @@ The ZIB model does a bit better at capturing the structure of the data than the 
 As shown in @tbl-marg-mu-brms, evidence for an effect of Fluency is inconclusive -- the 95% Cr.I is wide, suggesting substantial uncertainty about the direction and magnitude of the effect--that is, though most of the posterior density supports positive effects, nil and weakly negative effects cannot be ruled out.
 
 ```{r}
-
 marg_zi_brms <- fit_zi |>
   avg_comparisons(
     variables = "Fluency",
@@ -1124,7 +1122,6 @@ marg_zi_brms |>
 #### $\phi$
 
 ```{r}
-
 marg_phi_brms <- fit_zi |>
   avg_comparisons(
     variables = "Fluency",
@@ -1174,11 +1171,10 @@ marg_zi_brms <- fit_zi |>
 ```
 
 ```{r}
-#| label: p_direction zi 
+#| label: p_direction zi
 
 p_d <- marg_zi_brms |> # get pd for zi paramter
-p_direction()
-
+  p_direction()
 ```
 
 ```{r}
@@ -1433,7 +1429,7 @@ ord_beta_phi <- bf(Accuracy ~ Fluency, phi ~ Fluency)
 m.phi <- ordbetareg(
   ord_beta_phi,
   data = fluency_data,
-  phi_reg = 'both',
+  phi_reg = "both",
   file = here::here("manuscript", "models", "bayes_ordbeta_phi_model")
 )
 ```
@@ -1558,7 +1554,6 @@ model2 <- read_rds(here(
 model3 <- read_rds(here("manuscript", "models", "bayes_zib_model0not1.rds"))
 model4 <- read_rds(here("manuscript", "models", "bayes_zoib_model.rds"))
 model5 <- read_rds(here("manuscript", "models", "bayes_ordbeta_phi_model.rds"))
-
 ```
 
 ```{r}
@@ -1606,10 +1601,8 @@ cleaned_tables <- imap(model_list, function(mod, name) {
 pretty_table <- bind_rows(cleaned_tables) |>
   pivot_wider(names_from = Model, values_from = value) |>
   mutate(across(where(is.character), ~ replace_na(.x, "-"))) |>
-
   # Simplify parameter names
   mutate(Parameter = str_replace_all(Parameter, "FluencyFluent", "Fluency")) |>
-
   # Set factor levels
   mutate(
     Stat = factor(Stat, levels = c("Mean", "Cr.I", "pd")),
@@ -1630,7 +1623,6 @@ pretty_table <- bind_rows(cleaned_tables) |>
       )
     )
   ) |>
-
   arrange(Parameter, Stat) |>
   group_by(Parameter) |>
   mutate(Parameter = if_else(row_number() == 1, as.character(Parameter), "")) |>
@@ -1657,15 +1649,16 @@ pretty_table |>
     ),
     italic = TRUE,
     fontsize = .6
-  )
+  ) |>
+  theme_rotate()
 ```
 
 ```{r}
-
 #| label: predictions models
 #| echo: false
 
-pred <- rbind(estimate_prediction(model1, keep_iterations = 50, iterations = 50) |>
+pred <- rbind(
+  estimate_prediction(model1, keep_iterations = 50, iterations = 50) |>
     reshape_iterations() |>
     data_modify(Model = "LM"),
   estimate_prediction(model2, keep_iterations = 50, iterations = 50) |>
@@ -1676,9 +1669,8 @@ pred <- rbind(estimate_prediction(model1, keep_iterations = 50, iterations = 50)
     data_modify(Model = "ZIB"),
   estimate_prediction(model4, keep_iterations = 50, iterations = 50) |>
     reshape_iterations() |>
-    data_modify(Model = "ZOIB"))
-
-
+    data_modify(Model = "ZOIB")
+)
 ```
 
 ```{r}
@@ -1693,16 +1685,15 @@ x_grid <- seq(0, 1, length.out = 300)
 
 dens_summ <- pred %>%
   mutate(Model = factor(Model, levels = model_levels)) %>%
-  split(.$iter_group) %>%                     # split by posterior draw
+  split(.$iter_group) %>% # split by posterior draw
   map_df(function(df_draw) {
-    
     dens_list <- df_draw %>%
       group_by(Model, Fluency) %>%
       group_split()
-    
+
     map_df(dens_list, function(df_sub) {
       d <- density(df_sub$iter_value, from = 0, to = 1, n = length(x_grid))
-      
+
       tibble(
         Model = df_sub$Model[1],
         Fluency = df_sub$Fluency[1],
@@ -1710,46 +1701,45 @@ dens_summ <- pred %>%
         y = d$y
       )
     })
-    
   }, .id = "iter_group") %>%
   group_by(Model, Fluency, x) %>%
   summarise(
     y_med = median(y),
-    y_lo  = quantile(y, 0.025),
-    y_hi  = quantile(y, 0.975),
+    y_lo = quantile(y, 0.025),
+    y_hi = quantile(y, 0.975),
     .groups = "drop"
   )
 
 p <- ggplot() +
-  
+
   # Observed histogram
   geom_histogram(
     data = fluency_data,
-    aes(x = Accuracy,
-        y = after_stat(density),
-        fill = Fluency),
+    aes(
+      x = Accuracy,
+      y = after_stat(density),
+      fill = Fluency
+    ),
     bins = 25,
     alpha = 0.30,
     position = "identity"
   ) +
-  
+
   # Posterior predictive ribbon
   geom_ribbon(
     data = dens_summ,
     aes(x = x, ymin = y_lo, ymax = y_hi, fill = Fluency),
     alpha = 0.18
   ) +
-  
+
   # Median prediction
   geom_line(
     data = dens_summ,
     aes(x = x, y = y_med, color = Fluency),
     linewidth = 1
   ) +
-  
   facet_wrap(~Model) +
   coord_cartesian(xlim = c(0, 1)) +
-  
   scale_fill_manual(values = c(
     "Disfluent" = "#E69F00",
     "Fluent"    = "#56B4E9"
@@ -1758,10 +1748,8 @@ p <- ggplot() +
     "Disfluent" = "#E69F00",
     "Fluent"    = "#56B4E9"
   )) +
-  
   labs(x = "Accuracy", y = "Density") +
   scale_x_continuous(labels = label_percent()) +
-
   theme_publication()
 
 p
@@ -1779,7 +1767,7 @@ Given the models fit previously, either a ZOIB model or an ordered beta model co
 
 ```{r}
 #| lst-label: lst-joldata
-#| lst-cap: Read in JOL data 
+#| lst-cap: Read in JOL data
 
 jol_data <- read_csv(here::here("manuscript", "data", "jol_data.csv"))
 ```
@@ -1793,7 +1781,7 @@ jol_data <- read_csv(here::here("manuscript", "data", "jol_data.csv"))
 jol_data |>
   sample_n(4) |>
   tt() |>
-  format_tt(escape = TRUE) 
+  format_tt(escape = TRUE)
 ```
 
 ```{r}
@@ -1827,19 +1815,19 @@ jol_data |>
 #| results: hide
 
 bayes_reg_jol <- brm(
-   JOL ~ Fluency,
-   data = jol_data,
-   family = gaussian(),
-   seed = 666,
-   file = here::here("manuscript", "models", "model_reg_JOL")
- )
+  JOL ~ Fluency,
+  data = jol_data,
+  family = gaussian(),
+  seed = 666,
+  file = here::here("manuscript", "models", "model_reg_JOL")
+)
 ```
 
 ```{r}
 #| label: fig-ppcheck-jol
 #| fig-cap: "pp check for Guassian JOL model.  The plots show 100 posterior predicted distributions with the label yrep (light blue), the distribution of accuracy as function of fluency in dark blue for regular regression."
 
-  pp_check_jol <- pp_check(
+pp_check_jol <- pp_check(
   bayes_reg_jol,
   type = "dens_overlay_grouped",
   group = "Fluency",
@@ -1860,12 +1848,12 @@ pp_check_jol
 #| results: hide
 #| echo: true
 
-ord_beta_phi_jol <- bf(JOL~ Fluency, phi ~ Fluency)
+ord_beta_phi_jol <- bf(JOL ~ Fluency, phi ~ Fluency)
 
 m.phi_jol <- ordbetareg(
   ord_beta_phi_jol,
   data = jol_data,
-  phi_reg = 'both',
+  phi_reg = "both",
   file = here::here("manuscript", "models", "bayes_ordbeta_phi_jol_model")
 )
 ```
@@ -1877,10 +1865,10 @@ m.phi_jol <- ordbetareg(
 #| results: hide
 #| echo: true
 
-ord_beta_avg_jol<- avg_comparisons(m.phi_jol,
-    variables = "Fluency",
-    comparison = "difference"
-  )
+ord_beta_avg_jol <- avg_comparisons(m.phi_jol,
+  variables = "Fluency",
+  comparison = "difference"
+)
 ```
 
 ```{r}
@@ -1904,7 +1892,6 @@ ord_beta_avg_jol |>
   tt() |>
   format_tt(digits = 3) |>
   format_tt(escape = TRUE)
-
 ```
 
 ### Posterior Predictive Check
