@@ -1942,7 +1942,37 @@ Overall, this tutorial emphasizes the importance of modeling the data you have. 
 
 {{< pagebreak >}}
 
+# Declarations
+
+## Conflicts of Interest / Competing Interests
+
+The authors (JG, RK, CP, MV) have no conflicts of interest or competing interests to disclose.
+
+## Ethics Approval
+
+Not applicable.
+
+## Consent to Participate
+
+Not applicable.
+
+## Consent for Publication
+
+Not applicable.
+
+## Open Practices Statement / Availability of Data and Materials
+
+All study materials, data files, and R code used for the analyses reported in this manuscript are archived on Zenodo (<https://doi.org/10.5281/zenodo.15830595>) and on GitHub (<https://github.com/jgeller112/beta_regression_tutorial>). The experiment was not preregistered.
+
+## Funding
+
+No external funding was received for the experiments reported in this article.
+
+{{< pagebreak >}}
+
 # References
+
+{{< pagebreak >}}
 
 # Frequentist Beta Regression Approaches {#apx-beta}
 
@@ -2285,29 +2315,3 @@ avg_comparisons(ord_fit_dis, variables = "Fluency") |>
   tt() |>
   format_tt(escape = TRUE)
 ```
-
-# Declarations
-
-## Conflicts of Interest / Competing Interests
-
-The authors (JG, RK, CP, MV) have no conflicts of interest or competing interests to disclose.
-
-## Ethics Approval
-
-Not applicable.
-
-## Consent to Participate
-
-Not applicable.
-
-## Consent for Publication
-
-Not applicable.
-
-## Open Practices Statement / Availability of Data and Materials
-
-All study materials, data files, and R code used for the analyses reported in this manuscript are archived on Zenodo (<https://doi.org/10.5281/zenodo.15830595>) and on GitHub (<https://github.com/jgeller112/beta_regression_tutorial>). The experiment was not preregistered.
-
-## Funding
-
-No external funding was received for the experiments reported in this article.
