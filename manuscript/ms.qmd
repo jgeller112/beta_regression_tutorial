@@ -377,7 +377,7 @@ To ease readers into Bayesian data analysis we provide a metric known as the *pr
 
 ```{r}
 #| label: fig-p-value-pd-comp
-#| fig-cap: "A Bayesian posterior distribution (assuming a uniform prior) centered at a point estimate chosen so that the probability of direction (pd) equals 0.95, and a frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the pd, and the red area represents the remaining 1 − pd of the distribution. In the frequentist sampling distribution, the red tail areas represent the rejection region at α = 0.10. In this example, the posterior mean lies exactly at the $1 - \\frac{\\alpha}{2}$ quantile of the null sampling distribution. For symmetric posteriors with flat priors, the pd is numerically equivalent to the one-sided $p$-value."
+#| fig-cap: "A Bayesian posterior distribution (assuming a uniform prior) centered at a point estimate chosen so that the probability of direction (pd) equals 0.95, and a frequentist sampling distribution (under the null; centered at 0). In the Bayesian posterior distribution, the blue area represents the pd, and the red area represents the remaining 1 − pd of the distribution. In the frequentist sampling distribution, the red tail areas represent the rejection region at $\\alpha$ = 0.10. In this example, the posterior mean lies exactly at the $1 - \\frac{\\alpha}{2}$ quantile of the null sampling distribution. For symmetric posteriors with flat priors, the pd is numerically equivalent to the one-sided $p$-value."
 #| fig-asp: 0.8
 #| fig-height: 8
 # --- parameters ---
@@ -892,9 +892,9 @@ The ROPE can also be obtained using the {marginaleffects} package by specifying 
 
 The other component we need to pay attention to is the dispersion or precision parameter coefficients labeled as `phi` in @tbl-all. Specifically, $\phi$ in beta regression tells us about the variability of the response variable around its mean. Specifically, a higher parameter value indicates a narrower distribution, reflecting less variability. Conversely, a lower dispersion parameter suggests a wider distribution, reflecting greater variability. The main difference between a dispersion parameter and the variance is that the dispersion has a different interpretation depending on the value of the outcome, as we show below. The best way to understand dispersion is to examine visual changes in the distribution as the dispersion increases or decreases.
 
-Understanding the dispersion parameter helps us gauge the variability of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all). It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the phi model in `bf()`. We model variability ($\phi$) of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
+Understanding the dispersion parameter helps us gauge the variability of our predictions and the consistency of the response variable. In `beta_brms` we only modeled the dispersion of the intercept. When $\phi$ is not specified, the intercept is modeled by default (see @tbl-all). It represents the overall dispersion in the outcome across all conditions. Instead, we can model different dispersions across levels of the `Fluency` factor. To do so, we add `Fluency` to the $\phi$ model in `bf()`. We model variability ($\phi$) of the `Fluency` factor by using a `~` and adding factors of interest to the right of it (@lst-betadis).
 
-@tbl-all displays the model summary with the precision parameter labeled as `phi_Fluency`. Since $\phi$ is modeled on the log scale, the coefficients represent changes in log-$\phi$ rather than φ itself. To see the effect in the original units, we convert the values back by exponentiating. Thus, the effect of the Fluent condition can be understood by comparing the exponentiated predicted $\phi$ in the Fluent condition to that in the baseline condition.
+@tbl-all displays the model summary with the precision parameter labeled as `phi_Fluency`. Since $\phi$ is modeled on the log scale, the coefficients represent changes in log-$\phi$ rather than $\phi$ itself. To see the effect in the original units, we convert the values back by exponentiating. Thus, the effect of the Fluent condition can be understood by comparing the exponentiated predicted $\phi$ in the Fluent condition to that in the baseline condition.
 
 The $\phi$ parameters are estimated on the log scale. The term $\beta^{(\phi)}_{\text{Intercept}}$ represents the log-precision for the reference (disfluent) condition. The coefficient $\beta^{(\phi)}_{\text{FluencyFluent}}$ represents the change in log-precision when moving from the disfluent to the fluent condition.
 
@@ -903,7 +903,9 @@ To obtain precision on the original scale, we exponentiate the linear predictor:
 $$\phi_{\text{disfluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}}\big), \qquad
 \phi_{\text{fluent}} = \exp\big(\beta^{(\phi)}_{\text{Intercept}} + \beta^{(\phi)}_{\text{Fluency}}\big).$$
 
-The coefficient $\beta^{(\phi)}_{\text{Fluency}}$ therefore describes a *multiplicative* change in precision. $$\frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).$$
+The coefficient $\beta^{(\phi)}_{\text{Fluency}}$ therefore describes a *multiplicative* change in precision:
+
+$$\frac{\phi_{\text{fluent}}}{\phi_{\text{disfluent}}} = \exp\big(\beta^{(\phi)}_{\text{Fluency}}\big).$$
 
 **Looking at @tbl-all, the 95% Cr.I spans between \[-0.167, 1.022\] . The pd is 92%, indicating that while the vast majority of the posterior is positive, zero and negative values are not entirely ruled out, howeer.**
 
@@ -1767,9 +1769,11 @@ p
 
 ## Case Study 2
 
-In Case Study 1, our accuracy measure included both zeros and ones; however, there was only a single value of one in the dataset. To more clearly demonstrate how boundary values can be handled, we instead use example data containing multiple zeros and ones. In the same paper, @wilford2020 also asked participants to provide metamemory judgments for each video using judgments of learning (JOLs). Metamemory judgments refer to predictions about future memory performance; that is, how likely a person believes they are to remember a stimulus on a later memory test. In JOL tasks, participants rate each item on a scale from 0 to 100, where 0 indicates that the item will not be remembered and 100 indicates that it will definitely be remembered. JOLs are widely used in the learning and memory literature [@carpenter2012; @Rhodes2008; @carpenter2013; @rhodes2009; @sungkhasettee2011].
+**In Case Study 1, our accuracy measure included both zeros and ones; however, there was only a single value of one in the dataset. To more clearly demonstrate how boundary values can be handled, we instead use example data containing multiple zeros and ones. In the same paper, @wilford2020 also asked participants to provide metamemory judgments for each video using judgments of learning (JOLs). Metamemory judgments refer to predictions about future memory performance; that is, how likely a person believes they are to remember a stimulus on a later memory test. In JOL tasks, participants rate each item on a scale from 0 to 100, where 0 indicates that the item will not be remembered and 100 indicates that it will definitely be remembered. JOLs are widely used in the learning and memory literature [@carpenter2012; @Rhodes2008; @carpenter2013; @rhodes2009; @sungkhasettee2011].**
 
-In the current example, we use data from Experiment 1b, in which participants viewed fluent and disfluent lectures online. After watching the videos, participants provided two JOLs, one after each video. As shown in @fig-jol, these judgments produced both zeros and ones in both conditions. @wilford2020 were interested in whether disfluent videos received lower JOLs than fluent videos and analyzed the data using a traditional Gaussian model. As shown in @fig-ppcheck-jol, this model does not fit the data well.
+**In the current example, we use data from Experiment 1b, in which participants viewed fluent and disfluent lectures online. After watching the videos, participants provided two judgments of learning (JOLs), one after each video. As shown in @fig-jol, these judgments included both zeros and ones in both conditions. @wilford2020 were interested in whether disfluent videos received lower JOLs than fluent videos and analyzed the data using a traditional Gaussian model. However, as shown in @fig-ppcheck-jol, this model does not fit the data well.**
+
+@tbl-dataset-jol **provides a glimpse into the dataset we are using in this example. The dataset contains three columns: `Participant (id)`, `Condition` (`fluent` vs. `disfluent`), and `JOL` (the proportion of information participants believed they would recall).**
 
 Given the models fit previously, either a ZOIB model or an ordered beta model could be applied here. Because the authors were primarily interested in the overall effect of fluency on JOLs, we fit an ordered beta model to these data.
 
@@ -1782,7 +1786,7 @@ jol_data <- read_csv(here::here("manuscript", "data", "jol_data.csv"))
 
 ```{r}
 #| label: tbl-dataset-jol
-#| tbl-cap: "Four observations from @wilford2020 (Experiment 1b). JOL refers to how likley partiicpant will be to recall information from videos."
+#| tbl-cap: "Four observations from @wilford2020 (Experiment 1b). JOL refers to how likley participant will be to recall information from videos."
 #| echo: false
 #| after-caption-space: 0pt
 
@@ -1955,19 +1959,17 @@ Overall, this tutorial emphasizes the importance of modeling the data you have. 
 
 # References
 
-::: {#refs}
-:::
-
 # Frequentist Beta Regression Approaches {#apx-beta}
 
-To demonstrate frequentist approaches to beta regression we use case study 1.
+**To demonstrate frequentist approaches to beta regression we use case study 1.**
 
-## Beta Regression
+## **Beta Regression**
 
-In @lst-betareg we fit the beta regression using `glmmTMB` [@glmmTMB-4], specifying `family = beta_family(link = "logit")`. The `disp = ~Fluency` argument allows the precision parameter $\phi$ to vary by fluency.Alternative packages for frequentist beta regression include `betareg` [@betareg] and `gamlss` [@gamlss], though `glmmTMB` is preferred here for its support of random effects and extended family options.
+**In @lst-betareg we fit the beta regression using `glmmTMB`[@glmmTMB-4], specifying `family = beta_family(link = "logit")`. The `disp = ~Fluency` argument allows the precision parameter** $\phi$ **to vary by fluency.Alternative packages for frequentist beta regression include `betareg`[@betareg] and `gamlss`[@gamlss], though `glmmTMB` is preferred here for its support of random effects and extended family options.**
 
 ```{r}
 #| label: filter-boundary
+#| echo: false
 
 data_beta <- fluency_data |>
   filter(Accuracy != 0, Accuracy != 1)
@@ -1986,9 +1988,9 @@ beta_model <- glmmTMB(
 )
 ```
 
-### Model Parameters
+### **Model Parameters**
 
-@tbl-beta-params reports the full model summary. Conditional component coefficients ($\mu$) are on the logit scale; the dispersion component ($\phi$) is on the log scale.
+@tbl-beta-params **reports the full model summary. Conditional component coefficients (**$\mu$**) are on the logit scale; the dispersion component (**$\phi$**) is on the log scale.**
 
 ```{r}
 #| label: tbl-beta-params
@@ -2008,9 +2010,9 @@ beta_model |>
 
 **Comparing this to @tbl-all (Beta Regression), we can see that the estimates are closely aligned between the Bayesian model with default (weakly informative) priors and the maximum likelihood estimates. This correspondence is expected: when priors are weakly informative, the posterior is dominated by the likelihood, and Bayesian point estimates converge toward their frequentist counterparts.**
 
-### Predicted Probabilities and Marginal Effects
+### **Predicted Probabilities and Marginal Effects**
 
-We obtain predicted probabilities for each level of fluency with `avg_predictions()` (@lst-beta-preds), setting `dpar = "mu"` to target the conditional mean. Results are shown in @tbl-beta-preds.
+**We obtain predicted probabilities for each level of fluency with `avg_predictions()` (@lst-beta-preds), setting `dpar = "mu"` to target the conditional mean. Results are shown in @tbl-beta-preds.**
 
 ```{r}
 #| lst-label: lst-beta-preds
@@ -2038,7 +2040,7 @@ avg_predictions(beta_model, variables = "Fluency", dpar = "mu") |>
   format_tt(escape = TRUE)
 ```
 
-The average marginal effect of fluency on the conditional mean is computed with `avg_comparisons()` (@lst-beta-ame); estimates are shown in @tbl-beta-ame.
+**The average marginal effect of fluency on the conditional mean is computed with `avg_comparisons()` (@lst-beta-ame); estimates are shown in @tbl-beta-ame.**
 
 ```{r}
 #| lst-label: lst-beta-ame
@@ -2067,19 +2069,18 @@ avg_comparisons(beta_model, variables = "Fluency", dpar = "mu") |>
   format_tt(escape = TRUE)
 ```
 
-## Zero-Inflated Beta Regression
+## **Zero-Inflated Beta Regression**
 
 ```{r}
 #| lst-label: lst-zofilter
-#| lst-cap: Filtering out ones for the ZIB model
-#| echo: true
+#| echo: false
 
 
 data_beta_0 <- fluency_data |>
   filter(Accuracy != 1)
 ```
 
-In `glmmTMB` the zero-inflation component is specified via the `ziformula` argument (@lst-zibmodel).
+**In `glmmTMB` the zero-inflation component is specified via the `ziformula` argument (@lst-zibmodel).**
 
 ```{r}
 #| lst-label: lst-zibmodel
@@ -2096,9 +2097,9 @@ beta_model_0 <- glmmTMB(
 )
 ```
 
-### Model Parameters
+### **Model Parameters**
 
-@tbl-zib-params reports the full ZIB model summary.
+@tbl-zib-params **reports the full ZIB model summary.**
 
 ```{r}
 #| label: tbl-zib-params
@@ -2116,9 +2117,9 @@ beta_model_0 |>
   format_tt(escape = TRUE)
 ```
 
-### Predicted Probabilities and Marginal Effects
+### **Predicted Probabilities and Marginal Effects**
 
-@lst-zib-preds shows how to obtain predicted probabilities for the conditional mean ($\mu$) and the zero-inflation component (`type = "zprob"`); results appear in @tbl-zib-preds-mu and @tbl-zib-preds-zi.
+@lst-zib-preds **shows how to obtain predicted probabilities for the conditional mean (**$\mu$**) and the zero-inflation component (`type = "zprob"`); results appear in @tbl-zib-preds-mu and @tbl-zib-preds-zi.**
 
 ```{r}
 #| lst-label: lst-zib-preds
@@ -2165,7 +2166,7 @@ avg_predictions(beta_model_0, variables = "Fluency", type = "zprob") |>
   format_tt(escape = TRUE)
 ```
 
-Average marginal effects for both components are computed analogously (@lst-zib-ame); results are reported in @tbl-zib-ame-mu and @tbl-zib-ame-zi.
+**Average marginal effects for both components are computed analogously (@lst-zib-ame); results are reported in @tbl-zib-ame-mu and @tbl-zib-ame-zi.**
 
 ```{r}
 #| lst-label: lst-zib-ame
@@ -2212,13 +2213,13 @@ avg_comparisons(beta_model_0, variables = "Fluency", type = "zprob") |>
   format_tt(escape = TRUE)
 ```
 
-## Zero-One-Inflated Beta Regression
+## **Zero-One-Inflated Beta Regression**
 
-No frequentist packages currently fit this model. See the main article for a Bayesian implementation.
+**No frequentist packages currently fit this model. See the main article for a Bayesian implementation.**
 
-## Ordered Beta Regression
+## **Ordered Beta Regression**
 
-Ordered beta regression accommodates boundary values (0 and 1) directly without removal or transformation, and is fit using `family = ordbeta` in `glmmTMB`. As before, we can allow $\phi$ to vary by fluency (see @lst-ordbeta-disp).
+**Ordered beta regression accommodates boundary values (0 and 1) directly without removal or transformation, and is fit using `family = ordbeta` in `glmmTMB`. As before, we can allow** $\phi$ **to vary by fluency (see @lst-ordbeta-disp).**
 
 ```{r}
 #| lst-label: lst-ordbeta-disp
@@ -2233,9 +2234,9 @@ ord_fit_dis <- glmmTMB(
 )
 ```
 
-### Model Parameters
+### **Model Parameters**
 
-@tbl-ordbeta-disp-params reports parameter estimates for the ordered beta model with $\phi$ modeled by fluency. Conditional coefficients are on the logit scale.
+@tbl-ordbeta-disp-params **reports parameter estimates for the ordered beta model with** $\phi$ **modeled by fluency. Conditional coefficients are on the logit scale.**
 
 ```{r}
 #| label: tbl-ordbeta-disp-params
@@ -2253,9 +2254,9 @@ ord_fit_dis |>
   format_tt(escape = TRUE)
 ```
 
-### Predicted Probabilities and Marginal Effects
+### **Predicted Probabilities and Marginal Effects**
 
-@lst-ord-preds shows how to obtain predicted probabilities and AMEs for the ordered beta model; results are reported in @tbl-ord-preds and @tbl-ord-ame.
+@lst-ord-preds **shows how to obtain predicted probabilities and AMEs for the ordered beta model; results are reported in @tbl-ord-preds and @tbl-ord-ame.**
 
 ```{r}
 #| lst-label: lst-ord-preds
@@ -2298,16 +2299,4 @@ avg_comparisons(ord_fit_dis, variables = "Fluency") |>
   select(Contrast, Estimate, `95% CI`, p) |>
   tt() |>
   format_tt(escape = TRUE)
-```
-
-## XBX Regression
-
-XBX regression [@kosmidis2025] is a recently developed approach that also handles boundary values (0s and 1s) natively, and is fit
-
-with the `betareg` package. The mean and precision submodels are specified jointly using the `|` operator in the formula.
-
-```{r}
-#| label: fit-xbx
-
-xbx_fit <- betareg(Accuracy ~ Fluency | Fluency, data = fluency_data)
 ```
