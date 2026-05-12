@@ -128,6 +128,19 @@
     ]
     #align(center)[#it.body]
   ]
+
+  // format listing captions
+  show figure.where(kind: "quarto-float-lst"): it => block(width: 100%, breakable: false)[
+    #align(left)[
+      #if int(appendixcounter.display().at(0)) > 0 [
+        #heading(level: 2, outlined: false, numbering: none)[#it.supplement #appendixcounter.display("A")#it.counter.display()]
+      ] else [
+        #heading(level: 2, outlined: false, numbering: none)[#it.supplement #it.counter.display()]
+      ]
+      #par[#emph[#it.caption.body]]
+      #it.body
+    ]
+  ]
   
     set heading(numbering: "1.1")
     
@@ -287,6 +300,19 @@
       #par[#emph[#it.caption.body]]
     ]
     #align(center)[#it.body]
+  ]
+
+  // format listing captions
+  show figure.where(kind: "quarto-float-lst"): it => block(width: 100%, breakable: false)[
+    #align(left)[
+      #if int(appendixcounter.display().at(0)) > 0 [
+        #heading(level: 2, outlined: false, numbering: none)[#it.supplement #appendixcounter.display("A")#it.counter.display()]
+      ] else [
+        #heading(level: 2, outlined: false, numbering: none)[#it.supplement #it.counter.display()]
+      ]
+      #par[#emph[#it.caption.body]]
+      #it.body
+    ]
   ]
 
   set heading(numbering: "1.1")
