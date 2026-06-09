@@ -606,7 +606,7 @@ fluency_effect_BF <- hypothesis(bayes_reg_model, "FluencyFluent > 0")
 
 To test the strength of evidence for the effect, we can compare a model where the effect is greater than 0 to one where it is less than 0 using the `hypothesis()` function in {brms} (@lst-hypo). The resulting evidence ratio (ER) column contains the Bayes factor for this directional hypothesis, comparing the model $\delta > 0$ against $\delta < 0$. The BF for the fluency effect is `r round(fluency_effect_BF$hypothesis$Evid.Ratio, 2)`, providing very strong evidence that the effect is positive and not 0. If we instead wanted to test a point-null hypothesis—that is, whether the effect is equivalent to exactly 0—we would need to specify non-default priors and rely on the Savage-Dickey method, which evaluates the ratio of the posterior to the prior density at the null value and is therefore directly sensitive to that prior choice. Without specifying a weak or strong prior, one cannot calculate a BF. In {brms} the default prior for fixed effects are flat and uninformative.
 
-Importantly, pd and BFs do not indicate whether an effect is meaningfully large—they only reflect evidence that a non-zero effect exists. To address questions of practical significance, readers can also consider the Region of Practical Equivalence (ROPE) with the Cr.Is [@kruschke2015doing]. Unlike a hypothesis test of a point null (e.g., exactly zero), the ROPE defines a range of values that are deemed too small to be of substantive importance. As a rule of thumb [see @kruschke2018], if more than 95% of the posterior distribution lies inside the ROPE, the effect can be considered practically equivalent to that negligible range. If less than 5% lies inside, the effect can be considered meaningfully different. Intermediate cases are typically labeled undecided.
+Importantly, pd and BFs do not, by themselves, indicate whether an effect is meaningfully large; rather, they quantify evidence concerning the direction of an effect or the hypotheses being compared. To evaluate practical significance, readers can consider the Region of Practical Equivalence (ROPE) alongside the Cr.Is [@kruschke2015doing] . Unlike a test of a point null hypothesis, such as an effect of exactly zero, the ROPE defines a range of values considered too small to be substantively important. Ideally, ROPE boundaries should be informed by theory and by estimates derived from a mathematical or computational model of the processes generating the phenomenon under study. However, such mechanistic or process-based models are often unavailable or insufficiently detailed to provide numerically precise boundaries. As a rule of thumb [see @kruschke2018], an effect may be considered practically equivalent to the negligible range when more than 95% of the posterior distribution lies within the ROPE, whereas it may be considered meaningfully different when less than 5% lies within the ROPE. These thresholds are conventional and ultimately arbitrary rather than universal decision criteria, and intermediate cases are typically labeled undecided.
 
 The `rope()` function in the {bayestestR} package computes the proportion of the posterior within the ROPE to facilitate this evaluation. By default, from bayesian models fit via {brms}, the package determines a ROPE based on the data (roughly reflecting “negligible” effects), but these defaults should be used cautiously. The choice of ROPE should always be guided by theoretical considerations, previous research, and the substantive context of the study. In our case, we can instead anchor the ROPE in prior empirical work. Specifically, @carpenter2013 (the study @wilford2020 is based on) reported a difference in actual learning of approximately 4% between conditions in Experiment 1. Other examinations of this effect have also yielded differences that are very close to zero. This suggests that a ROPE of approximately ±4% is reasonable for the present context. Effects falling within this range can be considered practically equivalent (i.e., negligible), whereas effects exceeding this range would be interpreted as meaningfully different.
 
@@ -619,8 +619,8 @@ In @lst-ropebrms, we show how to compute this using {bayestestR}. Running the fu
 #| echo: true
 brms_rope <- bayestestR::rope(
   bayes_reg_model,
-  ci = .95, # CI
-  ci_method = "ETI", # equal tale CI
+  ci = .95, # Cr.I
+  ci_method = "ETI", # equal tail Cr.I
   range = c(-0.04, 0.04) # ROPE value
 )
 ```
@@ -635,11 +635,10 @@ p <- plot(brms_rope)
 # Extract the ROPE percentage
 rope_percentage <- round(brms_rope$ROPE_Percentage[2], 3) * 100
 
-# Add the percentage text to the plot
 p_annotated <- p +
   annotate(
     "text",
-    x = 0, # Since your ROPE is -0.02 to 0.02, center is 0
+    x = 0,
     y = Inf,
     label = paste0(rope_percentage, "%"),
     vjust = 1.2,
@@ -650,7 +649,11 @@ p_annotated <- p +
   ) +
   theme_publication() +
   scale_color_okabe_ito() +
-  scale_fill_okabe_ito()
+  scale_fill_okabe_ito() +
+  labs(
+    color = "Cr.I",
+    fill = "Cr.I"
+  )
 
 p_annotated
 ```
@@ -674,7 +677,7 @@ We can also examine how well the data fits the model by performing a posterior p
 
 ## Distributional Regression - Beta
 
-It is important to note that there are several justifiable approaches for addressing the distributional issues observed in the data. For instance, one could analyze median accuracy instead of the mean, use some type of robust estimator for heterogeneity, or apply non-parametric methods to relax some of the model assumptions. Alternatively, we can address these issues directly by fitting distributional models [@kruschke2013; @kneib2023]. A key advantage of distributional models is that they are not limited to modeling only the mean or median of the outcome, but can also model parameters such as the variance (or other shape parameters) as functions of predictors. This allows examining how instructor fluency may influence not only average performance, but also the variability in performance across students. If we wanted to keep our mean accuracy variable and continue to use a Guassian model, we could use a distributional approach and model the effect of fluency on $\sigma$.
+It is important to note that there are several justifiable approaches for addressing the distributional issues observed in the data. For instance, one could analyze median accuracy instead of the mean, use some type of robust estimator for heterogeneity, or apply non-parametric methods to relax some of the model assumptions (e.g., a binomial logistic model looking at idea units recalled over total idea units). Alternatively, we can address these issues directly by fitting distributional models [@kruschke2013; @kneib2023]. A key advantage of distributional models is that they are not limited to modeling only the mean or median of the outcome, but can also model parameters such as the variance (or other shape parameters) as functions of predictors. This allows examining how instructor fluency may influence not only average performance, but also the variability in performance across students. If we wanted to keep our mean accuracy variable and continue to use a Guassian model, we could use a distributional approach and model the effect of fluency on $\sigma$.
 
 Given the outcome variable is proportional, another solution would be to run a beta regression model. Again, we can create the beta regression model in {brms}. In {brms}, we model each parameter independently. Recall from the introduction that in a beta model we model two parameters--$\mu$ and $\phi$. Again we do this by using the `bf()` function from {brms} (@lst-beta01). We specify two formulas, one for $\mu$ and one for $\phi$ and store it in the `model_beta_bayes` object below. In the below `bf()` call, we are modeling accuracy as a function of fluency only for the $\mu$ parameter. For the $\phi$ parameter, we are only modeling the intercept value. This is saying that the variability of the outcome around $\mu$ does not change as a function of fluency.
 
@@ -869,7 +872,7 @@ beta_avg_comp |>
 
 ##### $\mu$ Difference
 
-@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.044, indicating that participants who watched a fluent instructor scored, on average, approximately 4.4 percentage points higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval spans from `r round(beta_avg_comp$conf.low,3)` to `r round(beta_avg_comp$conf.high,3)`, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd of `r round(p_d, 2)`indicates that 87% of the posterior distribution is positive, with the remaining 13% consistent with a null or negative effect. In the basic regression model above, the ROPE value was extracted using the {bayestestR} package.
+@tbl-ame1 presents the estimated difference for the `Fluency` factor (Mean column). The difference between the fluent and disfluent conditions is 0.044, indicating that participants who watched a fluent instructor scored, on average, approximately 4.4 percentage points higher on the final recall test than those who watched a disfluent instructor. However, the 95% credible interval spans from `r round(beta_avg_comp$conf.low,3)` to `r round(beta_avg_comp$conf.high,3)`, suggesting we cannot rule out the possibility of a null or weakly negative effect. The pd of `r round(p_d, 2)`indicates that 87% of the posterior distribution is positive, with the remaining 13% consistent with a null or negative effect. In the basic regression model above, the ROPE value was extracted using the {bayestestR} package. The ROPE can also be obtained using the {marginaleffects} package by specifying the `equivalence` bounds in `avg_comparisons()`. Running the code in @lst-merope returns a ROPE probability of 23%, indicating that there is insufficient evidence to conclude that the effect exceeds 4% or is practically equivalent to 0.
 
 ```{r}
 #| lst-label: lst-merope
@@ -883,8 +886,6 @@ beta_avg_comp_rope <- avg_comparisons(
   equivalence = c(-0.04, 0.04)
 )
 ```
-
-The ROPE can also be obtained using the {marginaleffects} package by specifying the `equivalence` bounds in `avg_comparisons()`. Running the code in @lst-merope returns a ROPE probability of 23%, indicating that there is insufficient evidence to conclude that the effect exceeds 4% or is practically equivalent to 0.
 
 #### $\phi$
 
@@ -1469,7 +1470,7 @@ ord_beta_avg |>
   format_tt(escape = TRUE)
 ```
 
-In @tbl-ordbeta the credible interval for the fluency difference is mostly positive with `r round(p_d$pd, 3)` % od the posterior above zero, suggesting that fluent instructions probably yield somewhat higher accuracy than disfluent instructions after accounting for boundary responses, though the effect remains uncertain. In addition, the 95% Cr.I is wide suggesting uncertainty about the effect.
+In @tbl-ordbeta the credible interval for the fluency difference is mostly positive with `r round(p_d$pd, 3)` % of the posterior above zero, suggesting that fluent instructions probably yield somewhat higher accuracy than disfluent instructions after accounting for boundary responses, though the effect remains uncertain. In addition, the 95% Cr.I is wide suggesting uncertainty about the effect.
 
 #### Cutpoints
 
@@ -2314,4 +2315,16 @@ avg_comparisons(ord_fit_dis, variables = "Fluency") |>
   select(Contrast, Estimate, `95% CI`, p) |>
   tt() |>
   format_tt(escape = TRUE)
+```
+
+## XBX Regression
+
+Readers can also use a recently developed analysis technique known as XBX regression [@kosmidis2025]. It can model continuous outcomes on the closed unit interval \[0,1\], including observations at exactly 0 or 1. It uses the extended-support beta mixture distribution, which extends the beta distribution beyond the unit interval and censors values below 0 or above 1 at the corresponding boundary. Thus, boundary values are accommodated directly rather than transformed or modeled using separate zero- and one-inflation processes. XBX regression is implemented in the {betareg} package and can also be fit in {brms} using `family = xbeta`. In @tbl-xbx we show you how to implement the model in {betareg}. For more information about interpreting this model please see @kosmidis2025.
+
+```{r}
+#| label: tbl-xbx
+#| tbl-cap: Fitting XBX regression using {betareg}
+#| echo: true
+#| eval: false
+xbx_fit <- betareg(Accuracy ~ Fluency | Fluency, data = fluency_data)
 ```
