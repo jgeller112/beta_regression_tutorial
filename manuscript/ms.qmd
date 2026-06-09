@@ -95,9 +95,9 @@ knitr:
 ---
 
 ::: callout-warning
-## Preprint
+## 
 
-This manuscript is currently under review and has not been peer-reviewed. Content is subject to change. Please feel free to provide feedback!
+This manuscript has been accepted in the journal Behavioral Research Methods (BRM)
 :::
 
 ```{r}
@@ -1838,7 +1838,7 @@ pp_check_jol
 
 ### Ordered Beta Regression
 
-@lst-ordbetadispjol shows the code for fitting an ordered beta regression model for JOLs as a fluency on $\mu$ and $\phi$. Using {marginaleffects} @lst-ordbetamargjol we see the difference between the conditions is 12% and the probability of direction is higher (pd = 1) suggesting the difference is above zero (@tbl-jol.
+@lst-ordbetadispjol shows the code for fitting an ordered beta regression model for JOLs as a fluency on $\mu$ and $\phi$. Using {marginaleffects} @lst-ordbetamargjol we see the difference between the conditions is 12% and the probability of direction is high (pd = 1), suggesting the difference is above zero (@tbl-jol.
 
 ```{r}
 #| label: brms ordered beta model phi jol
