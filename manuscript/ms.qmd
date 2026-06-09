@@ -291,7 +291,7 @@ To illustrate, consider a test question worth seven points. Suppose a participan
 
 ```{r}
 #| label: fig-curves
-#| fig-cap: "beta distributions with different shape1 and shape2 parameters."
+#| fig-cap: "Beta distributions with different shape1 and shape2 parameters."
 #| fig-asp: 0.52
 # Function to generate beta distribution data
 make_beta_df <- function(shape1, shape2, n = 9000) {
