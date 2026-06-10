@@ -25,7 +25,7 @@ author:
   - name: Robert Kubinec
     orcid: 0000-0001-6655-4119
     affiliations:
-      - name: University of South Carolina
+      - name: Texas A&M University
     roles:
      - Formal analysis
      - Validation
@@ -1977,7 +1977,7 @@ No external funding was received for the experiments reported in this article.
 
 # Frequentist Beta Regression Approaches {#apx-beta}
 
-To demonstrate frequentist approaches to beta regression we use case study 1.
+To demonstrate frequentist approaches to beta regression we use Case Study 1.
 
 ## Beta Regression
 
@@ -2319,12 +2319,14 @@ avg_comparisons(ord_fit_dis, variables = "Fluency") |>
 
 ## XBX Regression
 
-Readers can also use a recently developed analysis technique known as XBX regression [@kosmidis2025]. It can model continuous outcomes on the closed unit interval \[0,1\], including observations at exactly 0 or 1. It uses the extended-support beta mixture distribution, which extends the beta distribution beyond the unit interval and censors values below 0 or above 1 at the corresponding boundary. Thus, boundary values are accommodated directly rather than transformed or modeled using separate zero- and one-inflation processes. XBX regression is implemented in the {betareg} package and can also be fit in {brms} using `family = xbeta`. In @tbl-xbx we show you how to implement the model in {betareg}. For more information about interpreting this model please see @kosmidis2025.
+Readers can also use a recently developed analysis technique known as XBX regression [@kosmidis2025], which models continuous outcomes on the closed unit interval \[0,1\]. It uses the extended-support beta mixture distribution, which extends the beta distribution beyond the unit interval and censors values below 0 or above 1 at the corresponding boundary. Thus, boundary values are accommodated directly rather than transformed or modeled using separate zero- and one-inflation processes. XBX regression is implemented in the {betareg} package with `family = xbetax` used by default when data contains zeros and/or ones (see @lst-xbx). Readers can also fit this model using a Bayesian approach in {brms} using `family = xbeta`. For more information about interpreting this model please see @kosmidis2025.
 
 ```{r}
-#| label: tbl-xbx
+#| lst-label: lst-xbx
 #| tbl-cap: Fitting XBX regression using {betareg}
 #| echo: true
 #| eval: false
-xbx_fit <- betareg(Accuracy ~ Fluency | Fluency, data = fluency_data)
+
+# left of pipe is mu and right is phi
+xbx_fit <- betareg(Accuracy ~ Fluency | Fluency, data = fluency_data). 
 ```
