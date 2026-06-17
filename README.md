@@ -227,6 +227,7 @@ sudo apt install g++ make
 ```         
 required_packages = c(
   "tidyverse",
+  "betareg",
   "tinytex", 
   "brms",
   "geomtextpath",
