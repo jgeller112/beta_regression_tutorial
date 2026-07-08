@@ -131,7 +131,7 @@ nix-build
 ```
 
 ```         
-nix-shell
+nix-shell --pure 
 ```
 
 Once in the shell (after calling nix-shell), You can:
