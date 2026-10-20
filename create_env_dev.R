@@ -7,6 +7,7 @@ required_packages = c(
   "tidyverse",
   "dotwhisker",
   "brms",
+  "bayesplot",
   "quarto",
   "tinytable",
   "marginaleffects",
@@ -29,7 +30,7 @@ required_packages = c(
 library(rix)
 
 rix(
-  date = "2025-10-07",
+  date = "2026-10-13",
   r_pkgs = required_packages,
   system_pkgs = c(
     "quarto",

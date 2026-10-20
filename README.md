@@ -193,7 +193,7 @@ sudo apt install g++ make
 | Package | Version | Citation |
 |---------------|---------------|-------------------------------------------|
 | base | 4.5.1 | R Core Team (2025) |
-| bayesplot | 1.13.0 | Gabry et al. (2019); Gabry and Mahr (2025) |
+| bayesplot | 1.16.0 | Gabry et al. (2019); Gabry and Mahr (2025) |
 | betareg | 3.2.4 | Cribari-Neto and Zeileis (2010) |
 | brms | 2.22.0 | Bürkner (2017); Bürkner (2018); Bürkner (2021) |
 | cmdstanr | 0.9.0.9000 | Gabry et al. (2025) |

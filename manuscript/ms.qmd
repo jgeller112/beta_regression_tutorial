@@ -580,7 +580,7 @@ bayes_reg_model <- brm(
 brms_model_new <- model_parameters(bayes_reg_model, centrality = "mean")
 ```
 
-We fit the model using the `brm()` function from the {brms} package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval (Cr.I), which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output provides numerical diagnostics of the sampling algorithm’s performance. The potential scale reduction factor, the Brooks-Gelman-Rubin scale reduction factor ($\hat{R}$), should be close to 1 (\>= 1.01 signals issues), indicating that the chains have mixed well both within and between chains. Effective sample size (ESS) metrics indicate how much independent information is contained in the posterior draws; larger values are generally better, especially relative to the total number of post-warmup draws. By default, {brms} typically retains 4,000 post-warmup draws. As a rough guideline, ESS values of at least 1,000 are often recommended [@brms], although others suggest that values around 400, or approximately 100 per chain, may be sufficient in many cases [@vehtari2021]. For the models presented in this paper, convergence is straightforward for standard Gaussian models, but these diagnostics remain important to inspect in practice. Note that models fit with {brms} report potential sampling or model-fitting issues as warnings by default and should be dealt with accordingly.
+We fit the model using the `brm()` function from the {brms} package (@lst-gauss). Although not shown here, we ran the models using four chains (the default), executed in parallel across four cores. When the model is run in @lst-gauss, the model summary output will appear in the R console. The output from `bayes_reg_model` shows each parameter's posterior summary: The posterior distribution's mean and standard deviation (analogous to the frequentist standard error) and its 95% credible interval (Cr.I), which indicate the 95% of the most credible parameter values. In {brms}, the reported Cr.I is an equal-tailed interval, meaning that the probability mass excluded from the interval is split equally between the lower and upper tails. Additionally, the output provides numerical diagnostics of the sampling algorithm’s performance. The potential scale reduction factor, the Brooks-Gelman-Rubin scale reduction factor ($\hat{R}$), should be close to 1 (\>= 1.01 signals issues), indicating that the chains have mixed well both within and between chains. Effective sample size (ESS) metrics indicate how much independent information is contained in the posterior draws; larger values are generally better, especially relative to the total number of post-warmup draws. By default, {brms} typically retains 4,000 post-warmup draws. An ESS of at least 400 (approximately 100 per chain when running four chains) is needed for $\hat{R}$ and the other convergence diagnostics themselves to be reliable [@vehtari2021]. This threshold is about diagnosing convergence, not about how precisely the posterior summaries are estimated. How large the ESS needs to be for reporting a quantity of interest (e.g., a posterior mean or the endpoints of a credible interval) depends on how many digits you want to report: the Monte Carlo standard error (MCSE), which shrinks as ESS grows, should be small relative to the last reported digit [see Section 11.6 of @gelman2026workflow]. For example, for a roughly normal posterior with standard deviation 1, an ESS of about 2,000 makes the second significant digit of the posterior mean fairly stable, whereas an ESS of about 100 is often enough for one significant digit (but still not enough for reliable convergence diagnostics). MCSEs can be obtained with {posterior}, for example `summarise_draws(draws, default_mcse_measures())`. For the models presented in this paper, convergence is straightforward for standard Gaussian models, but these diagnostics remain important to inspect in practice. Note that models fit with {brms} report potential sampling or model-fitting issues as warnings by default and should be dealt with accordingly.
 
 Our main question of interest is: what is the causal effect of instructor fluency on final test performance? In order to answer this question, we will have to look at the output summary produced by @lst-gauss (also see @tbl-all under Bayesian LM). the `Intercept` refers to the posterior mean accuracy in the disfluent condition, *M* = `r round(brms_model_new$Mean[1], 3)` , as fluency was dummy-coded. The fluency coefficient (`FluencyFluent`) reflects the mean posterior difference[^7] in recall accuracy between the fluent and disfluent conditions: *b* = `r round(brms_model_new$Mean[2], 3)`. The 95% Cr.I for this estimate spans from `r round(brms_model_new$CI_low[2], 3)` to `r round(brms_model_new$CI_high[2], 3)`. These values are shown in the "95% Cr.I" columns of the output. These results closely mirror the findings reported by @wilford2020 (Experiment 1A).
 
@@ -1497,13 +1497,56 @@ In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and
 
 ### Model Fit
 
-The best way to visualize model fit is to plot the full predictive distribution relative to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, a separate plotting function, `pp_check_ordbetareg`, is included in the {ordbetareg} package that accurately handles the unique features of this distribution. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is. The {ordbetareg} function returns a list with two plots, `discrete` and `continuous`, which can either be printed and plotted or further modified as {ggplot2} objects (see @fig-ppcheckord).
+The best way to visualize model fit is to compare the model's predictions to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, the discrete (exactly 0 or 1) and continuous parts of the outcome should be checked separately. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is.
+
+For the discrete part, a common choice is a bar chart comparing the observed number of 0s, 1s, and continuous responses with the numbers predicted by the model. However, such bar charts are weak diagnostics: a model that predicts the right overall proportion of 0s can still assign those 0s to the wrong observations, and the bar chart cannot reveal this [@sailynoja2026]. A better option is a calibration plot [@sailynoja2026]. For each boundary (exactly 0 and exactly 1) we treat the outcome as binary (e.g., 1 if a response is exactly 0, and 0 otherwise) and plot the observed rate of that outcome against the model's predicted probability. The curve is estimated with the pool-adjacent-violators (PAV) algorithm, which yields a monotone, step-shaped calibration curve without requiring the user to choose bins. If the model is well calibrated, the curve should fall along the diagonal: observations given, for example, a 10% predicted probability of being 0 should be 0 about 10% of the time. In {bayesplot} (version 1.16.0 or later), `ppc_calibration()` produces this plot from the posterior draws of the predicted probabilities. For the ordered beta model, the probability of a response of exactly 0 is $1 - \text{logit}^{-1}(\eta - k_1)$ and the probability of exactly 1 is $\text{logit}^{-1}(\eta - k_2)$, where $\eta$ is the linear predictor for $\mu$ and $k_1$ and $k_2$ are the two cutpoints (in {ordbetareg}, $k_1$ = `cutzero` and $k_2$ = `cutzero` + $\exp($`cutone`$)$). We compute these probabilities for every posterior draw and wrap the plotting in a small helper so that we can reuse it later (see @lst-calib).
+
+```{r}
+#| label: calib-helper
+#| lst-label: lst-calib
+#| lst-cap: PAV-adjusted calibration plots for the boundaries of an ordered beta model
+#| echo: true
+
+ppc_calibration_ordbeta <- function(model, outcome) {
+  y <- model$data[[outcome]] # outcome as used by the model (0-1 scale)
+
+  # linear predictor for mu (logit scale): draws x observations
+  eta <- posterior_linpred(model, dpar = "mu")
+  cuts <- as_draws_matrix(model, variable = c("cutzero", "cutone"))
+  cut1 <- as.vector(cuts[, "cutzero"])
+  cut2 <- cut1 + exp(as.vector(cuts[, "cutone"]))
+
+  # predicted probability of exactly 0 and exactly 1 for every draw
+  p_zero <- 1 - plogis(eta - cut1)
+  p_one <- plogis(eta - cut2)
+
+  # fewer quantile dots so each dot is large enough to see
+  list(
+    zero = ppc_calibration(
+      y = as.integer(y == 0),
+      prep = p_zero,
+      qdots_quantiles = 30
+    ) +
+      ggtitle("Exactly 0"),
+    one = ppc_calibration(
+      y = as.integer(y == 1),
+      prep = p_one,
+      qdots_quantiles = 30
+    ) +
+      ggtitle("Exactly 1")
+  )
+}
+```
+
+For the continuous part, `pp_check_ordbeta()` from {ordbetareg} overlays the density of the observed continuous responses with densities from posterior predictive draws (see @fig-ppcheckord C).
 
 ```{r}
 #| label: fig-ppcheckord
-#| fig-width: 12
-#| fig-height: 8
-#| fig-cap: Posterior predictive check for ordered beta regression model. A. Discrete posterior check. B. Continuous posterior check.
+#| fig-width: 15
+#| fig-asp: 0.38
+#| fig-cap: Posterior predictive checks for the ordered beta regression model. A. PAV-adjusted calibration plot for responses of exactly 0. B. PAV-adjusted calibration plot for responses of exactly 1. C. Density overlay for the continuous responses. In A and B the dark line is the PAV calibration curve with its 95% pointwise credible interval, the dashed diagonal shows perfect calibration, and the dots show the distribution of predicted probabilities.
+
+calib <- ppc_calibration_ordbeta(m.phi, "Accuracy")
 
 plots <- pp_check_ordbeta(
   m.phi,
@@ -1511,15 +1554,18 @@ plots <- pp_check_ordbeta(
   outcome_label = "Final Test Accuracy"
 )
 
-plot <- plots +
-  theme_publication()
-
-plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
+plot_grid(
+  calib$zero,
+  calib$one,
+  plots$continuous,
+  labels = c("A", "B", "C"),
+  nrow = 1
+)
 ```
 
-The discrete plot, which is a bar graph, shows that the posterior distribution accurately captures the number of different types of responses (discrete or continuous) in the data. For the continuous plot shown as a density plot with one line per posterior draw, the model does a very good job at capturing the distribution.
+Because fluency is the only predictor, the model makes just two distinct predictions for each boundary (one per condition), so the calibration curves have only two steps and occupy a small region near the lower left of each panel. For exactly 0 (@fig-ppcheckord A), the calibration curve stays close to the diagonal, indicating that the model's predicted probability of a 0 in each condition matches how often 0s are actually observed. There is only a single response of exactly 1 in these data, so the calibration plot in @fig-ppcheckord B shows no evidence of miscalibration, but it cannot tell us much either. With more predictors (e.g., continuous covariates or participant-level effects), the predicted probabilities would spread out and these plots would become more informative. For the continuous plot shown as a density plot with one line per posterior draw (@fig-ppcheckord C), the model does a very good job at capturing the distribution.
 
-Overall, it is clear from the posterior distribution plot that the ordered beta model fits the data well. To fully understand model fit, both of these plots need to be inspected as they are conceptually distinct.
+To fully understand model fit, the discrete and continuous checks need to be inspected together as they are conceptually distinct. Overall, these checks indicate that the ordered beta model fits the data well.
 
 ### Model Visualization
 
@@ -1685,22 +1731,25 @@ x_grid <- seq(0, 1, length.out = 300)
 dens_summ <- pred %>%
   mutate(Model = factor(Model, levels = model_levels)) %>%
   split(.$iter_group) %>% # split by posterior draw
-  map_df(function(df_draw) {
-    dens_list <- df_draw %>%
-      group_by(Model, Fluency) %>%
-      group_split()
+  map_df(
+    function(df_draw) {
+      dens_list <- df_draw %>%
+        group_by(Model, Fluency) %>%
+        group_split()
 
-    map_df(dens_list, function(df_sub) {
-      d <- density(df_sub$iter_value, from = 0, to = 1, n = length(x_grid))
+      map_df(dens_list, function(df_sub) {
+        d <- density(df_sub$iter_value, from = 0, to = 1, n = length(x_grid))
 
-      tibble(
-        Model = df_sub$Model[1],
-        Fluency = df_sub$Fluency[1],
-        x = d$x,
-        y = d$y
-      )
-    })
-  }, .id = "iter_group") %>%
+        tibble(
+          Model = df_sub$Model[1],
+          Fluency = df_sub$Fluency[1],
+          x = d$x,
+          y = d$y
+        )
+      })
+    },
+    .id = "iter_group"
+  ) %>%
   group_by(Model, Fluency, x) %>%
   summarise(
     y_med = median(y),
@@ -1739,14 +1788,18 @@ p <- ggplot() +
   ) +
   facet_wrap(~Model) +
   coord_cartesian(xlim = c(0, 1)) +
-  scale_fill_manual(values = c(
-    "Disfluent" = "#E69F00",
-    "Fluent"    = "#56B4E9"
-  )) +
-  scale_color_manual(values = c(
-    "Disfluent" = "#E69F00",
-    "Fluent"    = "#56B4E9"
-  )) +
+  scale_fill_manual(
+    values = c(
+      "Disfluent" = "#E69F00",
+      "Fluent" = "#56B4E9"
+    )
+  ) +
+  scale_color_manual(
+    values = c(
+      "Disfluent" = "#E69F00",
+      "Fluent" = "#56B4E9"
+    )
+  ) +
   labs(x = "Accuracy", y = "Density") +
   scale_x_continuous(labels = label_percent()) +
   theme_publication()
@@ -1786,7 +1839,6 @@ jol_data |>
 ```{r}
 #| label: fig-jol
 #| fig-cap: "Dot plot depicting JOL distributions for the Fluent and Disfluent conditions. Each condition shows individual data points and mean (diamond))"
-
 
 jol_data |>
   ggplot(aes(x = JOL, y = Fluency, fill = Fluency)) +
@@ -1831,7 +1883,8 @@ pp_check_jol <- pp_check(
   type = "dens_overlay_grouped",
   group = "Fluency",
   ndraws = 100
-) + theme_publication()
+) +
+  theme_publication()
 
 pp_check_jol
 ```
@@ -1864,7 +1917,8 @@ m.phi_jol <- ordbetareg(
 #| results: hide
 #| echo: true
 
-ord_beta_avg_jol <- avg_comparisons(m.phi_jol,
+ord_beta_avg_jol <- avg_comparisons(
+  m.phi_jol,
   variables = "Fluency",
   comparison = "difference"
 )
@@ -1895,13 +1949,15 @@ ord_beta_avg_jol |>
 
 ### Posterior Predictive Check
 
-@fig-ppcheckjol highlights our posterior check and the ordered beta model does a good job at describing our data.
+@fig-ppcheckjol shows our posterior predictive checks, using the calibration helper from @lst-calib for the boundaries. The calibration curves for responses of exactly 0 and exactly 1 stay close to the diagonal, although with only a handful of boundary responses (`r sum(jol_data$JOL == 0)` zeros and `r sum(jol_data$JOL == 1)` ones) they are uncertain. The density overlay shows that the continuous responses are also well described. Overall, the ordered beta model does a good job at describing our data.
 
 ```{r}
 #| label: fig-ppcheckjol
-#| fig-cap: "Posterior check for JOL ordered beta model"
-#| fig-width: 12
-#| fig-height: 8
+#| fig-cap: "Posterior predictive checks for the JOL ordered beta model. A. PAV-adjusted calibration plot for JOLs of exactly 0. B. PAV-adjusted calibration plot for JOLs of exactly 1. C. Density overlay for the continuous JOLs."
+#| fig-width: 15
+#| fig-asp: 0.38
+
+calib_jol <- ppc_calibration_ordbeta(m.phi_jol, "JOL")
 
 plots <- pp_check_ordbeta(
   m.phi_jol,
@@ -1909,10 +1965,13 @@ plots <- pp_check_ordbeta(
   outcome_label = "JOLs"
 )
 
-plot <- plots +
-  theme_publication()
-
-plot_grid(plots$discrete, plots$continuous, labels = c("A", "B"))
+plot_grid(
+  calib_jol$zero,
+  calib_jol$one,
+  plots$continuous,
+  labels = c("A", "B", "C"),
+  nrow = 1
+)
 ```
 
 # Discussion
@@ -2019,7 +2078,15 @@ beta_model |>
   mutate(p = ifelse(p < .001, "<.001", sprintf("%.3f", p))) |>
   mutate(across(where(is.numeric), ~ round(.x, 3))) |>
   mutate(`95% CI` = str_glue("[{CI_low}, {CI_high}]")) |>
-  select(any_of(c("Parameter", "Component", "Coefficient", "SE", "95% CI", "z", "p"))) |>
+  select(any_of(c(
+    "Parameter",
+    "Component",
+    "Coefficient",
+    "SE",
+    "95% CI",
+    "z",
+    "p"
+  ))) |>
   tt() |>
   format_tt(escape = TRUE)
 ```
@@ -2035,7 +2102,6 @@ We obtain predicted probabilities for each level of fluency with `avg_prediction
 #| lst-cap: Predicted probabilities for the beta model
 #| eval: false
 #| echo: true
-
 
 avg_predictions(beta_model, variables = "Fluency", dpar = "mu")
 ```
@@ -2064,7 +2130,6 @@ The average marginal effect of fluency on the conditional mean is computed with 
 #| eval: false
 #| echo: true
 
-
 avg_comparisons(beta_model, variables = "Fluency", dpar = "mu")
 ```
 
@@ -2072,7 +2137,6 @@ avg_comparisons(beta_model, variables = "Fluency", dpar = "mu")
 #| label: tbl-beta-ame
 #| tbl-cap: Average marginal effect of fluency from the beta model
 #| echo: false
-
 
 avg_comparisons(beta_model, variables = "Fluency", dpar = "mu") |>
   as_tibble() |>
@@ -2091,7 +2155,6 @@ avg_comparisons(beta_model, variables = "Fluency", dpar = "mu") |>
 #| lst-label: lst-zofilter
 #| echo: false
 
-
 data_beta_0 <- fluency_data |>
   filter(Accuracy != 1)
 ```
@@ -2102,7 +2165,6 @@ In `glmmTMB` the zero-inflation component is specified via the `ziformula` argum
 #| lst-label: lst-zibmodel
 #| lst-cap: Fitting the ZIB model
 #| echo: true
-
 
 beta_model_0 <- glmmTMB(
   Accuracy ~ Fluency,
@@ -2128,7 +2190,15 @@ beta_model_0 |>
   mutate(p = ifelse(p < .001, "<.001", sprintf("%.3f", p))) |>
   mutate(across(where(is.numeric), ~ round(.x, 3))) |>
   mutate(`95% CI` = str_glue("[{CI_low}, {CI_high}]")) |>
-  select(any_of(c("Parameter", "Component", "Coefficient", "SE", "95% CI", "z", "p"))) |>
+  select(any_of(c(
+    "Parameter",
+    "Component",
+    "Coefficient",
+    "SE",
+    "95% CI",
+    "z",
+    "p"
+  ))) |>
   tt() |>
   format_tt(escape = TRUE)
 ```
@@ -2265,7 +2335,15 @@ ord_fit_dis |>
   mutate(p = ifelse(p < .001, "<.001", sprintf("%.3f", p))) |>
   mutate(across(where(is.numeric), ~ round(.x, 3))) |>
   mutate(`95% CI` = str_glue("[{CI_low}, {CI_high}]")) |>
-  select(any_of(c("Parameter", "Component", "Coefficient", "SE", "95% CI", "z", "p"))) |>
+  select(any_of(c(
+    "Parameter",
+    "Component",
+    "Coefficient",
+    "SE",
+    "95% CI",
+    "z",
+    "p"
+  ))) |>
   tt() |>
   format_tt(escape = TRUE)
 ```
@@ -2279,7 +2357,6 @@ ord_fit_dis |>
 #| lst-cap: Predicted probabilities and AMEs for the ordered beta model
 #| eval: false
 #| echo: true
-
 
 avg_predictions(ord_fit_dis, variables = "Fluency")
 avg_comparisons(ord_fit_dis, variables = "Fluency")
@@ -2328,5 +2405,6 @@ Readers can also use a recently developed analysis technique known as XBX regres
 #| eval: false
 
 # left of pipe is mu and right is phi
-xbx_fit <- betareg(Accuracy ~ Fluency | Fluency, data = fluency_data). 
+xbx_fit <- betareg(Accuracy ~ Fluency | Fluency, data = fluency_data)
+.
 ```
