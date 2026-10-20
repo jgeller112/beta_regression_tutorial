@@ -1521,19 +1521,14 @@ ppc_calibration_ordbeta <- function(model, outcome) {
   p_one <- plogis(eta - cut2)
 
   # fewer quantile dots so each dot is large enough to see
+  calib <- function(event, prep, title) {
+    ppc_calibration(y = event, prep = prep, qdots_quantiles = 30) +
+      ggtitle(title)
+  }
+
   list(
-    zero = ppc_calibration(
-      y = as.integer(y == 0),
-      prep = p_zero,
-      qdots_quantiles = 30
-    ) +
-      ggtitle("Exactly 0"),
-    one = ppc_calibration(
-      y = as.integer(y == 1),
-      prep = p_one,
-      qdots_quantiles = 30
-    ) +
-      ggtitle("Exactly 1")
+    zero = calib(as.integer(y == 0), p_zero, "Exactly 0"),
+    one = calib(as.integer(y == 1), p_one, "Exactly 1")
   )
 }
 ```

@@ -10,6 +10,7 @@ format:
   apaquarto-typst:
     documentmode: doc
     csl: apa.csl
+    include-in-header: typst-align.typ
   apaquarto-html:
     toc: true
     toc-depth: 2
