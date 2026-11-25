@@ -9,6 +9,9 @@ on:
   pull_request:
     branches-ignore:
       - rendered
+    paths:
+      - manuscript/ms.qmd
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -28,21 +31,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
 
-    - name: Check if manuscript changed
-      id: check_changes
-      run: |
-        if git rev-list --count HEAD >/dev/null 2>&1 && [ "$(git rev-list --count HEAD)" -gt 1 ]; then
-          if git diff --name-only HEAD^ HEAD | grep -q "^manuscript/ms.qmd$"; then
-            echo "changed=true" >> $GITHUB_ENV
-          else
-            echo "changed=false" >> $GITHUB_ENV
-          fi
-        else
-          echo "changed=true" >> $GITHUB_ENV
-        fi
-
     - name: Install Nix
-      if: env.changed == 'true'
       uses: DeterminateSystems/nix-installer-action@main
       with:
         logger: pretty
@@ -50,40 +39,33 @@ jobs:
         backtrace: full
 
     - name: Use rstats-on-nix cache
-      if: env.changed == 'true'
       uses: cachix/cachix-action@v15
       with:
         name: rstats-on-nix
 
 
     - name: Install MS fonts
-      if: env.changed == 'true'
       run: |
         echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
         sudo apt-get install -y --no-install-recommends fontconfig ttf-mscorefonts-installer
         fc-cache -fv
 
     - name: Generate default.nix
-      if: env.changed == 'true'
       run: nix-shell -p R rPackages.rix --run 'R -e "source(\"create_env_dev.R\")"'
 
     - name: Build development environment
-      if: env.changed == 'true'
       run: nix-build
 
     - name: Quarto render manuscript (PDF, DOCX, HTML)
-      if: env.changed == 'true'
       run: |
         nix-shell --run "quarto render manuscript/ms.qmd"
 
     - name: Copy full manuscript folder to temporary directory
-      if: env.changed == 'true'
       run: |
         mkdir -p out
         cp -r manuscript out/
 
     - name: Publish manuscript to rendered branch (single-commit, no history)
-      if: env.changed == 'true'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
