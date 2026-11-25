@@ -1499,13 +1499,75 @@ In @tbl-cutpoints, `cutzero` is the first cutpoint (the difference between 0 and
 
 The best way to visualize model fit is to compare the model's predictions to the original outcome. Because ordered beta regression is a mixed discrete/continuous model, the discrete (exactly 0 or 1) and continuous parts of the outcome should be checked separately. The default plot in `brms` will collapse these two features of the outcome together, which will make the fit look worse than it actually is.
 
-For the discrete part, a common choice is a bar chart comparing the observed number of 0s, 1s, and continuous responses with the numbers predicted by the model. However, such bar charts are weak diagnostics: a model that predicts the right overall proportion of 0s can still assign those 0s to the wrong observations, and the bar chart cannot reveal this [@sailynoja2026]. A better option is a calibration plot [@sailynoja2026]. For each boundary (exactly 0 and exactly 1) we treat the outcome as binary (e.g., 1 if a response is exactly 0, and 0 otherwise) and plot the observed rate of that outcome against the model's predicted probability. The curve is estimated with the pool-adjacent-violators (PAV) algorithm, which yields a monotone, step-shaped calibration curve without requiring the user to choose bins. If the model is well calibrated, the curve should fall along the diagonal: observations given, for example, a 10% predicted probability of being 0 should be 0 about 10% of the time. In {bayesplot} (version 1.16.0 or later), `ppc_calibration()` produces this plot from the posterior draws of the predicted probabilities. For the ordered beta model, the probability of a response of exactly 0 is $1 - \text{logit}^{-1}(\eta - k_1)$ and the probability of exactly 1 is $\text{logit}^{-1}(\eta - k_2)$, where $\eta$ is the linear predictor for $\mu$ and $k_1$ and $k_2$ are the two cutpoints (in {ordbetareg}, $k_1$ = `cutzero` and $k_2$ = `cutzero` + $\exp($`cutone`$)$). We compute these probabilities for every posterior draw and wrap the plotting in a small helper so that we can reuse it later (see @lst-calib).
+For the discrete part, a common choice is a bar chart comparing the observed number of 0s, 1s, and continuous responses with the numbers predicted by the model. However, such bar charts are weak diagnostics: a model that predicts the right overall proportion of 0s can still assign those 0s to the wrong observations, and the bar chart cannot reveal this [@sailynoja2026]. A better option is a calibration plot [@sailynoja2026]. Because the ordered beta model treats the outcome as three ordered categories (exactly 0, between 0 and 1, and exactly 1), we follow the recommendation of @sailynoja2026 for ordinal outcomes and check the calibration of the cumulative event probabilities, one for each cutpoint. This gives two binary events: whether a response is above 0 (i.e., not exactly 0) and whether a response reaches 1 (i.e., is exactly 1). For each event we code the outcome as binary (e.g., 1 if a response is above 0, and 0 otherwise) and plot the observed rate of that event against the model's predicted probability. The curve is estimated with the pool-adjacent-violators (PAV) algorithm, which yields a monotone, step-shaped calibration curve without requiring the user to choose bins. If the model is well calibrated, the curve should fall along the diagonal: observations given, for example, a 90% predicted probability of being above 0 should be above 0 about 90% of the time. For the ordered beta model, the probability of a response above 0 is $\text{logit}^{-1}(\eta - k_1)$ and the probability of a response of exactly 1 is $\text{logit}^{-1}(\eta - k_2)$, where $\eta$ is the linear predictor for $\mu$ and $k_1$ and $k_2$ are the two cutpoints (in {ordbetareg}, $k_1$ = `cutzero` and $k_2$ = `cutzero` + $\exp($`cutone`$)$). Both probabilities have the same form: the chance that the response exceeds a cutpoint. We compute these probabilities for every posterior draw. Following @sailynoja2026, the calibration curve uses each observation's posterior mean predicted probability, and uncertainty is shown with a 95% consistency band: the range of PAV curves obtained from outcomes simulated under the model (each simulation uses one posterior draw). The band shows how far the curve can stray from the diagonal by chance alone if the model is correct, so points outside the band indicate miscalibration. The {bayesplot} package (version 1.16.0 or later) provides `ppc_calibration()` for these plots, but it does not pool observations that share the same predicted probability. With categorical predictors, as in our example, every observation in a condition receives the same prediction, and the resulting curve then depends on the arbitrary order of the observations within each condition. We therefore wrote a small helper that pools tied predictions before applying PAV, so that each distinct prediction receives a single calibrated value (see @lst-calib). We reuse this helper later in the tutorial.
 
 ```{r}
 #| label: calib-helper
 #| lst-label: lst-calib
 #| lst-cap: PAV-adjusted calibration plots for the boundaries of an ordered beta model
 #| echo: true
+
+# PAV (pool-adjacent-violators) for forecasts sorted in increasing order.
+# v = observed event rate per distinct forecast, w = number of observations
+pav <- function(v, w) {
+  n <- rep(1, length(v))
+  i <- 1
+  while (i < length(v)) {
+    if (v[i] > v[i + 1]) {
+      # pool the two adjacent blocks into their weighted mean
+      v[i] <- (v[i] * w[i] + v[i + 1] * w[i + 1]) / (w[i] + w[i + 1])
+      w[i] <- w[i] + w[i + 1]
+      n[i] <- n[i] + n[i + 1]
+      v <- v[-(i + 1)]
+      w <- w[-(i + 1)]
+      n <- n[-(i + 1)]
+      i <- max(1, i - 1)
+    } else {
+      i <- i + 1
+    }
+  }
+  rep(v, n)
+}
+
+# calibration curve and 95% consistency band for one binary event.
+# event = 0/1 outcome; p_draws = draws x observations predicted probabilities
+calib_event <- function(event, p_draws, title, n_sims = 1000) {
+  p_mean <- round(colMeans(p_draws), 10) # forecast: posterior mean
+  forecast <- sort(unique(p_mean))
+  pooled <- function(e) {
+    # pool observations with the same forecast, then apply PAV
+    rate <- tapply(e, factor(p_mean, levels = forecast), mean)
+    pav(as.vector(rate), as.vector(table(p_mean)))
+  }
+  # consistency band: PAV curves of outcomes simulated under the model
+  sims <- replicate(n_sims, {
+    p_s <- p_draws[sample.int(nrow(p_draws), 1), ]
+    pooled(rbinom(length(event), 1, p_s))
+  })
+  sims <- matrix(sims, nrow = length(forecast))
+  d <- data.frame(
+    forecast = forecast,
+    cep = pooled(event), # calibrated observed rate
+    rate = as.vector(tapply(event, p_mean, mean)), # raw observed rate
+    n = as.vector(table(p_mean)),
+    lower = apply(sims, 1, quantile, probs = 0.025),
+    upper = apply(sims, 1, quantile, probs = 0.975)
+  )
+
+  ggplot(d, aes(x = forecast)) +
+    geom_abline(linetype = "dashed", colour = "grey50") +
+    geom_linerange(
+      aes(ymin = lower, ymax = upper),
+      linewidth = 6,
+      colour = color_scheme_get()$light
+    ) +
+    geom_step(aes(y = cep), colour = color_scheme_get()$dark, linewidth = 0.9) +
+    geom_point(aes(y = rate, size = n), colour = color_scheme_get()$dark) +
+    scale_size_area(max_size = 4, guide = "none") +
+    coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) +
+    labs(x = "Predicted probability", y = "Observed rate", title = title) +
+    theme_default()
+}
 
 ppc_calibration_ordbeta <- function(model, outcome) {
   y <- model$data[[outcome]] # outcome as used by the model (0-1 scale)
@@ -1516,19 +1578,14 @@ ppc_calibration_ordbeta <- function(model, outcome) {
   cut1 <- as.vector(cuts[, "cutzero"])
   cut2 <- cut1 + exp(as.vector(cuts[, "cutone"]))
 
-  # predicted probability of exactly 0 and exactly 1 for every draw
-  p_zero <- 1 - plogis(eta - cut1)
+  # cumulative event probabilities for every draw:
+  # P(y > 0) exceeds the first cutpoint, P(y = 1) exceeds the second
+  p_above_zero <- plogis(eta - cut1)
   p_one <- plogis(eta - cut2)
 
-  # fewer quantile dots so each dot is large enough to see
-  calib <- function(event, prep, title) {
-    ppc_calibration(y = event, prep = prep, qdots_quantiles = 30) +
-      ggtitle(title)
-  }
-
   list(
-    zero = calib(as.integer(y == 0), p_zero, "Exactly 0"),
-    one = calib(as.integer(y == 1), p_one, "Exactly 1")
+    above_zero = calib_event(as.integer(y > 0), p_above_zero, "Above 0"),
+    one = calib_event(as.integer(y == 1), p_one, "Exactly 1")
   )
 }
 ```
@@ -1539,7 +1596,7 @@ For the continuous part, `pp_check_ordbeta()` from {ordbetareg} overlays the den
 #| label: fig-ppcheckord
 #| fig-width: 15
 #| fig-asp: 0.38
-#| fig-cap: Posterior predictive checks for the ordered beta regression model. A. PAV-adjusted calibration plot for responses of exactly 0. B. PAV-adjusted calibration plot for responses of exactly 1. C. Density overlay for the continuous responses. In A and B the dark line is the PAV calibration curve with its 95% pointwise credible interval, the dashed diagonal shows perfect calibration, and the dots show the distribution of predicted probabilities.
+#| fig-cap: Posterior predictive checks for the ordered beta regression model. A. PAV-adjusted calibration plot for responses above 0. B. PAV-adjusted calibration plot for responses of exactly 1. C. Density overlay for the continuous responses. In A and B the points show the observed rate in each condition (sized by the number of observations), the dark line is the PAV calibration curve, the shaded bars are 95% consistency bands (the range of calibration values expected if the model were correct), and the dashed diagonal shows perfect calibration.
 
 calib <- ppc_calibration_ordbeta(m.phi, "Accuracy")
 
@@ -1550,7 +1607,7 @@ plots <- pp_check_ordbeta(
 )
 
 plot_grid(
-  calib$zero,
+  calib$above_zero,
   calib$one,
   plots$continuous,
   labels = c("A", "B", "C"),
@@ -1558,7 +1615,7 @@ plot_grid(
 )
 ```
 
-Because fluency is the only predictor, the model makes just two distinct predictions for each boundary (one per condition), so the calibration curves have only two steps and occupy a small region near the lower left of each panel. For exactly 0 (@fig-ppcheckord A), the calibration curve stays close to the diagonal, indicating that the model's predicted probability of a 0 in each condition matches how often 0s are actually observed. There is only a single response of exactly 1 in these data, so the calibration plot in @fig-ppcheckord B shows no evidence of miscalibration, but it cannot tell us much either. With more predictors (e.g., continuous covariates or participant-level effects), the predicted probabilities would spread out and these plots would become more informative. For the continuous plot shown as a density plot with one line per posterior draw (@fig-ppcheckord C), the model does a very good job at capturing the distribution.
+Because fluency is the only predictor, the model makes just two distinct predictions for each boundary (one per condition), so each calibration plot has just two points and occupies a small region of the panel (near the upper right for responses above 0, where predicted probabilities are high, and near the lower left for responses of exactly 1, where they are low). For responses above 0 (@fig-ppcheckord A), both points fall within their consistency bands, indicating that the model's predicted probability of a non-zero response in each condition matches how often non-zero responses (and therefore 0s) are actually observed. There is only a single response of exactly 1 in these data, so the calibration plot in @fig-ppcheckord B shows no evidence of miscalibration, but it cannot tell us much either. With more predictors (e.g., continuous covariates or participant-level effects), the predicted probabilities would spread out and these plots would become more informative. For the continuous plot shown as a density plot with one line per posterior draw (@fig-ppcheckord C), the model does a very good job at capturing the distribution.
 
 To fully understand model fit, the discrete and continuous checks need to be inspected together as they are conceptually distinct. Overall, these checks indicate that the ordered beta model fits the data well.
 
@@ -1944,11 +2001,11 @@ ord_beta_avg_jol |>
 
 ### Posterior Predictive Check
 
-@fig-ppcheckjol shows our posterior predictive checks, using the calibration helper from @lst-calib for the boundaries. The calibration curves for responses of exactly 0 and exactly 1 stay close to the diagonal, although with only a handful of boundary responses (`r sum(jol_data$JOL == 0)` zeros and `r sum(jol_data$JOL == 1)` ones) they are uncertain. The density overlay shows that the continuous responses are also well described. Overall, the ordered beta model does a good job at describing our data.
+@fig-ppcheckjol shows our posterior predictive checks, using the calibration helper from @lst-calib for the boundaries. The observed rates of responses above 0 and of exactly 1 fall within their consistency bands, although with only a handful of boundary responses (`r sum(jol_data$JOL == 0)` zeros and `r sum(jol_data$JOL == 1)` ones) they are uncertain. The density overlay shows that the continuous responses are also well described. Overall, the ordered beta model does a good job at describing our data.
 
 ```{r}
 #| label: fig-ppcheckjol
-#| fig-cap: "Posterior predictive checks for the JOL ordered beta model. A. PAV-adjusted calibration plot for JOLs of exactly 0. B. PAV-adjusted calibration plot for JOLs of exactly 1. C. Density overlay for the continuous JOLs."
+#| fig-cap: "Posterior predictive checks for the JOL ordered beta model. A. PAV-adjusted calibration plot for JOLs above 0. B. PAV-adjusted calibration plot for JOLs of exactly 1. C. Density overlay for the continuous JOLs."
 #| fig-width: 15
 #| fig-asp: 0.38
 
@@ -1961,7 +2018,7 @@ plots <- pp_check_ordbeta(
 )
 
 plot_grid(
-  calib_jol$zero,
+  calib_jol$above_zero,
   calib_jol$one,
   plots$continuous,
   labels = c("A", "B", "C"),
