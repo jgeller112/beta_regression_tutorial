@@ -82,7 +82,7 @@ rix(
     "anyfontsize"
   ),
   shell_hook = "Rscript install_cmdstan.R",
-  ide = "rstudio",
+  ide = "none",
   project_path = ".",
   overwrite = TRUE
 )

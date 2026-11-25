@@ -56,10 +56,6 @@ jobs:
         name: rstats-on-nix
 
 
-    - name: Generate default.nix
-      if: env.changed == 'true'
-      run: nix-shell -p R rPackages.rix --run 'R -e "source(\"create_env_dev.R\")"'
-
     - name: Install MS fonts
       if: env.changed == 'true'
       run: |
@@ -70,11 +66,6 @@ jobs:
     - name: Generate default.nix
       if: env.changed == 'true'
       run: nix-shell -p R rPackages.rix --run 'R -e "source(\"create_env_dev.R\")"'
-
-    - name: Replace rstudioWrapper with rWrapper
-      if: env.changed == 'true'
-      run: |
-        sed -i 's/rstudioWrapper/rWrapper/g' default.nix
 
     - name: Build development environment
       if: env.changed == 'true'
