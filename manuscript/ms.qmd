@@ -135,7 +135,7 @@ options(
   scipen = 999,
   marginaleffects_posterior_center = mean,
   brms.short_summary = TRUE,
-  rms.backend = Sys.getenv("BRMS_BACKEND", "cmdstanr"), # use cmdstanr and not rstan
+  brms.backend = Sys.getenv("BRMS_BACKEND", "cmdstanr"), # use cmdstanr and not rstan
   brms.threads = as.numeric(Sys.getenv("BRMS_THREADS", 2)),
   mc.cores = as.numeric(Sys.getenv("MAX_CORES", 4)) # use 4 cores when fitting brms models
 )
@@ -1238,7 +1238,7 @@ param_grid <- expand_grid(
 )
 
 # Simulate data
-set.seed(123)
+set.seed(666)
 sim_data <- param_grid %>%
   mutate(
     data = pmap(
@@ -1598,6 +1598,7 @@ For the continuous part, `pp_check_ordbeta()` from {ordbetareg} overlays the den
 #| fig-asp: 0.38
 #| fig-cap: Posterior predictive checks for the ordered beta regression model. A. PAV-adjusted calibration plot for responses above 0. B. PAV-adjusted calibration plot for responses of exactly 1. C. Density overlay for the continuous responses. In A and B the points show the observed rate in each condition (sized by the number of observations), the dark line is the PAV calibration curve, the shaded bars are 95% consistency bands (the range of calibration values expected if the model were correct), and the dashed diagonal shows perfect calibration.
 
+set.seed(666) # consistency bands are simulated
 calib <- ppc_calibration_ordbeta(m.phi, "Accuracy")
 
 plots <- pp_check_ordbeta(
@@ -2009,6 +2010,7 @@ ord_beta_avg_jol |>
 #| fig-width: 15
 #| fig-asp: 0.38
 
+set.seed(666) # consistency bands are simulated
 calib_jol <- ppc_calibration_ordbeta(m.phi_jol, "JOL")
 
 plots <- pp_check_ordbeta(
