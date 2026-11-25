@@ -5,6 +5,7 @@ on:
   workflow_run:
     workflows: ["Render paper with Nix and Quarto"]
     types: [completed]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,7 +18,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -45,7 +46,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Upload artifact (manuscript/)
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site/manuscript   # uploads index.html + pdf/docx + ms_files/
 
